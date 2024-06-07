@@ -1,4 +1,4 @@
-Der er en config.properties fil med lignende i /config mappen med information til en lokal Microsoft SQL Server DB:
+Opret en config.properties fil med lignende for at køre programmet.
 db.server=localhost
 db.database=EcoStruxure
 db.username=
