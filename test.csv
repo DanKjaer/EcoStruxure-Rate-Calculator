@@ -1,0 +1,17 @@
+currency,eur_rate,usd_rate,extra_field
+EUR,1.87,1.11,ignored
+USD,2.5,3.23,something extra
+GBP,1.08,1.22,
+JPY,113.5,0.0089,note
+CAD,1.31,0.97
+AUD,not a number,0.69
+CHF,,1.09
+NOK,10.50,1.15,extra
+DKK,7.44,0.16
+SEK,10.33,
+NZD,1.52,0.66
+HKD,7.77,2.27,invalid,extra
+MXN,20.27,0.05
+WWW,20.27,0.05
+MMW,9.87,23.32
+MWW,10.10,10.10

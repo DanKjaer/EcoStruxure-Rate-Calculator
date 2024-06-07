@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>EcoStruxure-Rate-Calculator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+    <!-- TESTING DEPENDENCIES -->
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.11.0-M1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.11.0-M1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-carbonicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.5</version> <!-- Or the latest version -->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version> <!-- Or the latest version -->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version> <!-- Or the latest version -->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/com.google.truth/truth -->
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <version>1.4.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+    <!-- IKONLI DEPENDENCIES -->
+        <!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-javafx -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-material2-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fontawesome5-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-feather-pack -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-feather-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-carbonicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+    <!-- DATABASE DEPENDENCIES -->
+        <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.4.1.jre11</version>
+        </dependency>
+
+
+    <!-- UI LIBRARIES DEPENDENCIES -->
+        <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>11.2.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.github.mkpaz/atlantafx-base -->
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <!-- https://github.com/HanSolo/countries -->
+        <dependency>
+            <groupId>eu.hansolo.fx</groupId>
+            <artifactId>countries</artifactId>
+            <version>21.0.3</version>
+        </dependency>
+
+    <!-- OTHER -->
+        <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+</project>
