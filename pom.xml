@@ -138,6 +138,13 @@
             <version>12.4.1.jre11</version>
         </dependency>
 
+        <!-- Postgresql dependency - se om microsoft er nødvendig efter den er blevet implementeret -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version> <!-- Use the latest version -->
+        </dependency>
+
 
     <!-- UI LIBRARIES DEPENDENCIES -->
         <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->

@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.dal.db;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
 import ecostruxure.rate.calculator.util.AppConfig;
 
 import java.io.FileInputStream;
@@ -10,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBConnector {
-    private final SQLServerDataSource dataSource;
+    private final PGSimpleDataSource dataSource;
 
     /**
      * Constructs a DBConnector using default configuration parameters from file provided by AppConfig.CONFIG_FILE
@@ -40,19 +41,14 @@ public class DBConnector {
         var properties = new Properties();
         properties.load(new FileInputStream(propertiesFilePath));
 
-        dataSource = new SQLServerDataSource();
+        dataSource = new PGSimpleDataSource();
         dataSource.setServerName(properties.getProperty(AppConfig.DB_SERVER));
         dataSource.setDatabaseName(properties.getProperty(AppConfig.DB_DATABASE));
 
-        if (Boolean.parseBoolean(properties.getProperty(AppConfig.DB_USE_INTEGRATED_SECURITY))) {
-            dataSource.setIntegratedSecurity(true);
-        } else {
-            dataSource.setUser(properties.getProperty(AppConfig.DB_USERNAME));
-            dataSource.setPassword(properties.getProperty(AppConfig.DB_PASSWORD));
-        }
+        dataSource.setUser(properties.getProperty(AppConfig.DB_USERNAME));
+        dataSource.setPassword(properties.getProperty(AppConfig.DB_PASSWORD));
 
         dataSource.setPortNumber(Integer.parseInt(properties.getProperty(AppConfig.DB_PORT)));
-        dataSource.setTrustServerCertificate(true);
     }
 
     /**
