@@ -1,8 +1,9 @@
 package ecostruxure.rate.calculator.dal.db;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import org.postgresql.ds.PGSimpleDataSource;
 import ecostruxure.rate.calculator.util.AppConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBConnector {
+    private static final Logger log = LoggerFactory.getLogger(DBConnector.class);
     private final PGSimpleDataSource dataSource;
 
     /**
@@ -44,7 +46,7 @@ public class DBConnector {
         dataSource = new PGSimpleDataSource();
         dataSource.setServerName(properties.getProperty(AppConfig.DB_SERVER));
         dataSource.setDatabaseName(properties.getProperty(AppConfig.DB_DATABASE));
-
+        dataSource.setCurrentSchema(properties.getProperty(AppConfig.DB_SCHEMA));
         dataSource.setUser(properties.getProperty(AppConfig.DB_USERNAME));
         dataSource.setPassword(properties.getProperty(AppConfig.DB_PASSWORD));
 

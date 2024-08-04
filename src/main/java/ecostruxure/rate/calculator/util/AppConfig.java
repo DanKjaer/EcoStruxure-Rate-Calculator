@@ -15,6 +15,7 @@ public class AppConfig {
     public static final String DB_USERNAME = "db.username";
     public static final String DB_PASSWORD = "db.password";
     public static final String DB_USE_INTEGRATED_SECURITY = "db.use_integrated_security";
+    public static final String DB_SCHEMA = "db.schema";
 
     public static final String USER_LANGUAGE = "user.language";
     public static final String USER_LANGUAGE_EN = "en";
