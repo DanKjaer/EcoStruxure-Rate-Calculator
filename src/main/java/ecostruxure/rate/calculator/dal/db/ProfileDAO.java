@@ -105,10 +105,10 @@ public class ProfileDAO implements IProfileDAO {
                                    SUM(utilization_rate) AS utilization_rate_total,
                                    SUM(utilization_hours) AS utilization_hours_total
                             FROM dbo.Teams_profiles
-                            WHERE archived = 0
+                            WHERE archived = FALSE
                             GROUP BY profileID
                         ) tp ON p.id = tp.profileID
-                        WHERE pd.archived = 0
+                        WHERE pd.archived = FALSE
                         ORDER BY p.id DESC;                     
                         """;
 
@@ -369,7 +369,7 @@ public class ProfileDAO implements IProfileDAO {
         String query = """
                         SELECT SUM(utilization_rate) AS total_utilization
                         FROM Teams_profiles
-                        WHERE profileId = ? AND Teams_profiles.archived = 0;
+                        WHERE profileId = ? AND Teams_profiles.archived = FALSE;
                         """;
 
         try (Connection conn = dbConnector.connection();
@@ -396,7 +396,7 @@ public class ProfileDAO implements IProfileDAO {
         String query = """
                         SELECT SUM(utilization_hours) AS total_utilization
                         FROM Teams_profiles
-                        WHERE profileId = ? AND Teams_profiles.archived = 0;
+                        WHERE profileId = ? AND Teams_profiles.archived = FALSE;
                         """;
 
         try (Connection conn = dbConnector.connection();
@@ -539,7 +539,7 @@ public class ProfileDAO implements IProfileDAO {
                        SELECT *
                        FROM Teams_profiles
                        INNER JOIN Teams ON Teams_profiles.teamId = Teams.id
-                       WHERE Teams_profiles.profileId = ? AND Teams.archived = 0;
+                       WHERE Teams_profiles.profileId = ? AND Teams.archived = FALSE;
                        """;
 
         try (Connection conn = dbConnector.connection();

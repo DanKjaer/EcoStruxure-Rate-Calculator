@@ -310,7 +310,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND archived = 0;
+                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND archived = FALSE;
                        """; //false
 
         try (Connection conn = dbConnector.connection();
@@ -335,7 +335,7 @@ public class TeamDAO implements ITeamDAO {
     public boolean removeAssignedProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String query = """
-                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND archived = 0;
+                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND archived = FALSE;
                        """; //false
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
@@ -359,7 +359,7 @@ public class TeamDAO implements ITeamDAO {
                         SELECT p.*, pd.*, tp.utilization_rate, tp.utilization_hours
                         FROM dbo.Profiles p
                         INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ?
-                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = 0;                    
+                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = FALSE;                    
                         """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -415,7 +415,7 @@ public class TeamDAO implements ITeamDAO {
                         SELECT p.*, pd.*, tp.utilization_rate, tp.utilization_hours
                         FROM dbo.Profiles p
                         INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ? AND tp.profileID = ?
-                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = 0;                    
+                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = FALSE;                    
                         """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -561,10 +561,10 @@ public class TeamDAO implements ITeamDAO {
                      FROM dbo.Teams_profiles
                      WHERE teamID != ?
                        AND (SELECT archived FROM dbo.Profiles_data WHERE id = profileID) = 0
-                       AND archived = 0
+                       AND archived = FALSE
                      GROUP BY profileID
                     ) AS total_sum ON p.id = total_sum.profileID
-                WHERE tp.archived = 1;
+                WHERE tp.archived = TRUE;
                     """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -685,7 +685,7 @@ public class TeamDAO implements ITeamDAO {
 
     public LocalDateTime getLastUpdated(int teamId) throws Exception {
         String query = """
-                SELECT TOP 1 updated_at FROM Teams_profiles_history WHERE team_id = ? ORDER BY updated_at DESC;
+                SELECT * FROM Teams_profiles_history WHERE team_id = ? ORDER BY updated_at DESC LIMIT 1;
                        """;
 
         try (Connection conn = dbConnector.connection();
