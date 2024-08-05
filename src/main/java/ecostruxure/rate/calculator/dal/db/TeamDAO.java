@@ -95,6 +95,7 @@ public class TeamDAO implements ITeamDAO {
                 }
             }
         } catch (Exception e) {
+            System.out.println(e.getStackTrace());
             throw new Exception("Could not create Team in Database.\n" + e.getMessage());
         }
 

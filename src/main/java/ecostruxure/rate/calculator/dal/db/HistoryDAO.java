@@ -243,7 +243,7 @@ public class HistoryDAO implements IHistoryDAO {
     @Override
     public Integer getLatestProfileHistoryId(TransactionContext context, int profileId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
-        String sql = "SELECT TOP 1 history_id FROM dbo.Profiles_history WHERE profile_id = ? ORDER BY updated_at DESC";
+        String sql = "SELECT history_id FROM dbo.Profiles_history WHERE profile_id = ? ORDER BY updated_at DESC LIMIT 1";
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
             stmt.setInt(1, profileId);
