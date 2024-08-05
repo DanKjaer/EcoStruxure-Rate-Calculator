@@ -575,7 +575,7 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileDataSQL = """
                                       UPDATE dbo.Profiles_data
-                                      SET name = ?, currency = ?, geography = ?, overhead = ?, archived = ?, updated_at = GETDATE()
+                                      SET name = ?, currency = ?, geography = ?, overhead = ?, archived = ?, updated_at = CURRENT_TIMESTAMP
                                       WHERE id = ?;
                                       """;
         try (Connection conn = dbConnector.connection();
@@ -623,7 +623,7 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileDataSQL = """
                                       UPDATE dbo.Profiles_data
-                                      SET name = ?, currency = ?, geography = ?, overhead = ?, archived = ?, updated_at = GETDATE()
+                                      SET name = ?, currency = ?, geography = ?, overhead = ?, archived = ?, updated_at = CURRENT_TIMESTAMP
                                       WHERE id = ?;
                                       """;
 
@@ -686,7 +686,7 @@ public class ProfileDAO implements IProfileDAO {
     @Override
     public boolean archive(Profile profile, boolean shouldArchive) throws Exception {
         String query = """
-                       UPDATE dbo.Profiles_data SET archived = ?, updated_at = GETDATE() WHERE id = ?;
+                       UPDATE dbo.Profiles_data SET archived = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -704,7 +704,7 @@ public class ProfileDAO implements IProfileDAO {
     @Override
     public boolean archive(List<Profile> profiles) throws Exception {
         String query = """
-                       UPDATE dbo.Profiles_data SET archived = ?, updated_at = GETDATE() WHERE id = ?;
+                       UPDATE dbo.Profiles_data SET archived = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;
                        """;
 
         try (Connection conn = dbConnector.connection();

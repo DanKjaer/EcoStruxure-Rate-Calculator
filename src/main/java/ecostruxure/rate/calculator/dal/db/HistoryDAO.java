@@ -119,7 +119,7 @@ public class HistoryDAO implements IHistoryDAO {
                                              effective_work_hours, hours_per_day, updated_at
                                          )
                                          SELECT p.id, pd.overhead, p.annual_salary, p.fixed_annual_amount, p.overhead_multiplier,
-                                                p.effective_work_hours, p.hours_per_day, GETDATE()
+                                                p.effective_work_hours, p.hours_per_day, CURRENT_TIMESTAMP
                                          FROM dbo.Profiles p
                                          JOIN dbo.Profiles_data pd ON p.id = pd.id
                                          WHERE p.id = ?
@@ -142,7 +142,7 @@ public class HistoryDAO implements IHistoryDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
                     INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, updated_at)
-                    VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, GETDATE());
+                    VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
                     """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
@@ -181,7 +181,7 @@ public class HistoryDAO implements IHistoryDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
                     INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, utilization_rate, utilization_hours, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE());
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
                     """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
