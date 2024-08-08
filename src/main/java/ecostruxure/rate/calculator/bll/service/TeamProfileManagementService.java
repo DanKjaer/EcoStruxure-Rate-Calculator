@@ -12,6 +12,7 @@ import ecostruxure.rate.calculator.dal.transaction.TransactionManager;
 import ecostruxure.rate.calculator.dal.db.HistoryDAO;
 import ecostruxure.rate.calculator.dal.db.ProfileDAO;
 import ecostruxure.rate.calculator.dal.db.TeamDAO;
+import ecostruxure.rate.calculator.gui.util.Calculations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,18 +23,22 @@ public class TeamProfileManagementService {
     private final ProfileDAO profileDAO;
     private final TeamDAO teamDAO;
     private final TransactionManager transactionManager;
+    private final Calculations calculator;
+
 
     public TeamProfileManagementService() throws Exception {
         this.historyDAO = new HistoryDAO();
         this.profileDAO = new ProfileDAO();
         this.teamDAO = new TeamDAO();
         this.transactionManager = new DbTransactionManager();
+        this.calculator = new Calculations();
     }
 
     public Team createTeam(Team team) throws Exception {
         return transactionManager.executeTransaction(context -> {
             Team createdTeam = teamDAO.create(context, team);
-            TeamMetrics metrics = calculateMetrics(createdTeam.id(), teamDAO.getTeamProfiles(context, createdTeam.id()), context);
+
+            TeamMetrics metrics = calculator.calculateMetrics(createdTeam.id(), teamDAO.getTeamProfiles(context, createdTeam.id()), context);
             historyDAO.insertEmptyTeamProfileHistory(context, createdTeam.id(), metrics, Reason.TEAM_CREATED);
             return createdTeam;
         });
@@ -46,7 +51,7 @@ public class TeamProfileManagementService {
             Team createdTeam = teamDAO.create(context, team);
             teamDAO.assignProfiles(context, createdTeam, profiles);
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, createdTeam.id());
-            TeamMetrics metrics = calculateMetrics(createdTeam.id(), assignedProfiles, context);
+            TeamMetrics metrics = calculator.calculateMetrics(createdTeam.id(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
                 Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.id());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
@@ -66,7 +71,7 @@ public class TeamProfileManagementService {
             if (!assigned) return false;
 
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, team.id());
-            TeamMetrics metrics = calculateMetrics(team.id(), assignedProfiles, context);
+            TeamMetrics metrics = calculator.calculateMetrics(team.id(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
                 Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.id());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
@@ -84,7 +89,7 @@ public class TeamProfileManagementService {
             if (!removed) return false;
 
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, team.id());
-            TeamMetrics metrics = calculateMetrics(team.id(), assignedProfiles, context);
+            TeamMetrics metrics = calculator.calculateMetrics(team.id(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
                 Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.id());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
@@ -110,7 +115,7 @@ public class TeamProfileManagementService {
             ProfileMetrics removedProfileMetrics = calculateMetrics(removedProfile, teamId, context);
 
             List<Profile> remainingProfiles = teamDAO.getTeamProfiles(context, teamId);
-            TeamMetrics updatedTeamMetrics = calculateMetrics(teamId, remainingProfiles, context);
+            TeamMetrics updatedTeamMetrics = calculator.calculateMetrics(teamId, remainingProfiles, context);
 
             Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profileId);
 
@@ -128,7 +133,7 @@ public class TeamProfileManagementService {
             if (!updated) return false;
 
             List<Profile> teamProfiles = teamDAO.getTeamProfiles(context, teamId);
-            TeamMetrics teamMetrics = calculateMetrics(teamId, teamProfiles, context);
+            TeamMetrics teamMetrics = calculator.calculateMetrics(teamId, teamProfiles, context);
             ProfileMetrics profileMetrics = calculateMetrics(profile, teamId, context);
 
             historyDAO.insertTeamProfileHistory(context, teamId, profile.id(), profileHistoryId, teamMetrics, Reason.UTILIZATION_CHANGE, profileMetrics, now);
@@ -144,7 +149,7 @@ public class TeamProfileManagementService {
             if (!updated) return false;
 
             List<Profile> updatedProfiles = teamDAO.getTeamProfiles(context, team.id());
-            TeamMetrics updatedTeamMetrics = calculateMetrics(team.id(), updatedProfiles, context);
+            TeamMetrics updatedTeamMetrics = calculator.calculateMetrics(team.id(), updatedProfiles, context);
 
             for (Profile profile : updatedProfiles) {
                 Integer profileHistoryId = historyDAO.insertProfileHistory(context, profile);
@@ -161,7 +166,7 @@ public class TeamProfileManagementService {
             profileDAO.update(context, toUpdate);
             List<Team> teams = profileDAO.getTeams(context, toUpdate);
             for (Team team : teams) {
-                TeamMetrics metrics = calculateMetrics(team.id(), teamDAO.getTeamProfiles(context, team.id()), context);
+                TeamMetrics metrics = calculator.calculateMetrics(team.id(), teamDAO.getTeamProfiles(context, team.id()), context);
                 ProfileMetrics profileMetrics = calculateMetrics(toUpdate, team, context);
                 historyDAO.insertTeamProfileHistory(context, team.id(), toUpdate.id(), profileHistoryId, metrics, Reason.UPDATED_PROFILE, profileMetrics);
             }
@@ -169,24 +174,25 @@ public class TeamProfileManagementService {
         });
     }
 
-    private TeamMetrics calculateMetrics(int teamId, List<Profile> profiles, TransactionContext context) throws Exception {
-        BigDecimal hourlyRate = BigDecimal.ZERO;
-        BigDecimal dayRate = BigDecimal.ZERO;
-        BigDecimal annualCost = BigDecimal.ZERO;
-        BigDecimal totalHours = BigDecimal.ZERO;
+//    private TeamMetrics calculateMetrics(int teamId, List<Profile> profiles, TransactionContext context) throws Exception {
+//        BigDecimal hourlyRate = BigDecimal.ZERO;
+//        BigDecimal dayRate = BigDecimal.ZERO;
+//        BigDecimal annualCost = BigDecimal.ZERO;
+//        BigDecimal totalHours = BigDecimal.ZERO;
+//
+//        for (Profile profile : profiles) {
+//            BigDecimal utilizationRate = profileDAO.getProfileRateUtilizationForTeam(context, profile.id(), teamId);
+//            BigDecimal utilizationHours = profileDAO.getProfileHourUtilizationForTeam(context, profile.id(), teamId);
+//
+//            hourlyRate = hourlyRate.add(RateUtils.hourlyRate(profile, utilizationRate));
+//            dayRate = dayRate.add(RateUtils.dayRate(profile, utilizationRate));
+//            annualCost = annualCost.add(RateUtils.annualCost(profile, utilizationRate));
+//            totalHours = totalHours.add(RateUtils.utilizedHours(profile, utilizationHours));
+//        }
+//
+//        return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
+//    }
 
-        for (Profile profile : profiles) {
-            BigDecimal utilizationRate = profileDAO.getProfileRateUtilizationForTeam(context, profile.id(), teamId);
-            BigDecimal utilizationHours = profileDAO.getProfileHourUtilizationForTeam(context, profile.id(), teamId);
-
-            hourlyRate = hourlyRate.add(RateUtils.hourlyRate(profile, utilizationRate));
-            dayRate = dayRate.add(RateUtils.dayRate(profile, utilizationRate));
-            annualCost = annualCost.add(RateUtils.annualCost(profile, utilizationRate));
-            totalHours = totalHours.add(RateUtils.utilizedHours(profile, utilizationHours));
-        }
-
-        return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
-    }
 
     private ProfileMetrics calculateMetrics(Profile profile, Team team, TransactionContext context) throws Exception {
         return calculateMetrics(profile, team.id(), context);

@@ -55,32 +55,78 @@ public class RateService {
     }
 
     // Metode til at udregne den udnyttede hourly rate for et team
+//    public BigDecimal utilizedHourlyRate(Team team) throws Exception {
+//        var total = BigDecimal.ZERO;
+//
+//        // Henter profilerne for et team og udregner den sammenlagte hourly rate.
+//        var profiles = teamService.getTeamProfiles(team);
+//        for (Profile profile : profiles) {
+//            var utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
+//            total = total.add(RateUtils.hourlyRate(profile, utilizationRate));
+//        }
+//
+//        return total;}
+
     public BigDecimal utilizedHourlyRate(Team team) throws Exception {
-        var total = BigDecimal.ZERO;
+        var totalAnnualRate = BigDecimal.ZERO;
+        var totalHours = BigDecimal.ZERO;
+        var annualHourlyRate = BigDecimal.ZERO;
 
         // Henter profilerne for et team og udregner den sammenlagte hourly rate.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
             var utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
-            total = total.add(RateUtils.hourlyRate(profile, utilizationRate));
-        }
+            var utilizationHours = profileService.getProfileHourUtilizationForTeam(profile.id(), team.id());
 
-        return total;
+            totalAnnualRate = totalAnnualRate.add(RateUtils.annualCost(profile, utilizationRate));
+            totalHours = totalHours.add(RateUtils.utilizedHours(profile, utilizationHours));
+
+            if (totalHours.compareTo(BigDecimal.ZERO) == 0) {
+                return BigDecimal.ZERO;
+            } else {
+                annualHourlyRate = totalAnnualRate.divide(totalHours, SCALE, ROUNDING_MODE);
+            }
+        }
+        return annualHourlyRate;
     }
 
     // Metode til at udregne den udnyttede day rate for et team
-    public BigDecimal utilizedDayRate(Team team) throws Exception {
-        var total = BigDecimal.ZERO;
+//    public BigDecimal utilizedDayRate(Team team) throws Exception {
+//        var total = BigDecimal.ZERO;
+//
+//        // Henter profilerne for et team og udregner den sammenlagte day rate.
+//        var profiles = teamService.getTeamProfiles(team);
+//        for (Profile profile : profiles) {
+//            var utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
+//            total = total.add(RateUtils.dayRate(profile, utilizationRate));
+//        }
+//
+//        return total;
+//    }
 
-        // Henter profilerne for et team og udregner den sammenlagte day rate.
+    // Metode til at udregne den udnyttede day rate for et team
+    public BigDecimal utilizedDayRate(Team team) throws Exception {
+        var annualRate = BigDecimal.ZERO;
+        var hours = BigDecimal.ZERO;
+        var annualDayRate = BigDecimal.ZERO;
+
+        // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
             var utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
-            total = total.add(RateUtils.dayRate(profile, utilizationRate));
-        }
+            var utilizationHours = profileService.getProfileHourUtilizationForTeam(profile.id(), team.id());
 
-        return total;
+            annualRate = annualRate.add(RateUtils.annualCost(profile, utilizationRate));
+            hours = hours.add(RateUtils.utilizedHours(profile, utilizationHours));
+            if (hours.compareTo(BigDecimal.ZERO) == 0) {
+                return BigDecimal.ZERO;
+            } else {
+                annualDayRate = annualRate.divide(hours, SCALE, ROUNDING_MODE).multiply(new BigDecimal("8.00"));
+            }
+        }
+        return annualDayRate;
     }
+
 
     // Metode til at udregne den udnyttede årlige omkostning for et team
     public BigDecimal utilizedAnnualCost(Team team) throws Exception {
