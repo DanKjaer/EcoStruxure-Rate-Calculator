@@ -22,6 +22,7 @@ public class RateService {
     private static final int SCALE = 2;
     private static final int PRECISION = 8;
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
+    private static final BigDecimal EIGHT = new BigDecimal("8.00");
 
     // Services til at håndtere profiles og teams
     private final ProfileService profileService;
@@ -54,19 +55,6 @@ public class RateService {
         return new Rates(rawRate, markupRate, grossMarginRate);
     }
 
-    // Metode til at udregne den udnyttede hourly rate for et team
-//    public BigDecimal utilizedHourlyRate(Team team) throws Exception {
-//        var total = BigDecimal.ZERO;
-//
-//        // Henter profilerne for et team og udregner den sammenlagte hourly rate.
-//        var profiles = teamService.getTeamProfiles(team);
-//        for (Profile profile : profiles) {
-//            var utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
-//            total = total.add(RateUtils.hourlyRate(profile, utilizationRate));
-//        }
-//
-//        return total;}
-
     public BigDecimal utilizedHourlyRate(Team team) throws Exception {
         var totalAnnualRate = BigDecimal.ZERO;
         var totalHours = BigDecimal.ZERO;
@@ -91,20 +79,6 @@ public class RateService {
     }
 
     // Metode til at udregne den udnyttede day rate for et team
-//    public BigDecimal utilizedDayRate(Team team) throws Exception {
-//        var total = BigDecimal.ZERO;
-//
-//        // Henter profilerne for et team og udregner den sammenlagte day rate.
-//        var profiles = teamService.getTeamProfiles(team);
-//        for (Profile profile : profiles) {
-//            var utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
-//            total = total.add(RateUtils.dayRate(profile, utilizationRate));
-//        }
-//
-//        return total;
-//    }
-
-    // Metode til at udregne den udnyttede day rate for et team
     public BigDecimal utilizedDayRate(Team team) throws Exception {
         var annualRate = BigDecimal.ZERO;
         var hours = BigDecimal.ZERO;
@@ -121,7 +95,7 @@ public class RateService {
             if (hours.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
             } else {
-                annualDayRate = annualRate.divide(hours, SCALE, ROUNDING_MODE).multiply(new BigDecimal("8.00"));
+                annualDayRate = annualRate.divide(hours, SCALE, ROUNDING_MODE).multiply(EIGHT);
             }
         }
         return annualDayRate;

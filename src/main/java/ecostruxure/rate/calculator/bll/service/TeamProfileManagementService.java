@@ -174,26 +174,6 @@ public class TeamProfileManagementService {
         });
     }
 
-//    private TeamMetrics calculateMetrics(int teamId, List<Profile> profiles, TransactionContext context) throws Exception {
-//        BigDecimal hourlyRate = BigDecimal.ZERO;
-//        BigDecimal dayRate = BigDecimal.ZERO;
-//        BigDecimal annualCost = BigDecimal.ZERO;
-//        BigDecimal totalHours = BigDecimal.ZERO;
-//
-//        for (Profile profile : profiles) {
-//            BigDecimal utilizationRate = profileDAO.getProfileRateUtilizationForTeam(context, profile.id(), teamId);
-//            BigDecimal utilizationHours = profileDAO.getProfileHourUtilizationForTeam(context, profile.id(), teamId);
-//
-//            hourlyRate = hourlyRate.add(RateUtils.hourlyRate(profile, utilizationRate));
-//            dayRate = dayRate.add(RateUtils.dayRate(profile, utilizationRate));
-//            annualCost = annualCost.add(RateUtils.annualCost(profile, utilizationRate));
-//            totalHours = totalHours.add(RateUtils.utilizedHours(profile, utilizationHours));
-//        }
-//
-//        return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
-//    }
-
-
     private ProfileMetrics calculateMetrics(Profile profile, Team team, TransactionContext context) throws Exception {
         return calculateMetrics(profile, team.id(), context);
     }
