@@ -18,6 +18,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  ProfileInteractor is responsible for managing the interaction between the ProfileModel and the ProfileService.
+ *  It handles fetching, updating, and saving profile data, as well as managing the state of the ProfileModel.
+ */
 public class ProfileInteractor {
     private static final BigDecimal INITIAL_VALUE = new BigDecimal("0.00");
 
@@ -38,6 +42,7 @@ public class ProfileInteractor {
     private ProfileSaveModel originalSaveModel;
     private LocalDateTime currentDateTime = LocalDateTime.now();
 
+    // Constructor initializes services and sets up bindings.
     public ProfileInteractor(ProfileModel model, Runnable onFetchError) {
         this.model = model;
 
@@ -52,6 +57,7 @@ public class ProfileInteractor {
         setupBindings();
     }
 
+    // Fetches profile data from ProfileService and updates the ProfileModel.
     public boolean fetchProfile(int id) {
         try {
             currentDateTime = LocalDateTime.now();
@@ -70,6 +76,7 @@ public class ProfileInteractor {
         }
     }
 
+    // Updates the ProfileModel with the fetched profile data.
     public void updateModelPostFetchProfile() {
         model.idProperty().set(profile.id());
         model.profileName().set(profile.profileData().name());
@@ -102,6 +109,7 @@ public class ProfileInteractor {
         setupBindings();
     }
 
+    // Saves the profile data and updates the model.
     public boolean saveProfile() {
         try {
             boolean saved = profileService.update(profile, createProfileFromModel());
@@ -113,6 +121,7 @@ public class ProfileInteractor {
         }
     }
 
+    // Updates the model with the selected history data.
     public void changeHistoryModel(ProfileHistoryItemModel historyModel) {
         model.historySelectedProperty().set(!historyModel.updatedAtProperty().get().equals(currentDateTime));
 
@@ -124,6 +133,7 @@ public class ProfileInteractor {
         model.saveModel().hoursPerDayProperty().set(historyModel.hoursPerDayProperty().get().toString());
     }
 
+    // Updates the model after saving the profile.
     public void updateModelPostSave() {
         updateModelPostFetchProfile();
         var firstHistory = model.history().getFirst();
@@ -151,6 +161,7 @@ public class ProfileInteractor {
         model.saveModel().hoursPerDayProperty().set(firstHistory.hoursPerDayProperty().get().toString());
     }
 
+    // Clears the profileModel.
     public void clearModel() {
         model.profileName().set("");
         model.location().set("");
@@ -165,6 +176,7 @@ public class ProfileInteractor {
         model.historySelectedProperty().set(false);
     }
 
+    // Undoes changes made to the ProfileModel.
     public void undoChanges() {
         if (originalSaveModel == null) return;
 
@@ -179,6 +191,7 @@ public class ProfileInteractor {
         current.hoursPerDayProperty().set(originalSaveModel.hoursPerDayProperty().get());
     }
 
+    // Updates the selected geograpy in the ProfileModel.
     private void updateSelectedGeography() {
         var geographyId = profile.profileData().geography();
         var geographyItem = model.saveModel().locations()
@@ -192,8 +205,7 @@ public class ProfileInteractor {
     }
 
 
-    // Model conversions
-
+    // Converts the ProfileModel to a Profile object.
     private Profile createProfileFromModel() {
         ProfileSaveModel saveModel = model.saveModel();
 
@@ -218,6 +230,7 @@ public class ProfileInteractor {
         return profile;
     }
 
+    // Clones the ProfileSaveModel.
     private ProfileSaveModel cloneProfileToSaveModel(ProfileSaveModel original) {
         ProfileSaveModel clone = new ProfileSaveModel();
 
@@ -233,6 +246,7 @@ public class ProfileInteractor {
         return clone;
     }
 
+    // Converts a profile object to a ProfileHistoryItemModel.
     private ProfileHistoryItemModel convertProfileToHistory(Profile profile) {
         ProfileHistoryItemModel historyModel = new ProfileHistoryItemModel();
 
@@ -254,6 +268,7 @@ public class ProfileInteractor {
         return historyModel;
     }
 
+    // Converts a list of ProfileHistory objects to a list of ProfileHistoryItemModel objects.
     private List<ProfileHistoryItemModel> convertToHistoryModels(List<ProfileHistory> history) {
         List<ProfileHistoryItemModel> historyModels = new ArrayList<>();
 
@@ -280,6 +295,7 @@ public class ProfileInteractor {
         return historyModels;
     }
 
+    // Converts a list of Geography objects to a list of AddProfileGeographyItemModel objects.
     private List<AddProfileGeographyItemModel> convertToGeographyModels(List<Geography> geographies) {
         List<AddProfileGeographyItemModel> geographyModels = new ArrayList<>();
 
@@ -293,6 +309,7 @@ public class ProfileInteractor {
         return geographyModels;
     }
 
+    // Converts a list of Team objects to a list of ProfileTeamItemModel objects.
     private List<ProfileTeamItemModel> convertToTeamModels(List<Team> teams) throws Exception {
         List<ProfileTeamItemModel> teamModels = new ArrayList<>();
 
@@ -336,7 +353,7 @@ public class ProfileInteractor {
         configureCheckoutBindings();
     }
 
-
+    // Configures validation bindings for the ProfileModel.
     private void configureValidationBindings() {
         var saveModel = model.saveModel();
         saveModel.nameIsValidProperty().bind(model.saveModel().nameProperty().isNotEmpty());
@@ -349,6 +366,7 @@ public class ProfileInteractor {
         model.saveModel().disableFieldsProperty().bind(model.historySelectedProperty());
     }
 
+    // Configures save bindings for the ProfileModel.
     private void configureSaveBindings() {
         model.okToSaveProperty().unbind();
         model.okToSaveProperty().bind(Bindings.createBooleanBinding(
@@ -364,6 +382,7 @@ public class ProfileInteractor {
         ));
     }
 
+    // Configures undo bindings for the ProfileModel.
     private void configureUndoBindings() {
         model.okToUndoProperty().unbind();
         model.okToUndoProperty().bind(Bindings.createBooleanBinding(
@@ -379,6 +398,7 @@ public class ProfileInteractor {
         );
     }
 
+    // Configures checkout bindings for the ProfileModel.
     private void configureCheckoutBindings() {
         var historyModel = model.selectedHistoryItemProperty();
 
@@ -395,6 +415,7 @@ public class ProfileInteractor {
         );
     }
 
+    // Archives or un-archives the profile
     public boolean archiveProfile(boolean shouldArchive) {
         try {
             Profile profile = profileService.get(model.idProperty().get());
@@ -404,10 +425,12 @@ public class ProfileInteractor {
         }
     }
 
+    // Updates the archived status of the profile in the ProfileModel.
     public void updateArchivedProfile(boolean archived) {
         model.archivedProperty().set(archived);
     }
 
+    // Checks if the history data differs from the original data.
     private boolean doesHistoryDifferFromOriginal(ProfileHistoryItemModel historyModel) {
         if (historyModel == null || originalSaveModel == null) return false;
 
@@ -421,6 +444,7 @@ public class ProfileInteractor {
                 !historyModel.hoursPerDayProperty().get().equals(new BigDecimal(originalSaveModel.hoursPerDayProperty().get()));
     }
 
+    // Checks if the data in the ProfileModel is valid.
     private boolean isDataValid() {
         return !model.saveModel().nameProperty().get().isEmpty() &&
                 model.saveModel().selectedGeographyProperty().get() != null &&
@@ -431,6 +455,7 @@ public class ProfileInteractor {
                 !model.saveModel().hoursPerDayProperty().get().isEmpty();
     }
 
+    // Checks if the data in the ProfileModel has changed.
     private boolean hasDataChanged() {
         if (originalSaveModel == null) return false;
         return !model.saveModel().nameProperty().get().equals(originalSaveModel.nameProperty().get()) ||
