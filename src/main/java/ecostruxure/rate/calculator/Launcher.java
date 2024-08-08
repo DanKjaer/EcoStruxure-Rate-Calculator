@@ -41,7 +41,7 @@ public class Launcher extends Application {
             LocalizedText.CURRENT_LOCALE.set(Locale.ENGLISH);
         }
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
-        var scene = new Scene(new VBox(), 1340, 940);
+        var scene = new Scene(new VBox(), stage.getMaxWidth(), stage.getHeight());
 
 
         var icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/app_icon.png")));

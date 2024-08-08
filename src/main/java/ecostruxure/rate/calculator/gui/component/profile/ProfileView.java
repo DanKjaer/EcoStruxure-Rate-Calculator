@@ -97,6 +97,18 @@ public class ProfileView implements View {
         });
     }
 
+    private ScrollPane profileScrollPane(Node content){
+//        VBox wrapper = new VBox(content);
+//        Region spacer = new Region();
+//        spacer.setMinHeight(100);
+//        wrapper.getChildren().add(spacer);
+
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        return scrollPane;
+    }
+
     @Override
     public Region build() {
         var results = new VBox(LayoutConstants.STANDARD_SPACING);
@@ -157,7 +169,8 @@ public class ProfileView implements View {
         VBox.setVgrow(content, Priority.ALWAYS);
 
         results.getChildren().addAll(createHeader(), createStats(), content);
-        return results;
+
+        return profileScrollPane(results);
     }
 
     private void shouldArchive(ActionEvent actionEvent) {
@@ -337,4 +350,6 @@ public class ProfileView implements View {
         tableView.getColumns().add(optionsColumn);
         return tableView;
     }
+
+
 }
