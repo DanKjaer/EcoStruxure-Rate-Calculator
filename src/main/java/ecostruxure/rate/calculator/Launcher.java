@@ -42,6 +42,7 @@ public class Launcher extends Application {
         }
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
         var scene = new Scene(new VBox(), stage.getMaxWidth(), stage.getHeight());
+        //var scene = new Scene(new VBox(), 1340, 940); -- Old scene size
 
 
         var icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/app_icon.png")));
