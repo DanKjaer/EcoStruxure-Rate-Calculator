@@ -378,11 +378,11 @@ public class TeamView implements View {
         TableColumn<ProfileItemModel, BigDecimal> hourColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
 
         TableColumn<ProfileItemModel, BigDecimal> utilizationRateColumn = customTableView.createColumn(LocalizedText.UTILIZATION_RATE, ProfileItemModel::utilizationRateProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> hourRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileItemModel::dayRateProperty, new CurrencyCellFactory<>());
+        //TableColumn<ProfileItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
+        //TableColumn<ProfileItemModel, BigDecimal> hourRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileItemModel::dayRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, utilizationHoursColumn, hourColumn, utilizationRateColumn, dayRateColumn, hourRateColumn, annualCostColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, utilizationHoursColumn, hourColumn, utilizationRateColumn, annualCostColumn)); //, dayRateColumn, hourRateColumn
     }
 
     private void profileConfigureContextMenu(TableView<ProfileItemModel> tableView) {
