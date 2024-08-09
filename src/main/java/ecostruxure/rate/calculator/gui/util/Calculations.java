@@ -35,10 +35,13 @@ public class Calculations {
             totalAnnualCost = totalAnnualCost.add(RateUtils.annualCost(profile, utilizationRate));
             totalHours = totalHours.add(RateUtils.utilizedHours(profile, utilizationHours));
         }
+        if(totalHours.compareTo(BigDecimal.ZERO) == 0){
+            return new TeamMetrics(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        }else {
+            BigDecimal hourlyRate = totalAnnualCost.divide(totalHours, SCALE, roundingMode);
+            BigDecimal dayRate = hourlyRate.multiply(HOURS_PER_DAY);
 
-        BigDecimal hourlyRate = totalAnnualCost.divide(totalHours, SCALE, roundingMode);
-        BigDecimal dayRate = hourlyRate.multiply(HOURS_PER_DAY);
-
-        return new TeamMetrics(hourlyRate, dayRate, totalAnnualCost, totalHours);
+            return new TeamMetrics(hourlyRate, dayRate, totalAnnualCost, totalHours);
+        }
     }
 }
