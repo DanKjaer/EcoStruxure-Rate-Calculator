@@ -89,8 +89,19 @@ public class AddProfileView implements View {
         var selectedCurrencyBinding = BindingsUtils.createStringBindingWithDefault(model.selectedCurrencyProperty(), "");
         var salaryField = Fields.currencyTextField(model.annualSalaryProperty(), selectedCurrencyBinding, model.annualSalaryIsValidProperty());
         var fixedAmountField = Fields.currencyTextField(model.annualFixedAmountProperty(), selectedCurrencyBinding, model.annualFixedAmountIsValidProperty());
-        var effectiveWorkingHoursField = Fields.hourTextField(model.annualEffectiveWorkingHoursProperty(), model.annualEffectiveWorkingHoursIsValidProperty(), 1, 8760);
+        var effectiveWorkingHoursField = Fields.hourTextField(model.annualEffectiveWorkingHoursProperty(), model.annualEffectiveWorkingHoursIsValidProperty(), 0, 8760);
 
+        toggleGroup.selectedToggleProperty().addListener((obs, ov, nv) -> {
+            if (nv != null) {
+                if (nv.getUserData() == ResourceType.OVERHEAD) {
+                    effectiveWorkingHoursField.setDisable(true);
+                } else if (nv.getUserData() == ResourceType.PRODUCTION) {
+                    effectiveWorkingHoursField.setDisable(false);
+                }
+            }
+        });
+
+        effectiveWorkingHoursField.setDisable(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
         var annuallyGrid = TwoColGridPane.styled()
                 .add(Labels.bound(LocalizedText.SALARY), salaryField)
                 .add(Labels.bound(LocalizedText.FIXED_AMOUNT), fixedAmountField)

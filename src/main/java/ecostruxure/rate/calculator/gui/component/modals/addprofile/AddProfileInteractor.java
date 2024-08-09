@@ -37,7 +37,7 @@ public class AddProfileInteractor {
         model.selectedCurrencyIsValidProperty().bind(model.selectedCurrencyProperty().isNotNull());
         model.annualSalaryIsValidProperty().bind(model.annualSalaryProperty().isNotEmpty());
         model.annualFixedAmountIsValidProperty().bind(model.annualFixedAmountProperty().isNotEmpty());
-        model.annualEffectiveWorkingHoursIsValidProperty().bind(model.annualEffectiveWorkingHoursProperty().isNotEmpty());
+        model.annualEffectiveWorkingHoursIsValidProperty().bind(model.annualEffectiveWorkingHoursProperty().isNotNull());
         model.overheadMultiplierIsValidProperty().bind(model.overheadMultiplierProperty().isNotEmpty());
         model.hoursPerDayIsValidProperty().bind(model.hoursPerDayProperty().isNotEmpty());
 
@@ -74,6 +74,7 @@ public class AddProfileInteractor {
             profileService.create(createProfileFromModel());
             return true;
         } catch (Exception e) {
+            System.out.println(e);
             return false;
         }
     }
@@ -135,7 +136,7 @@ public class AddProfileInteractor {
         model.selectedResourceTypeProperty().set(ResourceType.OVERHEAD);
         model.annualSalaryProperty().set("");
         model.annualFixedAmountProperty().set("");
-        model.annualEffectiveWorkingHoursProperty().set("");
+        model.annualEffectiveWorkingHoursProperty().set("0");
         model.overheadMultiplierProperty().set("");
         model.hoursPerDayProperty().set("8");
 
@@ -149,7 +150,7 @@ public class AddProfileInteractor {
                 model.selectedCurrencyProperty().get() != null &&
                 !model.annualSalaryProperty().get().isEmpty() &&
                 !model.annualFixedAmountProperty().get().isEmpty() &&
-                !model.annualEffectiveWorkingHoursProperty().get().isEmpty() &&
+                model.annualEffectiveWorkingHoursProperty().get() != null &&
                 !model.overheadMultiplierProperty().get().isEmpty() &&
                 !model.hoursPerDayProperty().get().isEmpty();
     }

@@ -18,7 +18,7 @@ public class AddProfileModel {
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
     private final StringProperty annualSalary = new SimpleStringProperty("");
     private final StringProperty annualFixedAmount = new SimpleStringProperty("");
-    private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("");
+    private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("0");
     private final StringProperty overheadMultiplier = new SimpleStringProperty("");
 
     private final ObjectProperty<CurrencyEnum> currency = new SimpleObjectProperty<>(CurrencyEnum.EUR);
