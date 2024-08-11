@@ -124,12 +124,6 @@
             <version>12.3.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-carbonicons-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-
     <!-- DATABASE DEPENDENCIES -->
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
         <dependency>
@@ -193,7 +187,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ecostruxure.rate.calculator.MainClass</mainClass> <!-- Replace with your main class -->
+                            <mainClass>ecostruxure.rate.calculator.Launcher</mainClass> <!-- Replace with your main class -->
                         </manifest>
                     </archive>
                 </configuration>
