@@ -54,7 +54,7 @@ public class AddTeamController implements ModalController {
         Task<Boolean> saveTask = new Task<>() {
             @Override
             protected Boolean call() {
-                System.out.println(interactor.addTeam());
+                System.out.println("AddTeamController - interactor.addTeam: " + interactor.addTeam());
                 return interactor.addTeam();
             }
         };
