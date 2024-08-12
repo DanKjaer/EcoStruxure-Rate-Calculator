@@ -207,7 +207,7 @@ public class ProfileService {
         if (profile.overheadMultiplier().compareTo(BigDecimal.ZERO) < 0 || profile.overheadMultiplier().compareTo(new BigDecimal("999.99")) > 0)
             throw new IllegalArgumentException("Overhead multiplier must be between 0 and 999.99");
 
-        if (profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
+        //if (profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
 
         if (profile.hoursPerDay().compareTo(BigDecimal.ZERO) < 0 || profile.hoursPerDay().compareTo(new BigDecimal("24")) > 0)
             throw new IllegalArgumentException("Hours per day must be between 0 and 24");

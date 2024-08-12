@@ -74,6 +74,7 @@ public class AddProfileInteractor {
             profileService.create(createProfileFromModel());
             return true;
         } catch (Exception e) {
+            System.out.println(e);
             return false;
         }
     }
@@ -135,7 +136,7 @@ public class AddProfileInteractor {
         model.selectedResourceTypeProperty().set(ResourceType.OVERHEAD);
         model.annualSalaryProperty().set("");
         model.annualFixedAmountProperty().set("");
-        model.annualEffectiveWorkingHoursProperty().set("");
+        model.annualEffectiveWorkingHoursProperty().set("0");
         model.overheadMultiplierProperty().set("");
         model.hoursPerDayProperty().set("8");
 
