@@ -37,7 +37,7 @@ public class AddProfileInteractor {
         model.selectedCurrencyIsValidProperty().bind(model.selectedCurrencyProperty().isNotNull());
         model.annualSalaryIsValidProperty().bind(model.annualSalaryProperty().isNotEmpty());
         model.annualFixedAmountIsValidProperty().bind(model.annualFixedAmountProperty().isNotEmpty());
-        model.annualEffectiveWorkingHoursIsValidProperty().bind(model.annualEffectiveWorkingHoursProperty().isNotNull());
+        model.annualEffectiveWorkingHoursIsValidProperty().bind(model.annualEffectiveWorkingHoursProperty().isNotEmpty());
         model.overheadMultiplierIsValidProperty().bind(model.overheadMultiplierProperty().isNotEmpty());
         model.hoursPerDayIsValidProperty().bind(model.hoursPerDayProperty().isNotEmpty());
 
@@ -150,7 +150,7 @@ public class AddProfileInteractor {
                 model.selectedCurrencyProperty().get() != null &&
                 !model.annualSalaryProperty().get().isEmpty() &&
                 !model.annualFixedAmountProperty().get().isEmpty() &&
-                model.annualEffectiveWorkingHoursProperty().get() != null &&
+                !model.annualEffectiveWorkingHoursProperty().get().isEmpty() &&
                 !model.overheadMultiplierProperty().get().isEmpty() &&
                 !model.hoursPerDayProperty().get().isEmpty();
     }

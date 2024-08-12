@@ -158,12 +158,12 @@ public class RateService {
             BigDecimal utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), teamId);
             BigDecimal utilizationHours = profileService.getProfileHourUtilizationForTeam(profile.id(), teamId);
 
+            // Udregningen for hourlyRate skal ændres, til total annual cost i et team, dividered med total hourly rate.
             hourlyRate = hourlyRate.add(profileService.hourlyRate(profile, utilizationRate));
             dayRate = dayRate.add(profileService.dayRate(profile, utilizationRate));
             annualCost = annualCost.add(profileService.annualCost(profile, utilizationRate));
             totalHours = totalHours.add(profileService.effectiveWorkHoursPercentage(profile, utilizationHours));
         }
-
         return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
     }
 
