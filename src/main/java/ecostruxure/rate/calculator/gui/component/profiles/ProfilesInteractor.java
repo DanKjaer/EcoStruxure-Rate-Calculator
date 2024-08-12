@@ -44,7 +44,8 @@ public class ProfilesInteractor {
             profileItemModels = convertToProfileItemModels(profiles);
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.getMessage();
+            e.printStackTrace();
             return false;
         }
     }

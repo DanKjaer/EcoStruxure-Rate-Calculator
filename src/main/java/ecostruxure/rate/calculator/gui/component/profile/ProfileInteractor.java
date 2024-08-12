@@ -72,6 +72,9 @@ public class ProfileInteractor {
             teamItemModels = convertToTeamModels(profileService.getTeams(profile));
             return true;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.getMessage();
+            e.printStackTrace();
             return false;
         }
     }
