@@ -140,32 +140,36 @@ public class RateService {
 
         return totalAdjustedRate;
     }
-
-    // Metode til at udregne Metrics for et team
-    public TeamMetrics calculateMetrics(Team team) throws Exception {
-        return calculateMetrics(team.id(), teamService.getTeamProfiles(team));
-    }
-
-    // Metode til at udregne metrics for et team baseret på team id og en liste af profiler
-    public TeamMetrics calculateMetrics(int teamId, List<Profile> profiles) throws Exception {
-        BigDecimal hourlyRate = BigDecimal.ZERO;
-        BigDecimal dayRate = BigDecimal.ZERO;
-        BigDecimal annualCost = BigDecimal.ZERO;
-        BigDecimal totalHours = BigDecimal.ZERO;
-
-        // Udregner de totale rates og timer for profilerne
-        for (Profile profile : profiles) {
-            BigDecimal utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), teamId);
-            BigDecimal utilizationHours = profileService.getProfileHourUtilizationForTeam(profile.id(), teamId);
-
-            hourlyRate = hourlyRate.add(profileService.hourlyRate(profile, utilizationRate));
-            dayRate = dayRate.add(profileService.dayRate(profile, utilizationRate));
-            annualCost = annualCost.add(profileService.annualCost(profile, utilizationRate));
-            totalHours = totalHours.add(profileService.effectiveWorkHoursPercentage(profile, utilizationHours));
-        }
-
-        return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
-    }
+    /**
+     * Metode til at udregne Metrics for et team - Ubrugelig, fordi den er i teamprofilemanagementservice?
+     * - skal nok bare slettes, beholds for nu.
+     */
+//    // Metode til at udregne Metrics for et team
+//    public TeamMetrics calculateMetrics(Team team) throws Exception {
+//        return calculateMetrics(team.id(), teamService.getTeamProfiles(team));
+//    }
+//
+//
+//    // Metode til at udregne metrics for et team baseret på team id og en liste af profiler
+//    public TeamMetrics calculateMetrics(int teamId, List<Profile> profiles) throws Exception {
+//        BigDecimal hourlyRate = BigDecimal.ZERO;
+//        BigDecimal dayRate = BigDecimal.ZERO;
+//        BigDecimal annualCost = BigDecimal.ZERO;
+//        BigDecimal totalHours = BigDecimal.ZERO;
+//
+//        // Udregner de totale rates og timer for profilerne
+//        for (Profile profile : profiles) {
+//            BigDecimal utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), teamId);
+//            BigDecimal utilizationHours = profileService.getProfileHourUtilizationForTeam(profile.id(), teamId);
+//
+//            hourlyRate = hourlyRate.add(profileService.hourlyRate(profile, utilizationRate));
+//            dayRate = dayRate.add(profileService.dayRate(profile, utilizationRate));
+//            annualCost = annualCost.add(profileService.annualCost(profile, utilizationRate));
+//            totalHours = totalHours.add(profileService.effectiveWorkHoursPercentage(profile, utilizationHours));
+//        }
+//
+//        return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
+//    }
 
     /**
      * Calculated as follows:

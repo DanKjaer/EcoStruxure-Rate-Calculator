@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.be.ProfileHistory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Objects;
 
 public class RateUtils {
@@ -72,6 +73,43 @@ public class RateUtils {
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return profile.hoursPerDay().multiply(percentageAsDecimal);
+    }
+
+    public static BigDecimal teamHourlyRate(List<Profile> profiles){
+        Objects.requireNonNull(profiles, "Profiles cannot be null");
+
+        BigDecimal totalAnnualCost = profiles.stream()
+                .map(RateUtils::annualCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalEffectiveWorkHours = profiles.stream()
+                .map(Profile::effectiveWorkHours)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalHourlyRate = totalAnnualCost.divide(totalEffectiveWorkHours, GENERAL_SCALE, ROUNDING_MODE);
+        return totalHourlyRate;
+    }
+
+    public static BigDecimal teamDayRate(List<Profile> profiles){
+        return teamHourlyRate(profiles).multiply(new BigDecimal("8.00"));
+    }
+
+    public static BigDecimal teamAnnualCost(List<Profile> profiles){
+        return profiles.stream()
+                .map(RateUtils::annualCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public static BigDecimal teamUtilizedHours(List<Profile> profiles, BigDecimal utilizationPercentage){
+        Objects.requireNonNull(profiles, "Profiles cannot be null");
+        Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
+
+        BigDecimal totalEffectiveWorkHours = profiles.stream()
+                .map(Profile::effectiveWorkHours)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
+        return totalEffectiveWorkHours.multiply(percentageAsDecimal);
     }
 
 }
