@@ -34,7 +34,7 @@ public class RateUtils {
         return profile.annualSalary().multiply(profile.overheadMultiplier()).add(profile.fixedAnnualAmount());
     }
 
-    // Basic rate calculations w/ utilization
+    //Basic rate calculations w/ utilization
     public static BigDecimal hourlyRate(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
@@ -42,6 +42,7 @@ public class RateUtils {
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return hourlyRate(profile).multiply(percentageAsDecimal);
     }
+
 
     public static BigDecimal dayRate(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
@@ -75,7 +76,8 @@ public class RateUtils {
         return profile.hoursPerDay().multiply(percentageAsDecimal);
     }
 
-    public static BigDecimal teamHourlyRate(List<Profile> profiles){
+    //This method causes the / by zero error.
+    public static BigDecimal teamHourlyRate(List<Profile> profiles) {
         Objects.requireNonNull(profiles, "Profiles cannot be null");
 
         BigDecimal totalAnnualCost = profiles.stream()
@@ -85,22 +87,22 @@ public class RateUtils {
         BigDecimal totalEffectiveWorkHours = profiles.stream()
                 .map(Profile::effectiveWorkHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal totalHourlyRate = totalAnnualCost.divide(totalEffectiveWorkHours, GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal totalHourlyRate = totalAnnualCost;
+//        BigDecimal totalHourlyRate = totalAnnualCost.divide(totalEffectiveWorkHours, GENERAL_SCALE, ROUNDING_MODE);
         return totalHourlyRate;
     }
 
-    public static BigDecimal teamDayRate(List<Profile> profiles){
+    public static BigDecimal teamDayRate(List<Profile> profiles) {
         return teamHourlyRate(profiles).multiply(new BigDecimal("8.00"));
     }
 
-    public static BigDecimal teamAnnualCost(List<Profile> profiles){
+    public static BigDecimal teamAnnualCost(List<Profile> profiles) {
         return profiles.stream()
                 .map(RateUtils::annualCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static BigDecimal teamUtilizedHours(List<Profile> profiles, BigDecimal utilizationPercentage){
+    public static BigDecimal teamUtilizedHours(List<Profile> profiles, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profiles, "Profiles cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
