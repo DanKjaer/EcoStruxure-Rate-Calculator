@@ -116,8 +116,7 @@ public class AddTeamInteractor {
             teamService.create(tempTeam, profiles);
             return true;
         } catch (Exception e) {
-            //System.out.println(Arrays.toString(e.getStackTrace()));
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

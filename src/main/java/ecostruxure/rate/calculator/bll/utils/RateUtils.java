@@ -90,6 +90,9 @@ public class RateUtils {
         BigDecimal totalEffectiveWorkHours = profiles.stream()
                 .map(Profile::effectiveWorkHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if(totalEffectiveWorkHours.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
         BigDecimal totalHourlyRate = totalAnnualCost.divide(totalEffectiveWorkHours, GENERAL_SCALE, ROUNDING_MODE);
         return totalHourlyRate;
     }
