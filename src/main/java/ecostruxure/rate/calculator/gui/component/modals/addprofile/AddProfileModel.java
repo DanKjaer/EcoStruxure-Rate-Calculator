@@ -17,7 +17,6 @@ public class AddProfileModel {
     private final ObjectProperty<ResourceType> selectedResourceType = new SimpleObjectProperty<>(ResourceType.OVERHEAD);
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
     private final StringProperty annualSalary = new SimpleStringProperty("");
-    private final StringProperty annualFixedAmount = new SimpleStringProperty("");
     private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("0");
     private final StringProperty overheadMultiplier = new SimpleStringProperty("");
 
@@ -28,7 +27,6 @@ public class AddProfileModel {
     private final BooleanProperty selectedCurrencyIsValid = new SimpleBooleanProperty(selectedCurrency.get() != null);
     private final BooleanProperty hoursPerDayIsValid = new SimpleBooleanProperty(true);
     private final BooleanProperty annualSalaryIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty annualFixedAmountIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty annualEffectiveWorkingHoursIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty overheadMultiplierIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty okToAdd = new SimpleBooleanProperty(false);
@@ -65,10 +63,6 @@ public class AddProfileModel {
         return annualSalary;
     }
 
-    public StringProperty annualFixedAmountProperty() {
-        return annualFixedAmount;
-    }
-
     public StringProperty annualEffectiveWorkingHoursProperty() {
         return annualEffectiveWorkingHours;
     }
@@ -100,10 +94,6 @@ public class AddProfileModel {
 
     public BooleanProperty annualSalaryIsValidProperty() {
         return annualSalaryIsValid;
-    }
-
-    public BooleanProperty annualFixedAmountIsValidProperty() {
-        return annualFixedAmountIsValid;
     }
 
     public BooleanProperty annualEffectiveWorkingHoursIsValidProperty() {

@@ -27,7 +27,6 @@ public class ProfileDAO implements IProfileDAO {
 
         // Profile
         BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-        BigDecimal fixedAnnualAmount = rs.getBigDecimal("fixed_annual_amount");
         BigDecimal overheadMultiplier = rs.getBigDecimal("overhead_multiplier");
         BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
@@ -37,7 +36,6 @@ public class ProfileDAO implements IProfileDAO {
                 name,
                 currency,
                 annualSalary,
-                fixedAnnualAmount,
                 overheadMultiplier,
                 geography,
                 effectiveWorkHours,
@@ -231,12 +229,11 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (annual_salary, fixed_annual_amount, overhead_multiplier, effective_work_hours, hours_per_day) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (annual_salary, overhead_multiplier, effective_work_hours, hours_per_day) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setBigDecimal(1, profile.annualSalary());
-            stmt.setBigDecimal(2, profile.fixedAnnualAmount());
-            stmt.setBigDecimal(3, profile.overheadMultiplier());
-            stmt.setBigDecimal(4, profile.effectiveWorkHours());
-            stmt.setBigDecimal(5, profile.hoursPerDay());
+            stmt.setBigDecimal(2, profile.overheadMultiplier());
+            stmt.setBigDecimal(3, profile.effectiveWorkHours());
+            stmt.setBigDecimal(4, profile.hoursPerDay());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -569,7 +566,7 @@ public class ProfileDAO implements IProfileDAO {
     public boolean update(Profile profile) throws Exception {
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_salary = ?, fixed_annual_amount = ?, overhead_multiplier = ?, effective_work_hours = ?, hours_per_day = ?
+                                  SET annual_salary = ?, overhead_multiplier = ?, effective_work_hours = ?, hours_per_day = ?
                                   WHERE id = ?;
                                   """;
 
@@ -584,11 +581,10 @@ public class ProfileDAO implements IProfileDAO {
             conn.setAutoCommit(false);
 
             updateProfileStmt.setBigDecimal(1, profile.annualSalary());
-            updateProfileStmt.setBigDecimal(2, profile.fixedAnnualAmount());
-            updateProfileStmt.setBigDecimal(3, profile.overheadMultiplier());
-            updateProfileStmt.setBigDecimal(4, profile.effectiveWorkHours());
-            updateProfileStmt.setBigDecimal(5, profile.hoursPerDay());
-            updateProfileStmt.setInt(6, profile.id());
+            updateProfileStmt.setBigDecimal(2, profile.overheadMultiplier());
+            updateProfileStmt.setBigDecimal(3, profile.effectiveWorkHours());
+            updateProfileStmt.setBigDecimal(4, profile.hoursPerDay());
+            updateProfileStmt.setInt(5, profile.id());
             updateProfileStmt.executeUpdate();
 
             updateProfileDataStmt.setString(1, profile.profileData().name());
@@ -617,7 +613,7 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_salary = ?, fixed_annual_amount = ?, overhead_multiplier = ?, effective_work_hours = ?, hours_per_day = ?
+                                  SET annual_salary = ?, overhead_multiplier = ?, effective_work_hours = ?, hours_per_day = ?
                                   WHERE id = ?;
                                   """;
 
@@ -630,11 +626,10 @@ public class ProfileDAO implements IProfileDAO {
         try (PreparedStatement updateProfileStmt = sqlContext.connection().prepareStatement(updateProfileSQL);
              PreparedStatement updateProfileDataStmt = sqlContext.connection().prepareStatement(updateProfileDataSQL)) {
             updateProfileStmt.setBigDecimal(1, profile.annualSalary());
-            updateProfileStmt.setBigDecimal(2, profile.fixedAnnualAmount());
-            updateProfileStmt.setBigDecimal(3, profile.overheadMultiplier());
-            updateProfileStmt.setBigDecimal(4, profile.effectiveWorkHours());
-            updateProfileStmt.setBigDecimal(5, profile.hoursPerDay());
-            updateProfileStmt.setInt(6, profile.id());
+            updateProfileStmt.setBigDecimal(2, profile.overheadMultiplier());
+            updateProfileStmt.setBigDecimal(3, profile.effectiveWorkHours());
+            updateProfileStmt.setBigDecimal(4, profile.hoursPerDay());
+            updateProfileStmt.setInt(5, profile.id());
             updateProfileStmt.executeUpdate();
 
             updateProfileDataStmt.setString(1, profile.profileData().name());

@@ -76,20 +76,16 @@ public class ProfileSaveView implements View {
         var resourceTypeContainer = TwoColGridPane.withTitle(LocalizedText.RESOURCE_TYPE, resourceTypeGrid);
 
         var annualSalaryField = Fields.currencyTextField(model.annualSalaryProperty(), "EUR", model.annualSalaryIsValidProperty());
-        var fixedAmountField = Fields.currencyTextField(model.annualFixedAmountProperty(), "EUR", model.annualFixedAmountIsValidProperty());
         var effectiveWorkingHoursField = Fields.hourTextField(model.annualEffectiveWorkingHoursProperty(), model.annualEffectiveWorkingHoursIsValidProperty(), 1,8760);
 
         annualSalaryField.getStyleClass().add("save-model-text-field");
-        fixedAmountField.getStyleClass().add("save-model-text-field");
         effectiveWorkingHoursField.getStyleClass().add("save-model-text-field");
 
         annualSalaryField.disableProperty().bind(model.disableFieldsProperty());
-        fixedAmountField.disableProperty().bind(model.disableFieldsProperty());
         effectiveWorkingHoursField.disableProperty().bind(model.disableFieldsProperty());
 
         var annuallyGrid = TwoColGridPane.styled()
                 .add(Labels.bound(LocalizedText.SALARY), annualSalaryField)
-                .add(Labels.bound(LocalizedText.FIXED_AMOUNT), fixedAmountField)
                 .add(Labels.bound(LocalizedText.EFFECTIVE_WORKING_HOURS), effectiveWorkingHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 

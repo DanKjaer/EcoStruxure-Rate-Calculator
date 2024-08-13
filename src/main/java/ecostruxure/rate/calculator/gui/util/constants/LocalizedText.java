@@ -95,7 +95,6 @@ public class LocalizedText {
     public static final StringProperty ANNUALLY = new SimpleStringProperty("Annually");
     public static final StringProperty EFFECTIVE_WORKING_HOURS = new SimpleStringProperty("Effective working hours");
     public static final StringProperty SALARY = new SimpleStringProperty("Salary");
-    public static final StringProperty FIXED_AMOUNT = new SimpleStringProperty("Fixed amount");
     public static final StringProperty VERIFY_PROFILES = new SimpleStringProperty("Verify profiles");
     public static final StringProperty VERIFY_PROFILE_UNARCHIVE = new SimpleStringProperty("At least one profile requires changes before unarchiving.");
     public static final StringProperty VERIFY_FOUND_UNARCHIVE = new SimpleStringProperty("Found:");
@@ -270,7 +269,6 @@ public class LocalizedText {
         ANNUALLY.set(bundle.getString("ANNUALLY"));
         EFFECTIVE_WORKING_HOURS.set(bundle.getString("EFFECTIVE_WORKING_HOURS"));
         SALARY.set(bundle.getString("SALARY"));
-        FIXED_AMOUNT.set(bundle.getString("FIXED_AMOUNT"));
         VERIFY_PROFILES.set(bundle.getString("VERIFY_PROFILES"));
         VERIFY_PROFILE_UNARCHIVE.set(bundle.getString("VERIFY_PROFILE_UNARCHIVE"));
         VERIFY_FOUND_UNARCHIVE.set(bundle.getString("VERIFY_FOUND_UNARCHIVE"));

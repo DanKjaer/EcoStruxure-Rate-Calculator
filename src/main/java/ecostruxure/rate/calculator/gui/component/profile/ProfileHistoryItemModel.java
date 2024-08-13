@@ -14,7 +14,6 @@ public class ProfileHistoryItemModel {
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final ObjectProperty<ResourceType> resourceType = new SimpleObjectProperty<>();
     private final FinancialData annualSalary = new FinancialData();
-    private final FinancialData fixedAnnualAmount = new FinancialData();
     private final ObjectProperty<BigDecimal> overheadMultiplier = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> hoursPerDay = new SimpleObjectProperty<>();
@@ -34,10 +33,6 @@ public class ProfileHistoryItemModel {
 
     public ObjectProperty<BigDecimal> annualSalaryProperty() {
         return annualSalary.amountProperty();
-    }
-
-    public ObjectProperty<BigDecimal> fixedAnnualAmountProperty() {
-        return fixedAnnualAmount.amountProperty();
     }
 
     public ObjectProperty<BigDecimal> overheadMultiplierProperty() {
@@ -70,10 +65,6 @@ public class ProfileHistoryItemModel {
 
     public void setAnnualSalary(BigDecimal annualSalary) {
         this.annualSalary.amount(annualSalary);
-    }
-
-    public void setFixedAnnualAmount(BigDecimal fixedAnnualAmount) {
-        this.fixedAnnualAmount.amount(fixedAnnualAmount);
     }
 
     public void setHourlyRate(BigDecimal hourlyRate) {

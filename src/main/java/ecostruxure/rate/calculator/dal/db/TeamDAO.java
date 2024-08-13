@@ -378,7 +378,6 @@ public class TeamDAO implements ITeamDAO {
 
                     // Profile
                     BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-                    BigDecimal fixedAnnualAmount = rs.getBigDecimal("fixed_annual_amount");
                     BigDecimal overheadMultiplier = rs.getBigDecimal("overhead_multiplier");
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
@@ -391,7 +390,6 @@ public class TeamDAO implements ITeamDAO {
                             name,
                             currency,
                             annualSalary,
-                            fixedAnnualAmount,
                             overheadMultiplier,
                             geography,
                             effectiveWorkHours,
@@ -436,7 +434,6 @@ public class TeamDAO implements ITeamDAO {
 
                     // Profile
                     BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-                    BigDecimal fixedAnnualAmount = rs.getBigDecimal("fixed_annual_amount");
                     BigDecimal overheadMultiplier = rs.getBigDecimal("overhead_multiplier");
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
@@ -449,7 +446,6 @@ public class TeamDAO implements ITeamDAO {
                             name,
                             currency,
                             annualSalary,
-                            fixedAnnualAmount,
                             overheadMultiplier,
                             geography,
                             effectiveWorkHours,
@@ -595,7 +591,6 @@ public class TeamDAO implements ITeamDAO {
 
                     // Profile
                     BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-                    BigDecimal fixedAnnualAmount = rs.getBigDecimal("fixed_annual_amount");
                     BigDecimal overheadMultiplier = rs.getBigDecimal("overhead_multiplier");
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
@@ -608,7 +603,6 @@ public class TeamDAO implements ITeamDAO {
                             name,
                             currency,
                             annualSalary,
-                            fixedAnnualAmount,
                             overheadMultiplier,
                             geography,
                             effectiveWorkHours,

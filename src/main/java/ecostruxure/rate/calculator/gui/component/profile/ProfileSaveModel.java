@@ -14,7 +14,6 @@ public class ProfileSaveModel {
     private final ObjectProperty<AddProfileGeographyItemModel> selectedGeography = new SimpleObjectProperty<>();
     private final ObjectProperty<ResourceType> selectedResourceType = new SimpleObjectProperty<>(ResourceType.OVERHEAD);
     private final StringProperty annualSalary = new SimpleStringProperty("");
-    private final StringProperty annualFixedAmount = new SimpleStringProperty("");
     private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("");
     private final StringProperty overheadMultiplier = new SimpleStringProperty("");
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
@@ -52,10 +51,6 @@ public class ProfileSaveModel {
 
     public StringProperty annualSalaryProperty() {
         return annualSalary;
-    }
-
-    public StringProperty annualFixedAmountProperty() {
-        return annualFixedAmount;
     }
 
     public StringProperty annualEffectiveWorkingHoursProperty() {

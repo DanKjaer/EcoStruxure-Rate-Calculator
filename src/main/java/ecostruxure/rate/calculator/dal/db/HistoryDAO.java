@@ -41,7 +41,6 @@ public class HistoryDAO implements IHistoryDAO {
                     profile.profileId(rs.getInt("profile_id"));
                     profile.overhead(rs.getBoolean("overhead"));
                     profile.annualSalary(rs.getBigDecimal("annual_salary"));
-                    profile.fixedAnnualAmount(rs.getBigDecimal("fixed_annual_amount"));
                     profile.overheadMultiplier(rs.getBigDecimal("overhead_multiplier"));
                     profile.effectiveWorkHours(rs.getBigDecimal("effective_work_hours"));
                     profile.hoursPerDay(rs.getBigDecimal("hours_per_day"));
@@ -115,10 +114,10 @@ public class HistoryDAO implements IHistoryDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String insertProfileHistorySQL = """
                                          INSERT INTO dbo.Profiles_history (
-                                             profile_id, overhead, annual_salary, fixed_annual_amount, overhead_multiplier,
+                                             profile_id, overhead, annual_salary, overhead_multiplier,
                                              effective_work_hours, hours_per_day, updated_at
                                          )
-                                         SELECT p.id, pd.overhead, p.annual_salary, p.fixed_annual_amount, p.overhead_multiplier,
+                                         SELECT p.id, pd.overhead, p.annual_salary, p.overhead_multiplier,
                                                 p.effective_work_hours, p.hours_per_day, CURRENT_TIMESTAMP
                                          FROM dbo.Profiles p
                                          JOIN dbo.Profiles_data pd ON p.id = pd.id

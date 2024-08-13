@@ -5,7 +5,6 @@ import java.util.Objects;
 public class Profile {
     private int id;
     private BigDecimal annualSalary;
-    private BigDecimal fixedAnnualAmount;
     private BigDecimal overheadMultiplier;
     private BigDecimal effectiveWorkHours;
 
@@ -19,13 +18,12 @@ public class Profile {
 
     }
 
-    public Profile(int id, String name, String currency, BigDecimal annualSalary, BigDecimal fixedAnnualAmount,
+    public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal overheadMultiplier, int geography,
                    BigDecimal effectiveWorkHours, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.id = id;
         this.annualSalary = annualSalary;
-        this.fixedAnnualAmount = fixedAnnualAmount;
         this.overheadMultiplier = overheadMultiplier;
         this.effectiveWorkHours = effectiveWorkHours;
         this.hoursPerDay = hoursPerDay;
@@ -33,13 +31,12 @@ public class Profile {
         this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
     }
 
-    public Profile(int id, String name, String currency, BigDecimal annualSalary, BigDecimal fixedAnnualAmount,
+    public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal overheadMultiplier, int geography,
                    BigDecimal effectiveWorkHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.id = id;
         this.annualSalary = annualSalary;
-        this.fixedAnnualAmount = fixedAnnualAmount;
         this.overheadMultiplier = overheadMultiplier;
         this.effectiveWorkHours = effectiveWorkHours;
         this.utilizationRate = setUtilization(utilizationRate);
@@ -49,12 +46,11 @@ public class Profile {
         this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
     }
 
-    public Profile(String name, String currency, BigDecimal annualSalary, BigDecimal fixedAnnualAmount,
+    public Profile(String name, String currency, BigDecimal annualSalary,
                    BigDecimal overheadMultiplier, int geography,
                    BigDecimal effectiveWorkHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.annualSalary = annualSalary;
-        this.fixedAnnualAmount = fixedAnnualAmount;
         this.overheadMultiplier = overheadMultiplier;
         this.effectiveWorkHours = effectiveWorkHours;
         this.utilizationRate = setUtilization(utilizationRate);
@@ -82,14 +78,6 @@ public class Profile {
 
     public void annualSalary(BigDecimal annualSalary) {
         this.annualSalary = annualSalary;
-    }
-
-    public BigDecimal fixedAnnualAmount() {
-        return fixedAnnualAmount;
-    }
-
-    public void fixedAnnualAmount(BigDecimal fixedAnnualAmount) {
-        this.fixedAnnualAmount = fixedAnnualAmount;
     }
 
     public BigDecimal overheadMultiplier() {
@@ -145,7 +133,6 @@ public class Profile {
         return "Profile{" +
                 "id=" + id +
                 ", annualSalary=" + annualSalary +
-                ", fixedAnnualAmount=" + fixedAnnualAmount +
                 ", overheadMultiplier=" + overheadMultiplier +
                 ", effectiveWorkHours=" + effectiveWorkHours +
                 ", utilizationRate=" + utilizationRate +
@@ -162,7 +149,6 @@ public class Profile {
         Profile that = (Profile) obj;
         return id == that.id &&
                 Objects.equals(annualSalary, that.annualSalary) &&
-                Objects.equals(fixedAnnualAmount, that.fixedAnnualAmount) &&
                 Objects.equals(overheadMultiplier, that.overheadMultiplier) &&
                 Objects.equals(effectiveWorkHours, that.effectiveWorkHours) &&
                 Objects.equals(hoursPerDay, that.hoursPerDay) &&
@@ -171,19 +157,17 @@ public class Profile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, annualSalary, fixedAnnualAmount, overheadMultiplier, effectiveWorkHours, hoursPerDay, profileData.overhead());
+        return Objects.hash(id, annualSalary, overheadMultiplier, effectiveWorkHours, hoursPerDay, profileData.overhead());
     }
 
     public static void main(String[] args) {
         var p = new Profile();
         p.annualSalary(new BigDecimal("50000.00"));
-        p.fixedAnnualAmount(new BigDecimal("10000.00"));
         p.effectiveWorkHours(new BigDecimal("6000"));
         p.overheadMultiplier(new BigDecimal("1.5"));
         p.utilizationRate(new BigDecimal("80"));
         /**
          * 500000.00
-         * 100000.00
          * 600
          * 1.5
          * 80

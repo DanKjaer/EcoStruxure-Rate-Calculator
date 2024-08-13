@@ -33,7 +33,7 @@ public class RateUtils {
     public static BigDecimal annualCost(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return profile.annualSalary().multiply(profile.overheadMultiplier()).add(profile.fixedAnnualAmount());
+        return profile.annualSalary().multiply(profile.overheadMultiplier());
     }
 
     //Basic rate calculations w/ utilization
