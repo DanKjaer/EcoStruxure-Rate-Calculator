@@ -15,7 +15,7 @@ public class ProfileSaveModel {
     private final ObjectProperty<ResourceType> selectedResourceType = new SimpleObjectProperty<>(ResourceType.OVERHEAD);
     private final StringProperty annualSalary = new SimpleStringProperty("");
     private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("");
-    private final StringProperty overheadMultiplier = new SimpleStringProperty("");
+    private final StringProperty effectiveness = new SimpleStringProperty("");
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
 
     private final ObjectProperty<CurrencyEnum> currency = new SimpleObjectProperty<>(CurrencyEnum.USD);
@@ -25,7 +25,7 @@ public class ProfileSaveModel {
     private final BooleanProperty annualSalaryIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty annualFixedAmountIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty annualEffectiveWorkingHoursIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty overheadMultiplierIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty effectivenessIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty hoursPerDayIsValid = new SimpleBooleanProperty(true);
     private final BooleanProperty disableFields = new SimpleBooleanProperty(false);
 
@@ -57,8 +57,8 @@ public class ProfileSaveModel {
         return annualEffectiveWorkingHours;
     }
 
-    public StringProperty overheadMultiplierProperty() {
-        return overheadMultiplier;
+    public StringProperty effectivenessProperty() {
+        return effectiveness;
     }
 
     public ObjectProperty<CurrencyEnum> currencyProperty() {
@@ -85,8 +85,8 @@ public class ProfileSaveModel {
         return annualEffectiveWorkingHoursIsValid;
     }
 
-    public BooleanProperty overheadMultiplierIsValidProperty() {
-        return overheadMultiplierIsValid;
+    public BooleanProperty effectivenessIsValidProperty() {
+        return effectivenessIsValid;
     }
 
     public BooleanProperty hoursPerDayIsValidProperty() {

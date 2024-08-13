@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.bll.utils;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileHistory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +32,7 @@ public class RateUtils {
     public static BigDecimal annualCost(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return profile.annualSalary().multiply(profile.overheadMultiplier());
+        return profile.annualSalary().multiply(profile.effectiveness());
     }
 
     //Basic rate calculations w/ utilization

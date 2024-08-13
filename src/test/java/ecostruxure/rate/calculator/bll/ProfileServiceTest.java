@@ -22,7 +22,7 @@ class ProfileServiceTest {
         profile = new Profile();
 
         profile.annualSalary(new BigDecimal("120000.1234"));
-        profile.overheadMultiplier(new BigDecimal("0.15")); // 15%
+        profile.effectiveness(new BigDecimal("0.15")); // 15%
         profile.effectiveWorkHours(new BigDecimal("2080"));
         profile.hoursPerDay(new BigDecimal("8"));
     }
@@ -44,7 +44,7 @@ class ProfileServiceTest {
     @Test
     void hourlyRateHandlesLargeValues() {
         profile.annualSalary(new BigDecimal("1000000000.0000"));
-        profile.overheadMultiplier(new BigDecimal("1.5"));
+        profile.effectiveness(new BigDecimal("0.5"));
         profile.effectiveWorkHours(new BigDecimal("1"));
         BigDecimal expectedHourlyRate = new BigDecimal("2000000000.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
@@ -71,7 +71,7 @@ class ProfileServiceTest {
     @Test
     void hourlyRateMaxSalary() {
         profile.annualSalary(new BigDecimal("999999999999999.9999"));
-        profile.overheadMultiplier(new BigDecimal("0.20")); // 20%
+        profile.effectiveness(new BigDecimal("0.20")); // 20%
         profile.effectiveWorkHours(new BigDecimal("2000.00"));
         BigDecimal expectedHourlyRate = new BigDecimal("100000000005.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
@@ -81,7 +81,7 @@ class ProfileServiceTest {
     @Test
     void hourlyRateMinSalary() {
         profile.annualSalary(new BigDecimal("0.0001"));
-        profile.overheadMultiplier(new BigDecimal("0.20")); // 20%
+        profile.effectiveness(new BigDecimal("0.20")); // 20%
         profile.effectiveWorkHours(new BigDecimal("2000.00"));
         BigDecimal expectedHourlyRate = new BigDecimal("5.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);

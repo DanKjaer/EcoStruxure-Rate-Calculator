@@ -89,7 +89,7 @@ public class ProfileSaveView implements View {
                 .add(Labels.bound(LocalizedText.EFFECTIVE_WORKING_HOURS), effectiveWorkingHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
-        var overheadField = Fields.multiplierTextField(model.overheadMultiplierProperty(), model.overheadMultiplierIsValidProperty());
+        var overheadField = Fields.multiplierTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());
         var hoursPerDayField = Fields.hourTextField(model.hoursPerDayProperty(), model.hoursPerDayIsValidProperty(), 1, 24);
 
         overheadField.getStyleClass().add("save-model-text-field");
@@ -99,7 +99,7 @@ public class ProfileSaveView implements View {
         hoursPerDayField.disableProperty().bind(model.disableFieldsProperty());
 
         var modifiersGrid = TwoColGridPane.styled()
-                .add(Labels.bound(LocalizedText.OVERHEAD_MULTIPLIER), overheadField)
+                .add(Labels.bound(LocalizedText.EFFECTIVENESS), overheadField)
                 .add(Labels.bound(LocalizedText.HOURS_PER_DAY), hoursPerDayField);
         var modifiersContainer = TwoColGridPane.withTitle(LocalizedText.MODIFIERS, modifiersGrid);
 

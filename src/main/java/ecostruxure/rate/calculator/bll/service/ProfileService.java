@@ -160,7 +160,7 @@ public class ProfileService {
     public BigDecimal annualCost(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return profile.annualSalary().multiply(profile.overheadMultiplier());
+        return profile.annualSalary().multiply(profile.effectiveness());
     }
 
     public BigDecimal annualCost(Profile profile, BigDecimal utilizationPercentage) {
@@ -173,7 +173,7 @@ public class ProfileService {
     public BigDecimal annualCost(ProfileHistory profile) {
         Objects.requireNonNull(profile, "ProfileHistory cannot be null");
 
-        return profile.annualSalary().multiply(profile.overheadMultiplier());
+        return profile.annualSalary().multiply(profile.effectiveness());
     }
 
     public BigDecimal annualCost(List<Profile> profiles) {
@@ -193,7 +193,7 @@ public class ProfileService {
     private void validateProfileNotNull(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(profile.annualSalary(), "Annual salary cannot be null");
-        Objects.requireNonNull(profile.overheadMultiplier(), "Overhead multiplier cannot be null");
+        Objects.requireNonNull(profile.effectiveness(), "Effectiveness cannot be null");
         Objects.requireNonNull(profile.effectiveWorkHours(), "Effective work hours cannot be null");
         Objects.requireNonNull(profile.profileData(), "Profile data cannot be null");
         Objects.requireNonNull(profile.profileData().name(), "Profile name cannot be null");
@@ -203,8 +203,8 @@ public class ProfileService {
     private void validateProfileValues(Profile profile) {
         if (profile.annualSalary().compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("Annual salary cannot be negative");
 
-        if (profile.overheadMultiplier().compareTo(BigDecimal.ZERO) < 0 || profile.overheadMultiplier().compareTo(new BigDecimal("999.99")) > 0)
-            throw new IllegalArgumentException("Overhead multiplier must be between 0 and 999.99");
+//        if (profile.effectiveness().compareTo(BigDecimal.ZERO) < 0 || profile.effectiveness().compareTo(new BigDecimal("1")) > 0)
+//            throw new IllegalArgumentException("Effectiveness must be between 0 and 1");
 
         //if (profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
 
@@ -223,7 +223,7 @@ public class ProfileService {
         if (profile.annualSalary().scale() > FINANCIAL_SCALE) throw new IllegalArgumentException("Annual salary scale must be less than or equal to " + FINANCIAL_SCALE);
 
         // Tjek scale af numeriske felter
-        if (profile.overheadMultiplier().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Overhead multiplier scale must be less than or equal to " + GENERAL_SCALE);
+        if (profile.effectiveness().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
         if (profile.effectiveWorkHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
         if (profile.hoursPerDay().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
     }

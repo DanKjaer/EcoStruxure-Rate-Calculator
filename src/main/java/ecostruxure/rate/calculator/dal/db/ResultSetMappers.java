@@ -18,7 +18,7 @@ public class ResultSetMappers {
 
         // Profile
         BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-        BigDecimal overheadMultiplier = rs.getBigDecimal("overhead_multiplier");
+        BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
         BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
@@ -27,7 +27,7 @@ public class ResultSetMappers {
                 name,
                 currency,
                 annualSalary,
-                overheadMultiplier,
+                effectiveness,
                 geography,
                 effectiveWorkHours,
                 overhead,

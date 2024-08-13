@@ -18,7 +18,7 @@ public class AddProfileModel {
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
     private final StringProperty annualSalary = new SimpleStringProperty("");
     private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("0");
-    private final StringProperty overheadMultiplier = new SimpleStringProperty("");
+    private final StringProperty effectiveness = new SimpleStringProperty("");
 
     private final ObjectProperty<CurrencyEnum> currency = new SimpleObjectProperty<>(CurrencyEnum.EUR);
 
@@ -28,7 +28,7 @@ public class AddProfileModel {
     private final BooleanProperty hoursPerDayIsValid = new SimpleBooleanProperty(true);
     private final BooleanProperty annualSalaryIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty annualEffectiveWorkingHoursIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty overheadMultiplierIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty effectivenessIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty okToAdd = new SimpleBooleanProperty(false);
 
     public StringProperty nameProperty() {
@@ -67,8 +67,8 @@ public class AddProfileModel {
         return annualEffectiveWorkingHours;
     }
 
-    public StringProperty overheadMultiplierProperty() {
-        return overheadMultiplier;
+    public StringProperty effectivenessProperty() {
+        return effectiveness;
     }
 
 
@@ -100,8 +100,8 @@ public class AddProfileModel {
         return annualEffectiveWorkingHoursIsValid;
     }
 
-    public BooleanProperty overheadMultiplierIsValidProperty() {
-        return overheadMultiplierIsValid;
+    public BooleanProperty effectivenessIsValidProperty() {
+        return effectivenessIsValid;
     }
 
 

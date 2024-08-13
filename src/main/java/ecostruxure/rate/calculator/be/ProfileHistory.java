@@ -8,7 +8,7 @@ public class ProfileHistory {
     private int profileId;
     private boolean overhead;
     private BigDecimal annualSalary;
-    private BigDecimal overheadMultiplier;
+    private BigDecimal effectiveness;
     private BigDecimal effectiveWorkHours;
     private BigDecimal hoursPerDay;
     private LocalDateTime updatedAt;
@@ -16,12 +16,12 @@ public class ProfileHistory {
     public ProfileHistory() {
     }
 
-    public ProfileHistory(int historyId, int profileId, boolean overhead, BigDecimal annualSalary, BigDecimal overheadMultiplier, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
+    public ProfileHistory(int historyId, int profileId, boolean overhead, BigDecimal annualSalary, BigDecimal effectiveness, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
         this.historyId = historyId;
         this.profileId = profileId;
         this.overhead = overhead;
         this.annualSalary = annualSalary;
-        this.overheadMultiplier = overheadMultiplier;
+        this.effectiveness = effectiveness;
         this.effectiveWorkHours = effectiveWorkHours;
         this.hoursPerDay = hoursPerDay;
         this.updatedAt = updatedAt;
@@ -59,12 +59,12 @@ public class ProfileHistory {
         this.annualSalary = annualSalary;
     }
 
-    public BigDecimal overheadMultiplier() {
-        return overheadMultiplier;
+    public BigDecimal effectiveness() {
+        return effectiveness;
     }
 
-    public void overheadMultiplier(BigDecimal overheadMultiplier) {
-        this.overheadMultiplier = overheadMultiplier;
+    public void effectiveness(BigDecimal effectiveness) {
+        this.effectiveness = effectiveness;
     }
 
     public BigDecimal effectiveWorkHours() {

@@ -14,7 +14,7 @@ public class ProfileHistoryItemModel {
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final ObjectProperty<ResourceType> resourceType = new SimpleObjectProperty<>();
     private final FinancialData annualSalary = new FinancialData();
-    private final ObjectProperty<BigDecimal> overheadMultiplier = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> effectiveness = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> hoursPerDay = new SimpleObjectProperty<>();
 
@@ -35,8 +35,8 @@ public class ProfileHistoryItemModel {
         return annualSalary.amountProperty();
     }
 
-    public ObjectProperty<BigDecimal> overheadMultiplierProperty() {
-        return overheadMultiplier;
+    public ObjectProperty<BigDecimal> effectivenessProperty() {
+        return effectiveness;
     }
 
     public ObjectProperty<BigDecimal> effectiveWorkHoursProperty() {

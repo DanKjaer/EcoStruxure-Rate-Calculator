@@ -99,7 +99,7 @@ public class LocalizedText {
     public static final StringProperty VERIFY_PROFILE_UNARCHIVE = new SimpleStringProperty("At least one profile requires changes before unarchiving.");
     public static final StringProperty VERIFY_FOUND_UNARCHIVE = new SimpleStringProperty("Found:");
     public static final StringProperty MODIFIERS = new SimpleStringProperty("Modifiers");
-    public static final StringProperty OVERHEAD_MULTIPLIER = new SimpleStringProperty("Overhead multiplier");
+    public static final StringProperty EFFECTIVENESS = new SimpleStringProperty("Effectiveness");
     public static final StringProperty UTILIZATION_PERCENTAGE = new SimpleStringProperty("Utilization percentage");
     public static final StringProperty RAW = new SimpleStringProperty("Raw");
     public static final StringProperty MARKUP = new SimpleStringProperty("Markup");
@@ -273,7 +273,7 @@ public class LocalizedText {
         VERIFY_PROFILE_UNARCHIVE.set(bundle.getString("VERIFY_PROFILE_UNARCHIVE"));
         VERIFY_FOUND_UNARCHIVE.set(bundle.getString("VERIFY_FOUND_UNARCHIVE"));
         MODIFIERS.set(bundle.getString("MODIFIERS"));
-        OVERHEAD_MULTIPLIER.set(bundle.getString("OVERHEAD_MULTIPLIER"));
+        EFFECTIVENESS.set(bundle.getString("EFFECTIVENESS"));
         UTILIZATION_PERCENTAGE.set(bundle.getString("UTILIZATION_PERCENTAGE"));
         RAW.set(bundle.getString("RAW"));
         MARKUP.set(bundle.getString("MARKUP"));
