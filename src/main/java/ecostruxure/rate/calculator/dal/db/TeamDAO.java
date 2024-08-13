@@ -104,6 +104,7 @@ public class TeamDAO implements ITeamDAO {
 
     @Override
     public Team create(TransactionContext context, Team team) throws Exception {
+
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
@@ -124,7 +125,6 @@ public class TeamDAO implements ITeamDAO {
         } catch (Exception e) {
             throw new Exception("Could not create Team in Database.\n" + e.getMessage());
         }
-
         return team;
     }
 
@@ -185,7 +185,9 @@ public class TeamDAO implements ITeamDAO {
         } catch (Exception e) {
             throw new Exception("Could not assign Profiles to Team in Database.\n" + e.getMessage());
         }
+
         return true;
+
     }
 
     @Override

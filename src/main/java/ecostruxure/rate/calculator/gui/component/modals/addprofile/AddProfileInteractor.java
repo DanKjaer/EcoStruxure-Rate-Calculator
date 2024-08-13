@@ -60,6 +60,7 @@ public class AddProfileInteractor {
             currencyModels = convertToCurrencyModels(currencyService.all());
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -74,7 +75,7 @@ public class AddProfileInteractor {
             profileService.create(createProfileFromModel());
             return true;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             return false;
         }
     }

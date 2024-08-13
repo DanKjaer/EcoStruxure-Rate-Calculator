@@ -32,6 +32,7 @@ public class TeamProfileManagementService {
 
     public Team createTeam(Team team) throws Exception {
         return transactionManager.executeTransaction(context -> {
+
             Team createdTeam = teamDAO.create(context, team);
 
             TeamMetrics metrics = calculateMetrics(createdTeam.id(), teamDAO.getTeamProfiles(context, createdTeam.id()), context);
@@ -43,7 +44,6 @@ public class TeamProfileManagementService {
     public Team createTeam(Team team, List<Profile> profiles) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
-
             Team createdTeam = teamDAO.create(context, team);
             teamDAO.assignProfiles(context, createdTeam, profiles);
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, createdTeam.id());
@@ -51,7 +51,9 @@ public class TeamProfileManagementService {
             for (Profile profile : assignedProfiles) {
                 Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.id());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
+
                 historyDAO.insertTeamProfileHistory(context, createdTeam.id(), profile.id(), profileHistoryId, metrics, Reason.TEAM_CREATED, profileMetrics, now);
+
             }
 
             historyDAO.insertEmptyTeamProfileHistory(context, createdTeam.id(), metrics, Reason.TEAM_CREATED, now);
@@ -62,10 +64,9 @@ public class TeamProfileManagementService {
     public boolean assignProfilesToTeam(Team team, List<Profile> profiles) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
-
             boolean assigned = teamDAO.assignProfiles(context, team, profiles);
-            if (!assigned) return false;
 
+            if (!assigned) return false;
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, team.id());
             TeamMetrics metrics = calculateMetrics(team.id(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
@@ -80,10 +81,9 @@ public class TeamProfileManagementService {
     public boolean removeProfilesFromTeam(Team team, List<Profile> profiles) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
-
             boolean removed = teamDAO.removeAssignedProfiles(context, team, profiles);
-            if (!removed) return false;
 
+            if (!removed) return false;
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, team.id());
             TeamMetrics metrics = calculateMetrics(team.id(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
@@ -105,16 +105,13 @@ public class TeamProfileManagementService {
             LocalDateTime now = LocalDateTime.now();
 
             boolean removed = teamDAO.removeProfileFromTeam(context, teamId, profileId);
-            if (!removed) return false;
 
+            if (!removed) return false;
             Profile removedProfile = profileDAO.get(context, profileId);
             ProfileMetrics removedProfileMetrics = calculateMetrics(removedProfile, teamId, context);
-
             List<Profile> remainingProfiles = teamDAO.getTeamProfiles(context, teamId);
             TeamMetrics updatedTeamMetrics = calculateMetrics(teamId, remainingProfiles, context);
-
             Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profileId);
-
             historyDAO.insertTeamProfileHistory(context, teamId, profileId, profileHistoryId, updatedTeamMetrics, Reason.REMOVED_PROFILE, removedProfileMetrics, now);
 
             return true;

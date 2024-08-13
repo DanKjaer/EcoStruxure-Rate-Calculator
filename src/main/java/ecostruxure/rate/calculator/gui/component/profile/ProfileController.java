@@ -54,12 +54,6 @@ public class ProfileController implements Controller {
             if (fetchTask.getValue()) interactor.updateModelPostFetchProfile();
             else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_FETCH_PROFILE));
         });
-        System.out.println();
-        fetchTask.setOnFailed(evt -> {
-            System.out.println("Halløj her er fejlen: " +evt);
-            System.out.println("Exception: " + fetchTask.getException());
-            System.out.println("Message: " + fetchTask.getMessage());
-        });
         interactor.clearModel();
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
     }
