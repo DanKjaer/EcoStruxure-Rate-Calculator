@@ -89,7 +89,7 @@ public class ProfileSaveView implements View {
                 .add(Labels.bound(LocalizedText.EFFECTIVE_WORKING_HOURS), effectiveWorkingHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
-        var overheadField = Fields.multiplierTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());
+        var overheadField = Fields.percentageTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());
         var hoursPerDayField = Fields.hourTextField(model.hoursPerDayProperty(), model.hoursPerDayIsValidProperty(), 1, 24);
 
         overheadField.getStyleClass().add("save-model-text-field");
