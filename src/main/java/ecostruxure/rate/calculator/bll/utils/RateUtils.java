@@ -14,7 +14,6 @@ public class RateUtils {
     private static final BigDecimal HUNDRED = new BigDecimal("100.00");
 
     // Basic rate calculation methods
-
     public static BigDecimal hourlyRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
         if(profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) == 0) {
@@ -32,7 +31,7 @@ public class RateUtils {
     public static BigDecimal annualCost(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return profile.annualSalary().multiply(profile.effectiveness());
+        return profile.annualSalary();
     }
 
     //Basic rate calculations w/ utilization
@@ -61,7 +60,7 @@ public class RateUtils {
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return annualCost(profile).multiply(percentageAsDecimal);
     }
-
+    // Kan bruges til at udregne effectiveness for en profil
     public static BigDecimal utilizedHours(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
