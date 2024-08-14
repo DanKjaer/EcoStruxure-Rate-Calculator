@@ -29,6 +29,7 @@ public class ProfileDAO implements IProfileDAO {
         BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
         BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
         BigDecimal totalHours = rs.getBigDecimal("total_hours");
+        BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
         return new Profile(
@@ -39,6 +40,7 @@ public class ProfileDAO implements IProfileDAO {
                 effectiveness,
                 geography,
                 totalHours,
+                effectiveWorkHours,
                 overhead,
                 hoursPerDay,
                 archived
@@ -229,11 +231,12 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (annual_salary, effectiveness, total_hours, hours_per_day) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (annual_salary, effectiveness, total_hours, effective_work_hours, hours_per_day) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setBigDecimal(1, profile.annualSalary());
             stmt.setBigDecimal(2, profile.effectiveness());
             stmt.setBigDecimal(3, profile.totalHours());
-            stmt.setBigDecimal(4, profile.hoursPerDay());
+            stmt.setBigDecimal(4, profile.effectiveWorkHours());
+            stmt.setBigDecimal(5, profile.hoursPerDay());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -613,7 +616,7 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_salary = ?, effectiveness = ?, total_hours = ?, hours_per_day = ?
+                                  SET annual_salary = ?, effectiveness = ?, total_hours = ?, hours_per_day = ?, effective_work_hours = ?
                                   WHERE id = ?;
                                   """;
 
@@ -629,7 +632,8 @@ public class ProfileDAO implements IProfileDAO {
             updateProfileStmt.setBigDecimal(2, profile.effectiveness());
             updateProfileStmt.setBigDecimal(3, profile.totalHours());
             updateProfileStmt.setBigDecimal(4, profile.hoursPerDay());
-            updateProfileStmt.setInt(5, profile.id());
+            updateProfileStmt.setBigDecimal(5, profile.effectiveWorkHours());
+            updateProfileStmt.setInt(6, profile.id());
             updateProfileStmt.executeUpdate();
 
             updateProfileDataStmt.setString(1, profile.profileData().name());

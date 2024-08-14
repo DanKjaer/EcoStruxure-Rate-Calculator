@@ -76,17 +76,17 @@ public class ProfileSaveView implements View {
         var resourceTypeContainer = TwoColGridPane.withTitle(LocalizedText.RESOURCE_TYPE, resourceTypeGrid);
 
         var annualSalaryField = Fields.currencyTextField(model.annualSalaryProperty(), "EUR", model.annualSalaryIsValidProperty());
-        var effectiveWorkingHoursField = Fields.hourTextField(model.annualEffectiveWorkingHoursProperty(), model.annualEffectiveWorkingHoursIsValidProperty(), 1,8760);
+        var totalHoursField = Fields.hourTextField(model.annualTotalHoursProperty(), model.annualTotalHoursIsValidProperty(), 1,8760);
 
         annualSalaryField.getStyleClass().add("save-model-text-field");
-        effectiveWorkingHoursField.getStyleClass().add("save-model-text-field");
+        totalHoursField.getStyleClass().add("save-model-text-field");
 
         annualSalaryField.disableProperty().bind(model.disableFieldsProperty());
-        effectiveWorkingHoursField.disableProperty().bind(model.disableFieldsProperty());
+        totalHoursField.disableProperty().bind(model.disableFieldsProperty());
 
         var annuallyGrid = TwoColGridPane.styled()
                 .add(Labels.bound(LocalizedText.SALARY), annualSalaryField)
-                .add(Labels.bound(LocalizedText.TOTAL_HOURS), effectiveWorkingHoursField);
+                .add(Labels.bound(LocalizedText.TOTAL_HOURS), totalHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
         var overheadField = Fields.percentageTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());

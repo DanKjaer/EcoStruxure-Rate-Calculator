@@ -173,7 +173,7 @@ public class ExportToExcel {
             }
             int rowIndex = 1;
             for (Profile p : profiles) {
-                String[] profileData = {p.profileData().name(), p.utilizationHours().toString(), profileService.effectiveWorkHoursPercentage(p, p.utilizationHours()).toString(), p.utilizationRate().toString(), profileService.hourlyRate(p, p.utilizationRate()).toString(), profileService.dayRate(p, p.utilizationRate()).toString()};
+                String[] profileData = {p.profileData().name(), p.utilizationHours().toString(), profileService.totalHoursPercentage(p, p.utilizationHours()).toString(), p.utilizationRate().toString(), profileService.hourlyRate(p, p.utilizationRate()).toString(), profileService.dayRate(p, p.utilizationRate()).toString()};
                 createDataRows(sheetProfiles, rowIndex++, profileData, workbook);
             }
         } else {
@@ -242,7 +242,7 @@ public class ExportToExcel {
                         String[] profileData = {
                                 p.profileData().name(),
                                 p.utilizationHours() != null ? p.utilizationHours().toString() : "",
-                                profileService.effectiveWorkHoursPercentage(p, p.utilizationHours()) != null ? profileService.effectiveWorkHoursPercentage(p, p.utilizationHours()).toString() : "",
+                                profileService.totalHoursPercentage(p, p.utilizationHours()) != null ? profileService.totalHoursPercentage(p, p.utilizationHours()).toString() : "",
                                 p.utilizationRate() != null ? p.utilizationRate().toString() : "",
                                 profileService.hourlyRate(p, p.utilizationRate()) != null ? profileService.hourlyRate(p, p.utilizationRate()).toString() : "",
                                 profileService.dayRate(p, p.utilizationRate()) != null ? profileService.dayRate(p, p.utilizationRate()).toString() : ""

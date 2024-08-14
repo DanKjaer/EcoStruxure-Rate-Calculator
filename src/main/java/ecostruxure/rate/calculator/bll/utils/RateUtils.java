@@ -85,13 +85,13 @@ public class RateUtils {
                 .map(RateUtils::annualCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal totalEffectiveWorkHours = profiles.stream()
+        BigDecimal totalHours = profiles.stream()
                 .map(Profile::totalHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if(totalEffectiveWorkHours.compareTo(BigDecimal.ZERO) == 0) {
+        if(totalHours.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-        BigDecimal totalHourlyRate = totalAnnualCost.divide(totalEffectiveWorkHours, GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal totalHourlyRate = totalAnnualCost.divide(totalHours, GENERAL_SCALE, ROUNDING_MODE);
         return totalHourlyRate;
     }
 
@@ -109,12 +109,12 @@ public class RateUtils {
         Objects.requireNonNull(profiles, "Profiles cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
-        BigDecimal totalEffectiveWorkHours = profiles.stream()
+        BigDecimal totalHours = profiles.stream()
                 .map(Profile::totalHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
-        return totalEffectiveWorkHours.multiply(percentageAsDecimal);
+        return totalHours.multiply(percentageAsDecimal);
     }
 
 }

@@ -14,7 +14,7 @@ public class ProfileSaveModel {
     private final ObjectProperty<AddProfileGeographyItemModel> selectedGeography = new SimpleObjectProperty<>();
     private final ObjectProperty<ResourceType> selectedResourceType = new SimpleObjectProperty<>(ResourceType.OVERHEAD);
     private final StringProperty annualSalary = new SimpleStringProperty("");
-    private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("");
+    private final StringProperty annualTotalHours = new SimpleStringProperty("");
     private final StringProperty effectiveness = new SimpleStringProperty("");
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
 
@@ -24,7 +24,7 @@ public class ProfileSaveModel {
     private final BooleanProperty selectedGeographyIsValid = new SimpleBooleanProperty(selectedGeography.get() != null);
     private final BooleanProperty annualSalaryIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty annualFixedAmountIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty annualEffectiveWorkingHoursIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty annualTotalHoursIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty effectivenessIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty hoursPerDayIsValid = new SimpleBooleanProperty(true);
     private final BooleanProperty disableFields = new SimpleBooleanProperty(false);
@@ -53,8 +53,8 @@ public class ProfileSaveModel {
         return annualSalary;
     }
 
-    public StringProperty annualEffectiveWorkingHoursProperty() {
-        return annualEffectiveWorkingHours;
+    public StringProperty annualTotalHoursProperty() {
+        return annualTotalHours;
     }
 
     public StringProperty effectivenessProperty() {
@@ -81,8 +81,8 @@ public class ProfileSaveModel {
         return annualFixedAmountIsValid;
     }
 
-    public BooleanProperty annualEffectiveWorkingHoursIsValidProperty() {
-        return annualEffectiveWorkingHoursIsValid;
+    public BooleanProperty annualTotalHoursIsValidProperty() {
+        return annualTotalHoursIsValid;
     }
 
     public BooleanProperty effectivenessIsValidProperty() {

@@ -2,10 +2,8 @@ package ecostruxure.rate.calculator.gui.component.profile;
 
 import atlantafx.base.controls.Spacer;
 import atlantafx.base.theme.Styles;
-import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import ecostruxure.rate.calculator.gui.common.View;
 import ecostruxure.rate.calculator.gui.component.profile.ProfileModel.ProfileTableType;
-import ecostruxure.rate.calculator.gui.component.teams.TeamItemModel;
 import ecostruxure.rate.calculator.gui.util.*;
 import ecostruxure.rate.calculator.gui.util.constants.CssClasses;
 import ecostruxure.rate.calculator.gui.util.constants.Icons;
@@ -28,7 +26,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import org.apache.poi.ss.formula.functions.T;
 import org.controlsfx.control.SegmentedButton;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -279,7 +276,7 @@ public class ProfileView implements View {
         TableColumn<ProfileTeamItemModel, String> nameColumn = customTableView.createColumn(LocalizedText.NAME, ProfileTeamItemModel::nameProperty);
 
         TableColumn<ProfileTeamItemModel, BigDecimal> utilizationHours = customTableView.createColumn(LocalizedText.UTILIZATION_HOURS, ProfileTeamItemModel::utilizationHoursProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualEffectiveWorkingHours = customTableView.createColumn(LocalizedText.ANNUAL_TOTAL_HOURS, ProfileTeamItemModel::annualEffectiveWorkingHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualTotalHours = customTableView.createColumn(LocalizedText.ANNUAL_TOTAL_HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
 
         TableColumn<ProfileTeamItemModel, BigDecimal> utilization = customTableView.createColumn(LocalizedText.UTILIZATION_RATE, ProfileTeamItemModel::utilizationCostProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> hourlyRate = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileTeamItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
@@ -287,7 +284,7 @@ public class ProfileView implements View {
         TableColumn<ProfileTeamItemModel, BigDecimal> annualCost = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualCostProperty, new CurrencyCellFactory<>());
 
 
-        TableView<ProfileTeamItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(nameColumn, utilizationHours, annualEffectiveWorkingHours, utilization, hourlyRate, dayRate, annualCost));
+        TableView<ProfileTeamItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(nameColumn, utilizationHours, annualTotalHours, utilization, hourlyRate, dayRate, annualCost));
         tableView.getStyleClass().add(Styles.STRIPED);
 
         tableItems.comparatorProperty().bind(tableView.comparatorProperty());
@@ -320,7 +317,7 @@ public class ProfileView implements View {
         TableColumn<ProfileHistoryItemModel, BigDecimal> hourlyRateColumn = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileHistoryItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileHistoryItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileHistoryItemModel::dayRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileHistoryItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileHistoryItemModel::annualCostProperty, new CurrencyCellFactory<>());
-        TableColumn<ProfileHistoryItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileHistoryItemModel::effectiveWorkHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileHistoryItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileHistoryItemModel::totalHoursProperty, new HourCellFactory<>());
 
         TableView<ProfileHistoryItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(dateColumn, annualHoursColumn, hourlyRateColumn, dayRateColumn, annualCostColumn));
         tableView.getStyleClass().add(Styles.STRIPED);

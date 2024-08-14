@@ -17,8 +17,9 @@ public class AddProfileModel {
     private final ObjectProperty<ResourceType> selectedResourceType = new SimpleObjectProperty<>(ResourceType.OVERHEAD);
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
     private final StringProperty annualSalary = new SimpleStringProperty("");
-    private final StringProperty annualEffectiveWorkingHours = new SimpleStringProperty("0");
+    private final StringProperty annualTotalHours = new SimpleStringProperty("0");
     private final StringProperty effectiveness = new SimpleStringProperty("");
+    private final StringProperty effectiveWorkHours = new SimpleStringProperty("");
 
     private final ObjectProperty<CurrencyEnum> currency = new SimpleObjectProperty<>(CurrencyEnum.EUR);
 
@@ -27,9 +28,10 @@ public class AddProfileModel {
     private final BooleanProperty selectedCurrencyIsValid = new SimpleBooleanProperty(selectedCurrency.get() != null);
     private final BooleanProperty hoursPerDayIsValid = new SimpleBooleanProperty(true);
     private final BooleanProperty annualSalaryIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty annualEffectiveWorkingHoursIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty annualTotalHoursIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty effectivenessIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty okToAdd = new SimpleBooleanProperty(false);
+    private final BooleanProperty effectiveWorkHoursIsValid = new SimpleBooleanProperty(false);
 
     public StringProperty nameProperty() {
         return name;
@@ -63,12 +65,16 @@ public class AddProfileModel {
         return annualSalary;
     }
 
-    public StringProperty annualEffectiveWorkingHoursProperty() {
-        return annualEffectiveWorkingHours;
+    public StringProperty annualTotalHoursProperty() {
+        return annualTotalHours;
     }
 
     public StringProperty effectivenessProperty() {
         return effectiveness;
+    }
+
+    public StringProperty effectiveWorkHoursProperty() {
+        return effectiveWorkHours;
     }
 
 
@@ -96,12 +102,16 @@ public class AddProfileModel {
         return annualSalaryIsValid;
     }
 
-    public BooleanProperty annualEffectiveWorkingHoursIsValidProperty() {
-        return annualEffectiveWorkingHoursIsValid;
+    public BooleanProperty annualTotalHoursIsValidProperty() {
+        return annualTotalHoursIsValid;
     }
 
     public BooleanProperty effectivenessIsValidProperty() {
         return effectivenessIsValid;
+    }
+
+    public BooleanProperty effectiveWorkHoursIsValidProperty() {
+        return effectiveWorkHoursIsValid;
     }
 
 

@@ -13,7 +13,7 @@ public class ProfileTeamItemModel {
     private final FinancialData dayRate = new FinancialData();
     private final FinancialData annualCost = new FinancialData();
     private final ObjectProperty<BigDecimal> utilizationHours = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> annualEffectiveWorkingHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> annualTotalHours = new SimpleObjectProperty<>();
 
     public IntegerProperty idProperty() {
         return id;
@@ -43,8 +43,8 @@ public class ProfileTeamItemModel {
         return utilizationHours;
     }
 
-    public ObjectProperty<BigDecimal> annualEffectiveWorkingHoursProperty() {
-        return annualEffectiveWorkingHours;
+    public ObjectProperty<BigDecimal> annualTotalHoursProperty() {
+        return annualTotalHours;
     }
 
     public void setHourlyRate(BigDecimal hourlyRate) {

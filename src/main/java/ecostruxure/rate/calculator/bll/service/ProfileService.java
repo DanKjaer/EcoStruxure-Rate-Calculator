@@ -57,7 +57,7 @@ public class ProfileService {
         return profileDAO.get(id);
     }
 
-    public BigDecimal effectiveWorkHoursPercentage(Profile profile, BigDecimal utilizationPercentage) {
+    public BigDecimal totalHoursPercentage(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
@@ -206,7 +206,7 @@ public class ProfileService {
 //        if (profile.effectiveness().compareTo(BigDecimal.ZERO) < 0 || profile.effectiveness().compareTo(new BigDecimal("1")) > 0)
 //            throw new IllegalArgumentException("Effectiveness must be between 0 and 1");
 
-        //if (profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
+        //if (profile.totalHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
 
         if (profile.hoursPerDay().compareTo(BigDecimal.ZERO) < 0 || profile.hoursPerDay().compareTo(new BigDecimal("24")) > 0)
             throw new IllegalArgumentException("Hours per day must be between 0 and 24");

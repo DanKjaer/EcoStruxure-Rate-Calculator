@@ -380,6 +380,7 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
                     BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
                     BigDecimal totalHours = rs.getBigDecimal("total_hours");
+                    BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
                     BigDecimal utilizationRate = rs.getBigDecimal("utilization_rate");
@@ -393,6 +394,7 @@ public class TeamDAO implements ITeamDAO {
                             effectiveness,
                             geography,
                             totalHours,
+                            effectiveWorkHours,
                             utilizationRate,
                             utilizationHours,
                             overhead,
@@ -436,6 +438,7 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
                     BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
                     BigDecimal totalHours = rs.getBigDecimal("total_hours");
+                    BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
                     BigDecimal utilizationRate = rs.getBigDecimal("utilization_rate");
@@ -449,6 +452,7 @@ public class TeamDAO implements ITeamDAO {
                             effectiveness,
                             geography,
                             totalHours,
+                            effectiveWorkHours,
                             utilizationRate,
                             utilizationHours,
                             overhead,
@@ -593,6 +597,7 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
                     BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
                     BigDecimal totalHours = rs.getBigDecimal("total_hours");
+                    BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
                     BigDecimal addedRate = utilizationRateTotal.add(utilizationRate);
@@ -606,6 +611,7 @@ public class TeamDAO implements ITeamDAO {
                             effectiveness,
                             geography,
                             totalHours,
+                            effectiveWorkHours,
                             addedRate,
                             addedHours,
                             overhead,

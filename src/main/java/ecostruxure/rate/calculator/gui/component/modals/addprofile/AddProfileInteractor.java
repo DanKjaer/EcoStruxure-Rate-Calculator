@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.be.enums.ResourceType;
 import ecostruxure.rate.calculator.bll.service.CurrencyService;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
+import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.gui.common.CurrencyItemModel;
 import javafx.beans.binding.Bindings;
 
@@ -36,9 +37,10 @@ public class AddProfileInteractor {
         model.selectedGeographyIsValidProperty().bind(model.selectedGeographyProperty().isNotNull());
         model.selectedCurrencyIsValidProperty().bind(model.selectedCurrencyProperty().isNotNull());
         model.annualSalaryIsValidProperty().bind(model.annualSalaryProperty().isNotEmpty());
-        model.annualEffectiveWorkingHoursIsValidProperty().bind(model.annualEffectiveWorkingHoursProperty().isNotEmpty());
+        model.annualTotalHoursIsValidProperty().bind(model.annualTotalHoursProperty().isNotEmpty());
         model.effectivenessIsValidProperty().bind(model.effectivenessProperty().isNotEmpty());
         model.hoursPerDayIsValidProperty().bind(model.hoursPerDayProperty().isNotEmpty());
+        model.effectiveWorkHoursIsValidProperty().bind(model.effectiveWorkHoursProperty().isNotEmpty());
 
         model.okToAddProperty().bind(Bindings.createBooleanBinding(
                 this::isDataValid,
@@ -46,9 +48,10 @@ public class AddProfileInteractor {
                 model.selectedGeographyProperty(),
                 model.selectedCurrencyProperty(),
                 model.annualSalaryProperty(),
-                model.annualEffectiveWorkingHoursProperty(),
+                model.annualTotalHoursProperty(),
                 model.effectivenessProperty(),
-                model.hoursPerDayProperty())
+                model.hoursPerDayProperty(),
+                model.effectiveWorkHoursProperty())
         );
     }
 
@@ -81,6 +84,7 @@ public class AddProfileInteractor {
     private Profile createProfileFromModel() {
         var profileData = new ProfileData();
 
+
         var currencyItemModel = model.selectedCurrencyProperty().get();
         BigDecimal eurConversionRate = new BigDecimal(currencyItemModel.eurConversionRateProperty().get());
 
@@ -93,9 +97,12 @@ public class AddProfileInteractor {
         var profile = new Profile();
         profile.annualSalary(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
         profile.effectiveness(new BigDecimal(model.effectivenessProperty().get()));
-        profile.totalHours(new BigDecimal(model.annualEffectiveWorkingHoursProperty().get()));
+        profile.totalHours(new BigDecimal(model.annualTotalHoursProperty().get()));
         profile.hoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
         profile.profileData(profileData);
+
+        BigDecimal effectiveWorkHours = RateUtils.utilizedHours(profile, profile.effectiveness());
+        profile.effectiveWorkHours(effectiveWorkHours);
 
         return profile;
     }
@@ -133,7 +140,7 @@ public class AddProfileInteractor {
         model.selectedCurrencyProperty().set(null);
         model.selectedResourceTypeProperty().set(ResourceType.OVERHEAD);
         model.annualSalaryProperty().set("");
-        model.annualEffectiveWorkingHoursProperty().set("0");
+        model.annualTotalHoursProperty().set("0");
         model.effectivenessProperty().set("");
         model.hoursPerDayProperty().set("8");
 
@@ -146,7 +153,7 @@ public class AddProfileInteractor {
                 model.selectedGeographyProperty().get() != null &&
                 model.selectedCurrencyProperty().get() != null &&
                 !model.annualSalaryProperty().get().isEmpty() &&
-                !model.annualEffectiveWorkingHoursProperty().get().isEmpty() &&
+                !model.annualTotalHoursProperty().get().isEmpty() &&
                 !model.effectivenessProperty().get().isEmpty() &&
                 !model.hoursPerDayProperty().get().isEmpty();
     }

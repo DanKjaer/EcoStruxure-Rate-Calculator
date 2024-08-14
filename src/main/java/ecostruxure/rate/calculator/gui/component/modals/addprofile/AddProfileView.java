@@ -88,22 +88,22 @@ public class AddProfileView implements View {
 
         var selectedCurrencyBinding = BindingsUtils.createStringBindingWithDefault(model.selectedCurrencyProperty(), "");
         var salaryField = Fields.currencyTextField(model.annualSalaryProperty(), selectedCurrencyBinding, model.annualSalaryIsValidProperty());
-        var effectiveWorkingHoursField = Fields.hourTextField(model.annualEffectiveWorkingHoursProperty(), model.annualEffectiveWorkingHoursIsValidProperty(), 0, 8760);
+        var totalHoursField = Fields.hourTextField(model.annualTotalHoursProperty(), model.annualTotalHoursIsValidProperty(), 0, 8760);
 
         toggleGroup.selectedToggleProperty().addListener((obs, ov, nv) -> {
             if (nv != null) {
                 if (nv.getUserData() == ResourceType.OVERHEAD) {
-                    effectiveWorkingHoursField.setDisable(true);
+                    totalHoursField.setDisable(true);
                 } else if (nv.getUserData() == ResourceType.PRODUCTION) {
-                    effectiveWorkingHoursField.setDisable(false);
+                    totalHoursField.setDisable(false);
                 }
             }
         });
 
-        effectiveWorkingHoursField.setDisable(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
+        totalHoursField.setDisable(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
         var annuallyGrid = TwoColGridPane.styled()
                 .add(Labels.bound(LocalizedText.SALARY), salaryField)
-                .add(Labels.bound(LocalizedText.TOTAL_HOURS), effectiveWorkingHoursField);
+                .add(Labels.bound(LocalizedText.TOTAL_HOURS), totalHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
         var effectivenessField = Fields.percentageTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());
@@ -123,7 +123,7 @@ public class AddProfileView implements View {
                 overheadRadio,
                 productionRadio,
                 salaryField,
-                effectiveWorkingHoursField,
+                totalHoursField,
                 effectivenessField,
                 hoursPerDayField
         );
