@@ -93,7 +93,7 @@ public class AddProfileInteractor {
         var profile = new Profile();
         profile.annualSalary(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
         profile.effectiveness(new BigDecimal(model.effectivenessProperty().get()));
-        profile.effectiveWorkHours(new BigDecimal(model.annualEffectiveWorkingHoursProperty().get()));
+        profile.totalHours(new BigDecimal(model.annualEffectiveWorkingHoursProperty().get()));
         profile.hoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
         profile.profileData(profileData);
 

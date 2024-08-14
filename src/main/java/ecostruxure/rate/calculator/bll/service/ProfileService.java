@@ -62,21 +62,21 @@ public class ProfileService {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(new BigDecimal("100.00"), GENERAL_SCALE, ROUNDING_MODE);
-        return profile.effectiveWorkHours().multiply(percentageAsDecimal);
+        return profile.totalHours().multiply(percentageAsDecimal);
     }
 
     public BigDecimal hourlyRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
-        if(profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) == 0) {
+        if(profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-        return annualCost(profile).divide(profile.effectiveWorkHours(), GENERAL_SCALE, ROUNDING_MODE);
+        return annualCost(profile).divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
     public BigDecimal hourlyRate(ProfileHistory profile) {
         Objects.requireNonNull(profile, "ProfileHistory cannot be null");
 
-        return annualCost(profile).divide(profile.effectiveWorkHours(), GENERAL_SCALE, ROUNDING_MODE);
+        return annualCost(profile).divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
     public BigDecimal hourlyRate(Profile profile, BigDecimal utilizationPercentage) {
@@ -194,7 +194,7 @@ public class ProfileService {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(profile.annualSalary(), "Annual salary cannot be null");
         Objects.requireNonNull(profile.effectiveness(), "Effectiveness cannot be null");
-        Objects.requireNonNull(profile.effectiveWorkHours(), "Effective work hours cannot be null");
+        Objects.requireNonNull(profile.totalHours(), "Effective work hours cannot be null");
         Objects.requireNonNull(profile.profileData(), "Profile data cannot be null");
         Objects.requireNonNull(profile.profileData().name(), "Profile name cannot be null");
         Objects.requireNonNull(profile.profileData().currency(), "Profile currency cannot be null");
@@ -214,7 +214,7 @@ public class ProfileService {
         if (profile.annualSalary().compareTo(new BigDecimal("999999999999999.9999")) > 0)
             throw new IllegalArgumentException("Annual salary must be less than or equal to 999999999999999.9999");
 
-         if (profile.effectiveWorkHours().compareTo(new BigDecimal("8760")) > 0)
+         if (profile.totalHours().compareTo(new BigDecimal("8760")) > 0)
             throw new IllegalArgumentException("Effective work hours must be less than or equal to 8760");
     }
 
@@ -224,7 +224,7 @@ public class ProfileService {
 
         // Tjek scale af numeriske felter
         if (profile.effectiveness().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
-        if (profile.effectiveWorkHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
+        if (profile.totalHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
         if (profile.hoursPerDay().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
     }
 

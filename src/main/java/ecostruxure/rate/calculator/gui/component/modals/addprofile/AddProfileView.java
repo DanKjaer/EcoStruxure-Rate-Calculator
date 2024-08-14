@@ -103,7 +103,7 @@ public class AddProfileView implements View {
         effectiveWorkingHoursField.setDisable(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
         var annuallyGrid = TwoColGridPane.styled()
                 .add(Labels.bound(LocalizedText.SALARY), salaryField)
-                .add(Labels.bound(LocalizedText.EFFECTIVE_WORKING_HOURS), effectiveWorkingHoursField);
+                .add(Labels.bound(LocalizedText.TOTAL_HOURS), effectiveWorkingHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
         var effectivenessField = Fields.percentageTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());

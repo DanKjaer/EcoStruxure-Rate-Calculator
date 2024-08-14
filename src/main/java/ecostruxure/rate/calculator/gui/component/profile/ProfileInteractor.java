@@ -89,7 +89,7 @@ public class ProfileInteractor {
 
         model.saveModel().annualSalaryProperty().set(String.valueOf(profile.annualSalary()));
         model.saveModel().effectivenessProperty().set(String.valueOf(profile.effectiveness()));
-        model.saveModel().annualEffectiveWorkingHoursProperty().set(String.valueOf(profile.effectiveWorkHours()));
+        model.saveModel().annualEffectiveWorkingHoursProperty().set(String.valueOf(profile.totalHours()));
         model.saveModel().hoursPerDayProperty().set(String.valueOf(profile.hoursPerDay()));
 
         model.saveModel().locations().setAll(addProfileGeographyItemModels);
@@ -218,7 +218,7 @@ public class ProfileInteractor {
 
         profile.annualSalary(new BigDecimal(saveModel.annualSalaryProperty().get()));
         profile.effectiveness(new BigDecimal(saveModel.effectivenessProperty().get()));
-        profile.effectiveWorkHours(new BigDecimal(saveModel.annualEffectiveWorkingHoursProperty().get()));
+        profile.totalHours(new BigDecimal(saveModel.annualEffectiveWorkingHoursProperty().get()));
         profile.hoursPerDay(new BigDecimal(saveModel.hoursPerDayProperty().get()));
         profile.profileData(profileData);
 
@@ -251,7 +251,7 @@ public class ProfileInteractor {
 
         historyModel.setAnnualSalary(profile.annualSalary());
         historyModel.effectivenessProperty().set(profile.effectiveness());
-        historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());
+        historyModel.effectiveWorkHoursProperty().set(profile.totalHours());
         historyModel.hoursPerDayProperty().set(profile.hoursPerDay());
         historyModel.updatedAtProperty().set(currentDateTime);
         historyModel.setHourlyRate(profileService.hourlyRate(profile));
@@ -275,7 +275,7 @@ public class ProfileInteractor {
 
             historyModel.setAnnualSalary(profile.annualSalary());
             historyModel.effectivenessProperty().set(profile.effectiveness());
-            historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());
+            historyModel.effectiveWorkHoursProperty().set(profile.totalHours());
             historyModel.hoursPerDayProperty().set(profile.hoursPerDay());
             historyModel.updatedAtProperty().set(profile.updatedAt());
             historyModel.setHourlyRate(profileService.hourlyRate(profile));

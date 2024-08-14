@@ -16,10 +16,10 @@ public class RateUtils {
     // Basic rate calculation methods
     public static BigDecimal hourlyRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
-        if(profile.effectiveWorkHours().compareTo(BigDecimal.ZERO) == 0) {
+        if(profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-        return annualCost(profile).divide(profile.effectiveWorkHours(), GENERAL_SCALE, ROUNDING_MODE);
+        return annualCost(profile).divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
     public static BigDecimal dayRate(Profile profile) {
@@ -66,7 +66,7 @@ public class RateUtils {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
-        return profile.effectiveWorkHours().multiply(percentageAsDecimal);
+        return profile.totalHours().multiply(percentageAsDecimal);
     }
 
     public static BigDecimal utilizedHoursPerDay(Profile profile, BigDecimal utilizationPercentage) {
@@ -86,7 +86,7 @@ public class RateUtils {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalEffectiveWorkHours = profiles.stream()
-                .map(Profile::effectiveWorkHours)
+                .map(Profile::totalHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if(totalEffectiveWorkHours.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
@@ -110,7 +110,7 @@ public class RateUtils {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal totalEffectiveWorkHours = profiles.stream()
-                .map(Profile::effectiveWorkHours)
+                .map(Profile::totalHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);

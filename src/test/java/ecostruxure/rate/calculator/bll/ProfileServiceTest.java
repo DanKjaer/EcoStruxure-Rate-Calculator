@@ -23,7 +23,7 @@ class ProfileServiceTest {
 
         profile.annualSalary(new BigDecimal("120000.1234"));
         profile.effectiveness(new BigDecimal("0.15")); // 15%
-        profile.effectiveWorkHours(new BigDecimal("2080"));
+        profile.totalHours(new BigDecimal("2080"));
         profile.hoursPerDay(new BigDecimal("8"));
     }
 
@@ -45,7 +45,7 @@ class ProfileServiceTest {
     void hourlyRateHandlesLargeValues() {
         profile.annualSalary(new BigDecimal("1000000000.0000"));
         profile.effectiveness(new BigDecimal("0.5"));
-        profile.effectiveWorkHours(new BigDecimal("1"));
+        profile.totalHours(new BigDecimal("1"));
         BigDecimal expectedHourlyRate = new BigDecimal("2000000000.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
         assertThat(actualHourlyRate).isEqualTo(expectedHourlyRate);
@@ -62,7 +62,7 @@ class ProfileServiceTest {
     @Test
     void hourlyRateSmallNumbers() {
         profile.annualSalary(new BigDecimal("1.0001"));
-        profile.effectiveWorkHours(new BigDecimal("1000"));
+        profile.totalHours(new BigDecimal("1000"));
         BigDecimal expectedHourlyRate = new BigDecimal("0.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
         assertThat(actualHourlyRate).isEqualTo(expectedHourlyRate);
@@ -72,7 +72,7 @@ class ProfileServiceTest {
     void hourlyRateMaxSalary() {
         profile.annualSalary(new BigDecimal("999999999999999.9999"));
         profile.effectiveness(new BigDecimal("0.20")); // 20%
-        profile.effectiveWorkHours(new BigDecimal("2000.00"));
+        profile.totalHours(new BigDecimal("2000.00"));
         BigDecimal expectedHourlyRate = new BigDecimal("100000000005.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
         assertThat(actualHourlyRate).isEqualTo(expectedHourlyRate);
@@ -82,7 +82,7 @@ class ProfileServiceTest {
     void hourlyRateMinSalary() {
         profile.annualSalary(new BigDecimal("0.0001"));
         profile.effectiveness(new BigDecimal("0.20")); // 20%
-        profile.effectiveWorkHours(new BigDecimal("2000.00"));
+        profile.totalHours(new BigDecimal("2000.00"));
         BigDecimal expectedHourlyRate = new BigDecimal("5.00").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
         assertThat(actualHourlyRate).isEqualTo(expectedHourlyRate);

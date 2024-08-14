@@ -279,7 +279,7 @@ public class ProfileView implements View {
         TableColumn<ProfileTeamItemModel, String> nameColumn = customTableView.createColumn(LocalizedText.NAME, ProfileTeamItemModel::nameProperty);
 
         TableColumn<ProfileTeamItemModel, BigDecimal> utilizationHours = customTableView.createColumn(LocalizedText.UTILIZATION_HOURS, ProfileTeamItemModel::utilizationHoursProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualEffectiveWorkingHours = customTableView.createColumn(LocalizedText.ANNUAL_EFFECTIVE_WORKINGS_HORUS, ProfileTeamItemModel::annualEffectiveWorkingHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualEffectiveWorkingHours = customTableView.createColumn(LocalizedText.ANNUAL_TOTAL_HOURS, ProfileTeamItemModel::annualEffectiveWorkingHoursProperty, new HourCellFactory<>());
 
         TableColumn<ProfileTeamItemModel, BigDecimal> utilization = customTableView.createColumn(LocalizedText.UTILIZATION_RATE, ProfileTeamItemModel::utilizationCostProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> hourlyRate = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileTeamItemModel::hourlyRateProperty, new CurrencyCellFactory<>());

@@ -86,7 +86,7 @@ public class ProfileSaveView implements View {
 
         var annuallyGrid = TwoColGridPane.styled()
                 .add(Labels.bound(LocalizedText.SALARY), annualSalaryField)
-                .add(Labels.bound(LocalizedText.EFFECTIVE_WORKING_HOURS), effectiveWorkingHoursField);
+                .add(Labels.bound(LocalizedText.TOTAL_HOURS), effectiveWorkingHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
         var overheadField = Fields.percentageTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());

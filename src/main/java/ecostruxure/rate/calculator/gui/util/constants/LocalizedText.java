@@ -35,7 +35,7 @@ public class LocalizedText {
     public static final StringProperty UTILIZATION_HOURS  = new SimpleStringProperty("Utilization hour");
     public static final StringProperty HISTORY = new SimpleStringProperty("History");
     public static final StringProperty ANNUAL_COST = new SimpleStringProperty("Annual cost");
-    public static final StringProperty ANNUAL_EFFECTIVE_WORKINGS_HORUS = new SimpleStringProperty("Annual hours");
+    public static final StringProperty ANNUAL_TOTAL_HOURS = new SimpleStringProperty("Annual hours");
     public static final StringProperty PAGE_DASHBOARD_HEADER = new SimpleStringProperty("Dashboard");
     public static final StringProperty PAGE_DASHBOARD_DESCRIPTION = new SimpleStringProperty("Details provided by the different categories.");
     public static final StringProperty PAGE_PROFILES_DESCRIPTION = new SimpleStringProperty("Define and see stats of profiles.");
@@ -93,7 +93,7 @@ public class LocalizedText {
     public static final StringProperty OVERHEAD = new SimpleStringProperty("Overhead");
     public static final StringProperty PRODUCTION = new SimpleStringProperty("Production");
     public static final StringProperty ANNUALLY = new SimpleStringProperty("Annually");
-    public static final StringProperty EFFECTIVE_WORKING_HOURS = new SimpleStringProperty("Effective working hours");
+    public static final StringProperty TOTAL_HOURS = new SimpleStringProperty("Total hours");
     public static final StringProperty SALARY = new SimpleStringProperty("Salary");
     public static final StringProperty VERIFY_PROFILES = new SimpleStringProperty("Verify profiles");
     public static final StringProperty VERIFY_PROFILE_UNARCHIVE = new SimpleStringProperty("At least one profile requires changes before unarchiving.");
@@ -209,7 +209,7 @@ public class LocalizedText {
         UTILIZATION_HOURS.set(bundle.getString("UTILIZATION_HOURS"));
         HISTORY.set(bundle.getString("HISTORY"));
         ANNUAL_COST.set(bundle.getString("ANNUAL_COST"));
-        ANNUAL_EFFECTIVE_WORKINGS_HORUS.set(bundle.getString("ANNUAL_EFFECTIVE_WORKINGS_HORUS"));
+        ANNUAL_TOTAL_HOURS.set(bundle.getString("ANNUAL_TOTAL_HOURS"));
         PAGE_DASHBOARD_HEADER.set(bundle.getString("PAGE_DASHBOARD_HEADER"));
         PAGE_DASHBOARD_DESCRIPTION.set(bundle.getString("PAGE_DASHBOARD_DESCRIPTION"));
         PAGE_PROFILES_DESCRIPTION.set(bundle.getString("PAGE_PROFILES_DESCRIPTION"));
@@ -267,7 +267,7 @@ public class LocalizedText {
         OVERHEAD.set(bundle.getString("OVERHEAD"));
         PRODUCTION.set(bundle.getString("PRODUCTION"));
         ANNUALLY.set(bundle.getString("ANNUALLY"));
-        EFFECTIVE_WORKING_HOURS.set(bundle.getString("EFFECTIVE_WORKING_HOURS"));
+        TOTAL_HOURS.set(bundle.getString("TOTAL_HOURS"));
         SALARY.set(bundle.getString("SALARY"));
         VERIFY_PROFILES.set(bundle.getString("VERIFY_PROFILES"));
         VERIFY_PROFILE_UNARCHIVE.set(bundle.getString("VERIFY_PROFILE_UNARCHIVE"));

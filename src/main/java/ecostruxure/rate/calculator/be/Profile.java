@@ -6,7 +6,7 @@ public class Profile {
     private int id;
     private BigDecimal annualSalary;
     private BigDecimal effectiveness;
-    private BigDecimal effectiveWorkHours;
+    private BigDecimal totalHours;
 
     private BigDecimal utilizationRate;
     private BigDecimal utilizationHours;
@@ -20,12 +20,12 @@ public class Profile {
 
     public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
-                   BigDecimal effectiveWorkHours, boolean overhead,
+                   BigDecimal totalHours, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.id = id;
         this.annualSalary = annualSalary;
         this.effectiveness = effectiveness;
-        this.effectiveWorkHours = effectiveWorkHours;
+        this.totalHours = totalHours;
         this.hoursPerDay = hoursPerDay;
 
         this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
@@ -33,12 +33,12 @@ public class Profile {
 
     public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
-                   BigDecimal effectiveWorkHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
+                   BigDecimal totalHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.id = id;
         this.annualSalary = annualSalary;
         this.effectiveness = effectiveness;
-        this.effectiveWorkHours = effectiveWorkHours;
+        this.totalHours = totalHours;
         this.utilizationRate = setUtilization(utilizationRate);
         this.utilizationHours = setUtilization(utilizationHours);
         this.hoursPerDay = hoursPerDay;
@@ -48,11 +48,11 @@ public class Profile {
 
     public Profile(String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
-                   BigDecimal effectiveWorkHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
+                   BigDecimal totalHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.annualSalary = annualSalary;
         this.effectiveness = effectiveness;
-        this.effectiveWorkHours = effectiveWorkHours;
+        this.totalHours = totalHours;
         this.utilizationRate = setUtilization(utilizationRate);
         this.utilizationHours = setUtilization(utilizationHours);
         this.hoursPerDay = hoursPerDay;
@@ -88,12 +88,12 @@ public class Profile {
         this.effectiveness = effectiveness;
     }
 
-    public BigDecimal effectiveWorkHours() {
-        return effectiveWorkHours;
+    public BigDecimal totalHours() {
+        return totalHours;
     }
 
-    public void effectiveWorkHours(BigDecimal effectiveWorkHours) {
-        this.effectiveWorkHours = effectiveWorkHours;
+    public void totalHours(BigDecimal totalHours) {
+        this.totalHours = totalHours;
     }
 
     public BigDecimal hoursPerDay() {
@@ -134,7 +134,7 @@ public class Profile {
                 "id=" + id +
                 ", annualSalary=" + annualSalary +
                 ", effectiveness=" + effectiveness +
-                ", effectiveWorkHours=" + effectiveWorkHours +
+                ", effectiveWorkHours=" + totalHours +
                 ", utilizationRate=" + utilizationRate +
                 ", utilizationHours=" + utilizationHours +
                 ", hoursPerDay=" + hoursPerDay +
@@ -150,20 +150,20 @@ public class Profile {
         return id == that.id &&
                 Objects.equals(annualSalary, that.annualSalary) &&
                 Objects.equals(effectiveness, that.effectiveness) &&
-                Objects.equals(effectiveWorkHours, that.effectiveWorkHours) &&
+                Objects.equals(totalHours, that.totalHours) &&
                 Objects.equals(hoursPerDay, that.hoursPerDay) &&
                 Objects.equals(profileData.overhead(), that.profileData.overhead());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, annualSalary, effectiveness, effectiveWorkHours, hoursPerDay, profileData.overhead());
+        return Objects.hash(id, annualSalary, effectiveness, totalHours, hoursPerDay, profileData.overhead());
     }
 
     public static void main(String[] args) {
         var p = new Profile();
         p.annualSalary(new BigDecimal("50000.00"));
-        p.effectiveWorkHours(new BigDecimal("6000"));
+        p.totalHours(new BigDecimal("6000"));
         p.effectiveness(new BigDecimal("0.8"));
         p.utilizationRate(new BigDecimal("80"));
         /**
