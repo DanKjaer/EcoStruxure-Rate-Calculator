@@ -9,8 +9,8 @@ public class Profile {
     private BigDecimal totalHours;
     private BigDecimal effectiveWorkHours;
 
-    private BigDecimal utilizationRate;
-    private BigDecimal utilizationHours;
+    private BigDecimal costAllocation;
+    private BigDecimal hourAllocation;
 
     private BigDecimal hoursPerDay;
     private ProfileData profileData;
@@ -35,15 +35,15 @@ public class Profile {
 
     public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
-                   BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
+                   BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal costAllocation, BigDecimal hourAllocation, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.id = id;
         this.annualSalary = annualSalary;
         this.effectiveness = effectiveness;
         this.totalHours = totalHours;
         this.effectiveWorkHours = effectiveWorkHours;
-        this.utilizationRate = setUtilization(utilizationRate);
-        this.utilizationHours = setUtilization(utilizationHours);
+        this.costAllocation = setUtilization(costAllocation);
+        this.hourAllocation = setUtilization(hourAllocation);
         this.hoursPerDay = hoursPerDay;
 
         this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
@@ -51,14 +51,14 @@ public class Profile {
 
     public Profile(String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
-                   BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal utilizationRate, BigDecimal utilizationHours, boolean overhead,
+                   BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal costAllocation, BigDecimal hourAllocation, boolean overhead,
                    BigDecimal hoursPerDay, boolean archived) {
         this.annualSalary = annualSalary;
         this.effectiveness = effectiveness;
         this.totalHours = totalHours;
         this.effectiveWorkHours = effectiveWorkHours;
-        this.utilizationRate = setUtilization(utilizationRate);
-        this.utilizationHours = setUtilization(utilizationHours);
+        this.costAllocation = setUtilization(costAllocation);
+        this.hourAllocation = setUtilization(hourAllocation);
         this.hoursPerDay = hoursPerDay;
 
         this.profileData = new ProfileData(name, currency, geography, overhead, archived);
@@ -112,20 +112,20 @@ public class Profile {
         return hoursPerDay;
     }
 
-    public BigDecimal utilizationRate() {
-        return utilizationRate;
+    public BigDecimal costAllocation() {
+        return costAllocation;
     }
 
-    public void utilizationRate(BigDecimal utilizationRate) {
-        this.utilizationRate = utilizationRate;
+    public void costAllocation(BigDecimal costAllocation) {
+        this.costAllocation = costAllocation;
     }
 
-    public BigDecimal utilizationHours() {
-        return utilizationHours;
+    public BigDecimal hourAllocation() {
+        return hourAllocation;
     }
 
-    public void utilizationHours(BigDecimal utilizationHours) {
-        this.utilizationHours = utilizationHours;
+    public void hourAllocation(BigDecimal hourAllocation) {
+        this.hourAllocation = hourAllocation;
     }
 
     public void hoursPerDay(BigDecimal hoursPerDay) {
@@ -148,8 +148,8 @@ public class Profile {
                 ", effectiveness=" + effectiveness +
                 ", totalHours=" + totalHours +
                 ", effectiveWorkHours=" + effectiveWorkHours +
-                ", utilizationRate=" + utilizationRate +
-                ", utilizationHours=" + utilizationHours +
+                ", costAllocation=" + costAllocation +
+                ", hourAllocation=" + hourAllocation +
                 ", hoursPerDay=" + hoursPerDay +
                 ", profileData=" + profileData +
                 '}';
@@ -180,7 +180,7 @@ public class Profile {
         p.totalHours(new BigDecimal("6000"));
         p.effectiveWorkHours(new BigDecimal("4800"));
         p.effectiveness(new BigDecimal("0.8"));
-        p.utilizationRate(new BigDecimal("80"));
+        p.costAllocation(new BigDecimal("80"));
         /**
          * 500000.00
          * 6000

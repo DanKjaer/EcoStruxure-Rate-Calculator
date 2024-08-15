@@ -7,15 +7,15 @@ public class TeamEditProfileModel {
     private final IntegerProperty teamId = new SimpleIntegerProperty();
     private final StringProperty profileName = new SimpleStringProperty("");
 
-    private final StringProperty utilizationRate = new SimpleStringProperty("");
-    private final BooleanProperty utilizationRateIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty utilizationRateFetched = new SimpleBooleanProperty(false);
-    private final StringProperty utilizationHours = new SimpleStringProperty("");
-    private final BooleanProperty utilizationHoursIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty utilizationHoursFetched = new SimpleBooleanProperty(false);
+    private final StringProperty costAllocation = new SimpleStringProperty("");
+    private final BooleanProperty costAllocationIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty costAllocationFetched = new SimpleBooleanProperty(false);
+    private final StringProperty hourAllocation = new SimpleStringProperty("");
+    private final BooleanProperty hourAllocationIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty hourAllocationFetched = new SimpleBooleanProperty(false);
 
-    private final StringProperty originalUtilizationRate = new SimpleStringProperty("");
-    private final StringProperty originalUtilizationHours = new SimpleStringProperty("");
+    private final StringProperty originalCostAllocation = new SimpleStringProperty("");
+    private final StringProperty originalhourAllocation = new SimpleStringProperty("");
     private final BooleanProperty okToSave = new SimpleBooleanProperty();
 
     public IntegerProperty profileIdProperty() {
@@ -30,36 +30,36 @@ public class TeamEditProfileModel {
         return profileName;
     }
 
-    public StringProperty utilizationRateProperty() {
-        return utilizationRate;
+    public StringProperty costAllocationProperty() {
+        return costAllocation;
     }
 
-    public BooleanProperty utilizationRateIsValidProperty() {
-        return utilizationRateIsValid;
+    public BooleanProperty costAllocationIsValidProperty() {
+        return costAllocationIsValid;
     }
 
-    public BooleanProperty utilizationRateFetchedProperty() {
-        return utilizationRateFetched;
+    public BooleanProperty costAllocationFetchedProperty() {
+        return costAllocationFetched;
     }
 
-    public StringProperty utilizationHoursProperty() {
-        return utilizationHours;
+    public StringProperty hourAllocationProperty() {
+        return hourAllocation;
     }
 
-    public BooleanProperty utilizationHoursIsValidProperty() {
-        return utilizationHoursIsValid;
+    public BooleanProperty hourAllocationIsValidProperty() {
+        return hourAllocationIsValid;
     }
 
-    public BooleanProperty utilizationHoursFetchedProperty() {
-        return utilizationHoursFetched;
+    public BooleanProperty hourAllocationFetchedProperty() {
+        return hourAllocationFetched;
     }
 
-    public StringProperty originalUtilizationRateProperty() {
-        return originalUtilizationRate;
+    public StringProperty originalCostAllocationProperty() {
+        return originalCostAllocation;
     }
 
-    public StringProperty originalUtilizationHoursProperty() {
-        return originalUtilizationHours;
+    public StringProperty originalhourAllocationProperty() {
+        return originalhourAllocation;
     }
 
     public BooleanProperty okToSaveProperty() {

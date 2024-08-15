@@ -25,8 +25,8 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
     private final HBox root;
     private final Label titleLabel;
     private final Label locationLabel;
-    private final Label utilizationRateLabel;
-    private final Label utilizationHoursLabel;
+    private final Label costAllocationLabel;
+    private final Label hourAllocationLabel;
     private CheckBox checkBox;
 
     private BigDecimalSpinner rateSpinner;
@@ -44,18 +44,18 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
         var Vbox = new VBox(0, titleLabel, locationLabel);
         Vbox.setMaxWidth(220);
 
-        utilizationHoursLabel = new Label("", new FontIcon(Icons.CLOCK));
-        utilizationHoursLabel.getStyleClass().add(Styles.TEXT_SMALL);
-        var utilizationHoursBox = new HBox(LayoutConstants.STANDARD_SPACING, getHoursSpinner());
-        utilizationHoursBox.setAlignment(Pos.CENTER_RIGHT);
+        hourAllocationLabel = new Label("", new FontIcon(Icons.CLOCK));
+        hourAllocationLabel.getStyleClass().add(Styles.TEXT_SMALL);
+        var hourAllocationBox = new HBox(LayoutConstants.STANDARD_SPACING, getHoursSpinner());
+        hourAllocationBox.setAlignment(Pos.CENTER_RIGHT);
 
-        utilizationRateLabel = new Label("", new FontIcon(Icons.MONEY));
+        costAllocationLabel = new Label("", new FontIcon(Icons.MONEY));
 
-        utilizationRateLabel.getStyleClass().add(Styles.TEXT_SMALL);
-        var utilizationRateBox = new HBox(LayoutConstants.STANDARD_SPACING, getRateSpinner());
-        utilizationRateBox.setAlignment(Pos.CENTER_RIGHT);
+        costAllocationLabel.getStyleClass().add(Styles.TEXT_SMALL);
+        var costAllocationBox = new HBox(LayoutConstants.STANDARD_SPACING, getRateSpinner());
+        costAllocationBox.setAlignment(Pos.CENTER_RIGHT);
 
-        var ratesBox = new VBox(2, utilizationHoursLabel, utilizationRateLabel);
+        var ratesBox = new VBox(2, hourAllocationLabel, costAllocationLabel);
         ratesBox.setPrefWidth(100);
         ratesBox.setPadding(new Insets(5, 5, 5, 5));
 
@@ -64,7 +64,7 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
                 Vbox,
                 new Spacer(),
                 ratesBox,
-                new HBox(5, utilizationHoursBox, utilizationRateBox)
+                new HBox(5, hourAllocationBox, costAllocationBox)
         );
 
         root.setAlignment(Pos.CENTER_LEFT);
@@ -87,7 +87,7 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
 
             rateSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (getItem() != null) {
-                        getItem().setRateUtilizationProperty().set(newVal);
+                        getItem().setCostAllocationProperty().set(newVal);
 
                     if (!onLoad) {
                         checkBox.setSelected(newVal.compareTo(BigDecimal.ZERO) != 0);
@@ -107,10 +107,10 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
             hoursSpinner.getTextField().setLeft(new FontIcon(Icons.CLOCK));
             hoursSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (getItem() != null) {
-                    getItem().setHourUtilizationProperty().set(newVal);
+                    getItem().setHourAllocationProperty().set(newVal);
 
                     if (!onLoad) {
-                        getItem().setHourUtilizationProperty().set(newVal);
+                        getItem().setHourAllocationProperty().set(newVal);
                         checkBox.setSelected(newVal.compareTo(BigDecimal.ZERO) != 0);
                     }
 
@@ -135,28 +135,28 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
     }
 
     private void updateRateLabel(AddProfileItemModel profileItemModel) {
-        BigDecimal currentRate = profileItemModel.currentRateUtilizationProperty().get();
-        BigDecimal setRate = profileItemModel.setRateUtilizationProperty().get();
+        BigDecimal currentRate = profileItemModel.currentCostAllocationProperty().get();
+        BigDecimal setRate = profileItemModel.setCostAllocationProperty().get();
 
         BigDecimal substracted = currentRate.subtract(setRate);
         if (substracted.compareTo(BigDecimal.ZERO) < 0) {
-            utilizationRateLabel.setText("0%");
+            costAllocationLabel.setText("0%");
             return;
         }
 
-        utilizationRateLabel.setText(substracted + "%");
+        costAllocationLabel.setText(substracted + "%");
     }
 
     private void updateHourLabel(AddProfileItemModel profileItemModel) {
-        BigDecimal currentHours = profileItemModel.currentHourUtilizationProperty().get();
-        BigDecimal setHours = profileItemModel.setHourUtilizationProperty().get();
+        BigDecimal currentHours = profileItemModel.currentHourAllocationProperty().get();
+        BigDecimal setHours = profileItemModel.setHourAllocationProperty().get();
 
         BigDecimal substracted = currentHours.subtract(setHours);
         if (substracted.compareTo(BigDecimal.ZERO) < 0) {
-            utilizationHoursLabel.setText("0%");
+            hourAllocationLabel.setText("0%");
             return;
         }
-        utilizationHoursLabel.setText(substracted + "%");
+        hourAllocationLabel.setText(substracted + "%");
     }
 
     @Override
@@ -168,11 +168,11 @@ public class NestedControlsListCell extends ListCell<AddProfileItemModel> {
             return;
         }
 
-        rateSpinner.setValue(profileItemModel.setRateUtilizationProperty().get());
-        rateSpinner.setMaximum(profileItemModel.currentRateUtilizationProperty().get());
+        rateSpinner.setValue(profileItemModel.setCostAllocationProperty().get());
+        rateSpinner.setMaximum(profileItemModel.currentCostAllocationProperty().get());
 
-        hoursSpinner.setValue(profileItemModel.setHourUtilizationProperty().get());
-        hoursSpinner.setMaximum(profileItemModel.currentHourUtilizationProperty().get());
+        hoursSpinner.setValue(profileItemModel.setHourAllocationProperty().get());
+        hoursSpinner.setMaximum(profileItemModel.currentHourAllocationProperty().get());
 
         updateRateLabel(profileItemModel);
         updateHourLabel(profileItemModel);

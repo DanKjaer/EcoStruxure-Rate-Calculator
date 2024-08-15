@@ -28,13 +28,13 @@ public class TeamEditProfileView implements View {
         StringExpression combinedTitle = Bindings.concat(LocalizedText.TEAM_PROFILE_EDIT_TITLE, " ", model.profileNameProperty());
 
         var nameLabel = Labels.bound(combinedTitle);
-        var rateField = Fields.percentageTextField(model.utilizationRateProperty(), model.utilizationRateIsValidProperty());
-        rateField.disableProperty().bind(model.utilizationRateFetchedProperty().not());
-        var rateBox = new VBox(Labels.bound(LocalizedText.UTILIZATION_RATE), rateField);
+        var rateField = Fields.percentageTextField(model.costAllocationProperty(), model.costAllocationIsValidProperty());
+        rateField.disableProperty().bind(model.costAllocationFetchedProperty().not());
+        var rateBox = new VBox(Labels.bound(LocalizedText.COST_ALLOCATION), rateField);
 
-        var hoursField = Fields.percentageTextField(model.utilizationHoursProperty(), model.utilizationHoursIsValidProperty());
-        hoursField.disableProperty().bind(model.utilizationHoursFetchedProperty().not());
-        var hoursBox = new VBox(Labels.bound(LocalizedText.UTILIZATION_HOURS), hoursField);
+        var hoursField = Fields.percentageTextField(model.hourAllocationProperty(), model.hourAllocationIsValidProperty());
+        hoursField.disableProperty().bind(model.hourAllocationFetchedProperty().not());
+        var hoursBox = new VBox(Labels.bound(LocalizedText.HOUR_ALLOCATION), hoursField);
 
         tabOrderConsumer.accept(List.of(rateField, hoursField));
 

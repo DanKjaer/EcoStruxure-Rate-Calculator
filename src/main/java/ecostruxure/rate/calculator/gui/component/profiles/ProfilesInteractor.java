@@ -2,13 +2,11 @@ package ecostruxure.rate.calculator.gui.component.profiles;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.ProfileData;
-import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
-import ecostruxure.rate.calculator.gui.component.teams.TeamItemModel;
 import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
@@ -58,16 +56,16 @@ public class ProfilesInteractor {
             profileItemModel.idProperty().set(profile.id());
             profileItemModel.nameProperty().set(profile.profileData().name());
 
-            BigDecimal utilizationRate = profileService.getTotalRateUtilization(profile.id());
-            BigDecimal utilizationHours = profileService.getTotalHourUtilization(profile.id());
+            BigDecimal costAllocation = profileService.getTotalCostAllocation(profile.id());
+            BigDecimal hourAllocation = profileService.getTotalHourAllocation(profile.id());
 
-            profileItemModel.utilizationHoursProperty().set(utilizationHours);
-            profileItemModel.hoursProperty().set(RateUtils.utilizedHours(profile, utilizationHours));
+            profileItemModel.hourAllocationProperty().set(hourAllocation);
+            profileItemModel.hoursProperty().set(RateUtils.utilizedHours(profile, hourAllocation));
 
-            profileItemModel.utilizationRateProperty().set(utilizationRate);
-            profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, utilizationRate));
-            profileItemModel.setDayRate(RateUtils.dayRate(profile, utilizationRate));
-            profileItemModel.setAnnualCost(RateUtils.annualCost(profile, utilizationRate));
+            profileItemModel.costAllocationProperty().set(costAllocation);
+            profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, costAllocation));
+            profileItemModel.setDayRate(RateUtils.dayRate(profile, costAllocation));
+            profileItemModel.setAnnualCost(RateUtils.annualCost(profile, costAllocation));
             profileItemModel.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
 
             profileItemModel.teamsProperty().set(String.valueOf(profileService.getTeams(profile).size()));

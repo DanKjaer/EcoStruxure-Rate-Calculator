@@ -3,8 +3,6 @@ package ecostruxure.rate.calculator.gui.component.team;
 import atlantafx.base.controls.Spacer;
 import atlantafx.base.theme.Styles;
 import ecostruxure.rate.calculator.be.TeamHistory.Reason;
-import ecostruxure.rate.calculator.be.TeamProfileHistory;
-import ecostruxure.rate.calculator.gui.common.ModalController;
 import ecostruxure.rate.calculator.gui.common.View;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
@@ -24,8 +22,6 @@ import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.*;
 import ecostruxure.rate.calculator.gui.widget.tables.contextmenu.CustomContextMenu;
 import ecostruxure.rate.calculator.gui.widget.tables.contextmenu.MenuItemInfo;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -38,7 +34,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
-import org.apache.commons.collections4.bag.HashBag;
 import org.controlsfx.control.SegmentedButton;
 import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.feather.Feather;
@@ -46,11 +41,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -374,15 +367,13 @@ public class TeamView implements View {
             };
         });
 
-        TableColumn<ProfileItemModel, BigDecimal> utilizationHoursColumn = customTableView.createColumn(LocalizedText.UTILIZATION_HOURS, ProfileItemModel::utilizationHoursProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileItemModel::hourAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> hourColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
 
-        TableColumn<ProfileItemModel, BigDecimal> utilizationRateColumn = customTableView.createColumn(LocalizedText.UTILIZATION_RATE, ProfileItemModel::utilizationRateProperty, new PercentageCellFactory<>());
-        //TableColumn<ProfileItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
-        //TableColumn<ProfileItemModel, BigDecimal> hourRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileItemModel::dayRateProperty, new CurrencyCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> costAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, utilizationHoursColumn, hourColumn, utilizationRateColumn, annualCostColumn)); //, dayRateColumn, hourRateColumn
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, hourColumn, costAllocationColumn, annualCostColumn)); //, dayRateColumn, hourRateColumn
     }
 
     private void profileConfigureContextMenu(TableView<ProfileItemModel> tableView) {
@@ -540,9 +531,9 @@ public class TeamView implements View {
 
     private void historyDetailTableColumns() {
         TableColumn<TeamHistoryProfileItemModel, String> nameColumn = detailTableView.createColumn(LocalizedText.NAME, TeamHistoryProfileItemModel::nameProperty);
-        TableColumn<TeamHistoryProfileItemModel, BigDecimal> utilizationHoursColumn = detailTableView.createColumn(LocalizedText.UTILIZATION_HOURS, TeamHistoryProfileItemModel::utilizationHoursProperty, new PercentageCellFactory<>());
+        TableColumn<TeamHistoryProfileItemModel, BigDecimal> hourAllocationColumn = detailTableView.createColumn(LocalizedText.HOUR_ALLOCATION, TeamHistoryProfileItemModel::hourAllocationProperty, new PercentageCellFactory<>());
         TableColumn<TeamHistoryProfileItemModel, BigDecimal> contributedHours = detailTableView.createColumn(LocalizedText.HOURS, TeamHistoryProfileItemModel::totalHoursProperty, new HourCellFactory<>());
-        TableColumn<TeamHistoryProfileItemModel, BigDecimal> utilizationRateColumn = detailTableView.createColumn(LocalizedText.UTILIZATION_RATE, TeamHistoryProfileItemModel::utilizationRateProperty, new PercentageCellFactory<>());
+        TableColumn<TeamHistoryProfileItemModel, BigDecimal> costAllocationColumn = detailTableView.createColumn(LocalizedText.COST_ALLOCATION, TeamHistoryProfileItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<TeamHistoryProfileItemModel, BigDecimal> hourlyRateColumn = detailTableView.createColumn(LocalizedText.HOURLY_RATE, TeamHistoryProfileItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
         TableColumn<TeamHistoryProfileItemModel, BigDecimal> dayRateColumn = detailTableView.createColumn(LocalizedText.DAY_RATE, TeamHistoryProfileItemModel::dayRateProperty, new CurrencyCellFactory<>());
 
@@ -560,6 +551,6 @@ public class TeamView implements View {
         optionsColumn.setMaxWidth(50);
         optionsColumn.setMinWidth(50);
 
-        detailTableView.addColumnsToPagination(Arrays.asList(nameColumn, utilizationHoursColumn, contributedHours, utilizationRateColumn, hourlyRateColumn, dayRateColumn));
+        detailTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, contributedHours, costAllocationColumn, hourlyRateColumn, dayRateColumn));
     }
 }

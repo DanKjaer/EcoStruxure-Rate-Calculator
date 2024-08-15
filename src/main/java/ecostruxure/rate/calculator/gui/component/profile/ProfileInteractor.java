@@ -11,7 +11,6 @@ import ecostruxure.rate.calculator.gui.component.profile.ProfileModel.ProfileTab
 import ecostruxure.rate.calculator.gui.system.currency.CurrencyManager;
 import ecostruxure.rate.calculator.gui.system.currency.CurrencyManager.CurrencyType;
 import javafx.beans.binding.Bindings;
-import org.apache.poi.ss.formula.functions.Rate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -315,17 +314,17 @@ public class ProfileInteractor {
             ProfileTeamItemModel teamModel = new ProfileTeamItemModel();
             teamModel.idProperty().set(team.id());
             teamModel.nameProperty().set(team.name());
-            BigDecimal utilizationRate = profileService.getProfileRateUtilizationForTeam(profile.id(), team.id());
-            BigDecimal utilizationHours = profileService.getProfileHourUtilizationForTeam(profile.id(), team.id());
+            BigDecimal costAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), team.id());
+            BigDecimal hourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), team.id());
 
-            teamModel.utilizationCostProperty().set(utilizationRate);
-            teamModel.utilizationHoursProperty().set(utilizationHours);
+            teamModel.costAllocationProperty().set(costAllocation);
+            teamModel.hourAllocationProperty().set(hourAllocation);
 
-            BigDecimal hourlyRate = RateUtils.hourlyRate(profile, utilizationRate);
-            BigDecimal dayRate = RateUtils.dayRate(profile, utilizationRate);
-            BigDecimal annualCost = RateUtils.annualCost(profile, utilizationRate);
+            BigDecimal hourlyRate = RateUtils.hourlyRate(profile, costAllocation);
+            BigDecimal dayRate = RateUtils.dayRate(profile, costAllocation);
+            BigDecimal annualCost = RateUtils.annualCost(profile, costAllocation);
 
-            BigDecimal annualTotalHours = RateUtils.utilizedHours(profile, utilizationHours);
+            BigDecimal annualTotalHours = RateUtils.utilizedHours(profile, hourAllocation);
             BigDecimal effectiveWorkHours = RateUtils.effectiveWorkHours(profile);
 
             teamModel.setHourlyRate(hourlyRate);

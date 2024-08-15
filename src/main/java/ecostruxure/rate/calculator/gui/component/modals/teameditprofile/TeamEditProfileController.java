@@ -1,6 +1,5 @@
 package ecostruxure.rate.calculator.gui.component.modals.teameditprofile;
 
-import ecostruxure.rate.calculator.gui.component.team.TeamController;
 import ecostruxure.rate.calculator.gui.component.teams.TeamsController;
 import ecostruxure.rate.calculator.gui.system.background.BackgroundTaskEvent;
 import ecostruxure.rate.calculator.gui.component.teams.TeamDataId;
@@ -42,13 +41,13 @@ public class TeamEditProfileController implements ModalController {
             model.teamIdProperty().set(teamData.teamId());
             model.profileIdProperty().set(teamData.profileId());
             model.profileNameProperty().set("");
-            model.utilizationRateFetchedProperty().set(false);
-            model.utilizationRateProperty().set("");
-            model.utilizationHoursFetchedProperty().set(false);
-            model.utilizationHoursProperty().set("");
+            model.costAllocationFetchedProperty().set(false);
+            model.costAllocationProperty().set("");
+            model.hourAllocationFetchedProperty().set(false);
+            model.hourAllocationProperty().set("");
 
-            model.originalUtilizationHoursProperty().set("");
-            model.originalUtilizationRateProperty().set("");
+            model.originalhourAllocationProperty().set("");
+            model.originalCostAllocationProperty().set("");
 
             fetchTeamProfile(teamData.teamId(), teamData.profileId());
         }

@@ -11,7 +11,6 @@ import javafx.beans.binding.StringBinding;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,17 +64,17 @@ public class AddTeamInteractor {
         List<AddProfileItemModel> profileItemModels = new ArrayList<>();
 
         for (Profile profile : profiles) {
-            if (!profileService.shouldProcessUtilization(profile.utilizationRate()))
+            if (!profileService.shouldProcessUtilization(profile.costAllocation()))
                 continue;
 
             AddProfileItemModel profileItemModel = new AddProfileItemModel();
             profileItemModel.idProperty().set(profile.id());
             profileItemModel.nameProperty().set(profile.profileData().name());
 
-            profileItemModel.currentRateUtilizationProperty().set(new BigDecimal(100).subtract(profile.utilizationRate()));
-            profileItemModel.setRateUtilizationProperty().set(BigDecimal.ZERO);
-            profileItemModel.currentHourUtilizationProperty().set(new BigDecimal(100).subtract(profile.utilizationHours()));
-            profileItemModel.setHourUtilizationProperty().set(BigDecimal.ZERO);
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.costAllocation()));
+            profileItemModel.setCostAllocationProperty().set(BigDecimal.ZERO);
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.hourAllocation()));
+            profileItemModel.setHourAllocationProperty().set(BigDecimal.ZERO);
 
             profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
 
@@ -99,8 +98,8 @@ public class AddTeamInteractor {
         var profile = new Profile();
         profile.id(model.idProperty().get());
         profile.profileData(profileData);
-        profile.utilizationRate(model.setRateUtilizationProperty().get());
-        profile.utilizationHours(model.setHourUtilizationProperty().get());
+        profile.costAllocation(model.setCostAllocationProperty().get());
+        profile.hourAllocation(model.setHourAllocationProperty().get());
 
         return profile;
     }

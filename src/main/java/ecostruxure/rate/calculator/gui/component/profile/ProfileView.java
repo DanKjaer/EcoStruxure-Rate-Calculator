@@ -275,16 +275,16 @@ public class ProfileView implements View {
         CustomTableView<ProfileTeamItemModel> customTableView = new CustomTableView<>();
         TableColumn<ProfileTeamItemModel, String> nameColumn = customTableView.createColumn(LocalizedText.NAME, ProfileTeamItemModel::nameProperty);
 
-        TableColumn<ProfileTeamItemModel, BigDecimal> utilizationHours = customTableView.createColumn(LocalizedText.UTILIZATION_HOURS, ProfileTeamItemModel::utilizationHoursProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocation = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualTotalHours = customTableView.createColumn(LocalizedText.ANNUAL_TOTAL_HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
 
-        TableColumn<ProfileTeamItemModel, BigDecimal> utilization = customTableView.createColumn(LocalizedText.UTILIZATION_RATE, ProfileTeamItemModel::utilizationCostProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> utilization = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> hourlyRate = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileTeamItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> dayRate = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileTeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualCost = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualCostProperty, new CurrencyCellFactory<>());
 
 
-        TableView<ProfileTeamItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(nameColumn, utilizationHours, annualTotalHours, utilization, hourlyRate, dayRate, annualCost));
+        TableView<ProfileTeamItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(nameColumn, hourAllocation, annualTotalHours, utilization, hourlyRate, dayRate, annualCost));
         tableView.getStyleClass().add(Styles.STRIPED);
 
         tableItems.comparatorProperty().bind(tableView.comparatorProperty());

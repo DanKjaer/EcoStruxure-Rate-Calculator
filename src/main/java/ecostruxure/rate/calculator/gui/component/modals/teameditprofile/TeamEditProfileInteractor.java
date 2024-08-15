@@ -20,8 +20,8 @@ public class TeamEditProfileInteractor {
             onFetchError.run();
         }
 
-        model.utilizationRateIsValidProperty().bind(model.utilizationRateProperty().isNotEmpty());
-        model.utilizationHoursIsValidProperty().bind(model.utilizationHoursProperty().isNotEmpty());
+        model.costAllocationIsValidProperty().bind(model.costAllocationProperty().isNotEmpty());
+        model.hourAllocationIsValidProperty().bind(model.hourAllocationProperty().isNotEmpty());
 
         configureSaveBindings();
 
@@ -40,8 +40,8 @@ public class TeamEditProfileInteractor {
         model.okToSaveProperty().unbind();
         model.okToSaveProperty().bind(Bindings.createBooleanBinding(
                 () -> isDataValid() && hasDataChanged(),
-                model.utilizationRateProperty(), model.utilizationRateFetchedProperty(),
-                model.utilizationHoursProperty(), model.utilizationHoursFetchedProperty())
+                model.costAllocationProperty(), model.costAllocationFetchedProperty(),
+                model.hourAllocationProperty(), model.hourAllocationFetchedProperty())
         );
     }
 
@@ -51,31 +51,31 @@ public class TeamEditProfileInteractor {
     }
 
     public void updateModel() {
-        model.utilizationRateProperty().set(profile.utilizationRate().toString());
-        model.originalUtilizationRateProperty().set(profile.utilizationRate().toString());
+        model.costAllocationProperty().set(profile.costAllocation().toString());
+        model.originalCostAllocationProperty().set(profile.costAllocation().toString());
         model.profileNameProperty().set(profile.profileData().name());
-        model.utilizationRateFetchedProperty().set(true);
-        model.utilizationHoursProperty().set(profile.utilizationHours().toString());
-        model.originalUtilizationHoursProperty().set(profile.utilizationHours().toString());
-        model.utilizationHoursFetchedProperty().set(true);
+        model.costAllocationFetchedProperty().set(true);
+        model.hourAllocationProperty().set(profile.hourAllocation().toString());
+        model.originalhourAllocationProperty().set(profile.hourAllocation().toString());
+        model.hourAllocationFetchedProperty().set(true);
     }
 
     private boolean hasDataChanged() {
-        return !model.utilizationRateProperty().get().equals(model.originalUtilizationRateProperty().get()) ||
-                !model.utilizationHoursProperty().get().equals(model.originalUtilizationHoursProperty().get());
+        return !model.costAllocationProperty().get().equals(model.originalCostAllocationProperty().get()) ||
+                !model.hourAllocationProperty().get().equals(model.originalhourAllocationProperty().get());
     }
 
     private boolean isDataValid() {
-        return model.utilizationRateProperty().isNotEmpty().get() &&
-                model.utilizationRateFetchedProperty().get() &&
-                model.utilizationHoursProperty().isNotEmpty().get() &&
-                model.utilizationHoursFetchedProperty().get();
+        return model.costAllocationProperty().isNotEmpty().get() &&
+                model.costAllocationFetchedProperty().get() &&
+                model.hourAllocationProperty().isNotEmpty().get() &&
+                model.hourAllocationFetchedProperty().get();
     }
 
     public boolean saveTeamProfile() {
         try {
-            profile.utilizationRate(new BigDecimal(model.utilizationRateProperty().get()));
-            profile.utilizationHours(new BigDecimal(model.utilizationHoursProperty().get()));
+            profile.costAllocation(new BigDecimal(model.costAllocationProperty().get()));
+            profile.hourAllocation(new BigDecimal(model.hourAllocationProperty().get()));
 
             return teamService.updateProfile(model.teamIdProperty().get(), profile);
         } catch (Exception e) {

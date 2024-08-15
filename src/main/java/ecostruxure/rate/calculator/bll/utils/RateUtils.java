@@ -99,7 +99,6 @@ public class RateUtils {
         return profile.hoursPerDay().multiply(percentageAsDecimal);
     }
 
-    //This method causes the / by zero error.
     public static BigDecimal teamHourlyRate(List<Profile> profiles) {
         Objects.requireNonNull(profiles, "Profiles cannot be null");
 
@@ -113,7 +112,10 @@ public class RateUtils {
         if(totalHours.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
+
         BigDecimal totalHourlyRate = totalAnnualCost.divide(totalHours, GENERAL_SCALE, ROUNDING_MODE);
+        System.out.println("totalHourlyRate: " + totalHourlyRate);
+
         return totalHourlyRate;
     }
 

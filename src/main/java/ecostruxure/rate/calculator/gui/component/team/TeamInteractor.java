@@ -98,8 +98,8 @@ public class TeamInteractor {
 
                 profileItemModel.nameProperty().set(profile.profileData().name());
                 profileItemModel.profileIdProperty().set(teamProfileHistory.profileHistoryId());
-                profileItemModel.utilizationRateProperty().set(teamProfileHistory.utilizationRate());
-                profileItemModel.utilizationHoursProperty().set(teamProfileHistory.utilizationHours());
+                profileItemModel.costAllocationProperty().set(teamProfileHistory.costAllocation());
+                profileItemModel.hourAllocationProperty().set(teamProfileHistory.hourAllocation());
                 profileItemModel.setHourlyRate(teamProfileHistory.hourlyRate());
                 profileItemModel.setDayRate(teamProfileHistory.dayRate());
                 profileItemModel.setAnnualCost(teamProfileHistory.annualCost());
@@ -128,13 +128,13 @@ public class TeamInteractor {
             profileItemModel.idProperty().set(profile.id());
             profileItemModel.nameProperty().set(profile.profileData().name());
 
-            profileItemModel.utilizationRateProperty().set(profile.utilizationRate());
-            profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, profile.utilizationRate()));
-            profileItemModel.setDayRate(RateUtils.dayRate(profile, profile.utilizationRate()));
-            profileItemModel.setAnnualCost(RateUtils.annualCost(profile, profile.utilizationRate()));
+            profileItemModel.costAllocationProperty().set(profile.costAllocation());
+            profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, profile.costAllocation()));
+            profileItemModel.setDayRate(RateUtils.dayRate(profile, profile.costAllocation()));
+            profileItemModel.setAnnualCost(RateUtils.annualCost(profile, profile.costAllocation()));
 
-            profileItemModel.utilizationHoursProperty().set(profile.utilizationHours());
-            profileItemModel.hoursProperty().set(RateUtils.utilizedHours(profile, profile.utilizationHours()));
+            profileItemModel.hourAllocationProperty().set(profile.hourAllocation());
+            profileItemModel.hoursProperty().set(RateUtils.utilizedHours(profile, profile.hourAllocation()));
 
             totalHorus = totalHorus.add(profileItemModel.hoursProperty().get());
 

@@ -172,41 +172,20 @@ public class TeamProfileManagementService {
     }
 
     private ProfileMetrics calculateMetrics(Profile profile, int teamid, TransactionContext context) throws Exception {
-        BigDecimal utilizationRate = profileDAO.getProfileRateUtilizationForTeam(context, profile.id(), teamid);
-        BigDecimal utilizationHours = profileDAO.getProfileHourUtilizationForTeam(context, profile.id(), teamid);
+        BigDecimal costAllocation = profileDAO.getProfileCostAllocationForTeam(context, profile.id(), teamid);
+        BigDecimal hourAllocation = profileDAO.getProfileHourAllocationForTeam(context, profile.id(), teamid);
 
         profileDAO.get(context, profile.id());
 
         return new ProfileMetrics(
-                RateUtils.hourlyRate(profile, utilizationRate),
-                RateUtils.dayRate(profile, utilizationRate),
-                RateUtils.annualCost(profile, utilizationRate),
-                RateUtils.utilizedHours(profile, utilizationHours),
-                utilizationRate,
-                utilizationHours
+                RateUtils.hourlyRate(profile, costAllocation),
+                RateUtils.dayRate(profile, costAllocation),
+                RateUtils.annualCost(profile, costAllocation),
+                RateUtils.utilizedHours(profile, hourAllocation),
+                costAllocation,
+                hourAllocation
         );
     }
-
-//    private TeamMetrics calculateMetrics(int teamId, List<Profile> profiles, TransactionContext context) throws Exception {
-//        BigDecimal annualCost = BigDecimal.ZERO;
-//        BigDecimal totalHours = BigDecimal.ZERO;
-//
-//        for (Profile profile : profiles) {
-//            BigDecimal utilizationRate = profileDAO.getProfileRateUtilizationForTeam(context, profile.id(), teamId);
-//            BigDecimal utilizationHours = profileDAO.getProfileHourUtilizationForTeam(context, profile.id(), teamId);
-//
-//            annualCost = annualCost.add(RateUtils.annualCost(profile, utilizationRate));
-//            totalHours = totalHours.add(RateUtils.utilizedHours(profile, utilizationHours));
-//        }
-//        if(totalHours.compareTo(BigDecimal.ZERO) == 0){
-//            return new TeamMetrics(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
-//        }else {
-//            BigDecimal hourlyRate = annualCost.divide(totalHours, 2, BigDecimal.ROUND_HALF_UP);
-//            BigDecimal dayRate = hourlyRate.multiply(new BigDecimal("8.00"));
-//
-//            return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
-//        }
-//    }
 
     private TeamMetrics calculateMetrics(int teamId, List<Profile> profiles, TransactionContext context) {
         BigDecimal annualCost = RateUtils.teamAnnualCost(profiles);

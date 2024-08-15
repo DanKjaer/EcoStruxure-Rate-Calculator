@@ -166,7 +166,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean assignProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                       INSERT INTO Teams_profiles (teamId, profileId, utilization_rate, utilization_hours) VALUES (?, ?, ?, ?)
+                       INSERT INTO Teams_profiles (teamId, profileId, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -175,8 +175,8 @@ public class TeamDAO implements ITeamDAO {
             for (Profile profile : profiles) {
                 stmt.setInt(1, team.id());
                 stmt.setInt(2, profile.id());
-                stmt.setBigDecimal(3, profile.utilizationRate());
-                stmt.setBigDecimal(4, profile.utilizationHours());
+                stmt.setBigDecimal(3, profile.costAllocation());
+                stmt.setBigDecimal(4, profile.hourAllocation());
                 stmt.addBatch();
             }
 
@@ -195,15 +195,15 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       INSERT INTO Teams_profiles (teamId, profileId, utilization_rate, utilization_hours) VALUES (?, ?, ?, ?)
+                       INSERT INTO Teams_profiles (teamId, profileId, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)
                        """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             for (Profile profile : profiles) {
                 stmt.setInt(1, team.id());
                 stmt.setInt(2, profile.id());
-                stmt.setBigDecimal(3, profile.utilizationRate());
-                stmt.setBigDecimal(4, profile.utilizationHours());
+                stmt.setBigDecimal(3, profile.costAllocation());
+                stmt.setBigDecimal(4, profile.hourAllocation());
                 stmt.addBatch();
             }
 
@@ -217,7 +217,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean updateProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                       UPDATE Teams_profiles SET utilization_rate = ?, utilization_hours = ? WHERE teamId = ? AND profileId = ?
+                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -225,8 +225,8 @@ public class TeamDAO implements ITeamDAO {
             conn.setAutoCommit(false);
 
             for (Profile profile : profiles) {
-                stmt.setBigDecimal(1, profile.utilizationRate());
-                stmt.setBigDecimal(2, profile.utilizationHours());
+                stmt.setBigDecimal(1, profile.costAllocation());
+                stmt.setBigDecimal(2, profile.hourAllocation());
                 stmt.setInt(3, team.id());
                 stmt.setInt(4, profile.id());
                 stmt.addBatch();
@@ -245,14 +245,14 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       UPDATE Teams_profiles SET utilization_rate = ?, utilization_hours = ? WHERE teamId = ? AND profileId = ?
+                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
                        """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
             for (Profile profile : profiles) {
-                stmt.setBigDecimal(1, profile.utilizationRate());
-                stmt.setBigDecimal(2, profile.utilizationHours());
+                stmt.setBigDecimal(1, profile.costAllocation());
+                stmt.setBigDecimal(2, profile.hourAllocation());
                 stmt.setInt(3, team.id());
                 stmt.setInt(4, profile.id());
                 stmt.addBatch();
@@ -269,14 +269,14 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean updateProfile(int teamId, Profile profile) throws Exception {
         String query = """
-                       UPDATE Teams_profiles SET utilization_rate = ?, utilization_hours = ? WHERE teamId = ? AND profileId = ?
+                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
                        """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setBigDecimal(1, profile.utilizationRate());
-            stmt.setBigDecimal(2, profile.utilizationHours());
+            stmt.setBigDecimal(1, profile.costAllocation());
+            stmt.setBigDecimal(2, profile.hourAllocation());
             stmt.setInt(3, teamId);
             stmt.setInt(4, profile.id());
 
@@ -292,13 +292,13 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       UPDATE Teams_profiles SET utilization_rate = ?, utilization_hours = ? WHERE teamId = ? AND profileId = ?
+                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
                        """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
-            stmt.setBigDecimal(1, profile.utilizationRate());
-            stmt.setBigDecimal(2, profile.utilizationHours());
+            stmt.setBigDecimal(1, profile.costAllocation());
+            stmt.setBigDecimal(2, profile.hourAllocation());
             stmt.setInt(3, teamId);
             stmt.setInt(4, profile.id());
 
@@ -359,7 +359,7 @@ public class TeamDAO implements ITeamDAO {
     public List<Profile> getTeamProfiles(int teamId) throws Exception {
         List<Profile> profiles = new ArrayList<>();
         String query = """
-                        SELECT p.*, pd.*, tp.utilization_rate, tp.utilization_hours
+                        SELECT p.*, pd.*, tp.cost_allocation, tp.hour_allocation
                         FROM dbo.Profiles p
                         INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ?
                         INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = FALSE;                    
@@ -383,8 +383,8 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
-                    BigDecimal utilizationRate = rs.getBigDecimal("utilization_rate");
-                    BigDecimal utilizationHours = rs.getBigDecimal("utilization_hours");
+                    BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                    BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
 
                     Profile profile = new Profile(
                             id,
@@ -395,8 +395,8 @@ public class TeamDAO implements ITeamDAO {
                             geography,
                             totalHours,
                             effectiveWorkHours,
-                            utilizationRate,
-                            utilizationHours,
+                            costAllocation,
+                            hourAllocation,
                             overhead,
                             hoursPerDay,
                             archived
@@ -405,6 +405,7 @@ public class TeamDAO implements ITeamDAO {
                     profiles.add(profile);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new Exception("Could not get Profiles for Team from Database.\n" + e.getMessage());
             }
             return profiles;
@@ -415,7 +416,7 @@ public class TeamDAO implements ITeamDAO {
     public Profile getTeamProfile(int teamId, int profileId) throws Exception {
         Profile profile = null;
         String query = """
-                        SELECT p.*, pd.*, tp.utilization_rate, tp.utilization_hours
+                        SELECT p.*, pd.*, tp.cost_allocation, tp.hour_allocation
                         FROM dbo.Profiles p
                         INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ? AND tp.profileID = ?
                         INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = FALSE;                    
@@ -441,8 +442,8 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
-                    BigDecimal utilizationRate = rs.getBigDecimal("utilization_rate");
-                    BigDecimal utilizationHours = rs.getBigDecimal("utilization_hours");
+                    BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                    BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
 
                     return new Profile(
                             id,
@@ -453,8 +454,8 @@ public class TeamDAO implements ITeamDAO {
                             geography,
                             totalHours,
                             effectiveWorkHours,
-                            utilizationRate,
-                            utilizationHours,
+                            costAllocation,
+                            hourAllocation,
                             overhead,
                             hoursPerDay,
                             archived
@@ -549,18 +550,18 @@ public class TeamDAO implements ITeamDAO {
                 SELECT
                     p.*,
                     pd.*,
-                    tp.utilization_rate AS utilization_rate,
-                    tp.utilization_hours,
-                    total_sum.total_utilization_rate,
-                    total_sum.total_utilization_hours
+                    tp.cost_allocation AS cost_allocation,
+                    tp.hour_allocation,
+                    total_sum.total_cost_allocation,
+                    total_sum.total_hour_allocation
                 FROM dbo.Profiles p
                 INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ?
                 INNER JOIN dbo.Profiles_data pd ON p.id = pd.id
                 INNER JOIN
                     (SELECT
                         profileID,
-                        SUM(utilization_rate) AS total_utilization_rate,
-                        SUM(utilization_hours) AS total_utilization_hours
+                        SUM(cost_allocation) AS total_cost_allocation,
+                        SUM(hour_allocation) AS total_hour_allocation
                      FROM dbo.Teams_profiles
                      WHERE teamID != ?
                        AND (SELECT archived FROM dbo.Profiles_data WHERE id = profileID) = 0
@@ -575,14 +576,14 @@ public class TeamDAO implements ITeamDAO {
             stmt.setInt(2, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    BigDecimal utilizationRate = rs.getBigDecimal("utilization_rate");
-                    BigDecimal utilizationRateTotal = rs.getBigDecimal("total_utilization_rate"); // den her ignorer det team man giver, så man skal plus sammen for at se om det er over 100
+                    BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                    BigDecimal costAllocationTotal = rs.getBigDecimal("total_cost_allocation"); // den her ignorer det team man giver, så man skal plus sammen for at se om det er over 100
 
-                    BigDecimal utilizationHours = rs.getBigDecimal("utilization_hours");
-                    BigDecimal utilizationHoursTotal = rs.getBigDecimal("total_utilization_hours");
+                    BigDecimal hourAllocation = rs.getBigDecimal("hourAllocation");
+                    BigDecimal hourAllocationTotal = rs.getBigDecimal("total_hour_allocation");
 
-                    boolean rateIsOK = utilizationRateTotal.add(utilizationRate).compareTo(new BigDecimal("100")) <= 0;
-                    boolean hoursIsOK = utilizationHoursTotal.add(utilizationHours).compareTo(new BigDecimal("100")) <= 0;
+                    boolean rateIsOK = costAllocationTotal.add(costAllocation).compareTo(new BigDecimal("100")) <= 0;
+                    boolean hoursIsOK = hourAllocationTotal.add(hourAllocation).compareTo(new BigDecimal("100")) <= 0;
                     if (rateIsOK && hoursIsOK)
                         continue;
 
@@ -600,8 +601,8 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
 
-                    BigDecimal addedRate = utilizationRateTotal.add(utilizationRate);
-                    BigDecimal addedHours = utilizationHoursTotal.add(utilizationHours);
+                    BigDecimal addedRate = costAllocationTotal.add(costAllocation);
+                    BigDecimal addedHours = hourAllocationTotal.add(hourAllocation);
 
                     Profile profile = new Profile(
                             id,
@@ -712,7 +713,7 @@ public class TeamDAO implements ITeamDAO {
         System.out.println(teamDAO.canUnarchive(20));
         System.out.println(teamDAO.canUnarchive(19));
 
-        System.out.println(profileDAO.getProfileHourUtilizationForTeam(20, 20));
-        System.out.println(profileDAO.getProfileRateUtilizationForTeam(20, 19));
+        System.out.println(profileDAO.getProfileHourAllocationForTeam(20, 20));
+        System.out.println(profileDAO.getProfileCostAllocationForTeam(20, 19));
     }
 }

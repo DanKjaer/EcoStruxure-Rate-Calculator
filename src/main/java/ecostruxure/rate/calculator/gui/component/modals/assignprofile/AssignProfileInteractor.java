@@ -44,20 +44,20 @@ public class AssignProfileInteractor {
             boolean isProfileInTeam = profilesTeams.stream()
                     .anyMatch(profileTeam -> profileTeam.id() == profile.id());
 
-            if (!isProfileInTeam && !profileService.shouldProcessUtilization(profile.utilizationRate()) && !profileService.shouldProcessUtilization(profile.utilizationHours()))
+            if (!isProfileInTeam && !profileService.shouldProcessUtilization(profile.costAllocation()) && !profileService.shouldProcessUtilization(profile.hourAllocation()))
                 continue;
 
             profileItemModel.idProperty().set(profile.id());
             profileItemModel.nameProperty().set(profile.profileData().name());
             profileItemModel.selectedProperty().set(isProfileInTeam);
 
-            BigDecimal profileRateUtilization = profileService.getProfileRateUtilizationForTeam(profile.id(), teamId);
-            profileItemModel.currentRateUtilizationProperty().set(new BigDecimal(100).subtract(profile.utilizationRate()).add(profileRateUtilization));
-            profileItemModel.setRateUtilizationProperty().set(profileRateUtilization);
+            BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), teamId);
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.costAllocation()).add(profileCostAllocation));
+            profileItemModel.setCostAllocationProperty().set(profileCostAllocation);
 
-            BigDecimal profileHourUtilization = profileService.getProfileHourUtilizationForTeam(profile.id(), teamId);
-            profileItemModel.currentHourUtilizationProperty().set(new BigDecimal(100).subtract(profile.utilizationHours()).add(profileHourUtilization));
-            profileItemModel.setHourUtilizationProperty().set(profileHourUtilization);
+            BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), teamId);
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.hourAllocation()).add(profileHourAllocation));
+            profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
 
             profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
 
@@ -81,8 +81,8 @@ public class AssignProfileInteractor {
         var profile = new Profile();
         profile.id(model.idProperty().get());
         profile.profileData(profileData);
-        profile.utilizationRate(model.setRateUtilizationProperty().get());
-        profile.utilizationHours(model.setHourUtilizationProperty().get());
+        profile.costAllocation(model.setCostAllocationProperty().get());
+        profile.hourAllocation(model.setHourAllocationProperty().get());
 
         return profile;
     }
@@ -175,8 +175,8 @@ public class AssignProfileInteractor {
                 .filter(currentProfile -> {
                     // Få fat i den originle profil som passer til den nuværende
                     AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.idProperty().get());
-                    return !currentProfile.setRateUtilizationProperty().get().equals(originalProfile.setRateUtilizationProperty().get()) ||
-                            !currentProfile.setHourUtilizationProperty().get().equals(originalProfile.setHourUtilizationProperty().get());
+                    return !currentProfile.setCostAllocationProperty().get().equals(originalProfile.setCostAllocationProperty().get()) ||
+                            !currentProfile.setHourAllocationProperty().get().equals(originalProfile.setHourAllocationProperty().get());
                 })
                 .map(this::createProfileFromModel)
                 .collect(Collectors.toList());
@@ -217,10 +217,10 @@ public class AssignProfileInteractor {
             AddProfileItemModel copiedProfile = new AddProfileItemModel();
             copiedProfile.idProperty().set(originalProfile.idProperty().get());
             copiedProfile.nameProperty().set(originalProfile.nameProperty().get());
-            copiedProfile.setRateUtilizationProperty().set(originalProfile.setRateUtilizationProperty().get());
-            copiedProfile.currentRateUtilizationProperty().set(originalProfile.currentRateUtilizationProperty().get());
-            copiedProfile.setHourUtilizationProperty().set(originalProfile.setHourUtilizationProperty().get());
-            copiedProfile.currentHourUtilizationProperty().set(originalProfile.currentHourUtilizationProperty().get());
+            copiedProfile.setCostAllocationProperty().set(originalProfile.setCostAllocationProperty().get());
+            copiedProfile.currentCostAllocationProperty().set(originalProfile.currentCostAllocationProperty().get());
+            copiedProfile.setHourAllocationProperty().set(originalProfile.setHourAllocationProperty().get());
+            copiedProfile.currentHourAllocationProperty().set(originalProfile.currentHourAllocationProperty().get());
             copiedProfile.utilizationPercentageIsValidProperty().set(originalProfile.utilizationPercentageIsValidProperty().get());
             copiedProfile.teamIdProperty().set(originalProfile.teamIdProperty().get());
             copiedProfile.locationProperty().set(originalProfile.locationProperty().get());

@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 public class AddProfileItemModel {
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty name = new SimpleStringProperty("");
-    private final ObjectProperty<BigDecimal> setRateUtilization = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> currentRateUtilization = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> setHourUtilization = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> currentHourUtilization = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> setCostAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> currentCostAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> setHourAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> currentHourAllocation = new SimpleObjectProperty<>();
 
     private final BooleanProperty utilizationPercentageIsValidProperty = new SimpleBooleanProperty();
     private final IntegerProperty teamId = new SimpleIntegerProperty();
@@ -27,20 +27,20 @@ public class AddProfileItemModel {
         return name;
     }
 
-    public ObjectProperty<BigDecimal> setRateUtilizationProperty() {
-        return setRateUtilization;
+    public ObjectProperty<BigDecimal> setCostAllocationProperty() {
+        return setCostAllocation;
     }
 
-    public ObjectProperty<BigDecimal> currentRateUtilizationProperty() {
-        return currentRateUtilization;
+    public ObjectProperty<BigDecimal> currentCostAllocationProperty() {
+        return currentCostAllocation;
     }
 
-    public ObjectProperty<BigDecimal> setHourUtilizationProperty() {
-        return setHourUtilization;
+    public ObjectProperty<BigDecimal> setHourAllocationProperty() {
+        return setHourAllocation;
     }
 
-    public ObjectProperty<BigDecimal> currentHourUtilizationProperty() {
-        return currentHourUtilization;
+    public ObjectProperty<BigDecimal> currentHourAllocationProperty() {
+        return currentHourAllocation;
     }
 
     public StringProperty locationProperty() {

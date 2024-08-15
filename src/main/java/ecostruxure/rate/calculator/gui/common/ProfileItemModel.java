@@ -15,8 +15,8 @@ public class ProfileItemModel {
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
     private final StringProperty teams = new SimpleStringProperty("");
     private final StringProperty location = new SimpleStringProperty("");
-    private final ObjectProperty<BigDecimal> utilizationRate = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> utilizationHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
     private final BooleanProperty archived = new SimpleBooleanProperty();
 
 
@@ -48,12 +48,12 @@ public class ProfileItemModel {
         return location;
     }
 
-    public ObjectProperty<BigDecimal> utilizationRateProperty() {
-        return utilizationRate;
+    public ObjectProperty<BigDecimal> costAllocationProperty() {
+        return costAllocation;
     }
 
-    public ObjectProperty<BigDecimal> utilizationHoursProperty() {
-        return utilizationHours;
+    public ObjectProperty<BigDecimal> hourAllocationProperty() {
+        return hourAllocation;
     }
 
     public ObjectProperty<BigDecimal> hoursProperty() {

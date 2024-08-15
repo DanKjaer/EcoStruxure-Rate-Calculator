@@ -30,17 +30,17 @@ public interface IProfileDAO {
     List<Profile> allByGeography(Geography geography) throws Exception;
     List<Profile> allByGeography(int geographyId) throws Exception;
 
-    BigDecimal getTotalRateUtilization(int id) throws Exception;
+    BigDecimal getTotalCostAllocation(int id) throws Exception;
 
-    BigDecimal getTotalHourUtilization(int id) throws Exception;
+    BigDecimal getTotalHourAllocation(int id) throws Exception;
 
-    BigDecimal getProfileRateUtilizationForTeam(int profileId, int teamId) throws Exception;
+    BigDecimal getProfileCostAllocationForTeam(int profileId, int teamId) throws Exception;
 
-    BigDecimal getProfileHourUtilizationForTeam(int profileId, int teamId) throws Exception;
+    BigDecimal getProfileHourAllocationForTeam(int profileId, int teamId) throws Exception;
 
-    BigDecimal getProfileRateUtilizationForTeam(TransactionContext context, int profileId, int teamId) throws Exception;
+    BigDecimal getProfileCostAllocationForTeam(TransactionContext context, int profileId, int teamId) throws Exception;
 
-    BigDecimal getProfileHourUtilizationForTeam(TransactionContext context, int profileId, int teamId) throws Exception;
+    BigDecimal getProfileHourAllocationForTeam(TransactionContext context, int profileId, int teamId) throws Exception;
 
     List<Team> getTeams(Profile profile) throws Exception;
 

@@ -61,7 +61,7 @@ public class HistoryDAO implements IHistoryDAO {
 
         String query = """
                         SELECT tph.team_id, tph.profile_id, tph.profile_history_id, tph.reason,
-                               tph.hourly_rate, tph.day_rate, tph.annual_cost, tph.total_hours, tph.utilization_rate, tph.utilization_hours,
+                               tph.hourly_rate, tph.day_rate, tph.annual_cost, tph.total_hours, tph.cost_allocation, tph.hour_allocation,
                                tph.profile_hourly_rate, tph.profile_day_rate, tph.profile_annual_cost, tph.profile_total_hours, tph.updated_at
                         FROM dbo.Teams_profiles_history tph
                         WHERE tph.team_id = ?
@@ -95,8 +95,8 @@ public class HistoryDAO implements IHistoryDAO {
                     teamProfileHistory.dayRate(rs.getBigDecimal("profile_day_rate"));
                     teamProfileHistory.annualCost(rs.getBigDecimal("profile_annual_cost"));
                     teamProfileHistory.totalHours(rs.getBigDecimal("profile_total_hours"));
-                    teamProfileHistory.utilizationRate(rs.getBigDecimal("utilization_rate"));
-                    teamProfileHistory.utilizationHours(rs.getBigDecimal("utilization_hours"));
+                    teamProfileHistory.costAllocation(rs.getBigDecimal("cost_allocation"));
+                    teamProfileHistory.hourAllocation(rs.getBigDecimal("hour_allocation"));
                     teamProfileHistory.updatedAt(updatedAt);
 
                     teamHistory.teamProfileHistories().add(teamProfileHistory);
@@ -179,7 +179,7 @@ public class HistoryDAO implements IHistoryDAO {
     public void insertTeamProfileHistory(TransactionContext context, int teamId, int profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
-                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, utilization_rate, utilization_hours, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
+                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, cost_allocation, hour_allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
                     """;
 
@@ -195,8 +195,8 @@ public class HistoryDAO implements IHistoryDAO {
             stmt.setBigDecimal(6, teamMetrics.dayRate());
             stmt.setBigDecimal(7, teamMetrics.annualCost());
             stmt.setBigDecimal(8, teamMetrics.totalHours());
-            stmt.setBigDecimal(9, profileMetrics.utilizationRate());
-            stmt.setBigDecimal(10, profileMetrics.utilizationHours());
+            stmt.setBigDecimal(9, profileMetrics.costAllocation());
+            stmt.setBigDecimal(10, profileMetrics.hourAllocation());
             stmt.setBigDecimal(11, profileMetrics.hourlyRate());
             stmt.setBigDecimal(12, profileMetrics.dayRate());
             stmt.setBigDecimal(13, profileMetrics.annualCost());
@@ -211,7 +211,7 @@ public class HistoryDAO implements IHistoryDAO {
     public void insertTeamProfileHistory(TransactionContext context, int teamId, int profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
-                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, utilization_rate, utilization_hours, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
+                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, cost_allocation, hour_Allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                     """;
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
@@ -226,8 +226,8 @@ public class HistoryDAO implements IHistoryDAO {
             stmt.setBigDecimal(6, teamMetrics.dayRate());
             stmt.setBigDecimal(7, teamMetrics.annualCost());
             stmt.setBigDecimal(8, teamMetrics.totalHours());
-            stmt.setBigDecimal(9, profileMetrics.utilizationRate());
-            stmt.setBigDecimal(10, profileMetrics.utilizationHours());
+            stmt.setBigDecimal(9, profileMetrics.costAllocation());
+            stmt.setBigDecimal(10, profileMetrics.hourAllocation());
             stmt.setBigDecimal(11, profileMetrics.hourlyRate());
             stmt.setBigDecimal(12, profileMetrics.dayRate());
             stmt.setBigDecimal(13, profileMetrics.annualCost());

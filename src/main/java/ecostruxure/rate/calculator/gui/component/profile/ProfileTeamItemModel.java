@@ -12,7 +12,7 @@ public class ProfileTeamItemModel {
     private final FinancialData hourlyRate = new FinancialData();
     private final FinancialData dayRate = new FinancialData();
     private final FinancialData annualCost = new FinancialData();
-    private final ObjectProperty<BigDecimal> utilizationHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> annualTotalHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
 
@@ -24,7 +24,7 @@ public class ProfileTeamItemModel {
         return name;
     }
 
-    public ObjectProperty<BigDecimal> utilizationCostProperty() {
+    public ObjectProperty<BigDecimal> costAllocationProperty() {
         return utilizationCost;
     }
 
@@ -40,8 +40,8 @@ public class ProfileTeamItemModel {
         return annualCost.amountProperty();
     }
 
-    public ObjectProperty<BigDecimal> utilizationHoursProperty() {
-        return utilizationHours;
+    public ObjectProperty<BigDecimal> hourAllocationProperty() {
+        return hourAllocation;
     }
 
     public ObjectProperty<BigDecimal> annualTotalHoursProperty() {

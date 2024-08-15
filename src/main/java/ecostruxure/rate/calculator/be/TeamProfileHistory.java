@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 public class TeamProfileHistory {
     private int profileId;
     private int profileHistoryId;
-    private BigDecimal utilizationRate;
-    private BigDecimal utilizationHours;
+    private BigDecimal costAllocation;
+    private BigDecimal hourAllocation;
     private BigDecimal hourlyRate;
     private BigDecimal dayRate;
     private BigDecimal annualCost;
@@ -30,20 +30,20 @@ public class TeamProfileHistory {
         this.profileHistoryId = profileHistoryId;
     }
 
-    public BigDecimal utilizationRate() {
-        return utilizationRate;
+    public BigDecimal costAllocation() {
+        return costAllocation;
     }
 
-    public void utilizationRate(BigDecimal utilizationRate) {
-        this.utilizationRate = utilizationRate;
+    public void costAllocation(BigDecimal costAllocation) {
+        this.costAllocation = costAllocation;
     }
 
-    public BigDecimal utilizationHours() {
-        return utilizationHours;
+    public BigDecimal hourAllocation() {
+        return hourAllocation;
     }
 
-    public void utilizationHours(BigDecimal utilizationHours) {
-        this.utilizationHours = utilizationHours;
+    public void hourAllocation(BigDecimal hourAllocation) {
+        this.hourAllocation = hourAllocation;
     }
 
     public BigDecimal hourlyRate() {
@@ -91,8 +91,8 @@ public class TeamProfileHistory {
         return "TeamProfileHistory{" +
                 "profileId=" + profileId +
                 ", profileHistoryId=" + profileHistoryId +
-                ", utilizationRate=" + utilizationRate +
-                ", utilizationHours=" + utilizationHours +
+                ", costAllocation=" + costAllocation +
+                ", hourAllocation=" + hourAllocation +
                 ", hourlyRate=" + hourlyRate +
                 ", dayRate=" + dayRate +
                 ", annualCost=" + annualCost +

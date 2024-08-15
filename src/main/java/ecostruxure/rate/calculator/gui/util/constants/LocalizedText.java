@@ -31,8 +31,8 @@ public class LocalizedText {
     public static final StringProperty GEOGRAPHIES = new SimpleStringProperty("Geographies");
     public static final StringProperty PROFIT = new SimpleStringProperty("Profit");
     public static final StringProperty UTILIZATION  = new SimpleStringProperty("Utilization");
-    public static final StringProperty UTILIZATION_RATE  = new SimpleStringProperty("Utilization rate");
-    public static final StringProperty UTILIZATION_HOURS  = new SimpleStringProperty("Utilization hour");
+    public static final StringProperty COST_ALLOCATION = new SimpleStringProperty("Cost allocation");
+    public static final StringProperty HOUR_ALLOCATION = new SimpleStringProperty("Hour allocation");
     public static final StringProperty HISTORY = new SimpleStringProperty("History");
     public static final StringProperty ANNUAL_COST = new SimpleStringProperty("Annual cost");
     public static final StringProperty ANNUAL_TOTAL_HOURS = new SimpleStringProperty("Annual hours");
@@ -206,8 +206,8 @@ public class LocalizedText {
         GEOGRAPHIES.set(bundle.getString("GEOGRAPHIES"));
         PROFIT.set(bundle.getString("PROFIT"));
         UTILIZATION.set(bundle.getString("UTILIZATION"));
-        UTILIZATION_RATE.set(bundle.getString("UTILIZATION_RATE"));
-        UTILIZATION_HOURS.set(bundle.getString("UTILIZATION_HOURS"));
+        COST_ALLOCATION.set(bundle.getString("COST_ALLOCATION"));
+        HOUR_ALLOCATION.set(bundle.getString("HOUR_ALLOCATION"));
         HISTORY.set(bundle.getString("HISTORY"));
         ANNUAL_COST.set(bundle.getString("ANNUAL_COST"));
         ANNUAL_TOTAL_HOURS.set(bundle.getString("ANNUAL_TOTAL_HOURS"));

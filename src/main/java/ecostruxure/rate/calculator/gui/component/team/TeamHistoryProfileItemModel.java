@@ -9,8 +9,8 @@ public class TeamHistoryProfileItemModel {
     private final IntegerProperty profileId = new SimpleIntegerProperty();
     private final IntegerProperty profileHistoryId = new SimpleIntegerProperty();
     private final StringProperty name = new SimpleStringProperty();
-    private final ObjectProperty<BigDecimal> utilizationRate = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> utilizationHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
     private final FinancialData hourlyRate = new FinancialData();
     private final FinancialData dayRate = new FinancialData();
     private final FinancialData annualCost = new FinancialData();
@@ -28,12 +28,12 @@ public class TeamHistoryProfileItemModel {
         return name;
     }
 
-    public ObjectProperty<BigDecimal> utilizationRateProperty() {
-        return utilizationRate;
+    public ObjectProperty<BigDecimal> costAllocationProperty() {
+        return costAllocation;
     }
 
-    public ObjectProperty<BigDecimal> utilizationHoursProperty() {
-        return utilizationHours;
+    public ObjectProperty<BigDecimal> hourAllocationProperty() {
+        return hourAllocation;
     }
 
     public ObjectProperty<BigDecimal> hourlyRateProperty() {
@@ -69,8 +69,8 @@ public class TeamHistoryProfileItemModel {
         return "TeamHistoryProfileItemModel{" +
                 "profileId=" + profileId.get() +
                 ", profileHistoryId=" + profileHistoryId.get() +
-                ", utilizationRate=" + utilizationRate.get() +
-                ", utilizationHours=" + utilizationHours.get() +
+                ", costAllocation=" + costAllocation.get() +
+                ", hourAllocation=" + hourAllocation.get() +
                 '}';
     }
 }

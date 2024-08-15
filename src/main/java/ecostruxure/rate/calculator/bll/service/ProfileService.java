@@ -238,28 +238,28 @@ public class ProfileService {
 
 
     // todo: rename til total/sum
-    public BigDecimal getTotalRateUtilization(int id) throws Exception {
-        return profileDAO.getTotalRateUtilization(id);
+    public BigDecimal getTotalCostAllocation(int id) throws Exception {
+        return profileDAO.getTotalCostAllocation(id);
     }
 
-    public BigDecimal getTotalHourUtilization(int id) throws Exception {
-        return profileDAO.getTotalHourUtilization(id);
+    public BigDecimal getTotalHourAllocation(int id) throws Exception {
+        return profileDAO.getTotalHourAllocation(id);
     }
 
-    public BigDecimal getProfileRateUtilizationForTeam(int id, int teamId) throws Exception {
-        return profileDAO.getProfileRateUtilizationForTeam(id, teamId);
+    public BigDecimal getProfileCostAllocationForTeam(int id, int teamId) throws Exception {
+        return profileDAO.getProfileCostAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileHourUtilizationForTeam(int id, int teamId) throws Exception {
-        return profileDAO.getProfileHourUtilizationForTeam(id, teamId);
+    public BigDecimal getProfileHourAllocationForTeam(int id, int teamId) throws Exception {
+        return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileRateUtilizationForArchivedTeam(int id, int teamId) throws Exception {
-        return profileDAO.getProfileRateUtilizationForTeam(id, teamId);
+    public BigDecimal getProfileCostAllocationForArchivedTeam(int id, int teamId) throws Exception {
+        return profileDAO.getProfileCostAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileHourUtilizationForArchivedTeam(int id, int teamId) throws Exception {
-        return profileDAO.getProfileHourUtilizationForTeam(id, teamId);
+    public BigDecimal getProfileHourAllocationForArchivedTeam(int id, int teamId) throws Exception {
+        return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
 

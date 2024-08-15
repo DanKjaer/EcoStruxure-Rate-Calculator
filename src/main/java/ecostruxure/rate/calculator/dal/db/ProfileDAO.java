@@ -96,14 +96,14 @@ public class ProfileDAO implements IProfileDAO {
 
         String query = """
                         SELECT p.*, pd.*,
-                           COALESCE(tp.utilization_rate_total, 0) AS utilization_rate_total,
-                           COALESCE(tp.utilization_hours_total, 0) AS utilization_hours_total
+                           COALESCE(tp.cost_allocation_total, 0) AS cost_allocation_total,
+                           COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
                         FROM dbo.Profiles p
                         INNER JOIN dbo.Profiles_data pd ON p.id = pd.id
                         LEFT JOIN (
                             SELECT profileID,
-                                   SUM(utilization_rate) AS utilization_rate_total,
-                                   SUM(utilization_hours) AS utilization_hours_total
+                                   SUM(cost_allocation) AS cost_allocation_total,
+                                   SUM(hour_allocation) AS hour_allocation_total
                             FROM dbo.Teams_profiles
                             WHERE archived = FALSE
                             GROUP BY profileID
@@ -118,8 +118,8 @@ public class ProfileDAO implements IProfileDAO {
 
             while (rs.next()) {
                 Profile profile = profileResultSet(rs);
-                profile.utilizationRate(rs.getBigDecimal("utilization_rate_total"));
-                profile.utilizationHours(rs.getBigDecimal("utilization_hours_total"));
+                profile.costAllocation(rs.getBigDecimal("cost_allocation_total"));
+                profile.hourAllocation(rs.getBigDecimal("hour_allocation_total"));
                 profiles.add(profile);
             }
 
@@ -135,14 +135,14 @@ public class ProfileDAO implements IProfileDAO {
 
         String query = """
                         SELECT p.*, pd.*,
-                               COALESCE(tp.utilization_rate_total, 0) AS utilization_rate_total,
-                               COALESCE(tp.utilization_hours_total, 0) AS utilization_hours_total
+                               COALESCE(tp.cost_allocation_total, 0) AS cost_allocation_total,
+                               COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
                         FROM dbo.Profiles p
                         INNER JOIN dbo.Profiles_data pd ON p.id = pd.id
                         LEFT JOIN (
                             SELECT profileID,
-                                   SUM(utilization_rate) AS utilization_rate_total,
-                                   SUM(utilization_hours) AS utilization_hours_total
+                                   SUM(cost_allocation) AS cost_allocation_total,
+                                   SUM(hour_allocation) AS uhour_allocation_total
                             FROM dbo.Teams_profiles
                             WHERE teamId = ?
                             GROUP BY profileID
@@ -160,8 +160,8 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Profile profile = profileResultSet(rs);
-                    profile.utilizationRate(rs.getBigDecimal("utilization_rate_total"));
-                    profile.utilizationHours(rs.getBigDecimal("utilization_hours_total"));
+                    profile.costAllocation(rs.getBigDecimal("cost_allocation_total"));
+                    profile.hourAllocation(rs.getBigDecimal("hour_allocation_total"));
                     profiles.add(profile);
                 }
             }
@@ -364,10 +364,10 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getTotalRateUtilization(int profileId) throws Exception {
+    public BigDecimal getTotalCostAllocation(int profileId) throws Exception {
         BigDecimal totalUtilization = BigDecimal.ZERO;
         String query = """
-                        SELECT SUM(utilization_rate) AS total_utilization
+                        SELECT SUM(cost_allocation) AS total_allocation
                         FROM Teams_profiles
                         WHERE profileId = ? AND Teams_profiles.archived = FALSE;
                         """;
@@ -378,9 +378,9 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    BigDecimal column = rs.getBigDecimal("total_utilization");
+                    BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        totalUtilization = rs.getBigDecimal("total_utilization");
+                        totalUtilization = rs.getBigDecimal("total_allocation");
                 }
             }
         } catch (Exception e) {
@@ -391,10 +391,10 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getTotalHourUtilization(int profileId) throws Exception {
-        BigDecimal totalUtilization = BigDecimal.ZERO;
+    public BigDecimal getTotalHourAllocation(int profileId) throws Exception {
+        BigDecimal totalAllocation = BigDecimal.ZERO;
         String query = """
-                        SELECT SUM(utilization_hours) AS total_utilization
+                        SELECT SUM(hour_allocation) AS total_allocation
                         FROM Teams_profiles
                         WHERE profileId = ? AND Teams_profiles.archived = FALSE;
                         """;
@@ -405,23 +405,24 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    BigDecimal column = rs.getBigDecimal("total_utilization");
+                    BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        totalUtilization = rs.getBigDecimal("total_utilization");
+                        totalAllocation = rs.getBigDecimal("total_allocation");
                 }
             }
         } catch (Exception e) {
-            throw new Exception("Getting total utilization hour for profile failed\n." + e.getMessage());
+            e.printStackTrace();
+            throw new Exception("Getting total hour allocation for profile failed\n." + e.getMessage());
         }
 
-        return totalUtilization;
+        return totalAllocation;
     }
 
     @Override
-    public BigDecimal getProfileRateUtilizationForTeam(int profileId, int teamId) throws Exception {
-        BigDecimal utilization = BigDecimal.ZERO;
+    public BigDecimal getProfileCostAllocationForTeam(int profileId, int teamId) throws Exception {
+        BigDecimal allocation = BigDecimal.ZERO;
         String query = """
-                        SELECT utilization_rate AS total_utilization
+                        SELECT cost_allocation AS total_allocation
                         FROM Teams_profiles
                         WHERE profileId = ? AND teamId = ?;
                         """;
@@ -433,23 +434,24 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    BigDecimal column = rs.getBigDecimal("total_utilization");
+                    BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        utilization = rs.getBigDecimal("total_utilization");
+                        allocation = rs.getBigDecimal("total_allocation");
                 }
             }
         } catch (Exception e) {
-            throw new Exception("Getting profile utilization for team failed\n." + e.getMessage());
+            e.printStackTrace();
+            throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
-        return utilization;
+        return allocation;
     }
 
     @Override
-    public BigDecimal getProfileHourUtilizationForTeam(int profileId, int teamId) throws Exception {
-        BigDecimal utilization = BigDecimal.ZERO;
+    public BigDecimal getProfileHourAllocationForTeam(int profileId, int teamId) throws Exception {
+        BigDecimal allocation = BigDecimal.ZERO;
         String query = """
-                        SELECT utilization_hours AS total_utilization
+                        SELECT hour_allocation AS total_allocation
                         FROM Teams_profiles
                         WHERE profileId = ? AND teamId = ?;
                         """;
@@ -461,25 +463,25 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    BigDecimal column = rs.getBigDecimal("total_utilization");
+                    BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        utilization = rs.getBigDecimal("total_utilization");
+                        allocation = rs.getBigDecimal("total_allocation");
                 }
             }
         } catch (Exception e) {
-            throw new Exception("Getting profile utilization for team failed\n." + e.getMessage());
+            throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
-        return utilization;
+        return allocation;
     }
 
     @Override
-    public BigDecimal getProfileRateUtilizationForTeam(TransactionContext context, int profileId, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(TransactionContext context, int profileId, int teamId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
-        BigDecimal utilization = BigDecimal.ZERO;
+        BigDecimal allocation = BigDecimal.ZERO;
         String query = """
-                        SELECT utilization_rate AS total_utilization
+                        SELECT cost_allocation AS total_allocation
                         FROM Teams_profiles
                         WHERE profileId = ? AND teamId = ?;
                         """;
@@ -490,25 +492,25 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    BigDecimal column = rs.getBigDecimal("total_utilization");
+                    BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        utilization = rs.getBigDecimal("total_utilization");
+                        allocation = rs.getBigDecimal("total_allocation");
                 }
             }
         } catch (Exception e) {
-            throw new Exception("Getting profile utilization for team failed\n." + e.getMessage());
+            throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
-        return utilization;
+        return allocation;
     }
 
     @Override
-    public BigDecimal getProfileHourUtilizationForTeam(TransactionContext context, int profileId, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(TransactionContext context, int profileId, int teamId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
-        BigDecimal utilization = BigDecimal.ZERO;
+        BigDecimal allocation = BigDecimal.ZERO;
         String query = """
-                        SELECT utilization_hours AS total_utilization
+                        SELECT hour_allocation AS total_allocation
                         FROM Teams_profiles
                         WHERE profileId = ? AND teamId = ?;
                         """;
@@ -519,16 +521,16 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    BigDecimal column = rs.getBigDecimal("total_utilization");
+                    BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        utilization = rs.getBigDecimal("total_utilization");
+                        allocation = rs.getBigDecimal("total_allocation");
                 }
             }
         } catch (Exception e) {
-            throw new Exception("Getting profile utilization for team failed\n." + e.getMessage());
+            throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
-        return utilization;
+        return allocation;
     }
 
     @Override
