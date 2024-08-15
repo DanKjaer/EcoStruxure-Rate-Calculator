@@ -63,6 +63,7 @@ public class CurrencyService {
                 BigDecimal usdConversionRate = getUsdConversionRate(currencyCode, record[2].trim());
                 currencyMap.put(currencyCode, new Currency(currencyCode, eurConversionRate, usdConversionRate));
             } catch (NumberFormatException e) {
+                e.printStackTrace();
                 // we just skip line if invalid format
             }
         }

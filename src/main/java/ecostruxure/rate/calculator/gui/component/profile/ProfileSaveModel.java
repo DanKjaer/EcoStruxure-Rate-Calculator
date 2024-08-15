@@ -15,6 +15,7 @@ public class ProfileSaveModel {
     private final ObjectProperty<ResourceType> selectedResourceType = new SimpleObjectProperty<>(ResourceType.OVERHEAD);
     private final StringProperty annualSalary = new SimpleStringProperty("");
     private final StringProperty annualTotalHours = new SimpleStringProperty("");
+    private final StringProperty effectiveWorkHours = new SimpleStringProperty("");
     private final StringProperty effectiveness = new SimpleStringProperty("");
     private final StringProperty hoursPerDay = new SimpleStringProperty("8");
 
@@ -23,8 +24,8 @@ public class ProfileSaveModel {
     private final BooleanProperty nameIsValid  = new SimpleBooleanProperty(false);
     private final BooleanProperty selectedGeographyIsValid = new SimpleBooleanProperty(selectedGeography.get() != null);
     private final BooleanProperty annualSalaryIsValid = new SimpleBooleanProperty(false);
-    private final BooleanProperty annualFixedAmountIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty annualTotalHoursIsValid = new SimpleBooleanProperty(false);
+    private final BooleanProperty effectiveWorkHoursIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty effectivenessIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty hoursPerDayIsValid = new SimpleBooleanProperty(true);
     private final BooleanProperty disableFields = new SimpleBooleanProperty(false);
@@ -57,6 +58,10 @@ public class ProfileSaveModel {
         return annualTotalHours;
     }
 
+    public StringProperty effectiveWorkHoursProperty() {
+        return effectiveWorkHours;
+    }
+
     public StringProperty effectivenessProperty() {
         return effectiveness;
     }
@@ -77,12 +82,12 @@ public class ProfileSaveModel {
         return annualSalaryIsValid;
     }
 
-    public BooleanProperty annualFixedAmountIsValidProperty() {
-        return annualFixedAmountIsValid;
-    }
-
     public BooleanProperty annualTotalHoursIsValidProperty() {
         return annualTotalHoursIsValid;
+    }
+
+    public BooleanProperty effectiveWorkHoursIsValidProperty(){
+        return effectiveWorkHoursIsValid;
     }
 
     public BooleanProperty effectivenessIsValidProperty() {

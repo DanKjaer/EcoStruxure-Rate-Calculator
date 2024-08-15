@@ -14,6 +14,7 @@ public class ProfileTeamItemModel {
     private final FinancialData annualCost = new FinancialData();
     private final ObjectProperty<BigDecimal> utilizationHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> annualTotalHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
 
     public IntegerProperty idProperty() {
         return id;
@@ -47,6 +48,10 @@ public class ProfileTeamItemModel {
         return annualTotalHours;
     }
 
+    public ObjectProperty<BigDecimal> effectiveWorkHoursProperty(){
+        return effectiveWorkHours;
+    }
+
     public void setHourlyRate(BigDecimal hourlyRate) {
         this.hourlyRate.amount(hourlyRate);
     }
@@ -57,5 +62,9 @@ public class ProfileTeamItemModel {
 
     public void setAnnualCost(BigDecimal annualCost) {
         this.annualCost.amount(annualCost);
+    }
+
+    public void setEffectiveWorkHours(BigDecimal effectiveWorkHours){
+        this.effectiveWorkHours.set(effectiveWorkHours);
     }
 }

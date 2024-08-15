@@ -34,6 +34,7 @@ public class BindingsUtils {
             try {
                 return NumberUtils.formatAsInteger(new BigDecimal(property.get()));
             } catch (NumberFormatException e) {
+                e.printStackTrace();
                 return "0";
             }
         }, property);

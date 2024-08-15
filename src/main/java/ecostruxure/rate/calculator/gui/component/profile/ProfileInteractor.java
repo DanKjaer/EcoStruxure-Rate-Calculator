@@ -11,6 +11,7 @@ import ecostruxure.rate.calculator.gui.component.profile.ProfileModel.ProfileTab
 import ecostruxure.rate.calculator.gui.system.currency.CurrencyManager;
 import ecostruxure.rate.calculator.gui.system.currency.CurrencyManager.CurrencyType;
 import javafx.beans.binding.Bindings;
+import org.apache.poi.ss.formula.functions.Rate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -51,6 +52,7 @@ public class ProfileInteractor {
             geographyService = new GeographyService();
             historyService = new HistoryService();
         } catch (Exception e) {
+            e.printStackTrace();
             onFetchError.run();
         }
 
@@ -72,7 +74,6 @@ public class ProfileInteractor {
             teamItemModels = convertToTeamModels(profileService.getTeams(profile));
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             e.getMessage();
             e.printStackTrace();
             return false;
@@ -118,7 +119,7 @@ public class ProfileInteractor {
             if (saved) fetchProfile(model.idProperty().get());
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -219,6 +220,7 @@ public class ProfileInteractor {
         profile.annualSalary(new BigDecimal(saveModel.annualSalaryProperty().get()));
         profile.effectiveness(new BigDecimal(saveModel.effectivenessProperty().get()));
         profile.totalHours(new BigDecimal(saveModel.annualTotalHoursProperty().get()));
+        profile.effectiveWorkHours(new BigDecimal(saveModel.effectiveWorkHoursProperty().get()));
         profile.hoursPerDay(new BigDecimal(saveModel.hoursPerDayProperty().get()));
         profile.profileData(profileData);
 
@@ -234,6 +236,7 @@ public class ProfileInteractor {
         clone.selectedResourceTypeProperty().set(original.selectedResourceTypeProperty().get());
         clone.annualSalaryProperty().set(original.annualSalaryProperty().get());
         clone.annualTotalHoursProperty().set(original.annualTotalHoursProperty().get());
+        clone.effectiveWorkHoursProperty().set(original.effectiveWorkHoursProperty().get());
         clone.effectivenessProperty().set(original.effectivenessProperty().get());
         clone.hoursPerDayProperty().set(original.hoursPerDayProperty().get());
 
@@ -252,6 +255,7 @@ public class ProfileInteractor {
         historyModel.setAnnualSalary(profile.annualSalary());
         historyModel.effectivenessProperty().set(profile.effectiveness());
         historyModel.totalHoursProperty().set(profile.totalHours());
+        historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());
         historyModel.hoursPerDayProperty().set(profile.hoursPerDay());
         historyModel.updatedAtProperty().set(currentDateTime);
         historyModel.setHourlyRate(profileService.hourlyRate(profile));
@@ -276,6 +280,7 @@ public class ProfileInteractor {
             historyModel.setAnnualSalary(profile.annualSalary());
             historyModel.effectivenessProperty().set(profile.effectiveness());
             historyModel.totalHoursProperty().set(profile.totalHours());
+            historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());
             historyModel.hoursPerDayProperty().set(profile.hoursPerDay());
             historyModel.updatedAtProperty().set(profile.updatedAt());
             historyModel.setHourlyRate(profileService.hourlyRate(profile));
@@ -321,16 +326,20 @@ public class ProfileInteractor {
             BigDecimal annualCost = RateUtils.annualCost(profile, utilizationRate);
 
             BigDecimal annualTotalHours = RateUtils.utilizedHours(profile, utilizationHours);
+            BigDecimal effectiveWorkHours = RateUtils.effectiveWorkHours(profile);
 
             teamModel.setHourlyRate(hourlyRate);
             teamModel.setDayRate(dayRate);
             teamModel.setAnnualCost(annualCost);
             teamModel.annualTotalHoursProperty().set(annualTotalHours);
+            teamModel.effectiveWorkHoursProperty().set(effectiveWorkHours);
 
             contributedHours = contributedHours.add(annualTotalHours);
             totalHourlyRate = totalHourlyRate.add(hourlyRate);
             totalDayRate = totalDayRate.add(dayRate);
             totalAnnualCost = totalAnnualCost.add(annualCost);
+            effectiveWorkHours = effectiveWorkHours.add(effectiveWorkHours);
+
             teamModels.add(teamModel);
         }
 
@@ -352,6 +361,7 @@ public class ProfileInteractor {
         saveModel.selectedGeographyIsValidProperty().bind(model.saveModel().selectedGeographyProperty().isNotNull());
         saveModel.annualSalaryIsValidProperty().bind(model.saveModel().annualSalaryProperty().isNotEmpty());
         saveModel.annualTotalHoursIsValidProperty().bind(model.saveModel().annualTotalHoursProperty().isNotEmpty());
+        saveModel.effectiveWorkHoursIsValidProperty().bind(model.saveModel().effectiveWorkHoursProperty().isNotEmpty());
         saveModel.effectivenessIsValidProperty().bind(model.saveModel().effectivenessProperty().isNotEmpty());
 
         model.saveModel().disableFieldsProperty().bind(model.historySelectedProperty());
@@ -367,6 +377,7 @@ public class ProfileInteractor {
                 model.saveModel().selectedResourceTypeProperty(),
                 model.saveModel().annualSalaryProperty(),
                 model.saveModel().annualTotalHoursProperty(),
+                model.saveModel().effectiveWorkHoursProperty(),
                 model.saveModel().effectivenessProperty(),
                 model.saveModel().hoursPerDayProperty()
         ));
@@ -382,6 +393,7 @@ public class ProfileInteractor {
                 model.saveModel().selectedResourceTypeProperty(),
                 model.saveModel().annualSalaryProperty(),
                 model.saveModel().annualTotalHoursProperty(),
+                model.saveModel().effectiveWorkHoursProperty(),
                 model.saveModel().effectivenessProperty(),
                 model.saveModel().hoursPerDayProperty())
         );
@@ -399,6 +411,7 @@ public class ProfileInteractor {
                 model.saveModel().annualSalaryProperty(),
                 model.saveModel().effectivenessProperty(),
                 model.saveModel().annualTotalHoursProperty(),
+                model.saveModel().effectiveWorkHoursProperty(),
                 model.saveModel().hoursPerDayProperty())
         );
     }
@@ -409,6 +422,7 @@ public class ProfileInteractor {
             Profile profile = profileService.get(model.idProperty().get());
             return profileService.archive(profile, shouldArchive);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -428,6 +442,7 @@ public class ProfileInteractor {
                 !historyModel.annualSalaryProperty().get().equals(new BigDecimal(originalSaveModel.annualSalaryProperty().get())) ||
                 !historyModel.effectivenessProperty().get().equals(new BigDecimal(originalSaveModel.effectivenessProperty().get())) ||
                 !historyModel.totalHoursProperty().get().equals(new BigDecimal(originalSaveModel.annualTotalHoursProperty().get())) ||
+                !historyModel.effectiveWorkHoursProperty().get().equals(new BigDecimal(originalSaveModel.effectiveWorkHoursProperty().get())) ||
                 !historyModel.hoursPerDayProperty().get().equals(new BigDecimal(originalSaveModel.hoursPerDayProperty().get()));
     }
 
@@ -437,6 +452,7 @@ public class ProfileInteractor {
                 model.saveModel().selectedGeographyProperty().get() != null &&
                 !model.saveModel().annualSalaryProperty().get().isEmpty() &&
                 !model.saveModel().annualTotalHoursProperty().get().isEmpty() &&
+                !model.saveModel().effectiveWorkHoursProperty().get().isEmpty() &&
                 !model.saveModel().effectivenessProperty().get().isEmpty() &&
                 !model.saveModel().hoursPerDayProperty().get().isEmpty();
     }
@@ -449,6 +465,7 @@ public class ProfileInteractor {
                 model.saveModel().selectedResourceTypeProperty().get() != originalSaveModel.selectedResourceTypeProperty().get() ||
                 !model.saveModel().annualSalaryProperty().get().equals(originalSaveModel.annualSalaryProperty().get()) ||
                 !model.saveModel().annualTotalHoursProperty().get().equals(originalSaveModel.annualTotalHoursProperty().get()) ||
+                !model.saveModel().effectiveWorkHoursProperty().get().equals(originalSaveModel.effectiveWorkHoursProperty().get()) ||
                 !model.saveModel().effectivenessProperty().get().equals(originalSaveModel.effectivenessProperty().get()) ||
                 !model.saveModel().hoursPerDayProperty().get().equals(originalSaveModel.hoursPerDayProperty().get());
     }

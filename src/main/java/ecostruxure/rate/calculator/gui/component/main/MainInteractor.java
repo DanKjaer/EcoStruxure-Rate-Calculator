@@ -54,6 +54,7 @@ public class MainInteractor {
 
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -74,6 +75,7 @@ public class MainInteractor {
 
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -89,6 +91,7 @@ public class MainInteractor {
             }
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -155,6 +158,7 @@ public class MainInteractor {
 
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -169,6 +173,7 @@ public class MainInteractor {
 
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }

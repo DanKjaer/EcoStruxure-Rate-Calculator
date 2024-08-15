@@ -5,7 +5,6 @@ import atlantafx.base.layout.InputGroup;
 import atlantafx.base.theme.Styles;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import ecostruxure.rate.calculator.gui.common.View;
-import ecostruxure.rate.calculator.gui.component.teams.TeamItemModel;
 import ecostruxure.rate.calculator.gui.util.*;
 import ecostruxure.rate.calculator.gui.util.constants.CssClasses;
 import ecostruxure.rate.calculator.gui.util.constants.Icons;
@@ -30,7 +29,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -349,8 +347,8 @@ public class ProfilesView implements View {
             };
         });
 
-        TableColumn<ProfileItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_ANNUAL_HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> hourlyRateColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_HOURLY_RATE, ProfileItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.ANNUAL_HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> effectiveWorkHoursColumn = customTableView.createColumn(LocalizedText.EFFECTIVE_WORK_HOURS, ProfileItemModel::effectiveWorkHoursProperty, new HourCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_DAY_RATE, ProfileItemModel::dayRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileItemModel, String> teamColumn = customTableView.createColumn(LocalizedText.TEAMS, ProfileItemModel::teamsProperty);
@@ -368,7 +366,7 @@ public class ProfilesView implements View {
         optionsColumn.setMaxWidth(50);
         optionsColumn.setPrefWidth(50);
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, hourlyRateColumn, dayRateColumn, annualCostColumn, locationColumn, teamColumn, optionsColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, dayRateColumn, annualCostColumn, locationColumn, teamColumn, optionsColumn));
 
         tableViewWithPagination.setEditable(true);
     }

@@ -16,6 +16,7 @@ public class ProfileHistoryItemModel {
     private final FinancialData annualSalary = new FinancialData();
     private final ObjectProperty<BigDecimal> effectiveness = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> totalHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> hoursPerDay = new SimpleObjectProperty<>();
 
     private final ObjectProperty<LocalDateTime> updatedAt = new SimpleObjectProperty<>();
@@ -43,6 +44,9 @@ public class ProfileHistoryItemModel {
         return totalHours;
     }
 
+    public ObjectProperty<BigDecimal> effectiveWorkHoursProperty() {
+        return effectiveWorkHours;
+    }
     public ObjectProperty<BigDecimal> hoursPerDayProperty() {
         return hoursPerDay;
     }

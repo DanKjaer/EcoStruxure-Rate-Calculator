@@ -569,7 +569,7 @@ public class ProfileDAO implements IProfileDAO {
     public boolean update(Profile profile) throws Exception {
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_salary = ?, effectiveness = ?, total_hours = ?, hours_per_day = ?
+                                  SET annual_salary = ?, effectiveness = ?, total_hours = ?, effective_work_hours =? hours_per_day = ?
                                   WHERE id = ?;
                                   """;
 
@@ -586,8 +586,9 @@ public class ProfileDAO implements IProfileDAO {
             updateProfileStmt.setBigDecimal(1, profile.annualSalary());
             updateProfileStmt.setBigDecimal(2, profile.effectiveness());
             updateProfileStmt.setBigDecimal(3, profile.totalHours());
-            updateProfileStmt.setBigDecimal(4, profile.hoursPerDay());
-            updateProfileStmt.setInt(5, profile.id());
+            updateProfileStmt.setBigDecimal(4, profile.effectiveWorkHours());
+            updateProfileStmt.setBigDecimal(5, profile.hoursPerDay());
+            updateProfileStmt.setInt(6, profile.id());
             updateProfileStmt.executeUpdate();
 
             updateProfileDataStmt.setString(1, profile.profileData().name());

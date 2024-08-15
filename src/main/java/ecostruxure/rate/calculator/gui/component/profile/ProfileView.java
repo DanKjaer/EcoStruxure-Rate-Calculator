@@ -257,7 +257,7 @@ public class ProfileView implements View {
                 Informative.statsBox(LocalizedText.CONTRIBUTED_HOURLY_RATE, BindingsUtils.createCurrencyStringBinding(model.totalHourlyRate()), CssClasses.BLUE, Feather.BAR_CHART),
                 Informative.statsBox(LocalizedText.CONTRIBUTED_DAY_RATE, BindingsUtils.createCurrencyStringBinding(model.totalDayRate()), CssClasses.GREEN, Feather.BAR_CHART_2),
                 Informative.statsBox(LocalizedText.CONTRIBUTED_ANNUAL_COST, BindingsUtils.createCurrencyStringBinding(model.totalAnnualCost()), CssClasses.ORANGE, Feather.PIE_CHART),
-                Informative.statsBox(LocalizedText.CONTRIBUTED_ANNUAL_HOURS, BindingsUtils.createIntegerStringBinding(model.contributedHours()), CssClasses.RED, Feather.CLOCK)
+                Informative.statsBox(LocalizedText.ANNUAL_HOURS, BindingsUtils.createIntegerStringBinding(model.contributedHours()), CssClasses.RED, Feather.CLOCK)
         );
 
         return stats;

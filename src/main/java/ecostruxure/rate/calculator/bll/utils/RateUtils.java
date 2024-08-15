@@ -69,6 +69,28 @@ public class RateUtils {
         return profile.totalHours().multiply(percentageAsDecimal);
     }
 
+//    public static BigDecimal effectiveWorkHours(Profile profile){
+//        System.out.println("profile: " + profile);
+//        System.out.println("profile.totalHours(): " + profile.totalHours());
+//        System.out.println("profile.effectiveness(): " + profile.effectiveness());
+//        if(profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
+//            return BigDecimal.ZERO.setScale(GENERAL_SCALE, ROUNDING_MODE);
+//        }
+//
+//        return profile.totalHours().multiply(profile.effectiveness().setScale(GENERAL_SCALE, ROUNDING_MODE));
+//    }
+
+    public static BigDecimal effectiveWorkHours(Profile profile) {
+        if (profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO.setScale(GENERAL_SCALE, ROUNDING_MODE);
+        }
+
+        BigDecimal effectiveness = profile.effectiveness().divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal effectiveWorkHours = profile.totalHours().multiply(effectiveness).setScale(GENERAL_SCALE, ROUNDING_MODE);
+
+        return effectiveWorkHours;
+    }
+
     public static BigDecimal utilizedHoursPerDay(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");

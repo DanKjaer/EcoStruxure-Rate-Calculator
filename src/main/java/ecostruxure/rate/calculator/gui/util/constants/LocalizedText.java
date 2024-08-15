@@ -69,7 +69,7 @@ public class LocalizedText {
     public static final StringProperty CONTRIBUTED_HOURLY_RATE = new SimpleStringProperty("Cont. hourly rate");
     public static final StringProperty CONTRIBUTED_DAY_RATE = new SimpleStringProperty("Cont. day rate");
     public static final StringProperty CONTRIBUTED_ANNUAL_COST = new SimpleStringProperty("Cont. annual cost");
-    public static final StringProperty CONTRIBUTED_ANNUAL_HOURS = new SimpleStringProperty("Cont. annual hours");
+    public static final StringProperty ANNUAL_HOURS = new SimpleStringProperty("Annual hours");
     public static final StringProperty SEARCH_PROMPT = new SimpleStringProperty("Search");
     public static final StringProperty THEME_SELECTOR = new SimpleStringProperty("Theme selector");
     public static final StringProperty ADD_NEW_PROFILE = new SimpleStringProperty("Add new profile");
@@ -100,6 +100,7 @@ public class LocalizedText {
     public static final StringProperty VERIFY_FOUND_UNARCHIVE = new SimpleStringProperty("Found:");
     public static final StringProperty MODIFIERS = new SimpleStringProperty("Modifiers");
     public static final StringProperty EFFECTIVENESS = new SimpleStringProperty("Effectiveness");
+    public static final StringProperty EFFECTIVE_WORK_HOURS = new SimpleStringProperty("Effective work hours");
     public static final StringProperty UTILIZATION_PERCENTAGE = new SimpleStringProperty("Utilization percentage");
     public static final StringProperty RAW = new SimpleStringProperty("Raw");
     public static final StringProperty MARKUP = new SimpleStringProperty("Markup");
@@ -243,7 +244,7 @@ public class LocalizedText {
         CONTRIBUTED_HOURLY_RATE.set(bundle.getString("CONTRIBUTED_HOURLY_RATE"));
         CONTRIBUTED_DAY_RATE.set(bundle.getString("CONTRIBUTED_DAY_RATE"));
         CONTRIBUTED_ANNUAL_COST.set(bundle.getString("CONTRIBUTED_ANNUAL_COST"));
-        CONTRIBUTED_ANNUAL_HOURS.set(bundle.getString("CONTRIBUTED_ANNUAL_HOURS"));
+        ANNUAL_HOURS.set(bundle.getString("ANNUAL_HOURS"));
         SEARCH_PROMPT.set(bundle.getString("SEARCH_PROMPT"));
         THEME_SELECTOR.set(bundle.getString("THEME_SELECTOR"));
         ADD_NEW_PROFILE.set(bundle.getString("ADD_NEW_PROFILE"));
@@ -274,6 +275,7 @@ public class LocalizedText {
         VERIFY_FOUND_UNARCHIVE.set(bundle.getString("VERIFY_FOUND_UNARCHIVE"));
         MODIFIERS.set(bundle.getString("MODIFIERS"));
         EFFECTIVENESS.set(bundle.getString("EFFECTIVENESS"));
+        EFFECTIVE_WORK_HOURS.set(bundle.getString("EFFECTIVE_WORK_HOURS"));
         UTILIZATION_PERCENTAGE.set(bundle.getString("UTILIZATION_PERCENTAGE"));
         RAW.set(bundle.getString("RAW"));
         MARKUP.set(bundle.getString("MARKUP"));
