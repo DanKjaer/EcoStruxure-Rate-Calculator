@@ -86,6 +86,7 @@ public class ProfileDAO implements IProfileDAO {
 
             return profiles;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not get all Profiles from Database.\n" + e.getMessage());
         }
     }

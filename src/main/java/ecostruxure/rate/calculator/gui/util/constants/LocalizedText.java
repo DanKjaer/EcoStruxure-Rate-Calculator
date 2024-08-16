@@ -33,6 +33,7 @@ public class LocalizedText {
     public static final StringProperty UTILIZATION  = new SimpleStringProperty("Utilization");
     public static final StringProperty COST_ALLOCATION = new SimpleStringProperty("Cost allocation");
     public static final StringProperty HOUR_ALLOCATION = new SimpleStringProperty("Hour allocation");
+    public static final StringProperty ALLOCATED_HOURS = new SimpleStringProperty("Allocated hours");
     public static final StringProperty HISTORY = new SimpleStringProperty("History");
     public static final StringProperty ANNUAL_COST = new SimpleStringProperty("Annual cost");
     public static final StringProperty ANNUAL_TOTAL_HOURS = new SimpleStringProperty("Annual hours");
@@ -208,6 +209,7 @@ public class LocalizedText {
         UTILIZATION.set(bundle.getString("UTILIZATION"));
         COST_ALLOCATION.set(bundle.getString("COST_ALLOCATION"));
         HOUR_ALLOCATION.set(bundle.getString("HOUR_ALLOCATION"));
+        ALLOCATED_HOURS.set(bundle.getString("ALLOCATED_HOURS"));
         HISTORY.set(bundle.getString("HISTORY"));
         ANNUAL_COST.set(bundle.getString("ANNUAL_COST"));
         ANNUAL_TOTAL_HOURS.set(bundle.getString("ANNUAL_TOTAL_HOURS"));

@@ -18,7 +18,7 @@ public class Profile {
     public Profile() {
 
     }
-
+    // Constructor without allocation
     public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
                    BigDecimal totalHours, BigDecimal effectiveWorkHours, boolean overhead,
@@ -32,7 +32,7 @@ public class Profile {
 
         this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
     }
-
+    // Constructor with id
     public Profile(int id, String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
                    BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal costAllocation, BigDecimal hourAllocation, boolean overhead,
@@ -47,8 +47,10 @@ public class Profile {
         this.hoursPerDay = hoursPerDay;
 
         this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
+        //System.out.println("Profile constructor: hourAllocation =" + this.hourAllocation);
     }
 
+    // Constructor without id
     public Profile(String name, String currency, BigDecimal annualSalary,
                    BigDecimal effectiveness, int geography,
                    BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal costAllocation, BigDecimal hourAllocation, boolean overhead,
@@ -179,14 +181,16 @@ public class Profile {
         p.annualSalary(new BigDecimal("50000.00"));
         p.totalHours(new BigDecimal("6000"));
         p.effectiveWorkHours(new BigDecimal("4800"));
-        p.effectiveness(new BigDecimal("0.8"));
-        p.costAllocation(new BigDecimal("80"));
+        p.effectiveness(new BigDecimal("80"));
+        p.costAllocation(new BigDecimal("100"));
+        p.hourAllocation(new BigDecimal("100"));
         /**
          * 500000.00
          * 6000
          * 4800
-         * 0.8
          * 80
+         * 100
+         * 100
          */
         System.out.println(p.annualSalary());
     }

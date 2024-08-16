@@ -67,6 +67,8 @@ public class ProfilesInteractor {
             profileItemModel.setDayRate(RateUtils.dayRate(profile, costAllocation));
             profileItemModel.setAnnualCost(RateUtils.annualCost(profile, costAllocation));
             profileItemModel.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
+            profileItemModel.setEffectiveness(RateUtils.effectiveness(profile));
+            profileItemModel.setAllocatedHours(RateUtils.allocatedHours(profile, hourAllocation));
 
             profileItemModel.teamsProperty().set(String.valueOf(profileService.getTeams(profile).size()));
             profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());

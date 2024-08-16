@@ -9,7 +9,7 @@ public record ProfileMetrics(BigDecimal hourlyRate, BigDecimal dayRate, BigDecim
         Objects.requireNonNull(dayRate, "Day rate cannot be null");
         Objects.requireNonNull(annualCost, "Annual cost cannot be null");
         Objects.requireNonNull(totalHours, "Total hours cannot be null");
-        Objects.requireNonNull(costAllocation, "Utilization rate cannot be null");
-        Objects.requireNonNull(hourAllocation, "Utilization hours cannot be null");
+        Objects.requireNonNull(costAllocation, "Allocated cost cannot be null");
+        Objects.requireNonNull(hourAllocation, "Allocated hours cannot be null");
     }
 }

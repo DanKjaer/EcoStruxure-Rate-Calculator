@@ -278,13 +278,13 @@ public class ProfileView implements View {
         TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocation = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualTotalHours = customTableView.createColumn(LocalizedText.ANNUAL_TOTAL_HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
 
-        TableColumn<ProfileTeamItemModel, BigDecimal> utilization = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::costAllocationProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> costAllocation = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> hourlyRate = customTableView.createColumn(LocalizedText.HOURLY_RATE, ProfileTeamItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> dayRate = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileTeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualCost = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualCostProperty, new CurrencyCellFactory<>());
 
 
-        TableView<ProfileTeamItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(nameColumn, hourAllocation, annualTotalHours, utilization, hourlyRate, dayRate, annualCost));
+        TableView<ProfileTeamItemModel> tableView = customTableView.createCustomTableView(Arrays.asList(nameColumn, hourAllocation, annualTotalHours, costAllocation, hourlyRate, dayRate, annualCost));
         tableView.getStyleClass().add(Styles.STRIPED);
 
         tableItems.comparatorProperty().bind(tableView.comparatorProperty());

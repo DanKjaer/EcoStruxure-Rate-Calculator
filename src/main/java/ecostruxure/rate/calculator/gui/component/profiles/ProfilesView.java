@@ -17,6 +17,7 @@ import ecostruxure.rate.calculator.gui.widget.Informative;
 import ecostruxure.rate.calculator.gui.widget.tables.*;
 import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.CurrencyCellFactory;
 import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.HourCellFactory;
+import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.PercentageCellFactory;
 import ecostruxure.rate.calculator.gui.widget.tables.contextmenu.MenuItemInfo;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -347,17 +348,24 @@ public class ProfilesView implements View {
             };
         });
 
+
+        //profilesView - Name, annual_salary, effectiveness, total_hours, effective_work_hours, location,
+        // total utilization hours. f.eks. hvis profilen er på 2 teams, og har 30% på hver,
+        // skal den sige utilization hours 60. - Omdøb utilization på navnet.
+
+        TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> effectivenessColumn = customTableView.createColumn(LocalizedText.EFFECTIVENESS, ProfileItemModel::effectivenessProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.ANNUAL_HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> effectiveWorkHoursColumn = customTableView.createColumn(LocalizedText.EFFECTIVE_WORK_HOURS, ProfileItemModel::effectiveWorkHoursProperty, new HourCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_DAY_RATE, ProfileItemModel::dayRateProperty, new CurrencyCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
-        TableColumn<ProfileItemModel, String> teamColumn = customTableView.createColumn(LocalizedText.TEAMS, ProfileItemModel::teamsProperty);
+        TableColumn<ProfileItemModel, BigDecimal> allocatedHours = customTableView.createColumn(LocalizedText.ALLOCATED_HOURS, ProfileItemModel::allocatedHoursProperty, new HourCellFactory<>());
         TableColumn<ProfileItemModel, String> locationColumn = customTableView.createColumn(LocalizedText.LOCATION, ProfileItemModel::locationProperty);
 
-        teamColumn.setResizable(false);
-        teamColumn.setMinWidth(80);
-        teamColumn.setMaxWidth(80);
-        teamColumn.setPrefWidth(80);
+        //TableColumn<ProfileItemModel, String> teamColumn = customTableView.createColumn(LocalizedText.TEAMS, ProfileItemModel::teamsProperty);
+
+        locationColumn.setResizable(false);
+        locationColumn.setMinWidth(80);
+        locationColumn.setMaxWidth(80);
+        locationColumn.setPrefWidth(80);
 
         TableColumn<ProfileItemModel, Void> optionsColumn = customTableView.createColumnWithMenu(new FontIcon(Icons.GEAR), tableViewWithPagination, contextMenu);
         optionsColumn.setResizable(false);
@@ -366,7 +374,7 @@ public class ProfilesView implements View {
         optionsColumn.setMaxWidth(50);
         optionsColumn.setPrefWidth(50);
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, dayRateColumn, annualCostColumn, locationColumn, teamColumn, optionsColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, effectivenessColumn, annualCostColumn, allocatedHours, locationColumn, optionsColumn));
 
         tableViewWithPagination.setEditable(true);
     }

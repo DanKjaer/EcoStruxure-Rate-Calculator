@@ -13,10 +13,13 @@ public class ProfileItemModel {
     private final FinancialData annualCost = new FinancialData(BigDecimal.ZERO);
     private final ObjectProperty<BigDecimal> hours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> effectiveness = new SimpleObjectProperty<>();
     private final StringProperty teams = new SimpleStringProperty("");
     private final StringProperty location = new SimpleStringProperty("");
     private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> currentHourAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> AllocatedHours = new SimpleObjectProperty<>();
     private final BooleanProperty archived = new SimpleBooleanProperty();
 
 
@@ -56,12 +59,20 @@ public class ProfileItemModel {
         return hourAllocation;
     }
 
+    public ObjectProperty<BigDecimal> allocatedHoursProperty() {
+        return AllocatedHours;
+    }
+
     public ObjectProperty<BigDecimal> hoursProperty() {
         return hours;
     }
 
     public ObjectProperty<BigDecimal> effectiveWorkHoursProperty() {
         return effectiveWorkHours;
+    }
+
+    public ObjectProperty<BigDecimal> effectivenessProperty() {
+        return effectiveness;
     }
 
     public BooleanProperty archivedProperty() {
@@ -82,5 +93,21 @@ public class ProfileItemModel {
 
     public void setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
         this.effectiveWorkHours.set(effectiveWorkHours);
+    }
+
+    public void setEffectiveness(BigDecimal effectiveness) {
+        this.effectiveness.set(effectiveness);
+    }
+
+    public void setAllocatedHours(BigDecimal allocatedHours) {
+        this.AllocatedHours.set(allocatedHours);
+    }
+
+    public ObjectProperty<BigDecimal> currentHourAllocationProperty() {
+        return currentHourAllocation;
+    }
+
+    public void setCurrentHourAllocation(BigDecimal currentHourAllocation) {
+        this.currentHourAllocation.set(currentHourAllocation);
     }
 }
