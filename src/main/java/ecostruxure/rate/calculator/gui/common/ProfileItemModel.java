@@ -24,6 +24,7 @@ public class ProfileItemModel {
     private final BooleanProperty archived = new SimpleBooleanProperty();
     private final ObjectProperty<BigDecimal> allocatedHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> allocatedCost = new SimpleObjectProperty<>();
+    private final StringProperty location = new SimpleStringProperty("");
 
     public void setIdProperty(UUID uuid) {
         ProfileItemModel.uuid = uuid;
@@ -150,12 +151,16 @@ public class ProfileItemModel {
     public boolean isArchived() {
         return archived.get();
     }
+
+    public StringProperty locationProperty() {
+        return location;
+    }
 }
 
 //    private final StringProperty teams = new SimpleStringProperty("");
-//    private final StringProperty location = new SimpleStringProperty("");
 
-    //    private final FinancialData dayRate = new FinancialData(BigDecimal.ZERO);
+
+//    private final FinancialData dayRate = new FinancialData(BigDecimal.ZERO);
     //    private final FinancialData hourlyRate = new FinancialData(BigDecimal.ZERO);
 //    private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
 //    private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
@@ -198,9 +203,7 @@ public class ProfileItemModel {
 //        return teams;
 //    }
 //
-//    public StringProperty locationProperty() {
-//        return location;
-//    }
+
 //
 //
 

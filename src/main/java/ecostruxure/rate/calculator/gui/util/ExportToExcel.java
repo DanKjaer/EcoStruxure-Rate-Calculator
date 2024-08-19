@@ -173,7 +173,10 @@ public class ExportToExcel {
             }
             int rowIndex = 1;
             for (Profile p : profiles) {
-                String[] profileData = {p.profileData().name(), p.hourAllocation().toString(), profileService.totalHoursPercentage(p, p.hourAllocation()).toString(), p.costAllocation().toString(), profileService.hourlyRate(p, p.costAllocation()).toString(), profileService.dayRate(p, p.costAllocation()).toString()};
+                String[] profileData = {p.getName(), p.getHourAllocation().toString(),
+                        profileService.totalHoursPercentage(p, p.getHourAllocation()).toString(),
+                        p.getCostAllocation().toString(), profileService.hourlyRate(p, p.getCostAllocation()).toString(),
+                        profileService.dayRate(p, p.getCostAllocation()).toString()};
                 createDataRows(sheetProfiles, rowIndex++, profileData, workbook);
             }
         } else {
@@ -240,12 +243,12 @@ public class ExportToExcel {
                     int rowIndex = profileHeaderIndex + 1;
                     for (Profile p : profiles) {
                         String[] profileData = {
-                                p.profileData().name(),
-                                p.hourAllocation() != null ? p.hourAllocation().toString() : "",
-                                profileService.totalHoursPercentage(p, p.hourAllocation()) != null ? profileService.totalHoursPercentage(p, p.hourAllocation()).toString() : "",
-                                p.costAllocation() != null ? p.costAllocation().toString() : "",
-                                profileService.hourlyRate(p, p.costAllocation()) != null ? profileService.hourlyRate(p, p.costAllocation()).toString() : "",
-                                profileService.dayRate(p, p.costAllocation()) != null ? profileService.dayRate(p, p.costAllocation()).toString() : ""
+                                p.getName(),
+                                p.getHourAllocation() != null ? p.getHourAllocation().toString() : "",
+                                profileService.totalHoursPercentage(p, p.getHourAllocation()) != null ? profileService.totalHoursPercentage(p, p.getHourAllocation()).toString() : "",
+                                p.getCostAllocation() != null ? p.getCostAllocation().toString() : "",
+                                profileService.hourlyRate(p, p.getCostAllocation()) != null ? profileService.hourlyRate(p, p.getCostAllocation()).toString() : "",
+                                profileService.dayRate(p, p.getCostAllocation()) != null ? profileService.dayRate(p, p.getCostAllocation()).toString() : ""
                         };
                         createDataRows(sheetTeam, rowIndex++, profileData, workbook);
                     }
@@ -271,19 +274,19 @@ public class ExportToExcel {
         }
     }
 
-    public void exportTable(TableView<?> tableView){
-        HSSFWorkbook hssfWorkbook=new HSSFWorkbook();
-        HSSFSheet hssfSheet=  hssfWorkbook.createSheet("Sheet1");
-        HSSFRow firstRow= hssfSheet.createRow(0);
+    public void exportTable(TableView<?> tableView) {
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        HSSFSheet hssfSheet = hssfWorkbook.createSheet("Sheet1");
+        HSSFRow firstRow = hssfSheet.createRow(0);
 
-        for (int i=0; i<tableView.getColumns().size();i++)
+        for (int i = 0; i < tableView.getColumns().size(); i++)
             firstRow.createCell(i).setCellValue(tableView.getColumns().get(i).getText());
 
-        for (int row=0; row<tableView.getItems().size();row++){
+        for (int row = 0; row < tableView.getItems().size(); row++) {
 
-            HSSFRow hssfRow= hssfSheet.createRow(row+1);
+            HSSFRow hssfRow = hssfSheet.createRow(row + 1);
 
-            for (int col=0; col<tableView.getColumns().size(); col++){
+            for (int col = 0; col < tableView.getColumns().size(); col++) {
                 if (tableView.getColumns().get(col).getCellObservableValue(row) == null)
                     continue;
 
@@ -292,7 +295,7 @@ public class ExportToExcel {
                     if (celValue != null && Double.parseDouble(celValue.toString()) != 0.0) {
                         hssfRow.createCell(col).setCellValue(Double.parseDouble(celValue.toString()));
                     }
-                } catch (  NumberFormatException e ){
+                } catch (NumberFormatException e) {
                     hssfRow.createCell(col).setCellValue(celValue.toString());
                 }
             }
