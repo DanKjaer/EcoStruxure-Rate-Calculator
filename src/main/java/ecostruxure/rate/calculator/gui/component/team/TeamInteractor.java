@@ -138,7 +138,7 @@ public class TeamInteractor {
 
             totalHorus = totalHorus.add(profileItemModel.annualHoursProperty().get());
 
-            String geographyName = geographyService.get(profile.profileData().geography()).name();
+            String geographyName = geographyService.get(profile.geography()).name();
             profileItemModel.locationProperty().set(geographyName);
 
             IGeographyItemModel geographyItemModel = new GeographyItemModel();

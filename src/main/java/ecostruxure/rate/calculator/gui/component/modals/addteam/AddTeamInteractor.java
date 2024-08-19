@@ -75,7 +75,7 @@ public class AddTeamInteractor {
             profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()));
             profileItemModel.setHourAllocationProperty().set(BigDecimal.ZERO);
 
-            profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
+            profileItemModel.locationProperty().set(geographyService.get(profile.geography()).name());
 
             profileItemModels.add(profileItemModel);
         }

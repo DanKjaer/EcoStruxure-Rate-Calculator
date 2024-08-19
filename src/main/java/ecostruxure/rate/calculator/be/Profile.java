@@ -20,6 +20,7 @@ public class Profile {
     private Timestamp updatedAt;
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
+    private Geography geography;
 
     // Implementer builder pattern, så jeg kan have 1 constructor.
 
@@ -38,6 +39,10 @@ public class Profile {
         this.updatedAt = builder.updatedAt;
         this.costAllocation = builder.costAllocation;
         this.hourAllocation = builder.hourAllocation;
+    }
+
+    public int geography() {
+        return geography.id();
     }
 
     public static class Builder{

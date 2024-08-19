@@ -65,7 +65,7 @@ public class VerifyProfilesInteractor {
             profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
             
-            profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
+            profileItemModel.locationProperty().set(geographyService.get(profile.geography()).name());
 
             profileItemModels.add(profileItemModel);
         }
