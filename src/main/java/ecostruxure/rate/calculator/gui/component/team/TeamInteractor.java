@@ -92,11 +92,11 @@ public class TeamInteractor {
 
             for (TeamProfileHistory teamProfileHistory : team.teamProfileHistories()) {
                 TeamHistoryProfileItemModel profileItemModel = new TeamHistoryProfileItemModel();
-                if (teamProfileHistory.profileId() == 0) continue;
+                if (teamProfileHistory.profileId() != null) continue;
 
                 Profile profile = profileService.get(teamProfileHistory.profileId());
 
-                profileItemModel.nameProperty().set(profile.profileData().name());
+                profileItemModel.nameProperty().set(profile.getName());
                 profileItemModel.profileIdProperty().set(teamProfileHistory.profileHistoryId());
                 profileItemModel.costAllocationProperty().set(teamProfileHistory.costAllocation());
                 profileItemModel.hourAllocationProperty().set(teamProfileHistory.hourAllocation());
@@ -125,16 +125,16 @@ public class TeamInteractor {
 
         for (Profile profile : profiles) {
             ProfileItemModel profileItemModel = new ProfileItemModel();
-            profileItemModel.idProperty().set(profile.id());
-            profileItemModel.nameProperty().set(profile.profileData().name());
+            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.nameProperty().set(profile.getName());
 
             profileItemModel.costAllocationProperty().set(profile.costAllocation());
             profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, profile.costAllocation()));
             profileItemModel.setDayRate(RateUtils.dayRate(profile, profile.costAllocation()));
-            profileItemModel.setAnnualCost(RateUtils.annualCost(profile, profile.costAllocation()));
+            profileItemModel.setAnnualCost(profile.getAnnualCost());
 
             profileItemModel.hourAllocationProperty().set(profile.hourAllocation());
-            profileItemModel.annualHoursProperty().set(RateUtils.utilizedHours(profile, profile.hourAllocation()));
+            profileItemModel.annualHoursProperty().set(profile.getAnnualHours());
 
             totalHorus = totalHorus.add(profileItemModel.annualHoursProperty().get());
 
@@ -153,7 +153,7 @@ public class TeamInteractor {
 
     public boolean removeTeamMember(ProfileItemModel profileItemModel) {
         try {
-            return teamService.removeProfileFromTeam(model.idProperty().get(), profileItemModel.idProperty().get());
+            return teamService.removeProfileFromTeam(model.idProperty().get(), profileItemModel.getUUID());
         } catch (Exception e) {
             return false;
         }

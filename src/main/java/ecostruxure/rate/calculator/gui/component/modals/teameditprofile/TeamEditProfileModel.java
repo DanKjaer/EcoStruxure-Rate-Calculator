@@ -2,8 +2,10 @@ package ecostruxure.rate.calculator.gui.component.modals.teameditprofile;
 
 import javafx.beans.property.*;
 
+import java.util.UUID;
+
 public class TeamEditProfileModel {
-    private final IntegerProperty profileId = new SimpleIntegerProperty();
+    private static UUID profileId;
     private final IntegerProperty teamId = new SimpleIntegerProperty();
     private final StringProperty profileName = new SimpleStringProperty("");
 
@@ -18,8 +20,12 @@ public class TeamEditProfileModel {
     private final StringProperty originalhourAllocation = new SimpleStringProperty("");
     private final BooleanProperty okToSave = new SimpleBooleanProperty();
 
-    public IntegerProperty profileIdProperty() {
+    public UUID profileIdProperty() {
         return profileId;
+    }
+
+    public void setProfileId(UUID profileId) {
+        TeamEditProfileModel.profileId = profileId;
     }
 
     public IntegerProperty teamIdProperty() {

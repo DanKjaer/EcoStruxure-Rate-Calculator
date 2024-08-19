@@ -10,6 +10,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TeamDAO implements ITeamDAO {
     private final DBConnector dbConnector;
@@ -174,9 +175,9 @@ public class TeamDAO implements ITeamDAO {
             conn.setAutoCommit(false);
             for (Profile profile : profiles) {
                 stmt.setInt(1, team.id());
-                stmt.setInt(2, profile.id());
-                stmt.setBigDecimal(3, profile.costAllocation());
-                stmt.setBigDecimal(4, profile.hourAllocation());
+                stmt.setObject(2, profile.getProfileId());
+                stmt.setBigDecimal(3, profile.getCostAllocation());
+                stmt.setBigDecimal(4, profile.getHourAllocation());
                 stmt.addBatch();
             }
 
@@ -201,9 +202,9 @@ public class TeamDAO implements ITeamDAO {
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             for (Profile profile : profiles) {
                 stmt.setInt(1, team.id());
-                stmt.setInt(2, profile.id());
-                stmt.setBigDecimal(3, profile.costAllocation());
-                stmt.setBigDecimal(4, profile.hourAllocation());
+                stmt.setObject(2, profile.getProfileId());
+                stmt.setBigDecimal(3, profile.getCostAllocation());
+                stmt.setBigDecimal(4, profile.getHourAllocation());
                 stmt.addBatch();
             }
 
@@ -225,10 +226,10 @@ public class TeamDAO implements ITeamDAO {
             conn.setAutoCommit(false);
 
             for (Profile profile : profiles) {
-                stmt.setBigDecimal(1, profile.costAllocation());
-                stmt.setBigDecimal(2, profile.hourAllocation());
+                stmt.setBigDecimal(1, profile.getCostAllocation());
+                stmt.setBigDecimal(2, profile.getHourAllocation());
                 stmt.setInt(3, team.id());
-                stmt.setInt(4, profile.id());
+                stmt.setObject(4, profile.getProfileId());
                 stmt.addBatch();
             }
 
@@ -251,10 +252,10 @@ public class TeamDAO implements ITeamDAO {
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
             for (Profile profile : profiles) {
-                stmt.setBigDecimal(1, profile.costAllocation());
-                stmt.setBigDecimal(2, profile.hourAllocation());
+                stmt.setBigDecimal(1, profile.getCostAllocation());
+                stmt.setBigDecimal(2, profile.getHourAllocation());
                 stmt.setInt(3, team.id());
-                stmt.setInt(4, profile.id());
+                stmt.setObject(4, profile.getProfileId());
                 stmt.addBatch();
             }
 
@@ -275,10 +276,10 @@ public class TeamDAO implements ITeamDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setBigDecimal(1, profile.costAllocation());
-            stmt.setBigDecimal(2, profile.hourAllocation());
+            stmt.setBigDecimal(1, profile.getCostAllocation());
+            stmt.setBigDecimal(2, profile.getHourAllocation());
             stmt.setInt(3, teamId);
-            stmt.setInt(4, profile.id());
+            stmt.setObject(4, profile.getProfileId());
 
             stmt.executeUpdate();
         } catch (Exception e) {
@@ -297,10 +298,10 @@ public class TeamDAO implements ITeamDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
-            stmt.setBigDecimal(1, profile.costAllocation());
-            stmt.setBigDecimal(2, profile.hourAllocation());
+            stmt.setBigDecimal(1, profile.getCostAllocation());
+            stmt.setBigDecimal(2, profile.getHourAllocation());
             stmt.setInt(3, teamId);
-            stmt.setInt(4, profile.id());
+            stmt.setObject(4, profile.getProfileId());
 
             stmt.executeUpdate();
         } catch (Exception e) {
@@ -322,7 +323,7 @@ public class TeamDAO implements ITeamDAO {
 
             for (Profile profile : profiles) {
                 stmt.setInt(1, team.id());
-                stmt.setInt(2, profile.id());
+                stmt.setObject(2, profile.getProfileId());
                 stmt.addBatch();
             }
 
@@ -344,7 +345,7 @@ public class TeamDAO implements ITeamDAO {
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             for (Profile profile : profiles) {
                 stmt.setInt(1, team.id());
-                stmt.setInt(2, profile.id());
+                stmt.setObject(2, profile.getProfileId());
                 stmt.addBatch();
             }
 
@@ -361,48 +362,44 @@ public class TeamDAO implements ITeamDAO {
         String query = """
                         SELECT p.*, pd.*, tp.cost_allocation, tp.hour_allocation
                         FROM dbo.Profiles p
-                        INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ?
-                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id AND pd.archived = FALSE;                    
+                        INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ?;                  
                         """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("id");
+                    UUID id = (UUID) rs.getObject("id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
-                    int geography = rs.getInt("geography");
-                    boolean overhead = rs.getBoolean("overhead");
-                    boolean archived = rs.getBoolean("archived");
+                    int countryId = rs.getInt("geography");
+                    boolean resourceType = rs.getBoolean("overhead");
 
-                    // Profile
-                    BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-                    BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
-                    BigDecimal totalHours = rs.getBigDecimal("total_hours");
-                    BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
+                    BigDecimal annualCost = rs.getBigDecimal("annual_cost");
+                    BigDecimal annualHours = rs.getBigDecimal("annual_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
+                    BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
+                    BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
+                    boolean archived = rs.getBoolean("archived");
 
                     BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
                     BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
 
-                    Profile profile = new Profile(
-                            id,
-                            name,
-                            currency,
-                            annualSalary,
-                            effectiveness,
-                            geography,
-                            totalHours,
-                            effectiveWorkHours,
-                            costAllocation,
-                            hourAllocation,
-                            overhead,
-                            hoursPerDay,
-                            archived
-                    );
-
-                    profiles.add(profile);
+                    profiles.add(new Profile.Builder()
+                            .setProfileId(id)
+                            .setName(name)
+                            .setCurrency(currency)
+                            .setCountryId(countryId)
+                            .setResourceType(resourceType)
+                            .setAnnualCost(annualCost)
+                            .setAnnualHours(annualHours)
+                            .setHoursPerDay(hoursPerDay)
+                            .setEffectivenessPercentage(effectivenessPercentage)
+                            .setEffectiveWorkHours(effectiveWorkHours)
+                            .setArchived(archived)
+                            .setCostAllocation(costAllocation)
+                            .setHourAllocation(hourAllocation)
+                            .build());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -413,7 +410,7 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public Profile getTeamProfile(int teamId, int profileId) throws Exception {
+    public Profile getTeamProfile(int teamId, UUID profileId) throws Exception {
         Profile profile = null;
         String query = """
                         SELECT p.*, pd.*, tp.cost_allocation, tp.hour_allocation
@@ -424,42 +421,41 @@ public class TeamDAO implements ITeamDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, teamId);
-            stmt.setInt(2, profileId);
+            stmt.setObject(2, profileId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    int id = rs.getInt("id");
+                    UUID id = (UUID) rs.getObject("id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
-                    int geography = rs.getInt("geography");
-                    boolean overhead = rs.getBoolean("overhead");
-                    boolean archived = rs.getBoolean("archived");
+                    int countryId = rs.getInt("geography");
+                    boolean resourceType = rs.getBoolean("overhead");
 
-                    // Profile
-                    BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-                    BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
-                    BigDecimal totalHours = rs.getBigDecimal("total_hours");
+                    BigDecimal annualCost = rs.getBigDecimal("annual_salary");
+                    BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
+                    BigDecimal annualHours = rs.getBigDecimal("total_hours");
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
+                    boolean archived = rs.getBoolean("archived");
 
                     BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
                     BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
 
-                    return new Profile(
-                            id,
-                            name,
-                            currency,
-                            annualSalary,
-                            effectiveness,
-                            geography,
-                            totalHours,
-                            effectiveWorkHours,
-                            costAllocation,
-                            hourAllocation,
-                            overhead,
-                            hoursPerDay,
-                            archived
-                    );
+                    return new Profile.Builder()
+                            .setProfileId(id)
+                            .setName(name)
+                            .setCurrency(currency)
+                            .setCountryId(countryId)
+                            .setResourceType(resourceType)
+                            .setAnnualCost(annualCost)
+                            .setAnnualHours(annualHours)
+                            .setHoursPerDay(hoursPerDay)
+                            .setEffectivenessPercentage(effectivenessPercentage)
+                            .setEffectiveWorkHours(effectiveWorkHours)
+                            .setArchived(archived)
+                            .setCostAllocation(costAllocation)
+                            .setHourAllocation(hourAllocation)
+                            .build();
                 }
             } catch (Exception e) {
                 throw new Exception("Could not get Profile for Team from Database.\n" + e.getMessage());
@@ -576,51 +572,50 @@ public class TeamDAO implements ITeamDAO {
             stmt.setInt(2, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                    BigDecimal addedRate = rs.getBigDecimal("cost_allocation");
                     BigDecimal costAllocationTotal = rs.getBigDecimal("total_cost_allocation"); // den her ignorer det team man giver, så man skal plus sammen for at se om det er over 100
 
-                    BigDecimal hourAllocation = rs.getBigDecimal("hourAllocation");
+                    BigDecimal addedHour = rs.getBigDecimal("hourAllocation");
                     BigDecimal hourAllocationTotal = rs.getBigDecimal("total_hour_allocation");
 
-                    boolean rateIsOK = costAllocationTotal.add(costAllocation).compareTo(new BigDecimal("100")) <= 0;
-                    boolean hoursIsOK = hourAllocationTotal.add(hourAllocation).compareTo(new BigDecimal("100")) <= 0;
+                    boolean rateIsOK = costAllocationTotal.add(addedRate).compareTo(new BigDecimal("100")) <= 0;
+                    boolean hoursIsOK = hourAllocationTotal.add(addedHour).compareTo(new BigDecimal("100")) <= 0;
                     if (rateIsOK && hoursIsOK)
                         continue;
 
-                    int id = rs.getInt("id");
+                    UUID id = (UUID) rs.getObject("id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
-                    int geography = rs.getInt("geography");
-                    boolean overhead = rs.getBoolean("overhead");
-                    boolean archived = rs.getBoolean("archived");
+                    int countryId = rs.getInt("geography");
+                    boolean resourceType = rs.getBoolean("overhead");
 
                     // Profile
-                    BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-                    BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
-                    BigDecimal totalHours = rs.getBigDecimal("total_hours");
+                    BigDecimal annualCost = rs.getBigDecimal("annual_salary");
+                    BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
+                    BigDecimal annualHours = rs.getBigDecimal("total_hours");
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
                     BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
+                    boolean archived = rs.getBoolean("archived");
 
-                    BigDecimal addedRate = costAllocationTotal.add(costAllocation);
-                    BigDecimal addedHours = hourAllocationTotal.add(hourAllocation);
+                    BigDecimal costAllocation = costAllocationTotal.add(addedRate);
+                    BigDecimal hourAllocation = hourAllocationTotal.add(addedHour);
 
-                    Profile profile = new Profile(
-                            id,
-                            name,
-                            currency,
-                            annualSalary,
-                            effectiveness,
-                            geography,
-                            totalHours,
-                            effectiveWorkHours,
-                            addedRate,
-                            addedHours,
-                            overhead,
-                            hoursPerDay,
-                            archived
-                    );
+                    profiles.add(new Profile.Builder()
+                            .setProfileId(id)
+                            .setName(name)
+                            .setCurrency(currency)
+                            .setCountryId(countryId)
+                            .setResourceType(resourceType)
+                            .setAnnualCost(annualCost)
+                            .setAnnualHours(annualHours)
+                            .setHoursPerDay(hoursPerDay)
+                            .setEffectivenessPercentage(effectivenessPercentage)
+                            .setEffectiveWorkHours(effectiveWorkHours)
+                            .setArchived(archived)
+                            .setCostAllocation(costAllocation)
+                            .setHourAllocation(hourAllocation)
+                            .build());
 
-                    profiles.add(profile);
                 }
             } catch (Exception e) {
                 throw new Exception("Could not get Profiles to verify for unarchiving Team from Database.\n" + e.getMessage());
@@ -630,7 +625,7 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public boolean removeProfileFromTeam(int teamId, int profileId) throws Exception {
+    public boolean removeProfileFromTeam(int teamId, UUID profileId) throws Exception {
         String query = """
                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?
                        """;
@@ -638,7 +633,7 @@ public class TeamDAO implements ITeamDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, teamId);
-            stmt.setInt(2, profileId);
+            stmt.setObject(2, profileId);
             stmt.executeUpdate();
         } catch (Exception e) {
             throw new Exception("Could not remove Profile from Team in Database.\n" + e.getMessage());
@@ -647,7 +642,7 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public boolean removeProfileFromTeam(TransactionContext context, int teamId, int profileId) throws Exception {
+    public boolean removeProfileFromTeam(TransactionContext context, int teamId, UUID profileId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
@@ -656,7 +651,7 @@ public class TeamDAO implements ITeamDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             stmt.setInt(1, teamId);
-            stmt.setInt(2, profileId);
+            stmt.setObject(2, profileId);
             stmt.executeUpdate();
         } catch (Exception e) {
             throw new Exception("Could not remove Profile from Team in Database.\n" + e.getMessage());
@@ -669,7 +664,6 @@ public class TeamDAO implements ITeamDAO {
 
         String query = """
                         SELECT * FROM dbo.Profiles
-                        INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
                         INNER JOIN dbo.Teams_profiles ON dbo.Profiles.id = dbo.Teams_profiles.profileId
                         WHERE dbo.Teams_profiles.teamId = ?;
                         """;

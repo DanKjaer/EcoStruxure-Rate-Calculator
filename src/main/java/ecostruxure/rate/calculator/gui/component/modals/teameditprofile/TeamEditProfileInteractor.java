@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.bll.service.TeamService;
 import javafx.beans.binding.Bindings;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class TeamEditProfileInteractor {
     private final TeamEditProfileModel model;
@@ -27,7 +28,7 @@ public class TeamEditProfileInteractor {
 
     }
 
-    public Boolean fetchTeamProfile(int teamId, int profileId) {
+    public Boolean fetchTeamProfile(int teamId, UUID profileId) {
         try {
             profile = teamService.getTeamProfile(teamId, profileId);
             return true;
@@ -51,12 +52,12 @@ public class TeamEditProfileInteractor {
     }
 
     public void updateModel() {
-        model.costAllocationProperty().set(profile.costAllocation().toString());
-        model.originalCostAllocationProperty().set(profile.costAllocation().toString());
-        model.profileNameProperty().set(profile.profileData().name());
+        model.costAllocationProperty().set(profile.getCostAllocation().toString());
+        model.originalCostAllocationProperty().set(profile.getCostAllocation().toString());
+        model.profileNameProperty().set(profile.getName());
         model.costAllocationFetchedProperty().set(true);
-        model.hourAllocationProperty().set(profile.hourAllocation().toString());
-        model.originalhourAllocationProperty().set(profile.hourAllocation().toString());
+        model.hourAllocationProperty().set(profile.getHourAllocation().toString());
+        model.originalhourAllocationProperty().set(profile.getHourAllocation().toString());
         model.hourAllocationFetchedProperty().set(true);
     }
 
@@ -74,8 +75,8 @@ public class TeamEditProfileInteractor {
 
     public boolean saveTeamProfile() {
         try {
-            profile.costAllocation(new BigDecimal(model.costAllocationProperty().get()));
-            profile.hourAllocation(new BigDecimal(model.hourAllocationProperty().get()));
+            profile.setCostAllocation(new BigDecimal(model.costAllocationProperty().get()));
+            profile.setHourAllocation(new BigDecimal(model.hourAllocationProperty().get()));
 
             return teamService.updateProfile(model.teamIdProperty().get(), profile);
         } catch (Exception e) {

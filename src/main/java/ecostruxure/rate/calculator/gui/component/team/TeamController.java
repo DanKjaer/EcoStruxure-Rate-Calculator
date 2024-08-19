@@ -126,12 +126,12 @@ public class TeamController implements Controller {
     }
 
     private void teamEditProfile(ProfileItemModel profileItemModel) {
-        eventBus.publish(new ShowModalEvent(editTeamProfileController, new TeamDataId(model.idProperty().get(), profileItemModel.idProperty().get())));
+        eventBus.publish(new ShowModalEvent(editTeamProfileController, new TeamDataId(model.idProperty().get(), profileItemModel.getUUID())));
     }
 
 
     private void showProfile(ProfileItemModel data) {
-        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.idProperty().get()));
+        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.getUUID()));
     }
 
     private void showVerifyProfiles(int teamId, List<Profile> profilesToVerify) {

@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TeamEditProfileController implements ModalController {
     private final EventBus eventBus;
@@ -39,7 +40,7 @@ public class TeamEditProfileController implements ModalController {
     public void activate(Object data) {
         if (data instanceof TeamDataId teamData) {
             model.teamIdProperty().set(teamData.teamId());
-            model.profileIdProperty().set(teamData.profileId());
+            model.setProfileId(teamData.profileId());
             model.profileNameProperty().set("");
             model.costAllocationFetchedProperty().set(false);
             model.costAllocationProperty().set("");
@@ -53,7 +54,7 @@ public class TeamEditProfileController implements ModalController {
         }
     }
 
-    private void fetchTeamProfile(int teamId, int profileId) {
+    private void fetchTeamProfile(int teamId, UUID profileId) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {

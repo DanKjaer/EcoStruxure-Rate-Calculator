@@ -20,7 +20,7 @@ public interface IProfileDAO {
 
     Profile get(UUID id) throws Exception;
 
-    Profile get(TransactionContext context, int id) throws Exception;
+    Profile get(TransactionContext context, UUID id) throws Exception;
 
     List<Profile> allByCountry(Country country) throws Exception;
     List<Profile> allByCountry(String countryCode) throws Exception;

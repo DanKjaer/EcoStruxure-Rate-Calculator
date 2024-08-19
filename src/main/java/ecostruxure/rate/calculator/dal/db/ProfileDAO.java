@@ -33,20 +33,20 @@ public class ProfileDAO implements IProfileDAO {
         boolean archived = rs.getBoolean("archived");
         Timestamp updatedAt = rs.getTimestamp("updated_at");
 
-        return new Profile(
-                profileId,
-                name,
-                currency,
-                countryId,
-                resourceType,
-                annualCost,
-                annualHours,
-                hoursPerDay,
-                effectivenessPercentage,
-                effectiveWorkHours,
-                archived,
-                updatedAt
-        );
+        return new Profile.Builder()
+                .setProfileId(profileId)
+                .setName(name)
+                .setCurrency(currency)
+                .setCountryId(countryId)
+                .setResourceType(resourceType)
+                .setAnnualCost(annualCost)
+                .setAnnualHours(annualHours)
+                .setHoursPerDay(hoursPerDay)
+                .setEffectivenessPercentage(effectivenessPercentage)
+                .setEffectiveWorkHours(effectiveWorkHours)
+                .setArchived(archived)
+                .setUpdatedAt(updatedAt)
+                .build();
     }
 
     // Bemærk: Kan nok laves smartere, men indtil videre er dette funktionelt og opdelt.
@@ -202,7 +202,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public Profile get(TransactionContext context, int id) throws Exception {
+    public Profile get(TransactionContext context, UUID id) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         Profile profile = null;
@@ -215,7 +215,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
-            stmt.setInt(1, id);
+            stmt.setObject(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
@@ -232,16 +232,17 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (name, currency, country_id, resource_type, annual_cost, effectiveness, total_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (name, currency, country_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, profile.getName());
-            stmt.setInt(2, profile.getCountryId());
-            stmt.setBoolean(3, profile.isResourceType());
-            stmt.setBigDecimal(4, profile.getAnnualCost());
-            stmt.setBigDecimal(5, profile.getEffectivenessPercentage());
-            stmt.setBigDecimal(6, profile.getHourAllocation());
-            stmt.setBigDecimal(7, profile.getEffectiveWorkHours());
-            stmt.setBigDecimal(8, profile.getHoursPerDay());
-            stmt.setBoolean(9, profile.isArchived());
+            stmt.setString(2, profile.getCurrency());
+            stmt.setInt(3, profile.getCountryId());
+            stmt.setBoolean(4, profile.isResourceType());
+            stmt.setBigDecimal(5, profile.getAnnualCost());
+            stmt.setBigDecimal(6, profile.getEffectivenessPercentage());
+            stmt.setBigDecimal(7, profile.getHourAllocation());
+            stmt.setBigDecimal(8, profile.getEffectiveWorkHours());
+            stmt.setBigDecimal(9, profile.getHoursPerDay());
+            stmt.setBoolean(10, profile.isArchived());
 
             int affectedRows = stmt.executeUpdate();
 

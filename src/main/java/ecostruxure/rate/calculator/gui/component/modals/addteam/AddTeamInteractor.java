@@ -63,16 +63,16 @@ public class AddTeamInteractor {
         List<AddProfileItemModel> profileItemModels = new ArrayList<>();
 
         for (Profile profile : profiles) {
-            if (!profileService.shouldProcessUtilization(profile.costAllocation()))
+            if (!profileService.shouldProcessUtilization(profile.getCostAllocation()))
                 continue;
 
             AddProfileItemModel profileItemModel = new AddProfileItemModel();
-            profileItemModel.idProperty().set(profile.id());
-            profileItemModel.nameProperty().set(profile.profileData().name());
+            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.nameProperty().set(profile.getName());
 
-            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.costAllocation()));
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.getCostAllocation()));
             profileItemModel.setCostAllocationProperty().set(BigDecimal.ZERO);
-            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.hourAllocation()));
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()));
             profileItemModel.setHourAllocationProperty().set(BigDecimal.ZERO);
 
             profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
@@ -90,15 +90,12 @@ public class AddTeamInteractor {
     }
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
-        var profileData = new ProfileData();
-        profileData.id(model.idProperty().get());
-        profileData.name((model.nameProperty().get()));
-
         var profile = new Profile();
-        profile.id(model.idProperty().get());
-        profile.profileData(profileData);
-        profile.costAllocation(model.setCostAllocationProperty().get());
-        profile.hourAllocation(model.setHourAllocationProperty().get());
+        profile.setProfileId(model.getUUID());
+        profile.setName((model.nameProperty().get()));
+
+        profile.setCostAllocation(model.setCostAllocationProperty().get());
+        profile.setHourAllocation(model.setHourAllocationProperty().get());
 
         return profile;
     }

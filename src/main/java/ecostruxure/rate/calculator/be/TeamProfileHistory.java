@@ -2,9 +2,10 @@ package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class TeamProfileHistory {
-    private int profileId;
+    private UUID profileId;
     private int profileHistoryId;
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
@@ -14,11 +15,11 @@ public class TeamProfileHistory {
     private BigDecimal totalHours;
     private LocalDateTime updatedAt;
 
-    public int profileId() {
+    public UUID profileId() {
         return profileId;
     }
 
-    public void profileId(int profileId) {
+    public void profileId(UUID profileId) {
         this.profileId = profileId;
     }
 

@@ -22,7 +22,8 @@ public class ProfileItemModel {
     private final ObjectProperty<Timestamp> updatedAt = new SimpleObjectProperty<>();
     private final BooleanProperty resourceType = new SimpleBooleanProperty();
     private final BooleanProperty archived = new SimpleBooleanProperty();
-    private final ObjectProperty<BigDecimal> AllocatedHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> allocatedHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> allocatedCost = new SimpleObjectProperty<>();
 
     public void setIdProperty(UUID uuid) {
         ProfileItemModel.uuid = uuid;
@@ -59,11 +60,11 @@ public class ProfileItemModel {
     }
 
     public ObjectProperty<BigDecimal> allocatedHoursProperty() {
-        return AllocatedHours;
+        return allocatedHours;
     }
 
     public void setAllocatedHours(BigDecimal allocatedHours) {
-        this.AllocatedHours.set(allocatedHours);
+        this.allocatedHours.set(allocatedHours);
     }
 
     public void setAnnualCost(BigDecimal annualCost) {

@@ -7,6 +7,7 @@ import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface ITeamDAO {
     List<Team> all() throws Exception;
@@ -37,7 +38,7 @@ public interface ITeamDAO {
 
     List<Profile> getTeamProfiles(int teamId) throws Exception;
 
-    Profile getTeamProfile(int teamId, int profileId) throws Exception;
+    Profile getTeamProfile(int teamId, UUID profileId) throws Exception;
 
     boolean archive(int teamId, boolean archive) throws Exception;
 
@@ -45,9 +46,9 @@ public interface ITeamDAO {
 
     List<Profile> canUnarchive(int teamId) throws Exception;
 
-    boolean removeProfileFromTeam(int teamId, int profileId) throws Exception;
+    boolean removeProfileFromTeam(int teamId, UUID profileId) throws Exception;
 
-    boolean removeProfileFromTeam(TransactionContext context, int teamId, int profileId) throws Exception;
+    boolean removeProfileFromTeam(TransactionContext context, int teamId, UUID profileId) throws Exception;
 
     List<Profile> getTeamProfiles(TransactionContext context, int teamId) throws Exception;
 

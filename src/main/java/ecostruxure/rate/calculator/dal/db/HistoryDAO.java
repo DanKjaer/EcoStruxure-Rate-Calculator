@@ -89,7 +89,7 @@ public class HistoryDAO implements IHistoryDAO {
                     }
 
                     TeamProfileHistory teamProfileHistory = new TeamProfileHistory();
-                    teamProfileHistory.profileId(rs.getInt("profile_id"));
+                    teamProfileHistory.profileId((UUID) rs.getObject("profile_id"));
                     teamProfileHistory.profileHistoryId(rs.getInt("profile_history_id"));
                     teamProfileHistory.hourlyRate(rs.getBigDecimal("profile_hourly_rate"));
                     teamProfileHistory.dayRate(rs.getBigDecimal("profile_day_rate"));
@@ -176,7 +176,7 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public void insertTeamProfileHistory(TransactionContext context, int teamId, int profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
+    public void insertTeamProfileHistory(TransactionContext context, int teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
                     INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, cost_allocation, hour_allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
@@ -185,7 +185,7 @@ public class HistoryDAO implements IHistoryDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
             stmt.setInt(1, teamId);
-            stmt.setInt(2, profileId);
+            stmt.setObject(2, profileId);
 
             if (profileHistoryId == null) stmt.setNull(3, Types.INTEGER);
             else stmt.setInt(3, profileHistoryId);
@@ -208,7 +208,7 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public void insertTeamProfileHistory(TransactionContext context, int teamId, int profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
+    public void insertTeamProfileHistory(TransactionContext context, int teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
                     INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, cost_allocation, hour_Allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
@@ -216,7 +216,7 @@ public class HistoryDAO implements IHistoryDAO {
                     """;
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
             stmt.setInt(1, teamId);
-            stmt.setInt(2, profileId);
+            stmt.setObject(2, profileId);
 
             if (profileHistoryId == null) stmt.setNull(3, Types.INTEGER);
             else stmt.setInt(3, profileHistoryId);
@@ -240,12 +240,12 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public Integer getLatestProfileHistoryId(TransactionContext context, int profileId) throws Exception {
+    public Integer getLatestProfileHistoryId(TransactionContext context, UUID profileId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = "SELECT history_id FROM dbo.Profiles_history WHERE profile_id = ? ORDER BY updated_at DESC LIMIT 1";
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
-            stmt.setInt(1, profileId);
+            stmt.setObject(1, profileId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("history_id");

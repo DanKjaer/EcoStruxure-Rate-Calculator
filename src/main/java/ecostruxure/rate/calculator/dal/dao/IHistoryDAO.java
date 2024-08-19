@@ -23,9 +23,9 @@ public interface IHistoryDAO {
 
     void insertEmptyTeamProfileHistory(TransactionContext context, int teamId, TeamMetrics metrics, Reason reason, LocalDateTime now) throws Exception;
 
-    void insertTeamProfileHistory(TransactionContext context, int teamId, int profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception;
+    void insertTeamProfileHistory(TransactionContext context, int teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception;
 
-    void insertTeamProfileHistory(TransactionContext context, int teamId, int profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception;
+    void insertTeamProfileHistory(TransactionContext context, int teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception;
 
-    Integer getLatestProfileHistoryId(TransactionContext context, int profileId) throws Exception;
+    Integer getLatestProfileHistoryId(TransactionContext context, UUID profileId) throws Exception;
 }

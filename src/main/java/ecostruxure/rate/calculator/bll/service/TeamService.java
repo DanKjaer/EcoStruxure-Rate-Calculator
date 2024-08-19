@@ -2,15 +2,14 @@ package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.bll.service.TeamProfileManagementService;
 import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class TeamService {
     private final ITeamDAO teamDAO;
@@ -177,9 +176,9 @@ public class TeamService {
         return teamDAO.getTeamProfiles(teamId);
     }
 
-    public Profile getTeamProfile(int teamId, int profileId) throws Exception {
+    public Profile getTeamProfile(int teamId, UUID profileId) throws Exception {
         if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId <= 0) throw new IllegalArgumentException("Profile ID must be greater than 0");
+        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return teamDAO.getTeamProfile(teamId, profileId);
     }
@@ -208,9 +207,9 @@ public class TeamService {
         return teamDAO.canUnarchive(team.id());
     }
 
-    public boolean removeProfileFromTeam(int teamId, int profileId) throws Exception {
+    public boolean removeProfileFromTeam(int teamId, UUID profileId) throws Exception {
         if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId <= 0) throw new IllegalArgumentException("Profile ID must be greater than 0");
+        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return teamProfileManagementService.removeProfileFromTeam(teamId, profileId);
     }

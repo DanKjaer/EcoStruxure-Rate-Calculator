@@ -21,27 +21,117 @@ public class Profile {
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
 
+    // Implementer builder pattern, så jeg kan have 1 constructor.
+
+    private Profile(Builder builder){
+        this.profileId = builder.profileId;
+        this.name = builder.name;
+        this.currency = builder.currency;
+        this.countryId = builder.countryId;
+        this.resourceType = builder.resourceType;
+        this.annualCost = builder.annualCost;
+        this.annualHours = builder.annualHours;
+        this.hoursPerDay = builder.hoursPerDay;
+        this.effectivenessPercentage = builder.effectivenessPercentage;
+        this.effectiveWorkHours = builder.effectiveWorkHours;
+        this.archived = builder.archived;
+        this.updatedAt = builder.updatedAt;
+        this.costAllocation = builder.costAllocation;
+        this.hourAllocation = builder.hourAllocation;
+    }
+
+    public static class Builder{
+        private UUID profileId;
+        private String name;
+        private String currency;
+        private int countryId;
+        private Boolean resourceType;
+        private BigDecimal annualCost;
+        private BigDecimal annualHours;
+        private BigDecimal hoursPerDay;
+        private BigDecimal effectivenessPercentage;
+        private BigDecimal effectiveWorkHours;
+        private boolean archived;
+        private Timestamp updatedAt;
+        private BigDecimal costAllocation;
+        private BigDecimal hourAllocation;
+
+        public Builder setProfileId(UUID profileId){
+            this.profileId = profileId;
+            return this;
+        }
+
+        public Builder setName(String name){
+            this.name = name;
+            return this;
+        }
+
+        public Builder setCurrency(String currency){
+            this.currency = currency;
+            return this;
+        }
+
+        public Builder setCountryId(int countryId){
+            this.countryId = countryId;
+            return this;
+        }
+
+        public Builder setResourceType(Boolean resourceType){
+            this.resourceType = resourceType;
+            return this;
+        }
+
+        public Builder setAnnualCost(BigDecimal annualCost){
+            this.annualCost = annualCost;
+            return this;
+        }
+
+        public Builder setAnnualHours(BigDecimal annualHours){
+            this.annualHours = annualHours;
+            return this;
+        }
+
+        public Builder setHoursPerDay(BigDecimal hoursPerDay){
+            this.hoursPerDay = hoursPerDay;
+            return this;
+        }
+
+        public Builder setEffectivenessPercentage(BigDecimal effectivenessPercentage){
+            this.effectivenessPercentage = effectivenessPercentage;
+            return this;
+        }
+
+        public Builder setEffectiveWorkHours(BigDecimal effectiveWorkHours){
+            this.effectiveWorkHours = effectiveWorkHours;
+            return this;
+        }
+
+        public Builder setArchived(boolean archived){
+            this.archived = archived;
+            return this;
+        }
+
+        public Builder setUpdatedAt(Timestamp updatedAt){
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Builder setCostAllocation(BigDecimal costAllocation){
+            this.costAllocation = costAllocation;
+            return this;
+        }
+
+        public Builder setHourAllocation(BigDecimal hourAllocation){
+            this.hourAllocation = hourAllocation;
+            return this;
+        }
+
+        public Profile build(){
+            return new Profile(this);
+        }
+
+    }
     public Profile() {
-    }
-
-    public Profile(String name, Boolean resourceType) {
-        this.name = name;
-        this.resourceType = resourceType;
-    }
-
-    public Profile(UUID profileId, String name, String currency, int countryId, boolean resourceType, BigDecimal annualCost, BigDecimal annualHours, BigDecimal hoursPerDay, BigDecimal effectivenessPercentage, BigDecimal effectiveWorkHours, boolean archived, Timestamp updatedAt) {
-        this.profileId = profileId;
-        this.name = name;
-        this.currency = currency;
-        this.countryId = countryId;
-        this.resourceType = resourceType;
-        this.annualCost = annualCost;
-        this.annualHours = annualHours;
-        this.hoursPerDay = hoursPerDay;
-        this.effectivenessPercentage = effectivenessPercentage;
-        this.effectiveWorkHours = effectiveWorkHours;
-        this.archived = archived;
-        this.updatedAt = updatedAt;
     }
 
     public UUID getProfileId() {
@@ -156,182 +246,3 @@ public class Profile {
         this.hourAllocation = hourAllocation;
     }
 }
-
-//public class Profile {
-//    private int id;
-//    private BigDecimal annualSalary;
-//    private BigDecimal effectiveness;
-//    private BigDecimal totalHours;
-//    private BigDecimal effectiveWorkHours;
-//
-
-//
-//    private BigDecimal hoursPerDay;
-//    private ProfileData profileData;
-//
-//    public Profile() {
-//
-//    }
-//    // Constructor without allocation
-//    public Profile(int id, String name, String currency, BigDecimal annualSalary,
-//                   BigDecimal effectiveness, int geography,
-//                   BigDecimal totalHours, BigDecimal effectiveWorkHours, boolean overhead,
-//                   BigDecimal hoursPerDay, boolean archived) {
-//        this.id = id;
-//        this.annualSalary = annualSalary;
-//        this.effectiveness = effectiveness;
-//        this.totalHours = totalHours;
-//        this.effectiveWorkHours = effectiveWorkHours;
-//        this.hoursPerDay = hoursPerDay;
-//
-//        this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
-//    }
-//    // Constructor with id
-//    public Profile(int id, String name, String currency, BigDecimal annualSalary,
-//                   BigDecimal effectiveness, int geography,
-//                   BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal costAllocation, BigDecimal hourAllocation, boolean overhead,
-//                   BigDecimal hoursPerDay, boolean archived) {
-//        this.id = id;
-//        this.annualSalary = annualSalary;
-//        this.effectiveness = effectiveness;
-//        this.totalHours = totalHours;
-//        this.effectiveWorkHours = effectiveWorkHours;
-//        this.costAllocation = setUtilization(costAllocation);
-//        this.hourAllocation = setUtilization(hourAllocation);
-//        this.hoursPerDay = hoursPerDay;
-//
-//        this.profileData = new ProfileData(id, name, currency, geography, overhead, archived);
-//        //System.out.println("Profile constructor: hourAllocation =" + this.hourAllocation);
-//    }
-//
-//    // Constructor without id
-//    public Profile(String name, String currency, BigDecimal annualSalary,
-//                   BigDecimal effectiveness, int geography,
-//                   BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal costAllocation, BigDecimal hourAllocation, boolean overhead,
-//                   BigDecimal hoursPerDay, boolean archived) {
-//        this.annualSalary = annualSalary;
-//        this.effectiveness = effectiveness;
-//        this.totalHours = totalHours;
-//        this.effectiveWorkHours = effectiveWorkHours;
-//        this.costAllocation = setUtilization(costAllocation);
-//        this.hourAllocation = setUtilization(hourAllocation);
-//        this.hoursPerDay = hoursPerDay;
-//
-//        this.profileData = new ProfileData(name, currency, geography, overhead, archived);
-//    }
-//
-//    private BigDecimal setUtilization(BigDecimal utilization) {
-//        return Objects.requireNonNullElse(utilization, BigDecimal.ZERO);
-//    }
-//
-//    public int id() {
-//        return this.id;
-//    }
-//
-//    public void id(int id) {
-//        this.id = id;
-//    }
-//
-//    public BigDecimal annualSalary() {
-//        return annualSalary;
-//    }
-//
-//    public void annualSalary(BigDecimal annualSalary) {
-//        this.annualSalary = annualSalary;
-//    }
-//
-//    public BigDecimal effectiveness() {
-//        return effectiveness;
-//    }
-//
-//    public void effectiveness(BigDecimal effectiveness) {
-//        this.effectiveness = effectiveness;
-//    }
-//
-//    public BigDecimal totalHours() {
-//        return totalHours;
-//    }
-//
-//    public void totalHours(BigDecimal totalHours) {
-//        this.totalHours = totalHours;
-//    }
-//
-//    public void effectiveWorkHours(BigDecimal effectiveWorkHours) {
-//        this.effectiveWorkHours = effectiveWorkHours;
-//    }
-//
-//    public BigDecimal effectiveWorkHours() {
-//        return effectiveWorkHours;
-//    }
-//
-//    public BigDecimal hoursPerDay() {
-//        return hoursPerDay;
-//    }
-//
-
-//
-//    public void hoursPerDay(BigDecimal hoursPerDay) {
-//        this.hoursPerDay = hoursPerDay;
-//    }
-//
-//    public ProfileData profileData() {
-//        return profileData;
-//    }
-//
-//    public void profileData(ProfileData profileData) {
-//        this.profileData = profileData;
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "Profile{" +
-//                "id=" + id +
-//                ", annualSalary=" + annualSalary +
-//                ", effectiveness=" + effectiveness +
-//                ", totalHours=" + totalHours +
-//                ", effectiveWorkHours=" + effectiveWorkHours +
-//                ", costAllocation=" + costAllocation +
-//                ", hourAllocation=" + hourAllocation +
-//                ", hoursPerDay=" + hoursPerDay +
-//                ", profileData=" + profileData +
-//                '}';
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) return true;
-//        if (obj == null || getClass() != obj.getClass()) return false;
-//        Profile that = (Profile) obj;
-//        return id == that.id &&
-//                Objects.equals(annualSalary, that.annualSalary) &&
-//                Objects.equals(effectiveness, that.effectiveness) &&
-//                Objects.equals(totalHours, that.totalHours) &&
-//                Objects.equals(effectiveWorkHours, that.effectiveWorkHours) &&
-//                Objects.equals(hoursPerDay, that.hoursPerDay) &&
-//                Objects.equals(profileData.overhead(), that.profileData.overhead());
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(id, annualSalary, effectiveness, totalHours, effectiveWorkHours, hoursPerDay, profileData.overhead());
-//    }
-//
-//    public static void main(String[] args) {
-//        var p = new Profile();
-//        p.annualSalary(new BigDecimal("50000.00"));
-//        p.totalHours(new BigDecimal("6000"));
-//        p.effectiveWorkHours(new BigDecimal("4800"));
-//        p.effectiveness(new BigDecimal("80"));
-//        p.costAllocation(new BigDecimal("100"));
-//        p.hourAllocation(new BigDecimal("100"));
-//        /**
-//         * 500000.00
-//         * 6000
-//         * 4800
-//         * 80
-//         * 100
-//         * 100
-//         */
-//        System.out.println(p.annualSalary());
-//    }
-//}

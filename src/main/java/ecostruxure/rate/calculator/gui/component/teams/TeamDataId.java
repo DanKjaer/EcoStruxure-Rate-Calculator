@@ -1,3 +1,5 @@
 package ecostruxure.rate.calculator.gui.component.teams;
 
-public record TeamDataId(int teamId, int profileId) { }
+import java.util.UUID;
+
+public record TeamDataId(int teamId, UUID profileId) { }
