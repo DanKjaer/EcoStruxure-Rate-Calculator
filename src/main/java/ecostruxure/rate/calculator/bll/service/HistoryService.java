@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.dal.dao.*;
 import ecostruxure.rate.calculator.dal.db.HistoryDAO;
 
 import java.util.List;
+import java.util.UUID;
 
 public class HistoryService {
     private final IHistoryDAO historyDAO;
@@ -12,7 +13,7 @@ public class HistoryService {
         this.historyDAO = new HistoryDAO();
     }
 
-    public List<ProfileHistory> getProfileHistory(int profileId) throws Exception {
+    public List<ProfileHistory> getProfileHistory(UUID profileId) throws Exception {
         return historyDAO.getProfileHistory(profileId);
     }
 

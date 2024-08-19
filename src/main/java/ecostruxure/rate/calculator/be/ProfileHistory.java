@@ -2,10 +2,11 @@ package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ProfileHistory {
     private int historyId;
-    private int profileId;
+    private UUID profileId;
     private boolean overhead;
     private BigDecimal annualSalary;
     private BigDecimal effectiveness;
@@ -17,7 +18,7 @@ public class ProfileHistory {
     public ProfileHistory() {
     }
 
-    public ProfileHistory(int historyId, int profileId, boolean overhead, BigDecimal annualSalary, BigDecimal effectiveness, BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
+    public ProfileHistory(int historyId, UUID profileId, boolean overhead, BigDecimal annualSalary, BigDecimal effectiveness, BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
         this.historyId = historyId;
         this.profileId = profileId;
         this.overhead = overhead;
@@ -37,11 +38,11 @@ public class ProfileHistory {
         this.historyId = historyId;
     }
 
-    public int profileId() {
+    public UUID profileId() {
         return profileId;
     }
 
-    public void profileId(int profileId) {
+    public void profileId(UUID profileId) {
         this.profileId = profileId;
     }
 

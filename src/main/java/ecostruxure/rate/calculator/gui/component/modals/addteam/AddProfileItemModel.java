@@ -3,9 +3,10 @@ package ecostruxure.rate.calculator.gui.component.modals.addteam;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class AddProfileItemModel {
-    private final IntegerProperty id = new SimpleIntegerProperty();
+    private static UUID uuid;
     private final StringProperty name = new SimpleStringProperty("");
     private final ObjectProperty<BigDecimal> setCostAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> currentCostAllocation = new SimpleObjectProperty<>();
@@ -19,8 +20,12 @@ public class AddProfileItemModel {
     private final BooleanProperty selected = new SimpleBooleanProperty();
     private final BooleanProperty wasChanged = new SimpleBooleanProperty();
 
-    public IntegerProperty idProperty() {
-        return id;
+    public void setIdProperty(UUID uuid) {
+        AddProfileItemModel.uuid = uuid;
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
     public StringProperty nameProperty() {

@@ -16,22 +16,22 @@ public class RateUtils {
     // Basic rate calculation methods
     public static BigDecimal hourlyRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
-        if(profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
+        if(profile.getAnnualHours().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-        return annualCost(profile).divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
+        return annualCost(profile).divide(profile.getAnnualHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
     public static BigDecimal dayRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return hourlyRate(profile).multiply(profile.hoursPerDay());
+        return hourlyRate(profile).multiply(profile.getHoursPerDay());
     }
 
     public static BigDecimal annualCost(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return profile.annualSalary();
+        return profile.getAnnualCost();
     }
 
     //Basic rate calculations w/ utilization
@@ -67,26 +67,26 @@ public class RateUtils {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
-        return profile.totalHours().multiply(percentageAsDecimal);
+        return profile.getAnnualHours().multiply(percentageAsDecimal);
     }
 
     public static BigDecimal effectiveWorkHours(Profile profile) {
-        if (profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
+        if (profile.getAnnualHours().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO.setScale(GENERAL_SCALE, ROUNDING_MODE);
         }
 
-        BigDecimal effectiveness = profile.effectiveness().divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
-        BigDecimal effectiveWorkHours = profile.totalHours().multiply(effectiveness).setScale(GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal effectiveness = profile.getEffectivenessPercentage().divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal effectiveWorkHours = profile.getAnnualHours().multiply(effectiveness).setScale(GENERAL_SCALE, ROUNDING_MODE);
 
         return effectiveWorkHours;
     }
 
     public static BigDecimal effectiveness(Profile profile) {
-        if (profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
+        if (profile.getAnnualHours().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO.setScale(GENERAL_SCALE, ROUNDING_MODE);
         }
 
-        BigDecimal effectiveness = profile.effectiveWorkHours().divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal effectiveness = profile.getEffectivenessPercentage().divide(profile.getAnnualHours(), GENERAL_SCALE, ROUNDING_MODE);
         return effectiveness.multiply(HUNDRED);
     }
 
@@ -94,7 +94,7 @@ public class RateUtils {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(allocationPercentage, "Allocation percentage cannot be null");
 
-        BigDecimal hourAllocation = profile.totalHours();
+        BigDecimal hourAllocation = profile.getAnnualHours();
         BigDecimal percentageAsDecimal = allocationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return hourAllocation.multiply(percentageAsDecimal);
     }
@@ -104,7 +104,7 @@ public class RateUtils {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
-        return profile.hoursPerDay().multiply(percentageAsDecimal);
+        return profile.getHoursPerDay().multiply(percentageAsDecimal);
     }
 
     public static BigDecimal teamHourlyRate(List<Profile> profiles) {
@@ -115,7 +115,7 @@ public class RateUtils {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalHours = profiles.stream()
-                .map(Profile::totalHours)
+                .map(Profile::getAnnualHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if(totalHours.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
@@ -142,7 +142,7 @@ public class RateUtils {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal totalHours = profiles.stream()
-                .map(Profile::totalHours)
+                .map(Profile::getAnnualHours)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);

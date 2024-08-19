@@ -82,27 +82,25 @@ public class AddProfileInteractor {
     }
 
     private Profile createProfileFromModel() {
-        var profileData = new ProfileData();
+        var profile = new Profile();
 
 
         var currencyItemModel = model.selectedCurrencyProperty().get();
         BigDecimal eurConversionRate = new BigDecimal(currencyItemModel.eurConversionRateProperty().get());
 
-        profileData.name((model.nameProperty().get()));
-        profileData.currency(currencyItemModel.currencyCodeProperty().get());
-        profileData.geography(model.selectedGeographyProperty().get().idProperty().get());
-        profileData.overhead(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
-        profileData.archived(false);
+        profile.setName((model.nameProperty().get()));
+        profile.setCurrency(currencyItemModel.currencyCodeProperty().get());
+        profile.setCountryId(model.selectedGeographyProperty().get().idProperty().get());
+        profile.setResourceType(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
+        profile.setArchived(false);
 
-        var profile = new Profile();
-        profile.annualSalary(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
-        profile.effectiveness(new BigDecimal(model.effectivenessProperty().get()));
-        profile.totalHours(new BigDecimal(model.annualTotalHoursProperty().get()));
-        profile.hoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
-        profile.profileData(profileData);
+        profile.setAnnualCost(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
+        profile.setEffectivenessPercentage(new BigDecimal(model.effectivenessProperty().get()));
+        profile.setHourAllocation(new BigDecimal(model.annualTotalHoursProperty().get()));
+        profile.setHoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
 
-        BigDecimal effectiveWorkHours = RateUtils.utilizedHours(profile, profile.effectiveness());
-        profile.effectiveWorkHours(effectiveWorkHours);
+        BigDecimal effectiveWorkHours = RateUtils.utilizedHours(profile, profile.getEffectivenessPercentage());
+        profile.setEffectiveWorkHours(effectiveWorkHours);
 
         return profile;
     }

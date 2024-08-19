@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ProfileModel {
     public enum ProfileTableType {
@@ -16,7 +17,7 @@ public class ProfileModel {
         HISTORY
     }
 
-    private final IntegerProperty id = new SimpleIntegerProperty();
+    private static UUID id;
     private final StringProperty profileName = new SimpleStringProperty();
     private final StringProperty location = new SimpleStringProperty();
     private final ProfileSaveModel saveModel = new ProfileSaveModel();
@@ -37,8 +38,12 @@ public class ProfileModel {
     private final StringProperty searchTeam = new SimpleStringProperty("");
     private final BooleanProperty archived = new SimpleBooleanProperty();
 
-    public IntegerProperty idProperty() {
+    public UUID getUUID() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        ProfileModel.id = id;
     }
 
     public StringProperty profileName() {

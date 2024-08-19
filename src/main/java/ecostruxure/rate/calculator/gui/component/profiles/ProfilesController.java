@@ -79,7 +79,7 @@ public class ProfilesController implements Controller {
     }
 
     private void showProfile(ProfileItemModel data) {
-        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.idProperty().get()));
+        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.getUUID()));
     }
 
     private void archiveProfile(ProfileItemModel profile) {

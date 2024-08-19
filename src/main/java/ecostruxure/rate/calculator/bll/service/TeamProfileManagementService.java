@@ -172,10 +172,10 @@ public class TeamProfileManagementService {
     }
 
     private ProfileMetrics calculateMetrics(Profile profile, int teamid, TransactionContext context) throws Exception {
-        BigDecimal costAllocation = profileDAO.getProfileCostAllocationForTeam(context, profile.id(), teamid);
-        BigDecimal hourAllocation = profileDAO.getProfileHourAllocationForTeam(context, profile.id(), teamid);
+        BigDecimal costAllocation = profileDAO.getProfileCostAllocationForTeam(context, profile.getProfileId(), teamid);
+        BigDecimal hourAllocation = profileDAO.getProfileHourAllocationForTeam(context, profile.getProfileId(), teamid);
 
-        profileDAO.get(context, profile.id());
+        profileDAO.get(context, profile.getProfileId());
 
         return new ProfileMetrics(
                 RateUtils.hourlyRate(profile, costAllocation),

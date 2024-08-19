@@ -61,8 +61,8 @@ public class RateService {
         // Henter profilerne for et team og udregner den sammenlagte hourly rate.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), team.id());
-            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), team.id());
+            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
+            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.id());
 
             totalAnnualRate = totalAnnualRate.add(RateUtils.annualCost(profile, costAllocation));
             totalHours = totalHours.add(RateUtils.utilizedHours(profile, hourAllocation));
@@ -85,8 +85,8 @@ public class RateService {
         // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), team.id());
-            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), team.id());
+            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
+            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.id());
 
             annualRate = annualRate.add(RateUtils.annualCost(profile, costAllocation));
             hours = hours.add(RateUtils.utilizedHours(profile, hourAllocation));
@@ -107,7 +107,7 @@ public class RateService {
         // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), team.id());
+            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
             total = total.add(RateUtils.annualCost(profile, costAllocation));
         }
 

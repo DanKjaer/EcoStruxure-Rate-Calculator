@@ -4,67 +4,46 @@ import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.UUID;
+
+
 
 public class ProfileItemModel {
-    private final IntegerProperty id = new SimpleIntegerProperty();
+    private static UUID uuid;
     private final StringProperty name = new SimpleStringProperty("");
-    private final FinancialData dayRate = new FinancialData(BigDecimal.ZERO);
-    private final FinancialData hourlyRate = new FinancialData(BigDecimal.ZERO);
     private final FinancialData annualCost = new FinancialData(BigDecimal.ZERO);
-    private final ObjectProperty<BigDecimal> hours = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
+    private final StringProperty currency = new SimpleStringProperty("");
+    private final IntegerProperty countryId = new SimpleIntegerProperty();
+    private final ObjectProperty<BigDecimal> hoursPerDay = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveness = new SimpleObjectProperty<>();
-    private final StringProperty teams = new SimpleStringProperty("");
-    private final StringProperty location = new SimpleStringProperty("");
-    private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> currentHourAllocation = new SimpleObjectProperty<>();
-    private final ObjectProperty<BigDecimal> AllocatedHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> annualHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<Timestamp> updatedAt = new SimpleObjectProperty<>();
+    private final BooleanProperty resourceType = new SimpleBooleanProperty();
     private final BooleanProperty archived = new SimpleBooleanProperty();
+    private final ObjectProperty<BigDecimal> AllocatedHours = new SimpleObjectProperty<>();
 
+    public void setIdProperty(UUID uuid) {
+        ProfileItemModel.uuid = uuid;
+    }
 
-    public IntegerProperty idProperty() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     public StringProperty nameProperty() {
         return name;
     }
 
-    public ObjectProperty<BigDecimal> hourlyRateProperty() {
-        return hourlyRate.amountProperty();
-    }
-
-    public ObjectProperty<BigDecimal> dayRateProperty() {
-        return dayRate.amountProperty();
-    }
 
     public ObjectProperty<BigDecimal> annualCostProperty() {
         return annualCost.amountProperty();
     }
 
-    public StringProperty teamsProperty() {
-        return teams;
-    }
 
-    public StringProperty locationProperty() {
-        return location;
-    }
-
-    public ObjectProperty<BigDecimal> costAllocationProperty() {
-        return costAllocation;
-    }
-
-    public ObjectProperty<BigDecimal> hourAllocationProperty() {
-        return hourAllocation;
-    }
-
-    public ObjectProperty<BigDecimal> allocatedHoursProperty() {
-        return AllocatedHours;
-    }
-
-    public ObjectProperty<BigDecimal> hoursProperty() {
-        return hours;
+    public ObjectProperty<BigDecimal> annualHoursProperty() {
+        return annualHours;
     }
 
     public ObjectProperty<BigDecimal> effectiveWorkHoursProperty() {
@@ -79,12 +58,12 @@ public class ProfileItemModel {
         return archived;
     }
 
-    public void setHourlyRate(BigDecimal hourlyRate) {
-        this.hourlyRate.amount(hourlyRate);
+    public ObjectProperty<BigDecimal> allocatedHoursProperty() {
+        return AllocatedHours;
     }
 
-    public void setDayRate(BigDecimal dayRate) {
-        this.dayRate.amount(dayRate);
+    public void setAllocatedHours(BigDecimal allocatedHours) {
+        this.AllocatedHours.set(allocatedHours);
     }
 
     public void setAnnualCost(BigDecimal annualCost) {
@@ -99,15 +78,131 @@ public class ProfileItemModel {
         this.effectiveness.set(effectiveness);
     }
 
-    public void setAllocatedHours(BigDecimal allocatedHours) {
-        this.AllocatedHours.set(allocatedHours);
+    public static UUID getUuid() {
+        return uuid;
     }
 
-    public ObjectProperty<BigDecimal> currentHourAllocationProperty() {
-        return currentHourAllocation;
+    public static void setUuid(UUID uuid) {
+        ProfileItemModel.uuid = uuid;
     }
 
-    public void setCurrentHourAllocation(BigDecimal currentHourAllocation) {
-        this.currentHourAllocation.set(currentHourAllocation);
+    public String getName() {
+        return name.get();
+    }
+
+    public FinancialData getAnnualCost() {
+        return annualCost;
+    }
+
+    public String getCurrency() {
+        return currency.get();
+    }
+
+    public StringProperty currencyProperty() {
+        return currency;
+    }
+
+    public int getCountryId() {
+        return countryId.get();
+    }
+
+    public IntegerProperty countryIdProperty() {
+        return countryId;
+    }
+
+    public Boolean getResourceType() {
+        return resourceType.get();
+    }
+
+    public BooleanProperty resourceTypeProperty() {
+        return resourceType;
+    }
+
+    public BigDecimal getHoursPerDay() {
+        return hoursPerDay.get();
+    }
+
+    public ObjectProperty<BigDecimal> hoursPerDayProperty() {
+        return hoursPerDay;
+    }
+
+    public BigDecimal getEffectiveness() {
+        return effectiveness.get();
+    }
+
+    public BigDecimal getAnnualHours() {
+        return annualHours.get();
+    }
+
+    public BigDecimal getEffectiveWorkHours() {
+        return effectiveWorkHours.get();
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt.get();
+    }
+
+    public ObjectProperty<Timestamp> updatedAtProperty() {
+        return updatedAt;
+    }
+
+    public boolean isArchived() {
+        return archived.get();
     }
 }
+
+//    private final StringProperty teams = new SimpleStringProperty("");
+//    private final StringProperty location = new SimpleStringProperty("");
+
+    //    private final FinancialData dayRate = new FinancialData(BigDecimal.ZERO);
+    //    private final FinancialData hourlyRate = new FinancialData(BigDecimal.ZERO);
+//    private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
+//    private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
+//    private final ObjectProperty<BigDecimal> currentHourAllocation = new SimpleObjectProperty<>();
+
+
+//    public ObjectProperty<BigDecimal> currentHourAllocationProperty() {
+//        return currentHourAllocation;
+//    }
+//
+//    public void setCurrentHourAllocation(BigDecimal currentHourAllocation) {
+//        this.currentHourAllocation.set(currentHourAllocation);
+//    }
+
+//    public void setHourlyRate(BigDecimal hourlyRate) {
+//        this.hourlyRate.amount(hourlyRate);
+//    }
+//
+//    public void setDayRate(BigDecimal dayRate) {
+//        this.dayRate.amount(dayRate);
+//    }
+
+//    public ObjectProperty<BigDecimal> hourlyRateProperty() {
+//        return hourlyRate.amountProperty();
+//    }
+//
+//    public ObjectProperty<BigDecimal> dayRateProperty() {
+//        return dayRate.amountProperty();
+//    }
+
+    //    public ObjectProperty<BigDecimal> costAllocationProperty() {
+//        return costAllocation;
+//    }
+//
+//    public ObjectProperty<BigDecimal> hourAllocationProperty() {
+//        return hourAllocation;
+//    }
+
+    //    public StringProperty teamsProperty() {
+//        return teams;
+//    }
+//
+//    public StringProperty locationProperty() {
+//        return location;
+//    }
+//
+//
+
+
+
+

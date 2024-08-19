@@ -22,7 +22,7 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public List<ProfileHistory> getProfileHistory(int profileId) throws Exception {
+    public List<ProfileHistory> getProfileHistory(UUID profileId) throws Exception {
         List<ProfileHistory> profiles = new ArrayList<>();
 
         String query = """
@@ -34,11 +34,11 @@ public class HistoryDAO implements IHistoryDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, profileId);
+            stmt.setObject(1, profileId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     ProfileHistory profile = new ProfileHistory();
-                    profile.profileId(rs.getInt("profile_id"));
+                    profile.profileId((UUID) rs.getObject("profile_id"));
                     profile.overhead(rs.getBoolean("overhead"));
                     profile.annualSalary(rs.getBigDecimal("annual_salary"));
                     profile.effectiveness(rs.getBigDecimal("effectiveness"));
@@ -125,7 +125,7 @@ public class HistoryDAO implements IHistoryDAO {
                                          """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertProfileHistorySQL, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, profile.id());
+            stmt.setObject(1, profile.getProfileId());
             stmt.executeUpdate();
 
             int profileHistoryId = -1;

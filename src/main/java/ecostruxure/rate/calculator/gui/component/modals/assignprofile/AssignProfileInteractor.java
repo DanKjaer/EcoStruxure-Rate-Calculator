@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.gui.component.modals.assignprofile;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileData;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
@@ -51,12 +50,12 @@ public class AssignProfileInteractor {
             profileItemModel.nameProperty().set(profile.profileData().name());
             profileItemModel.selectedProperty().set(isProfileInTeam);
 
-            BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), teamId);
-            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.costAllocation()).add(profileCostAllocation));
+            BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), teamId);
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.getCostAllocation()).add(profileCostAllocation));
             profileItemModel.setCostAllocationProperty().set(profileCostAllocation);
 
-            BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), teamId);
-            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.hourAllocation()).add(profileHourAllocation));
+            BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), teamId);
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
 
             profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());

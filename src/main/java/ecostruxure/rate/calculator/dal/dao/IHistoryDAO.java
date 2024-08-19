@@ -10,9 +10,10 @@ import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface IHistoryDAO {
-    List<ProfileHistory> getProfileHistory(int profileId) throws Exception;
+    List<ProfileHistory> getProfileHistory(UUID profileId) throws Exception;
 
     List<TeamHistory> getTeamHistory(int teamId) throws Exception;
 

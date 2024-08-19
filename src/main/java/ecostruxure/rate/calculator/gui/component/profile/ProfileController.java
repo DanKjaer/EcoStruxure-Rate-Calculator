@@ -16,6 +16,8 @@ import ecostruxure.rate.calculator.gui.system.view.ChangeViewEvent;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Region;
 
+import java.util.UUID;
+
 public class ProfileController implements Controller {
     private final ProfileModel model;
     private final ProfileInteractor interactor;
@@ -32,8 +34,8 @@ public class ProfileController implements Controller {
 
     @Override
     public void activate(Object profileId) {
-        if (profileId instanceof Integer) {
-            fetchProfile((int) profileId);
+        if (profileId instanceof UUID) {
+            fetchProfile((UUID) profileId);
         }
     }
     @Override
@@ -42,7 +44,7 @@ public class ProfileController implements Controller {
     }
 
 
-    private void fetchProfile(int id) {
+    private void fetchProfile(UUID id) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {

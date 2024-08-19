@@ -134,9 +134,9 @@ public class TeamInteractor {
             profileItemModel.setAnnualCost(RateUtils.annualCost(profile, profile.costAllocation()));
 
             profileItemModel.hourAllocationProperty().set(profile.hourAllocation());
-            profileItemModel.hoursProperty().set(RateUtils.utilizedHours(profile, profile.hourAllocation()));
+            profileItemModel.annualHoursProperty().set(RateUtils.utilizedHours(profile, profile.hourAllocation()));
 
-            totalHorus = totalHorus.add(profileItemModel.hoursProperty().get());
+            totalHorus = totalHorus.add(profileItemModel.annualHoursProperty().get());
 
             String geographyName = geographyService.get(profile.profileData().geography()).name();
             profileItemModel.locationProperty().set(geographyName);

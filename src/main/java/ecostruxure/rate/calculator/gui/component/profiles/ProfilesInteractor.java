@@ -1,25 +1,17 @@
 package ecostruxure.rate.calculator.gui.component.profiles;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileData;
-import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
-import ecostruxure.rate.calculator.bll.service.TeamService;
-import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import javafx.collections.ObservableList;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 public class ProfilesInteractor {
     private final ProfilesModel model;
     private ProfileService profileService;
-    private GeographyService geographyService;
-    private TeamService teamService;
     private List<ProfileItemModel> profileItemModels;
 
     private Profile profile;
@@ -29,8 +21,6 @@ public class ProfilesInteractor {
 
         try {
             profileService = new ProfileService();
-            geographyService = new GeographyService();
-            teamService = new TeamService();
         } catch (Exception e) {
             onFetchError.run();
         }
@@ -39,7 +29,7 @@ public class ProfilesInteractor {
     public boolean fetchProfiles() {
         try {
             List<Profile> profiles = profileService.all();
-            profileItemModels = convertToProfileItemModels(profiles);
+            profileItemModels = convertToProfileItemModel(profiles);
             return true;
         } catch (Exception e) {
             e.getMessage();
@@ -48,32 +38,23 @@ public class ProfilesInteractor {
         }
     }
 
-    private List<ProfileItemModel> convertToProfileItemModels(List<Profile> profiles) throws Exception {
+    private List<ProfileItemModel> convertToProfileItemModel(List<Profile> profiles) throws Exception {
         List<ProfileItemModel> profileItemModels = new ArrayList<>();
 
         for (Profile profile : profiles) {
             ProfileItemModel profileItemModel = new ProfileItemModel();
-            profileItemModel.idProperty().set(profile.id());
-            profileItemModel.nameProperty().set(profile.profileData().name());
-
-            BigDecimal costAllocation = profileService.getTotalCostAllocation(profile.id());
-            BigDecimal hourAllocation = profileService.getTotalHourAllocation(profile.id());
-
-            profileItemModel.hourAllocationProperty().set(hourAllocation);
-            profileItemModel.hoursProperty().set(RateUtils.utilizedHours(profile, hourAllocation));
-
-            profileItemModel.costAllocationProperty().set(costAllocation);
-            profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, costAllocation));
-            profileItemModel.setDayRate(RateUtils.dayRate(profile, costAllocation));
-            profileItemModel.setAnnualCost(RateUtils.annualCost(profile, costAllocation));
-            profileItemModel.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
-            profileItemModel.setEffectiveness(RateUtils.effectiveness(profile));
-            profileItemModel.setAllocatedHours(RateUtils.allocatedHours(profile, hourAllocation));
-
-            profileItemModel.teamsProperty().set(String.valueOf(profileService.getTeams(profile).size()));
-            profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
-            profileItemModel.archivedProperty().set(profile.profileData().archived());
-
+            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.nameProperty().set(profile.getName());
+            profileItemModel.currencyProperty().set(profile.getCurrency());
+            profileItemModel.countryIdProperty().set(profile.getCountryId());
+            profileItemModel.resourceTypeProperty().set(profile.isResourceType());
+            profileItemModel.setAnnualCost(profile.getAnnualCost());
+            profileItemModel.annualHoursProperty().set(profile.getAnnualHours());
+            profileItemModel.effectivenessProperty().set(profile.getEffectivenessPercentage());
+            profileItemModel.setEffectiveWorkHours(profile.getEffectiveWorkHours());
+            profileItemModel.hoursPerDayProperty().set(profile.getHoursPerDay());
+            profileItemModel.updatedAtProperty().set(profile.getUpdatedAt());
+            profileItemModel.archivedProperty().set(profile.isArchived());
 
             profileItemModels.add(profileItemModel);
         }
@@ -82,15 +63,21 @@ public class ProfilesInteractor {
     }
 
 
+    public void updateModel(){
+        model.profiles().setAll(profileItemModels);
+    }
+    /**
+     * Unødvendig metode. Eftersom totalHourly og totalDaily rate skal udregnes på teams fremfor profile?
+
 
     public void updateModel() {
-        model.profiles().setAll(profileItemModels);
+        model.profiles().setAll(profileList);
 
         BigDecimal totalHourly = BigDecimal.ZERO;
         BigDecimal totalDaily = BigDecimal.ZERO;
         Set<String> uniqueGeographies = new HashSet<>();
 
-        for (ProfileItemModel profileItemModel : model.profiles()) {
+        for (Profile profile : model.profiles()) {
             totalHourly = totalHourly.add(profileItemModel.hourlyRateProperty().get());
             totalDaily = totalDaily.add(profileItemModel.dayRateProperty().get());
             uniqueGeographies.add(profileItemModel.locationProperty().get());
@@ -100,32 +87,31 @@ public class ProfilesInteractor {
         model.setTotalDayRate(totalDaily);
         model.numProfiles().set(String.valueOf(model.profiles().size()));
         model.uniqueGeographies().set(String.valueOf(uniqueGeographies.size()));
-    }
+    } */
 
-    private List<Profile> convertModelsToEntity(ObservableList<ProfileItemModel> profileItemModels, boolean checkArchived) {
-        List<Profile> profiles = new ArrayList<>();
-        for (ProfileItemModel profileItemModel : profileItemModels) {
-            if (checkArchived && profileItemModel.archivedProperty().get())
+    private List<Profile> convertModelsToEntity(ObservableList<ProfileItemModel> profile, boolean checkArchived) {
+        List<Profile> profileList = new ArrayList<>();
+        for (ProfileItemModel profileItemModel : profile) {
+            if (checkArchived && profileItemModel.isArchived())
                 continue;
 
-            Profile profile = new Profile();
-            ProfileData profileData = new ProfileData();
-            profile.id(profileItemModel.idProperty().get());
-            profileData.name(profileItemModel.nameProperty().get());
+            Profile profiles = new Profile();
+            profiles.setProfileId(profiles.getProfileId());
+            profiles.setName(profiles.getName());
 
-            profile.profileData(profileData);
-
-            profiles.add(profile);
+            profileList.add(profiles);
         }
-        return profiles;
+        return profileList;
 
     }
 
     public boolean archiveProfile(ProfileItemModel profileItemModel, boolean shouldArchive) {
         try {
-            Profile profile = profileService.get(profileItemModel.idProperty().get());
+            UUID profileUUID = profileItemModel.getUUID();
+            Profile profile = profileService.get(profileUUID);
             return profileService.archive(profile, shouldArchive);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *  ProfileInteractor is responsible for managing the interaction between the ProfileModel and the ProfileService.
@@ -59,7 +60,7 @@ public class ProfileInteractor {
     }
 
     // Fetches profile data from ProfileService and updates the ProfileModel.
-    public boolean fetchProfile(int id) {
+    public boolean fetchProfile(UUID id) {
         try {
             currentDateTime = LocalDateTime.now();
             contributedHours = INITIAL_VALUE;
@@ -81,16 +82,16 @@ public class ProfileInteractor {
 
     // Updates the ProfileModel with the fetched profile data.
     public void updateModelPostFetchProfile() {
-        model.idProperty().set(profile.id());
-        model.profileName().set(profile.profileData().name());
-        model.saveModel().nameProperty().set(profile.profileData().name());
-        model.saveModel().selectedResourceTypeProperty().set(profile.profileData().overhead() ? ResourceType.OVERHEAD : ResourceType.PRODUCTION);
-        model.archivedProperty().set(profile.profileData().archived());
+        model.setId(profile.getProfileId());
+        model.profileName().set(profile.getName());
+        model.saveModel().nameProperty().set(profile.getName());
+        model.saveModel().selectedResourceTypeProperty().set(profile.isResourceType() ? ResourceType.OVERHEAD : ResourceType.PRODUCTION);
+        model.archivedProperty().set(profile.isArchived());
 
-        model.saveModel().annualSalaryProperty().set(String.valueOf(profile.annualSalary()));
-        model.saveModel().effectivenessProperty().set(String.valueOf(profile.effectiveness()));
-        model.saveModel().annualTotalHoursProperty().set(String.valueOf(profile.totalHours()));
-        model.saveModel().hoursPerDayProperty().set(String.valueOf(profile.hoursPerDay()));
+        model.saveModel().annualSalaryProperty().set(String.valueOf(profile.getAnnualCost()));
+        model.saveModel().effectivenessProperty().set(String.valueOf(profile.getEffectivenessPercentage()));
+        model.saveModel().annualTotalHoursProperty().set(String.valueOf(profile.getAnnualHours()));
+        model.saveModel().hoursPerDayProperty().set(String.valueOf(profile.getHoursPerDay()));
 
         model.saveModel().locations().setAll(addProfileGeographyItemModels);
         model.teams().setAll(teamItemModels);
@@ -115,7 +116,7 @@ public class ProfileInteractor {
     public boolean saveProfile() {
         try {
             boolean saved = profileService.update(profile, createProfileFromModel());
-            if (saved) fetchProfile(model.idProperty().get());
+            if (saved) fetchProfile(model.getUUID());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,7 +190,7 @@ public class ProfileInteractor {
 
     // Updates the selected geograpy in the ProfileModel.
     private void updateSelectedGeography() {
-        var geographyId = profile.profileData().geography();
+        var geographyId = profile.getCountryId();
         var geographyItem = model.saveModel().locations()
                                              .stream()
                                              .filter(geography -> geography.idProperty().get() == geographyId)
@@ -205,23 +206,19 @@ public class ProfileInteractor {
     private Profile createProfileFromModel() {
         ProfileSaveModel saveModel = model.saveModel();
 
-        var profileData = new ProfileData();
-        profileData.id(model.idProperty().get());
-        profileData.name((saveModel.nameProperty().get()));
-        profileData.currency(saveModel.currencyProperty().get().name());
-        profileData.geography(saveModel.selectedGeographyProperty().get().idProperty().get());
-        profileData.overhead(saveModel.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
-        profileData.archived(false);
-
         var profile = new Profile();
-        profile.id(model.idProperty().get());
+        profile.setProfileId(model.getUUID());
+        profile.setName((saveModel.nameProperty().get()));
+        profile.setCurrency(saveModel.currencyProperty().get().name());
+        profile.setCountryId(saveModel.selectedGeographyProperty().get().idProperty().get());
+        profile.setResourceType(saveModel.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
+        profile.setArchived(false);
 
-        profile.annualSalary(new BigDecimal(saveModel.annualSalaryProperty().get()));
-        profile.effectiveness(new BigDecimal(saveModel.effectivenessProperty().get()));
-        profile.totalHours(new BigDecimal(saveModel.annualTotalHoursProperty().get()));
-        profile.effectiveWorkHours(new BigDecimal(saveModel.effectiveWorkHoursProperty().get()));
-        profile.hoursPerDay(new BigDecimal(saveModel.hoursPerDayProperty().get()));
-        profile.profileData(profileData);
+        profile.setAnnualCost(new BigDecimal(saveModel.annualSalaryProperty().get()));
+        profile.setEffectivenessPercentage(new BigDecimal(saveModel.effectivenessProperty().get()));
+        profile.setAnnualHours(new BigDecimal(saveModel.annualTotalHoursProperty().get()));
+        profile.setEffectiveWorkHours(new BigDecimal(saveModel.effectiveWorkHoursProperty().get()));
+        profile.setHoursPerDay(new BigDecimal(saveModel.hoursPerDayProperty().get()));
 
         return profile;
     }
@@ -246,16 +243,16 @@ public class ProfileInteractor {
     private ProfileHistoryItemModel convertProfileToHistory(Profile profile) {
         ProfileHistoryItemModel historyModel = new ProfileHistoryItemModel();
 
-        historyModel.idProperty().set(profile.id());
+        historyModel.setIdProperty(profile.getProfileId());
 
-        if (profile.profileData().overhead()) historyModel.resourceTypeProperty().set(ResourceType.OVERHEAD);
+        if (profile.isResourceType()) historyModel.resourceTypeProperty().set(ResourceType.OVERHEAD);
         else historyModel.resourceTypeProperty().set(ResourceType.PRODUCTION);
 
-        historyModel.setAnnualSalary(profile.annualSalary());
-        historyModel.effectivenessProperty().set(profile.effectiveness());
-        historyModel.totalHoursProperty().set(profile.totalHours());
-        historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());
-        historyModel.hoursPerDayProperty().set(profile.hoursPerDay());
+        historyModel.setAnnualSalary(profile.getAnnualCost());
+        historyModel.effectivenessProperty().set(profile.getEffectivenessPercentage());
+        historyModel.totalHoursProperty().set(profile.getAnnualHours());
+        historyModel.effectiveWorkHoursProperty().set(profile.getEffectiveWorkHours());
+        historyModel.hoursPerDayProperty().set(profile.getHoursPerDay());
         historyModel.updatedAtProperty().set(currentDateTime);
         historyModel.setHourlyRate(profileService.hourlyRate(profile));
         historyModel.setDayRate(profileService.dayRate(profile));
@@ -271,7 +268,7 @@ public class ProfileInteractor {
         for (ProfileHistory profile : history) {
             ProfileHistoryItemModel historyModel = new ProfileHistoryItemModel();
 
-            historyModel.idProperty().set(profile.profileId());
+            historyModel.setIdProperty(profile.profileId());
 
             if (profile.overhead()) historyModel.resourceTypeProperty().set(ResourceType.OVERHEAD);
             else historyModel.resourceTypeProperty().set(ResourceType.PRODUCTION);
@@ -314,8 +311,8 @@ public class ProfileInteractor {
             ProfileTeamItemModel teamModel = new ProfileTeamItemModel();
             teamModel.idProperty().set(team.id());
             teamModel.nameProperty().set(team.name());
-            BigDecimal costAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), team.id());
-            BigDecimal hourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), team.id());
+            BigDecimal costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
+            BigDecimal hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.id());
 
             teamModel.costAllocationProperty().set(costAllocation);
             teamModel.hourAllocationProperty().set(hourAllocation);
@@ -418,7 +415,7 @@ public class ProfileInteractor {
     // Archives or un-archives the profile
     public boolean archiveProfile(boolean shouldArchive) {
         try {
-            Profile profile = profileService.get(model.idProperty().get());
+            Profile profile = profileService.get(model.getUUID());
             return profileService.archive(profile, shouldArchive);
         } catch (Exception e) {
             e.printStackTrace();

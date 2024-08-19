@@ -706,14 +706,14 @@ public class TeamDAO implements ITeamDAO {
 
         return null;
     }
-
-    public static void main(String[] args) throws Exception {
-        TeamDAO teamDAO = new TeamDAO();
-        ProfileDAO profileDAO = new ProfileDAO();
-        System.out.println(teamDAO.canUnarchive(20));
-        System.out.println(teamDAO.canUnarchive(19));
-
-        System.out.println(profileDAO.getProfileHourAllocationForTeam(20, 20));
-        System.out.println(profileDAO.getProfileCostAllocationForTeam(20, 19));
-    }
+    // Method for testing teamDAO - Kan nok blive slettet
+//    public static void main(String[] args) throws Exception {
+//        TeamDAO teamDAO = new TeamDAO();
+//        ProfileDAO profileDAO = new ProfileDAO();
+//        System.out.println(teamDAO.canUnarchive(20));
+//        System.out.println(teamDAO.canUnarchive(19));
+//
+//        System.out.println(profileDAO.getProfileHourAllocationForTeam(20, 20));
+//        System.out.println(profileDAO.getProfileCostAllocationForTeam(20, 19));
+//    }
 }

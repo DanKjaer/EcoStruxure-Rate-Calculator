@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ProfileDAO implements IProfileDAO {
     private final DBConnector dbConnector;
@@ -17,33 +18,34 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     private Profile profileResultSet(ResultSet rs) throws SQLException {
-        // ProfileData
-        int id = rs.getInt("id");
+
+        UUID profileId = (UUID) rs.getObject("profile_id");
         String name = rs.getString("name");
         String currency = rs.getString("currency");
-        int geography = rs.getInt("geography");
-        boolean overhead = rs.getBoolean("overhead");
-        boolean archived = rs.getBoolean("archived");
+        int countryId = rs.getInt("country_id");
+        boolean resourceType = rs.getBoolean("resource_type");
 
-        // Profile
-        BigDecimal annualSalary = rs.getBigDecimal("annual_salary");
-        BigDecimal effectiveness = rs.getBigDecimal("effectiveness");
-        BigDecimal totalHours = rs.getBigDecimal("total_hours");
-        BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
+        BigDecimal annualCost = rs.getBigDecimal("annual_cost");
+        BigDecimal annualHours = rs.getBigDecimal("annual_hours");
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
+        BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
+        BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
+        boolean archived = rs.getBoolean("archived");
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
 
         return new Profile(
-                id,
+                profileId,
                 name,
                 currency,
-                annualSalary,
-                effectiveness,
-                geography,
-                totalHours,
-                effectiveWorkHours,
-                overhead,
+                countryId,
+                resourceType,
+                annualCost,
+                annualHours,
                 hoursPerDay,
-                archived
+                effectivenessPercentage,
+                effectiveWorkHours,
+                archived,
+                updatedAt
         );
     }
 
@@ -54,8 +56,6 @@ public class ProfileDAO implements IProfileDAO {
             conn.setAutoCommit(false);
             try {
                 Profile createdProfile = createProfile(conn, profile);
-                ProfileData createdProfileData = createProfileData(conn, createdProfile, profile.profileData());
-                createdProfile.profileData(createdProfileData);
                 conn.commit();
                 return createdProfile;
             } catch (Exception ex) {
@@ -71,9 +71,9 @@ public class ProfileDAO implements IProfileDAO {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
-                       SELECT * FROM dbo.Profiles
-                       INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
-                       ORDER BY dbo.Profiles.id DESC
+                       SELECT profile_id, name, currency, dbo.geography.name FROM dbo.Profiles
+                       INNER JOIN dbo.Geography ON dbo.Profiles.country_id = dbo.Geography.id
+                       ORDER BY dbo.Profiles.profile_id DESC
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -90,8 +90,8 @@ public class ProfileDAO implements IProfileDAO {
             throw new Exception("Could not get all Profiles from Database.\n" + e.getMessage());
         }
     }
-
     @Override
+
     public List<Profile> allWithUtilization() throws Exception {
         List<Profile> profiles = new ArrayList<>();
 
@@ -119,8 +119,8 @@ public class ProfileDAO implements IProfileDAO {
 
             while (rs.next()) {
                 Profile profile = profileResultSet(rs);
-                profile.costAllocation(rs.getBigDecimal("cost_allocation_total"));
-                profile.hourAllocation(rs.getBigDecimal("hour_allocation_total"));
+                profile.setCostAllocation(rs.getBigDecimal("cost_allocation_total"));
+                profile.setHourAllocation(rs.getBigDecimal("hour_allocation_total"));
                 profiles.add(profile);
             }
 
@@ -161,8 +161,8 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Profile profile = profileResultSet(rs);
-                    profile.costAllocation(rs.getBigDecimal("cost_allocation_total"));
-                    profile.hourAllocation(rs.getBigDecimal("hour_allocation_total"));
+                    profile.setCostAllocation(rs.getBigDecimal("cost_allocation_total"));
+                    profile.setHourAllocation(rs.getBigDecimal("hour_allocation_total"));
                     profiles.add(profile);
                 }
             }
@@ -174,7 +174,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public Profile get(int id) throws Exception {
+    public Profile get(UUID id) throws Exception {
         Profile profile = null;
 
         String query = """
@@ -186,7 +186,7 @@ public class ProfileDAO implements IProfileDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);
+            stmt.setString(1, id.toString());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
@@ -232,12 +232,16 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (annual_salary, effectiveness, total_hours, effective_work_hours, hours_per_day) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setBigDecimal(1, profile.annualSalary());
-            stmt.setBigDecimal(2, profile.effectiveness());
-            stmt.setBigDecimal(3, profile.totalHours());
-            stmt.setBigDecimal(4, profile.effectiveWorkHours());
-            stmt.setBigDecimal(5, profile.hoursPerDay());
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (name, currency, country_id, resource_type, annual_cost, effectiveness, total_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, profile.getName());
+            stmt.setInt(2, profile.getCountryId());
+            stmt.setBoolean(3, profile.isResourceType());
+            stmt.setBigDecimal(4, profile.getAnnualCost());
+            stmt.setBigDecimal(5, profile.getEffectivenessPercentage());
+            stmt.setBigDecimal(6, profile.getHourAllocation());
+            stmt.setBigDecimal(7, profile.getEffectiveWorkHours());
+            stmt.setBigDecimal(8, profile.getHoursPerDay());
+            stmt.setBoolean(9, profile.isArchived());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -247,7 +251,7 @@ public class ProfileDAO implements IProfileDAO {
             // Få ID fra oprettet profil
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    profile.id(generatedKeys.getInt(1));
+                    profile.setProfileId((UUID) generatedKeys.getObject(1));
                     return profile;
                 } else {
                     throw new SQLException("Creating profile failed, no ID obtained.");
@@ -256,23 +260,23 @@ public class ProfileDAO implements IProfileDAO {
         }
     }
 
-    private ProfileData createProfileData(Connection connection, Profile profile, ProfileData profileData) throws Exception {
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles_data (id, name, currency, geography, overhead, archived) VALUES (?, ?, ?, ?, ?, ?)")) {
-            stmt.setInt(1, profile.id());
-            stmt.setString(2, profileData.name());
-            stmt.setString(3, profileData.currency());
-            stmt.setInt(4, profileData.geography());
-            stmt.setBoolean(5, profileData.overhead());
-            stmt.setBoolean(6, profileData.archived()); // Er dog false fra default, måske fjernes...
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows == 0)
-                throw new SQLException("Creating profile data failed, no rows affected.");
-
-            return profileData;
-        }
-    }
+//    private ProfileData createProfileData(Connection connection, Profile profile, ProfileData profileData) throws Exception {
+//        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles_data (id, name, currency, geography, overhead, archived) VALUES (?, ?, ?, ?, ?, ?)")) {
+//            stmt.setInt(1, profile.id());
+//            stmt.setString(2, profileData.name());
+//            stmt.setString(3, profileData.currency());
+//            stmt.setInt(4, profileData.geography());
+//            stmt.setBoolean(5, profileData.overhead());
+//            stmt.setBoolean(6, profileData.archived()); // Er dog false fra default, måske fjernes...
+//
+//            int affectedRows = stmt.executeUpdate();
+//
+//            if (affectedRows == 0)
+//                throw new SQLException("Creating profile data failed, no rows affected.");
+//
+//            return profileData;
+//        }
+//    }
 
     public List<Profile> allByCountry(Country country) throws Exception {
         return allByCountry(country.code());
@@ -365,7 +369,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getTotalCostAllocation(int profileId) throws Exception {
+    public BigDecimal getTotalCostAllocation(UUID profileId) throws Exception {
         BigDecimal totalUtilization = BigDecimal.ZERO;
         String query = """
                         SELECT SUM(cost_allocation) AS total_allocation
@@ -375,7 +379,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, profileId);
+            stmt.setString(1, profileId.toString());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -392,7 +396,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getTotalHourAllocation(int profileId) throws Exception {
+    public BigDecimal getTotalHourAllocation(UUID profileId) throws Exception {
         BigDecimal totalAllocation = BigDecimal.ZERO;
         String query = """
                         SELECT SUM(hour_allocation) AS total_allocation
@@ -402,7 +406,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, profileId);
+            stmt.setString(1, profileId.toString());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -420,7 +424,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileCostAllocationForTeam(int profileId, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(UUID profileId, int teamId) throws Exception {
         BigDecimal allocation = BigDecimal.ZERO;
         String query = """
                         SELECT cost_allocation AS total_allocation
@@ -430,7 +434,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, profileId);
+            stmt.setObject(1, profileId);
             stmt.setInt(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -449,7 +453,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileHourAllocationForTeam(int profileId, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(UUID profileId, int teamId) throws Exception {
         BigDecimal allocation = BigDecimal.ZERO;
         String query = """
                         SELECT hour_allocation AS total_allocation
@@ -459,7 +463,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, profileId);
+            stmt.setObject(1, profileId);
             stmt.setInt(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -477,7 +481,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileCostAllocationForTeam(TransactionContext context, int profileId, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(TransactionContext context, UUID profileId, int teamId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         BigDecimal allocation = BigDecimal.ZERO;
@@ -488,7 +492,7 @@ public class ProfileDAO implements IProfileDAO {
                         """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
-            stmt.setInt(1, profileId);
+            stmt.setObject(1, profileId);
             stmt.setInt(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -506,7 +510,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileHourAllocationForTeam(TransactionContext context, int profileId, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(TransactionContext context, UUID profileId, int teamId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         BigDecimal allocation = BigDecimal.ZERO;
@@ -517,7 +521,7 @@ public class ProfileDAO implements IProfileDAO {
                         """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
-            stmt.setInt(1, profileId);
+            stmt.setObject(1, profileId);
             stmt.setInt(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -547,7 +551,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, profile.id());
+            stmt.setObject(1, profile.getProfileId());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -569,91 +573,6 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public boolean update(Profile profile) throws Exception {
-        String updateProfileSQL = """
-                                  UPDATE dbo.Profiles
-                                  SET annual_salary = ?, effectiveness = ?, total_hours = ?, effective_work_hours =? hours_per_day = ?
-                                  WHERE id = ?;
-                                  """;
-
-        String updateProfileDataSQL = """
-                                      UPDATE dbo.Profiles_data
-                                      SET name = ?, currency = ?, geography = ?, overhead = ?, archived = ?, updated_at = CURRENT_TIMESTAMP
-                                      WHERE id = ?;
-                                      """;
-        try (Connection conn = dbConnector.connection();
-             PreparedStatement updateProfileStmt = conn.prepareStatement(updateProfileSQL);
-             PreparedStatement updateProfileDataStmt = conn.prepareStatement(updateProfileDataSQL)) {
-            conn.setAutoCommit(false);
-
-            updateProfileStmt.setBigDecimal(1, profile.annualSalary());
-            updateProfileStmt.setBigDecimal(2, profile.effectiveness());
-            updateProfileStmt.setBigDecimal(3, profile.totalHours());
-            updateProfileStmt.setBigDecimal(4, profile.effectiveWorkHours());
-            updateProfileStmt.setBigDecimal(5, profile.hoursPerDay());
-            updateProfileStmt.setInt(6, profile.id());
-            updateProfileStmt.executeUpdate();
-
-            updateProfileDataStmt.setString(1, profile.profileData().name());
-            updateProfileDataStmt.setString(2, profile.profileData().currency());
-            updateProfileDataStmt.setInt(3, profile.profileData().geography());
-            updateProfileDataStmt.setBoolean(4, profile.profileData().overhead());
-            updateProfileDataStmt.setBoolean(5, profile.profileData().archived());
-            updateProfileDataStmt.setInt(6, profile.id());
-            updateProfileDataStmt.executeUpdate();
-
-            conn.commit();
-            return true;
-        } catch (Exception e) {
-            try (Connection conn = dbConnector.connection()) {
-                conn.rollback();
-                return false;
-            } catch (Exception ex) {
-                throw new Exception("Could not update Profile in Database.\n" + ex.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public boolean update(TransactionContext context, Profile profile) throws Exception {
-        SqlTransactionContext sqlContext = (SqlTransactionContext) context;
-
-        String updateProfileSQL = """
-                                  UPDATE dbo.Profiles
-                                  SET annual_salary = ?, effectiveness = ?, total_hours = ?, hours_per_day = ?, effective_work_hours = ?
-                                  WHERE id = ?;
-                                  """;
-
-        String updateProfileDataSQL = """
-                                      UPDATE dbo.Profiles_data
-                                      SET name = ?, currency = ?, geography = ?, overhead = ?, archived = ?, updated_at = CURRENT_TIMESTAMP
-                                      WHERE id = ?;
-                                      """;
-
-        try (PreparedStatement updateProfileStmt = sqlContext.connection().prepareStatement(updateProfileSQL);
-             PreparedStatement updateProfileDataStmt = sqlContext.connection().prepareStatement(updateProfileDataSQL)) {
-            updateProfileStmt.setBigDecimal(1, profile.annualSalary());
-            updateProfileStmt.setBigDecimal(2, profile.effectiveness());
-            updateProfileStmt.setBigDecimal(3, profile.totalHours());
-            updateProfileStmt.setBigDecimal(4, profile.hoursPerDay());
-            updateProfileStmt.setBigDecimal(5, profile.effectiveWorkHours());
-            updateProfileStmt.setInt(6, profile.id());
-            updateProfileStmt.executeUpdate();
-
-            updateProfileDataStmt.setString(1, profile.profileData().name());
-            updateProfileDataStmt.setString(2, profile.profileData().currency());
-            updateProfileDataStmt.setInt(3, profile.profileData().geography());
-            updateProfileDataStmt.setBoolean(4, profile.profileData().overhead());
-            updateProfileDataStmt.setBoolean(5, profile.profileData().archived());
-            updateProfileDataStmt.setInt(6, profile.id());
-            updateProfileDataStmt.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            throw new Exception("Could not update Profile in Database.\n" + e.getMessage());
-        }
-    }
-
-    @Override
     public List<Team> getTeams(TransactionContext context, Profile profile) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
@@ -667,7 +586,7 @@ public class ProfileDAO implements IProfileDAO {
         List<Team> teams = new ArrayList<>();
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
-            stmt.setInt(1, profile.id());
+            stmt.setObject(1, profile.getProfileId());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -687,15 +606,87 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
+    public boolean update(Profile profile) throws Exception {
+        String updateProfileSQL = """
+                                  UPDATE dbo.Profiles
+                                  SET annual_salary = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
+                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_arhived = ?, updated_at = CURRENT_TIMESTAMP
+                                  WHERE id = ?;
+                                  """;
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement updateProfileStmt = conn.prepareStatement(updateProfileSQL)) {
+            conn.setAutoCommit(false);
+
+            updateProfileStmt.setBigDecimal(1, profile.getAnnualCost());
+            updateProfileStmt.setBigDecimal(2, profile.getEffectivenessPercentage());
+            updateProfileStmt.setBigDecimal(3, profile.getAnnualHours());
+            updateProfileStmt.setBigDecimal(4, profile.getEffectiveWorkHours());
+            updateProfileStmt.setBigDecimal(5, profile.getHoursPerDay());
+            updateProfileStmt.setString(6, profile.getName());
+            updateProfileStmt.setString(7, profile.getCurrency());
+            updateProfileStmt.setInt(8, profile.getCountryId());
+            updateProfileStmt.setBoolean(9, profile.isResourceType());
+            updateProfileStmt.setBoolean(10, profile.isArchived());
+            updateProfileStmt.setObject(11, profile.getProfileId());
+            updateProfileStmt.executeUpdate();
+
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            try (Connection conn = dbConnector.connection()) {
+                conn.rollback();
+                return false;
+            } catch (Exception ex) {
+                e.printStackTrace();
+                throw new Exception("Could not update Profile in Database.\n" + ex.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public boolean update(TransactionContext context, Profile profile) throws Exception {
+        SqlTransactionContext sqlContext = (SqlTransactionContext) context;
+
+        String updateProfileSQL = """
+                                  UPDATE dbo.Profiles
+                                  SET annual_salary = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
+                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_arhived = ?, updated_at = CURRENT_TIMESTAMP
+                                  WHERE id = ?;
+                                  """;
+        try (PreparedStatement updateProfileStmt = sqlContext.connection().prepareStatement(updateProfileSQL)) {
+            updateProfileStmt.setBigDecimal(1, profile.getAnnualCost());
+            updateProfileStmt.setBigDecimal(2, profile.getEffectivenessPercentage());
+            updateProfileStmt.setBigDecimal(3, profile.getAnnualHours());
+            updateProfileStmt.setBigDecimal(4, profile.getEffectiveWorkHours());
+            updateProfileStmt.setBigDecimal(5, profile.getHoursPerDay());
+            updateProfileStmt.setString(6, profile.getName());
+            updateProfileStmt.setString(7, profile.getCurrency());
+            updateProfileStmt.setInt(8, profile.getCountryId());
+            updateProfileStmt.setBoolean(9, profile.isResourceType());
+            updateProfileStmt.setBoolean(10, profile.isArchived());
+            updateProfileStmt.setObject(11, profile.getProfileId());
+            updateProfileStmt.executeUpdate();
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Could not update Profile in Database.\n" + e.getMessage());
+        }
+    }
+
+
+
+    @Override
     public boolean archive(Profile profile, boolean shouldArchive) throws Exception {
         String query = """
-                       UPDATE dbo.Profiles_data SET archived = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;
+                       UPDATE dbo.Profiles SET is_archived = ?, updated_at = CURRENT_TIMESTAMP WHERE profile_id = ?;
                        """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, shouldArchive);
-            stmt.setInt(2, profile.id());
+            stmt.setObject(2, profile.getProfileId());
 
             stmt.executeUpdate();
             return true;
@@ -703,11 +694,11 @@ public class ProfileDAO implements IProfileDAO {
             throw new Exception("Could not archive Profile in Database.\n" + e.getMessage());
         }
     }
-
+    // Updatere flere profiler på en gang, er det nødvendigt?
     @Override
     public boolean archive(List<Profile> profiles) throws Exception {
         String query = """
-                       UPDATE dbo.Profiles_data SET archived = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;
+                       UPDATE dbo.Profiles SET is_archived = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -716,7 +707,7 @@ public class ProfileDAO implements IProfileDAO {
 
             for (Profile profile : profiles) {
                 stmt.setBoolean(1, true);
-                stmt.setInt(2, profile.id());
+                stmt.setObject(2, profile.getProfileId());
                 stmt.addBatch();
             }
 

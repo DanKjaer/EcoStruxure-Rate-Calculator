@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.gui.component.modals.verifyprofiles;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileData;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
@@ -11,6 +10,7 @@ import ecostruxure.rate.calculator.gui.component.modals.addteam.AddProfileItemMo
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class VerifyProfilesInteractor {
@@ -51,18 +51,18 @@ public class VerifyProfilesInteractor {
 
         for (Profile profile : profiles) {
             AddProfileItemModel profileItemModel = new AddProfileItemModel();
-            profileItemModel.idProperty().set(profile.id());
-            profileItemModel.nameProperty().set(profile.profileData().name());
+            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.nameProperty().set(profile.getName());
 
             profileItemModel.selectedProperty().set(profilesTeams.stream()
-                    .anyMatch(profileTeam -> profileTeam.id() == profile.id()));
+                    .anyMatch(profileTeam -> profileTeam.getProfileId() == profile.getProfileId()));
 
-            BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.id(), teamId);
-            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.costAllocation()).add(profileCostAllocation));
+            BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), teamId);
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.getCostAllocation()).add(profileCostAllocation));
             profileItemModel.setCostAllocationProperty().set(profileCostAllocation);
 
-            BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.id(), teamId);
-            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.hourAllocation()).add(profileHourAllocation));
+            BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), teamId);
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
             
             profileItemModel.locationProperty().set(geographyService.get(profile.profileData().geography()).name());
@@ -115,15 +115,12 @@ public class VerifyProfilesInteractor {
     }
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
-        var profileData = new ProfileData();
-        profileData.id(model.idProperty().get());
-        profileData.name((model.nameProperty().get()));
-
         var profile = new Profile();
-        profile.id(model.idProperty().get());
-        profile.profileData(profileData);
-        profile.costAllocation(model.setCostAllocationProperty().get());
-        profile.hourAllocation(model.setHourAllocationProperty().get());
+        profile.setProfileId(model.getUUID());
+        profile.setName(model.nameProperty().getName());
+
+        profile.setCostAllocation(model.setCostAllocationProperty().get());
+        profile.setHourAllocation(model.setHourAllocationProperty().get());
 
         return profile;
     }
@@ -142,7 +139,7 @@ public class VerifyProfilesInteractor {
                 // Filter ud de originale profiler som ikke er valgt i current profiles
                 .filter(originalProfile -> !currentSelectedProfiles.contains(originalProfile) &&
                         !currentSelectedProfiles.stream().anyMatch(currentProfile ->
-                                currentProfile.idProperty().get() == originalProfile.idProperty().get()))
+                                currentProfile.getUUID() == originalProfile.getUUID()))
                 .map(this::createProfileFromModel)
                 .collect(Collectors.toList());
     }
@@ -158,13 +155,13 @@ public class VerifyProfilesInteractor {
         return currentSelectedProfiles.stream()
                 .filter(currentProfile -> {
                     // Find den originale profil som passer til den nuværende profil
-                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.idProperty().get());
+                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.getUUID());
                     return originalProfile != null && currentProfile.selectedProperty().get();
                 })
                 // Filter nuværende profiler hvor setUtilization er forskellig fra original
                 .filter(currentProfile -> {
                     // Få fat i den originle profil som passer til den nuværende
-                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.idProperty().get());
+                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.getUUID());
                     return !currentProfile.setCostAllocationProperty().get().equals(originalProfile.setCostAllocationProperty().get()) ||
                             !currentProfile.setHourAllocationProperty().get().equals(originalProfile.setHourAllocationProperty().get());
                 })
@@ -179,9 +176,9 @@ public class VerifyProfilesInteractor {
      * @param id        The ID to search for
      * @return The profile if found, otherwise null
      */
-    private AddProfileItemModel findProfileById(List<AddProfileItemModel> profiles, int id) {
+    private AddProfileItemModel findProfileById(List<AddProfileItemModel> profiles, UUID id) {
         return profiles.stream()
-                .filter(profile -> profile.idProperty().get() == id)
+                .filter(profile -> profile.getUUID() == id)
                 .findFirst()
                 .orElse(null);
     }
@@ -194,7 +191,7 @@ public class VerifyProfilesInteractor {
 
         for (AddProfileItemModel originalProfile : profileItemModels) {
             AddProfileItemModel copiedProfile = new AddProfileItemModel();
-            copiedProfile.idProperty().set(originalProfile.idProperty().get());
+            copiedProfile.setIdProperty(originalProfile.getUUID());
             copiedProfile.nameProperty().set(originalProfile.nameProperty().get());
             copiedProfile.setCostAllocationProperty().set(originalProfile.setCostAllocationProperty().get());
             copiedProfile.currentCostAllocationProperty().set(originalProfile.currentCostAllocationProperty().get());

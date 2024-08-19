@@ -368,7 +368,7 @@ public class TeamView implements View {
         });
 
         TableColumn<ProfileItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileItemModel::hourAllocationProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> hourColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> hourColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileItemModel::annualHoursProperty, new HourCellFactory<>());
 
         TableColumn<ProfileItemModel, BigDecimal> costAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());

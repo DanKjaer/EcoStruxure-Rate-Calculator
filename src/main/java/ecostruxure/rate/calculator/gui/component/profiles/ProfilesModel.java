@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class ProfilesModel {
     private final ObservableList<ProfileItemModel> profiles = FXCollections.observableArrayList();
@@ -18,7 +19,11 @@ public class ProfilesModel {
     private final FinancialData totalAnnualRate = new FinancialData();
     private final StringProperty uniqueGeographies = new SimpleStringProperty();
     private final StringProperty search = new SimpleStringProperty("");
-    private final IntegerProperty lastSelectedTeamId = new SimpleIntegerProperty();
+    private static UUID lastSelectedTeamId;
+
+    public UUID ProfilesModel() {
+        return lastSelectedTeamId;
+    }
 
 
     public ObservableList<ProfileItemModel> profiles() {
@@ -57,7 +62,7 @@ public class ProfilesModel {
         return search;
     }
 
-    public IntegerProperty lastSelectedTeamIdProperty() {
+    public UUID lastSelectedTeamIdProperty() {
         return lastSelectedTeamId;
     }
 

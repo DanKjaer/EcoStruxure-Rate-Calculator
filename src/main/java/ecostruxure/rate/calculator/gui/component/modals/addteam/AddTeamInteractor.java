@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.gui.component.modals.addteam;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileData;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;

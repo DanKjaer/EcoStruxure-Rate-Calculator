@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ProfileService {
     private static final int FINANCIAL_SCALE = 4;
@@ -29,8 +30,8 @@ public class ProfileService {
 
     public Profile create(Profile profile) throws Exception {
         validateProfile(profile);
-        if (profile.id() != 0) throw new IllegalArgumentException("Profile ID must be set upon creation.");
-        if (profile.profileData().archived()) throw new IllegalArgumentException("Profile cannot be archived upon creation");
+        if (profile.getProfileId() != null) throw new IllegalArgumentException("Profile ID must be set upon creation.");
+        if (profile.isArchived()) throw new IllegalArgumentException("Profile cannot be archived upon creation");
 
         return profileDAO.create(profile);
     }
@@ -53,7 +54,7 @@ public class ProfileService {
         return profileDAO.allWithUtilizationByTeam(teamId);
     }
 
-    public Profile get(int id) throws Exception {
+    public Profile get(UUID id) throws Exception {
         return profileDAO.get(id);
     }
 
@@ -62,15 +63,15 @@ public class ProfileService {
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
         BigDecimal percentageAsDecimal = utilizationPercentage.divide(new BigDecimal("100.00"), GENERAL_SCALE, ROUNDING_MODE);
-        return profile.totalHours().multiply(percentageAsDecimal);
+        return profile.getAnnualHours().multiply(percentageAsDecimal);
     }
 
     public BigDecimal hourlyRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
-        if(profile.totalHours().compareTo(BigDecimal.ZERO) == 0) {
+        if(profile.getAnnualCost().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-        return annualCost(profile).divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
+        return annualCost(profile).divide(profile.getAnnualHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
     public BigDecimal hourlyRate(ProfileHistory profile) {
@@ -115,7 +116,7 @@ public class ProfileService {
     public BigDecimal dayRate(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return hourlyRate(profile).multiply(profile.hoursPerDay());
+        return hourlyRate(profile).multiply(profile.getHoursPerDay());
     }
 
     public BigDecimal dayRate(ProfileHistory profile) {
@@ -160,7 +161,7 @@ public class ProfileService {
     public BigDecimal annualCost(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        return profile.annualSalary().multiply(profile.effectiveness());
+        return profile.getAnnualCost().multiply(profile.getEffectivenessPercentage());
     }
 
     public BigDecimal annualCost(Profile profile, BigDecimal utilizationPercentage) {
@@ -192,40 +193,39 @@ public class ProfileService {
 
     private void validateProfileNotNull(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
-        Objects.requireNonNull(profile.annualSalary(), "Annual salary cannot be null");
-        Objects.requireNonNull(profile.effectiveness(), "Effectiveness cannot be null");
-        Objects.requireNonNull(profile.totalHours(), "Effective work hours cannot be null");
-        Objects.requireNonNull(profile.profileData(), "Profile data cannot be null");
-        Objects.requireNonNull(profile.profileData().name(), "Profile name cannot be null");
-        Objects.requireNonNull(profile.profileData().currency(), "Profile currency cannot be null");
+        Objects.requireNonNull(profile.getAnnualCost(), "Annual salary cannot be null");
+        Objects.requireNonNull(profile.getEffectivenessPercentage(), "Effectiveness cannot be null");
+        Objects.requireNonNull(profile.getAnnualHours(), "Effective work hours cannot be null");
+        Objects.requireNonNull(profile.getName(), "Profile name cannot be null");
+        Objects.requireNonNull(profile.getCurrency(), "Profile currency cannot be null");
     }
 
     private void validateProfileValues(Profile profile) {
-        if (profile.annualSalary().compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("Annual salary cannot be negative");
+        if (profile.getAnnualCost().compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("Annual salary cannot be negative");
 
 //        if (profile.effectiveness().compareTo(BigDecimal.ZERO) < 0 || profile.effectiveness().compareTo(new BigDecimal("1")) > 0)
 //            throw new IllegalArgumentException("Effectiveness must be between 0 and 1");
 
         //if (profile.totalHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
 
-        if (profile.hoursPerDay().compareTo(BigDecimal.ZERO) < 0 || profile.hoursPerDay().compareTo(new BigDecimal("24")) > 0)
+        if (profile.getHoursPerDay().compareTo(BigDecimal.ZERO) < 0 || profile.getHoursPerDay().compareTo(new BigDecimal("24")) > 0)
             throw new IllegalArgumentException("Hours per day must be between 0 and 24");
 
-        if (profile.annualSalary().compareTo(new BigDecimal("999999999999999.9999")) > 0)
+        if (profile.getAnnualCost().compareTo(new BigDecimal("999999999999999.9999")) > 0)
             throw new IllegalArgumentException("Annual salary must be less than or equal to 999999999999999.9999");
 
-         if (profile.totalHours().compareTo(new BigDecimal("8760")) > 0)
+         if (profile.getAnnualHours().compareTo(new BigDecimal("8760")) > 0)
             throw new IllegalArgumentException("Effective work hours must be less than or equal to 8760");
     }
 
     private void validateProfileValueScale(Profile profile) {
         // Tjek scale af finansielle felter
-        if (profile.annualSalary().scale() > FINANCIAL_SCALE) throw new IllegalArgumentException("Annual salary scale must be less than or equal to " + FINANCIAL_SCALE);
+        if (profile.getAnnualCost().scale() > FINANCIAL_SCALE) throw new IllegalArgumentException("Annual salary scale must be less than or equal to " + FINANCIAL_SCALE);
 
         // Tjek scale af numeriske felter
-        if (profile.effectiveness().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
-        if (profile.totalHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
-        if (profile.hoursPerDay().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
+        if (profile.getEffectivenessPercentage().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
+        if (profile.getAnnualHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
+        if (profile.getHoursPerDay().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
     }
 
     public List<Team> getTeams(Profile profile) throws Exception {
@@ -238,27 +238,27 @@ public class ProfileService {
 
 
     // todo: rename til total/sum
-    public BigDecimal getTotalCostAllocation(int id) throws Exception {
+    public BigDecimal getTotalCostAllocation(UUID id) throws Exception {
         return profileDAO.getTotalCostAllocation(id);
     }
 
-    public BigDecimal getTotalHourAllocation(int id) throws Exception {
+    public BigDecimal getTotalHourAllocation(UUID id) throws Exception {
         return profileDAO.getTotalHourAllocation(id);
     }
 
-    public BigDecimal getProfileCostAllocationForTeam(int id, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(UUID id, int teamId) throws Exception {
         return profileDAO.getProfileCostAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileHourAllocationForTeam(int id, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(UUID id, int teamId) throws Exception {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileCostAllocationForArchivedTeam(int id, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForArchivedTeam(UUID id, int teamId) throws Exception {
         return profileDAO.getProfileCostAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileHourAllocationForArchivedTeam(int id, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForArchivedTeam(UUID id, int teamId) throws Exception {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
@@ -273,8 +273,8 @@ public class ProfileService {
 
     public boolean update(Profile original, Profile updated) throws Exception {
         validateProfile(updated);
-        if (updated.id() <= 0) throw new IllegalArgumentException("Profile ID must be greater than 0");
-        if (updated.profileData().archived()) throw new IllegalArgumentException("Profile cannot be archived upon update");
+        if (updated.getProfileId() == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
+        if (updated.isArchived()) throw new IllegalArgumentException("Profile cannot be archived upon update");
 
         if (original.equals(updated)) return profileDAO.update(updated);
 
@@ -282,7 +282,7 @@ public class ProfileService {
     }
 
     public boolean archive(Profile profile, boolean shouldArchive) throws Exception {
-        if (profile.id() <= 0) throw new IllegalArgumentException("Profile ID must be greater than 0");
+        if (profile.getProfileId() == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return profileDAO.archive(profile, shouldArchive);
     }

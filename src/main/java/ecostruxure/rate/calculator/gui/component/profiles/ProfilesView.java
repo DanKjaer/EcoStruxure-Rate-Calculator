@@ -40,6 +40,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -120,7 +121,7 @@ public class ProfilesView implements View {
             while (change.next() && customTableView != null) {
                 if (change.wasAdded() || change.wasRemoved()) {
                     customTableView.updatePaginationTable(0);
-                    selectItemById(model.lastSelectedTeamIdProperty().get());
+                    selectItemById(model.lastSelectedTeamIdProperty());
                 }
             }
         });
@@ -150,9 +151,9 @@ public class ProfilesView implements View {
         });
     }
 
-    private void selectItemById(long id) {
+    private void selectItemById(UUID uuid) {
         tableViewWithPagination.getItems().stream()
-                .filter(item -> item.idProperty().get() == id)
+                .filter(item -> item.getUUID() == uuid)
                 .findFirst()
                 .ifPresent(item -> {
                     tableViewWithPagination.getSelectionModel().select(item);
@@ -355,17 +356,20 @@ public class ProfilesView implements View {
 
         TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.CONTRIBUTED_ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> effectivenessColumn = customTableView.createColumn(LocalizedText.EFFECTIVENESS, ProfileItemModel::effectivenessProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.ANNUAL_HOURS, ProfileItemModel::hoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.ANNUAL_HOURS, ProfileItemModel::annualHoursProperty, new HourCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> effectiveWorkHoursColumn = customTableView.createColumn(LocalizedText.EFFECTIVE_WORK_HOURS, ProfileItemModel::effectiveWorkHoursProperty, new HourCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> allocatedHours = customTableView.createColumn(LocalizedText.ALLOCATED_HOURS, ProfileItemModel::allocatedHoursProperty, new HourCellFactory<>());
-        TableColumn<ProfileItemModel, String> locationColumn = customTableView.createColumn(LocalizedText.LOCATION, ProfileItemModel::locationProperty);
+
+        // Fixes senere når jeg ved hvad jeg skal gøre med geography for at få den ind
+        //TableColumn<ProfileItemModel, String> locationColumn = customTableView.createColumn(LocalizedText.LOCATION, ProfileItemModel::property);
 
         //TableColumn<ProfileItemModel, String> teamColumn = customTableView.createColumn(LocalizedText.TEAMS, ProfileItemModel::teamsProperty);
 
-        locationColumn.setResizable(false);
-        locationColumn.setMinWidth(80);
-        locationColumn.setMaxWidth(80);
-        locationColumn.setPrefWidth(80);
+        // Ændres til locationColumn istedet for allocatedHours, når jeg har fikset den column,
+        allocatedHours.setResizable(false);
+        allocatedHours.setMinWidth(80);
+        allocatedHours.setMaxWidth(80);
+        allocatedHours.setPrefWidth(80);
 
         TableColumn<ProfileItemModel, Void> optionsColumn = customTableView.createColumnWithMenu(new FontIcon(Icons.GEAR), tableViewWithPagination, contextMenu);
         optionsColumn.setResizable(false);
@@ -374,7 +378,7 @@ public class ProfilesView implements View {
         optionsColumn.setMaxWidth(50);
         optionsColumn.setPrefWidth(50);
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, effectivenessColumn, annualCostColumn, allocatedHours, locationColumn, optionsColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, effectivenessColumn, annualCostColumn, allocatedHours, optionsColumn)); //locationColumn,
 
         tableViewWithPagination.setEditable(true);
     }

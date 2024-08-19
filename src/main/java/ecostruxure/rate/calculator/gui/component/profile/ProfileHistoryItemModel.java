@@ -9,9 +9,10 @@ import javafx.beans.property.SimpleObjectProperty;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ProfileHistoryItemModel {
-    private final IntegerProperty id = new SimpleIntegerProperty();
+    private static UUID id;
     private final ObjectProperty<ResourceType> resourceType = new SimpleObjectProperty<>();
     private final FinancialData annualSalary = new FinancialData();
     private final ObjectProperty<BigDecimal> effectiveness = new SimpleObjectProperty<>();
@@ -24,8 +25,12 @@ public class ProfileHistoryItemModel {
     private final FinancialData dayRate = new FinancialData();
     private final FinancialData annualCost = new FinancialData();
 
-    public IntegerProperty idProperty() {
+    public UUID getUUID() {
         return id;
+    }
+
+    public void setIdProperty(UUID uuid) {
+        ProfileHistoryItemModel.id = uuid;
     }
 
     public ObjectProperty<ResourceType> resourceTypeProperty() {
