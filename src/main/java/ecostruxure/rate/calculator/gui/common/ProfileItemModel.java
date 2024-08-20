@@ -22,6 +22,8 @@ public class ProfileItemModel {
     private final ObjectProperty<Timestamp> updatedAt = new SimpleObjectProperty<>();
     private final BooleanProperty resourceType = new SimpleBooleanProperty();
     private final BooleanProperty archived = new SimpleBooleanProperty();
+
+    //måske slette de 3 nederste her?
     private final ObjectProperty<BigDecimal> allocatedHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> allocatedCost = new SimpleObjectProperty<>();
     private final StringProperty location = new SimpleStringProperty("");

@@ -43,7 +43,7 @@ public class TeamInteractor {
     private Rates hourlyRates;
     private Rates dayRates;
     private Rates annualRates;
-    private BigDecimal totalHorus = BigDecimal.ZERO;
+    private BigDecimal totalHours = BigDecimal.ZERO;
 
     public TeamInteractor(TeamModel model,Runnable onFetchError) {
         this.model = model;
@@ -62,7 +62,7 @@ public class TeamInteractor {
     public boolean fetchTeam(int id) {
         try {
             currentDateTime = LocalDateTime.now();
-            totalHorus = BigDecimal.ZERO;
+            totalHours = BigDecimal.ZERO;
             team = teamService.get(id);
             updatedAt = teamService.getLastUpdated(id);
             historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
@@ -136,7 +136,7 @@ public class TeamInteractor {
             profileItemModel.hourAllocationProperty().set(profile.hourAllocation());
             profileItemModel.annualHoursProperty().set(profile.getAnnualHours());
 
-            totalHorus = totalHorus.add(profileItemModel.annualHoursProperty().get());
+            totalHours = totalHours.add(profileItemModel.annualHoursProperty().get());
 
             String geographyName = geographyService.get(profile.geography()).name();
             profileItemModel.locationProperty().set(geographyName);
@@ -160,9 +160,9 @@ public class TeamInteractor {
     }
 
     public void updateModel() {
-        model.idProperty().set(team.id());
-        model.teamNameProperty().set(team.name());
-        model.archivedProperty().set(team.archived());
+        model.idProperty().set(team.getTeamId());
+        model.teamNameProperty().set(team.getName());
+        model.archivedProperty().set(team.isArchived());
         model.updatedAtProperty().set(updatedAt);
         model.profiles().setAll(profileItemModels);
         model.geographies().setAll(geographyItemModels);
@@ -175,7 +175,7 @@ public class TeamInteractor {
         model.setRawRate(hourlyRates.rawRate());
         model.setMarkupRate(hourlyRates.markupRate());
         model.setGrossMarginRate(hourlyRates.grossMarginRate());
-        model.totalHoursProperty().set(totalHorus.toString());
+        model.totalHoursProperty().set(totalHours.toString());
     }
 
     public boolean exportTeamToExcel(File file, int teamId) {
