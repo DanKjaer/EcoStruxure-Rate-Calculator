@@ -18,6 +18,7 @@ public class Profile {
     private BigDecimal effectiveWorkHours;
     private boolean archived;
     private Timestamp updatedAt;
+    //De 3 nederste skal måske slettes, afhængig af hvordan jeg skal håndtere geography. Cost og Hour skal refactors over i team
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
     private Geography geography;

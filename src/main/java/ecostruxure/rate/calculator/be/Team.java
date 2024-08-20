@@ -1,7 +1,102 @@
 package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.UUID;
+
+public class Team{
+    private UUID teamId;
+    private String name;
+    private BigDecimal markup;
+    private BigDecimal grossMargin;
+    private BigDecimal hourlyRate;
+    private BigDecimal dayRate;
+    private BigDecimal totalAllocatedHours;
+    private BigDecimal totalAllocatedCost;
+    private Timestamp updatedAt;
+    private boolean archived;
+
+    public UUID getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(UUID teamId) {
+        this.teamId = teamId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getMarkup() {
+        return markup;
+    }
+
+    public void setMarkup(BigDecimal markup) {
+        this.markup = markup;
+    }
+
+    public BigDecimal getGrossMargin() {
+        return grossMargin;
+    }
+
+    public void setGrossMargin(BigDecimal grossMargin) {
+        this.grossMargin = grossMargin;
+    }
+
+    public BigDecimal getHourlyRate() {
+        return hourlyRate;
+    }
+
+    public void setHourlyRate(BigDecimal hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
+    public BigDecimal getDayRate() {
+        return dayRate;
+    }
+
+    public void setDayRate(BigDecimal dayRate) {
+        this.dayRate = dayRate;
+    }
+
+    public BigDecimal getTotalAllocatedHours() {
+        return totalAllocatedHours;
+    }
+
+    public void setTotalAllocatedHours(BigDecimal totalAllocatedHours) {
+        this.totalAllocatedHours = totalAllocatedHours;
+    }
+
+    public BigDecimal getTotalAllocatedCost() {
+        return totalAllocatedCost;
+    }
+
+    public void setTotalAllocatedCost(BigDecimal totalAllocatedCost) {
+        this.totalAllocatedCost = totalAllocatedCost;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+}
 
 public class Team {
     private int id;
