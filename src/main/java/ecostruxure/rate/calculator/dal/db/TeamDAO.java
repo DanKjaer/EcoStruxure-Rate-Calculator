@@ -72,7 +72,7 @@ public class TeamDAO implements ITeamDAO {
                             .name(rs.getString("name"))
                             .markup(rs.getBigDecimal("markup"))
                             .grossMargin(rs.getBigDecimal("gross_margin"))
-                            .archived(rs.getBoolean("archived"))
+                            .archived(rs.getBoolean("is_archived"))
                             .updatedAt(rs.getTimestamp("updated_at"))
                             .dayRate(rs.getBigDecimal("day_rate"))
                             .hourlyRate(rs.getBigDecimal("hourly_rate"))
@@ -337,7 +337,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND archived = FALSE;
+                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
                        """; //false
 
         try (Connection conn = dbConnector.connection();
@@ -363,7 +363,7 @@ public class TeamDAO implements ITeamDAO {
     public boolean removeAssignedProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String query = """
-                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND archived = FALSE;
+                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
                        """; //false
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
@@ -543,7 +543,7 @@ public class TeamDAO implements ITeamDAO {
 
     private void archiveTeamMembers(Connection conn, UUID teamId, boolean archive) throws Exception {
         String query = """
-                       UPDATE Teams_profiles SET archived = ? WHERE teamId = ?
+                       UPDATE Teams_profiles SET is_archived = ? WHERE teamId = ?
                        """;
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, archive);
@@ -557,7 +557,7 @@ public class TeamDAO implements ITeamDAO {
 
     private void archiveTeam(Connection conn, UUID teamId, boolean archive) throws Exception {
         String query = """
-                       UPDATE Teams SET archived = ? WHERE id = ?
+                       UPDATE Teams SET is_archived = ? WHERE id = ?
                        """;
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, archive);
@@ -588,11 +588,11 @@ public class TeamDAO implements ITeamDAO {
                         SUM(hour_allocation) AS total_hour_allocation
                      FROM dbo.Teams_profiles
                      WHERE teamID != ?
-                       AND (SELECT archived FROM dbo.Profiles_data WHERE id = profileID) = 0
-                       AND archived = FALSE
+                       AND (SELECT is_archived FROM dbo.Profiles_data WHERE id = profileID) = 0
+                       AND is_archived = FALSE
                      GROUP BY profileID
                     ) AS total_sum ON p.id = total_sum.profileID
-                WHERE tp.archived = TRUE;
+                WHERE tp.is_archived = TRUE;
                     """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {

@@ -83,6 +83,7 @@ public class ProfilesView implements View {
         setupChangeList();
         setupComboBoxFilters();
         setupListArchivedListener();
+
     }
 
     private void setupSearchFilter() {
@@ -121,7 +122,7 @@ public class ProfilesView implements View {
             while (change.next() && customTableView != null) {
                 if (change.wasAdded() || change.wasRemoved()) {
                     customTableView.updatePaginationTable(0);
-                    selectItemById(model.lastSelectedTeamIdProperty());
+                    selectItemById(model.lastSelectedTeamIdProperty().get());
                 }
             }
         });
@@ -153,7 +154,7 @@ public class ProfilesView implements View {
 
     private void selectItemById(UUID uuid) {
         tableViewWithPagination.getItems().stream()
-                .filter(item -> item.getUUID() == uuid)
+                .filter(item -> item.UUIDProperty().get().equals(uuid))
                 .findFirst()
                 .ifPresent(item -> {
                     tableViewWithPagination.getSelectionModel().select(item);
@@ -210,6 +211,11 @@ public class ProfilesView implements View {
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
         results.getChildren().addAll(header, stats, controls, content);
+
+        if(!model.profiles().isEmpty()) {
+            customTableView.updatePaginationTable(0);
+            selectItemById(model.lastSelectedTeamIdProperty().get());
+        }
         return results;
     }
 
@@ -286,8 +292,9 @@ public class ProfilesView implements View {
         NodeUtils.bindVisibility(dividerMultiSelect.separatorMenuItem(), multipleSelectedBinding);
 
         Runnable doubleClickAction = () -> {
+            ProfileItemModel selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (tableView.getSelectionModel().getSelectedItem() != null) {
-                onShowProfile.accept(tableView.getSelectionModel().getSelectedItem());
+                onShowProfile.accept(selectedItem);
             }
         };
 

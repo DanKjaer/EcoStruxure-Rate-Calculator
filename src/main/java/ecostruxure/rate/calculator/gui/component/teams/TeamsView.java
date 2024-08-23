@@ -299,7 +299,7 @@ public class TeamsView implements View {
         TableColumn<TeamItemModel, BigDecimal> hourlyRateColumn = customTableView.createColumn(LocalizedText.HOURLY_RATE, TeamItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
         TableColumn<TeamItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, TeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
         TableColumn<TeamItemModel, BigDecimal> totalAllocatedCostColumn = customTableView.createColumn(LocalizedText.TOTAL_ANNUAL_COST, TeamItemModel::totalAllocatedCostProperty, new CurrencyCellFactory<>());
-        TableColumn<TeamItemModel, BigDecimal> totalAllocatedHoursColumn = customTableView.createColumn(LocalizedText.TOTAL_HOURS_ANNUALLY, TeamItemModel::totalAllocatedHoursProperty, new CurrencyCellFactory<>());
+        TableColumn<TeamItemModel, BigDecimal> totalAllocatedHoursColumn = customTableView.createColumn(LocalizedText.TOTAL_HOURS_ANNUALLY, TeamItemModel::totalAllocatedHoursProperty, new HourCellFactory<>());
         markupColumn.setVisible(true);
         markupColumn.setResizable(false);
         markupColumn.setMinWidth(80);

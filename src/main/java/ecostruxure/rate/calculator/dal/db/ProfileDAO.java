@@ -102,12 +102,12 @@ public class ProfileDAO implements IProfileDAO {
                            COALESCE(tp.cost_allocation_total, 0) AS cost_allocation_total,
                            COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
                         FROM dbo.Profiles p
-                        LEFT JOIN (
+                        LEFT JOIN LATERAL (
                             SELECT profileID,
                                    SUM(cost_allocation) AS cost_allocation_total,
                                    SUM(hour_allocation) AS hour_allocation_total
                             FROM dbo.Teams_profiles
-                            WHERE archived = FALSE
+                            WHERE is_archived = FALSE
                             GROUP BY profileID
                         ) tp ON p.profile_id = tp.profileID
                         WHERE p.is_archived = FALSE
@@ -127,6 +127,7 @@ public class ProfileDAO implements IProfileDAO {
 
             return profiles;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not get all Profiles from Database.\n" + e.getMessage());
         }
     }
@@ -242,7 +243,7 @@ public class ProfileDAO implements IProfileDAO {
             stmt.setBoolean(4, profile.isResourceType());
             stmt.setBigDecimal(5, profile.getAnnualCost());
             stmt.setBigDecimal(6, profile.getEffectivenessPercentage());
-            stmt.setBigDecimal(7, profile.getHourAllocation());
+            stmt.setBigDecimal(7, profile.getAnnualHours());
             stmt.setBigDecimal(8, profile.getEffectiveWorkHours());
             stmt.setBigDecimal(9, profile.getHoursPerDay());
             stmt.setBoolean(10, profile.isArchived());
@@ -557,7 +558,7 @@ public class ProfileDAO implements IProfileDAO {
                        SELECT *
                        FROM Teams_profiles
                        INNER JOIN Teams ON Teams_profiles.teamId = Teams.id
-                       WHERE Teams_profiles.profileId = ? AND Teams.archived = FALSE;
+                       WHERE Teams_profiles.profileId = ? AND Teams.is_archived = FALSE;
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -571,7 +572,7 @@ public class ProfileDAO implements IProfileDAO {
                             .name(rs.getString("name"))
                             .markup(rs.getBigDecimal("markup"))
                             .grossMargin(rs.getBigDecimal("gross_margin"))
-                            .archived(rs.getBoolean("archived"))
+                            .archived(rs.getBoolean("is_archived"))
                             .build();
                     teams.add(team);
                 }

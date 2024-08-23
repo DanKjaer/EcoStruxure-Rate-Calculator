@@ -6,8 +6,10 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class AddProfileItemModel {
-    private static UUID uuid;
+    private final ObjectProperty<UUID> uuid = new SimpleObjectProperty<>();
     private final StringProperty name = new SimpleStringProperty("");
+    private final ObjectProperty<BigDecimal> annualCostAllocation = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> annualHourAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> setCostAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> currentCostAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> setHourAllocation = new SimpleObjectProperty<>();
@@ -20,16 +22,22 @@ public class AddProfileItemModel {
     private final BooleanProperty selected = new SimpleBooleanProperty();
     private final BooleanProperty wasChanged = new SimpleBooleanProperty();
 
-    public void setIdProperty(UUID uuid) {
-        AddProfileItemModel.uuid = uuid;
-    }
 
-    public UUID getUUID() {
+
+    public ObjectProperty<UUID> UUIDProperty() {
         return uuid;
     }
 
     public StringProperty nameProperty() {
         return name;
+    }
+
+    public ObjectProperty<BigDecimal> annualCostAllocationProperty() {
+        return annualCostAllocation;
+    }
+
+    public ObjectProperty<BigDecimal> annualHourAllocationProperty() {
+        return annualHourAllocation;
     }
 
     public ObjectProperty<BigDecimal> setCostAllocationProperty() {

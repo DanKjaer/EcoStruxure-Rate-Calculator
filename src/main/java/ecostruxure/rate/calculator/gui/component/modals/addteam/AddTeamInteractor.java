@@ -68,7 +68,7 @@ public class AddTeamInteractor {
                 continue;
 
             AddProfileItemModel profileItemModel = new AddProfileItemModel();
-            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
 
             profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.getCostAllocation()));
@@ -92,7 +92,7 @@ public class AddTeamInteractor {
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
         var profile = new Profile();
-        profile.setProfileId(model.getUUID());
+        profile.setProfileId(model.UUIDProperty().get());
         profile.setName((model.nameProperty().get()));
 
         profile.setCostAllocation(model.setCostAllocationProperty().get());

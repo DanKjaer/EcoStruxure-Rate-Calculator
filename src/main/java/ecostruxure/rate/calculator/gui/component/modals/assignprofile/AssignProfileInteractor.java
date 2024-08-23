@@ -48,7 +48,7 @@ public class AssignProfileInteractor {
             if (!isProfileInTeam && !profileService.shouldProcessUtilization(profile.getCostAllocation()) && !profileService.shouldProcessUtilization(profile.getHourAllocation()))
                 continue;
 
-            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
             profileItemModel.selectedProperty().set(isProfileInTeam);
 
@@ -83,7 +83,7 @@ public class AssignProfileInteractor {
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
         var profile = new Profile();
-        profile.setProfileId(model.getUUID());
+        profile.setProfileId(model.UUIDProperty().get());
         profile.setName((model.nameProperty().get()));
 
         profile.setCostAllocation(model.setCostAllocationProperty().get());
@@ -139,7 +139,7 @@ public class AssignProfileInteractor {
                                 // Tjek if der ikke er et match i den originale liste
                                 .noneMatch(originalProfile ->
                                         // Tjek om IDer er ens og om den originale profil er selected
-                                        originalProfile.getUUID() == currentProfile.getUUID() &&
+                                        originalProfile.UUIDProperty() == currentProfile.UUIDProperty() &&
                                                 originalProfile.selectedProperty().get()))
                 .map(this::createProfileFromModel)
                 .collect(Collectors.toList());
@@ -159,7 +159,7 @@ public class AssignProfileInteractor {
                 // Filter ud de originale profiler som ikke er valgt i current profiles
                 .filter(originalProfile -> !currentSelectedProfiles.contains(originalProfile) &&
                         !currentSelectedProfiles.stream().anyMatch(currentProfile ->
-                                currentProfile.getUUID() == originalProfile.getUUID()))
+                                currentProfile.UUIDProperty() == originalProfile.UUIDProperty()))
                 .map(this::createProfileFromModel)
                 .collect(Collectors.toList());
     }
@@ -175,13 +175,13 @@ public class AssignProfileInteractor {
         return currentSelectedProfiles.stream()
                 .filter(currentProfile -> {
                     // Find den originale profil som passer til den nuværende profil
-                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.getUUID());
+                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.UUIDProperty().get());
                     return originalProfile != null && currentProfile.selectedProperty().get();
                 })
                 // Filter nuværende profiler hvor setUtilization er forskellig fra original
                 .filter(currentProfile -> {
                     // Få fat i den originle profil som passer til den nuværende
-                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.getUUID());
+                    AddProfileItemModel originalProfile = findProfileById(originalSelectedProfiles, currentProfile.UUIDProperty().get());
                     return !currentProfile.setCostAllocationProperty().get().equals(originalProfile.setCostAllocationProperty().get()) ||
                             !currentProfile.setHourAllocationProperty().get().equals(originalProfile.setHourAllocationProperty().get());
                 })
@@ -198,7 +198,7 @@ public class AssignProfileInteractor {
      */
     private AddProfileItemModel findProfileById(List<AddProfileItemModel> profiles, UUID id) {
         return profiles.stream()
-                .filter(profile -> profile.getUUID() == id)
+                .filter(profile -> profile.UUIDProperty().get() == id)
                 .findFirst()
                 .orElse(null);
     }
@@ -222,7 +222,7 @@ public class AssignProfileInteractor {
 
         for (AddProfileItemModel originalProfile : profileItemModels) {
             AddProfileItemModel copiedProfile = new AddProfileItemModel();
-            copiedProfile.setIdProperty(originalProfile.getUUID());
+            copiedProfile.UUIDProperty().set(originalProfile.UUIDProperty().get());
             copiedProfile.nameProperty().set(originalProfile.nameProperty().get());
             copiedProfile.setCostAllocationProperty().set(originalProfile.setCostAllocationProperty().get());
             copiedProfile.currentCostAllocationProperty().set(originalProfile.currentCostAllocationProperty().get());

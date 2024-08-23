@@ -43,7 +43,7 @@ public class ProfilesInteractor {
 
         for (Profile profile : profiles) {
             ProfileItemModel profileItemModel = new ProfileItemModel();
-            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
             profileItemModel.currencyProperty().set(profile.getCurrency());
             profileItemModel.countryIdProperty().set(profile.getCountryId());
@@ -107,7 +107,7 @@ public class ProfilesInteractor {
 
     public boolean archiveProfile(ProfileItemModel profileItemModel, boolean shouldArchive) {
         try {
-            UUID profileUUID = profileItemModel.getUUID();
+            UUID profileUUID = profileItemModel.UUIDProperty().get();
             Profile profile = profileService.get(profileUUID);
             return profileService.archive(profile, shouldArchive);
         } catch (Exception e) {

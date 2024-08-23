@@ -1,7 +1,5 @@
 package ecostruxure.rate.calculator.gui.component.profiles;
 
-import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.gui.component.teams.TeamItemModel;
 import ecostruxure.rate.calculator.gui.component.teams.TeamsController;
 import ecostruxure.rate.calculator.gui.system.background.BackgroundTaskEvent;
 import ecostruxure.rate.calculator.gui.common.Controller;
@@ -79,7 +77,7 @@ public class ProfilesController implements Controller {
     }
 
     private void showProfile(ProfileItemModel data) {
-        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.getUUID()));
+        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.UUIDProperty().get()));
     }
 
     private void archiveProfile(ProfileItemModel profile) {

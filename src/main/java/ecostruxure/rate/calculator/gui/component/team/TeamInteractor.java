@@ -125,7 +125,7 @@ public class TeamInteractor {
 
         for (Profile profile : profiles) {
             ProfileItemModel profileItemModel = new ProfileItemModel();
-            profileItemModel.setIdProperty(profile.getProfileId());
+            profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
             profileItemModel.setAnnualCost(profile.getAnnualCost());
             profileItemModel.currencyProperty().set(profile.getCurrency());
@@ -154,7 +154,7 @@ public class TeamInteractor {
 
     public boolean removeTeamMember(ProfileItemModel profileItemModel) {
         try {
-            return teamService.removeProfileFromTeam(model.teamIdProperty().get(), profileItemModel.getUUID());
+            return teamService.removeProfileFromTeam(model.teamIdProperty().get(), profileItemModel.UUIDProperty().get());
         } catch (Exception e) {
             return false;
         }

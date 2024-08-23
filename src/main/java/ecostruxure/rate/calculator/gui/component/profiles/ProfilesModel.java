@@ -19,12 +19,11 @@ public class ProfilesModel {
     private final FinancialData totalAnnualRate = new FinancialData();
     private final StringProperty uniqueGeographies = new SimpleStringProperty();
     private final StringProperty search = new SimpleStringProperty("");
-    private static UUID lastSelectedTeamId;
+    private final ObjectProperty<UUID> lastSelectedTeamId = new SimpleObjectProperty<>();
 
-    public UUID ProfilesModel() {
+    public ObjectProperty<UUID> lastSelectedTeamIdProperty() {
         return lastSelectedTeamId;
     }
-
 
     public ObservableList<ProfileItemModel> profiles() {
         return profiles;
@@ -60,10 +59,6 @@ public class ProfilesModel {
 
     public StringProperty searchProperty() {
         return search;
-    }
-
-    public UUID lastSelectedTeamIdProperty() {
-        return lastSelectedTeamId;
     }
 
     public void setTotalHourlyRate(BigDecimal totalHourlyRate) {

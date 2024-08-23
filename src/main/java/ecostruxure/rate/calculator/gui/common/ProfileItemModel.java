@@ -10,7 +10,7 @@ import java.util.UUID;
 
 
 public class ProfileItemModel {
-    private static UUID uuid;
+    private final ObjectProperty<UUID> uuid = new SimpleObjectProperty<>();
     private final StringProperty name = new SimpleStringProperty("");
     private final FinancialData annualCost = new FinancialData(BigDecimal.ZERO);
     private final StringProperty currency = new SimpleStringProperty("");
@@ -28,11 +28,7 @@ public class ProfileItemModel {
     private final ObjectProperty<BigDecimal> allocatedCost = new SimpleObjectProperty<>();
     private final StringProperty location = new SimpleStringProperty("");
 
-    public void setIdProperty(UUID uuid) {
-        ProfileItemModel.uuid = uuid;
-    }
-
-    public UUID getUUID() {
+    public ObjectProperty<UUID> UUIDProperty() {
         return uuid;
     }
 
@@ -80,14 +76,6 @@ public class ProfileItemModel {
 
     public void setEffectiveness(BigDecimal effectiveness) {
         this.effectiveness.set(effectiveness);
-    }
-
-    public static UUID getUuid() {
-        return uuid;
-    }
-
-    public static void setUuid(UUID uuid) {
-        ProfileItemModel.uuid = uuid;
     }
 
     public String getName() {
