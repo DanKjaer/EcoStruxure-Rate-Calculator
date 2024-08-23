@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Team{
+public class Team {
     private UUID teamId;
     private String name;
     private BigDecimal markup;
@@ -17,6 +17,88 @@ public class Team{
     private Timestamp updatedAt;
     private boolean archived;
 
+    private Team(Builder builder) {
+        this.teamId = builder.teamId;
+        this.name = builder.name;
+        this.markup = builder.markup;
+        this.grossMargin = builder.grossMargin;
+        this.hourlyRate = builder.hourlyRate;
+        this.dayRate = builder.dayRate;
+        this.totalAllocatedHours = builder.totalAllocatedHours;
+        this.totalAllocatedCost = builder.totalAllocatedCost;
+        this.updatedAt = builder.updatedAt;
+        this.archived = builder.archived;
+    }
+
+    public static class Builder {
+        private UUID teamId;
+        private String name;
+        private BigDecimal markup;
+        private BigDecimal grossMargin;
+        private BigDecimal hourlyRate;
+        private BigDecimal dayRate;
+        private BigDecimal totalAllocatedHours;
+        private BigDecimal totalAllocatedCost;
+        private Timestamp updatedAt;
+        private boolean archived;
+
+
+        public Builder teamId(UUID teamId) {
+            this.teamId = teamId;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder markup(BigDecimal markup) {
+            this.markup = markup;
+            return this;
+        }
+
+        public Builder grossMargin(BigDecimal grossMargin) {
+            this.grossMargin = grossMargin;
+            return this;
+        }
+
+        public Builder hourlyRate(BigDecimal hourlyRate) {
+            this.hourlyRate = hourlyRate;
+            return this;
+        }
+
+        public Builder dayRate(BigDecimal dayRate) {
+            this.dayRate = dayRate;
+            return this;
+        }
+
+        public Builder totalAllocatedHours(BigDecimal totalAllocatedHours) {
+            this.totalAllocatedHours = totalAllocatedHours;
+            return this;
+        }
+
+        public Builder totalAllocatedCost(BigDecimal totalAllocatedCost) {
+            this.totalAllocatedCost = totalAllocatedCost;
+            return this;
+        }
+
+        public Builder updatedAt(Timestamp updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Builder archived(boolean archived) {
+            this.archived = archived;
+            return this;
+        }
+
+        public Team build() {
+            return new Team(this);
+        }
+    }
+
+    // Getters og setters
     public UUID getTeamId() {
         return teamId;
     }

@@ -36,7 +36,7 @@ public class VerifyProfilesInteractor {
         model.okToUnArchiveProperty().set(true);
     }
 
-    public boolean convertTeam(List<Profile> profiles, int teamId) {
+    public boolean convertTeam(List<Profile> profiles, UUID teamId) {
         try {
             profileItemModels = convertToProfileItemModels(profiles, teamId);
             return true;
@@ -45,7 +45,7 @@ public class VerifyProfilesInteractor {
         }
     }
 
-    private List<AddProfileItemModel> convertToProfileItemModels(List<Profile> profiles, int teamId) throws Exception {
+    private List<AddProfileItemModel> convertToProfileItemModels(List<Profile> profiles, UUID teamId) throws Exception {
         List<AddProfileItemModel> profileItemModels = new ArrayList<>();
         List<Profile> profilesTeams = teamService.getTeamProfiles(teamId);
 
@@ -65,7 +65,7 @@ public class VerifyProfilesInteractor {
             profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
             
-            profileItemModel.locationProperty().set(geographyService.get(profile.geography()).name());
+            profileItemModel.locationProperty().set(geographyService.getByCountryId(profile.getCountryId()).name());
 
             profileItemModels.add(profileItemModel);
         }
@@ -74,7 +74,9 @@ public class VerifyProfilesInteractor {
     }
 
     private Team createTeamFromModel(VerifyProfilesModel model) {
-        return new Team(model.teamIdProperty().get());
+        return new Team.Builder()
+                .teamId(model.getTeamId())
+                .build();
     }
 
     private List<AddProfileItemModel> getSelectedProfiles(List<AddProfileItemModel> profiles) {

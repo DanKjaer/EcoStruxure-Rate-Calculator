@@ -1,5 +1,6 @@
 package ecostruxure.rate.calculator.gui.component.modals.assignprofile;
 
+import ecostruxure.rate.calculator.be.Geography;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
@@ -35,7 +36,7 @@ public class AssignProfileInteractor {
         model.okToSaveProperty().set(true);
     }
 
-    private List<AddProfileItemModel> convertToProfileItemModels(List<Profile> profiles, int teamId) throws Exception {
+    private List<AddProfileItemModel> convertToProfileItemModels(List<Profile> profiles, UUID teamId) throws Exception {
         List<AddProfileItemModel> profileItemModels = new ArrayList<>();
         List<Profile> profilesTeams = teamService.getTeamProfiles(teamId);
 
@@ -59,7 +60,14 @@ public class AssignProfileInteractor {
             profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
 
-            profileItemModel.locationProperty().set(geographyService.get(profile.geography()).name());
+            Geography geography = profile.fetchGeography(geographyService);
+            if (geography != null) {
+
+                profileItemModel.locationProperty().set(geography.name());
+            } else {
+                System.out.println("Unknown location property");
+                profileItemModel.locationProperty().set("Unknown location property");
+            }
 
             profileItemModels.add(profileItemModel);
         }
@@ -85,7 +93,9 @@ public class AssignProfileInteractor {
     }
 
     private Team createTeamFromModel(AssignProfileModel model) {
-        return new Team(model.teamIdProperty().get());
+        return new Team.Builder()
+                .teamId(model.getTeamId())
+                .build();
     }
 
     public boolean assignProfiles() {
@@ -194,7 +204,7 @@ public class AssignProfileInteractor {
     }
 
 
-    public Boolean fetchProfiles(int teamId) {
+    public Boolean fetchProfiles(UUID teamId) {
         try {
             List<Profile> profiles = profileService.allWithUtilization();
             profileItemModels = convertToProfileItemModels(profiles, teamId);

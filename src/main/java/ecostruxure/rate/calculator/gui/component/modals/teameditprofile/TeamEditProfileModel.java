@@ -20,7 +20,7 @@ public class TeamEditProfileModel {
     private final StringProperty originalhourAllocation = new SimpleStringProperty("");
     private final BooleanProperty okToSave = new SimpleBooleanProperty();
 
-    public UUID profileIdProperty() {
+    public UUID getProfileId() {
         return profileId;
     }
 

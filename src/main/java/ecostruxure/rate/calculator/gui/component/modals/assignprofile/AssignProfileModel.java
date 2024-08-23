@@ -5,10 +5,12 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.UUID;
+
 public class AssignProfileModel {
     private final ObservableList<AddProfileItemModel> profiles = FXCollections.observableArrayList();
     private final ObservableList<AddProfileItemModel> originalProfiles = FXCollections.observableArrayList();
-    private final IntegerProperty teamId = new SimpleIntegerProperty();
+    private static UUID teamId;
     private final StringProperty teamName = new SimpleStringProperty();
     private final BooleanProperty profilesFetchedProperty = new SimpleBooleanProperty();
     private final StringProperty searchProperty = new SimpleStringProperty("");
@@ -23,8 +25,12 @@ public class AssignProfileModel {
         return originalProfiles;
     }
 
-    public IntegerProperty teamIdProperty() {
+    public UUID getTeamId() {
         return teamId;
+    }
+
+    public void setTeamId(UUID teamId) {
+        AssignProfileModel.teamId = teamId;
     }
 
     public StringProperty teamNameProperty() {

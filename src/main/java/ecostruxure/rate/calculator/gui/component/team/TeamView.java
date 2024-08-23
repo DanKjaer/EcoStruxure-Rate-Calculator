@@ -7,6 +7,7 @@ import ecostruxure.rate.calculator.gui.common.View;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import ecostruxure.rate.calculator.gui.component.team.TeamModel.TeamTableType;
+import ecostruxure.rate.calculator.gui.component.teams.TeamItemModel;
 import ecostruxure.rate.calculator.gui.util.*;
 import ecostruxure.rate.calculator.gui.util.constants.CssClasses;
 import ecostruxure.rate.calculator.gui.util.constants.Icons;
@@ -367,13 +368,12 @@ public class TeamView implements View {
             };
         });
 
-        TableColumn<ProfileItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileItemModel::hourAllocationProperty, new PercentageCellFactory<>());
+        //TableColumn<ProfileItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileItemModel::hourAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> hourColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileItemModel::annualHoursProperty, new HourCellFactory<>());
-
-        TableColumn<ProfileItemModel, BigDecimal> costAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileItemModel::costAllocationProperty, new PercentageCellFactory<>());
+        //TableColumn<ProfileItemModel, BigDecimal> costAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileItemModel::annualCostProperty, new CurrencyCellFactory<>());
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, hourColumn, costAllocationColumn, annualCostColumn)); //, dayRateColumn, hourRateColumn
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn,  hourColumn,  annualCostColumn)); //, dayRateColumn, hourRateColumn hourAllocationColumn, costAllocationColumn,
     }
 
     private void profileConfigureContextMenu(TableView<ProfileItemModel> tableView) {

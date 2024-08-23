@@ -8,10 +8,11 @@ import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class TeamHistoryItemModel {
-    private final IntegerProperty teamId = new SimpleIntegerProperty();
-    private final IntegerProperty profileId = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
+    private final ObjectProperty<UUID> profileId = new SimpleObjectProperty<>();
     private final IntegerProperty profileHistoryId = new SimpleIntegerProperty();
     private final ObjectProperty<LocalDateTime> updatedAt = new SimpleObjectProperty<>();
     private final ObjectProperty<Reason> reason = new SimpleObjectProperty<>();
@@ -21,11 +22,11 @@ public class TeamHistoryItemModel {
     private final ObjectProperty<BigDecimal> totalHours = new SimpleObjectProperty<>();
     private final ObservableList<TeamHistoryProfileItemModel> details = FXCollections.observableArrayList();
 
-    public IntegerProperty teamIdProperty() {
+    public ObjectProperty<UUID> teamIdProperty() {
         return teamId;
     }
 
-    public IntegerProperty profileIdProperty() {
+    public ObjectProperty<UUID> profileIdProperty() {
         return profileId;
     }
 

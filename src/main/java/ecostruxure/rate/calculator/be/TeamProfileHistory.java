@@ -12,7 +12,7 @@ public class TeamProfileHistory {
     private BigDecimal hourlyRate;
     private BigDecimal dayRate;
     private BigDecimal annualCost;
-    private BigDecimal totalHours;
+    private BigDecimal annualHours;
     private LocalDateTime updatedAt;
 
     public UUID profileId() {
@@ -71,12 +71,12 @@ public class TeamProfileHistory {
         this.annualCost = annualCost;
     }
 
-    public BigDecimal totalHours() {
-        return totalHours;
+    public BigDecimal annualHours() {
+        return annualHours;
     }
 
-    public void totalHours(BigDecimal totalHours) {
-        this.totalHours = totalHours;
+    public void annualHours(BigDecimal totalHours) {
+        this.annualHours = totalHours;
     }
 
     public LocalDateTime updatedAt() {
@@ -97,7 +97,7 @@ public class TeamProfileHistory {
                 ", hourlyRate=" + hourlyRate +
                 ", dayRate=" + dayRate +
                 ", annualCost=" + annualCost +
-                ", totalHours=" + totalHours +
+                ", annualHours=" + annualHours +
                 ", updatedAt=" + updatedAt +
                 '}';
     }

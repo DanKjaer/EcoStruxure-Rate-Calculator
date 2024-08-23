@@ -6,11 +6,13 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.UUID;
+
 public class VerifyProfilesModel {
     private final ObservableList<AddProfileItemModel> profiles = FXCollections.observableArrayList();
     private final ObservableList<AddProfileItemModel> originalProfiles = FXCollections.observableArrayList();
 
-    private final IntegerProperty teamId = new SimpleIntegerProperty();
+    private static UUID teamId;
     private final StringProperty teamName = new SimpleStringProperty();
     private final BooleanProperty okToUnArchive = new SimpleBooleanProperty();
     private final BooleanProperty profilesFetched = new SimpleBooleanProperty();
@@ -24,8 +26,12 @@ public class VerifyProfilesModel {
         return originalProfiles;
     }
 
-    public IntegerProperty teamIdProperty() {
+    public UUID getTeamId() {
         return teamId;
+    }
+
+    public void setTeamId(UUID teamId) {
+        VerifyProfilesModel.teamId = teamId;
     }
 
     public StringProperty teamNameProperty() {

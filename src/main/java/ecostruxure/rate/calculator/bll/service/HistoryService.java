@@ -17,7 +17,7 @@ public class HistoryService {
         return historyDAO.getProfileHistory(profileId);
     }
 
-    public List<TeamHistory> getTeamHistory(int teamId) throws Exception {
+    public List<TeamHistory> getTeamHistory(UUID teamId) throws Exception {
         return historyDAO.getTeamHistory(teamId);
     }
 }

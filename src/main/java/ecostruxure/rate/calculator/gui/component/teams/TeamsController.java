@@ -82,27 +82,27 @@ public class TeamsController implements Controller {
     }
 
     private void adjustMultipliers(TeamItemModel teamItemModel) {
-        eventBus.publish(new ShowModalEvent(teamMultiplierController, teamItemModel.idProperty().get()));
+        eventBus.publish(new ShowModalEvent(teamMultiplierController, teamItemModel.teamIdProperty()));
     }
 
     public void assignProfiles(TeamItemModel teamItemModel) {
-        eventBus.publish(new ShowModalEvent(assignProfileController, teamItemModel.idProperty().get()));
+        eventBus.publish(new ShowModalEvent(assignProfileController, teamItemModel.teamIdProperty()));
     }
 
     public void editTeam(TeamItemModel teamItemModel) {
-        eventBus.publish(new ShowModalEvent(teamEditController, teamItemModel.idProperty().get()));
+        eventBus.publish(new ShowModalEvent(teamEditController, teamItemModel.teamIdProperty()));
     }
 
     private void showTeam(TeamItemModel teamItemModel) {
-        eventBus.publish(new ChangeViewEvent(TeamController.class, teamItemModel.idProperty().get()));
+        eventBus.publish(new ChangeViewEvent(TeamController.class, teamItemModel.teamIdProperty()));
     }
 
     private void adjustMarkup(TeamItemModel teamItemModel, BigDecimal newValue) {
-        interactor.saveMarkup(teamItemModel.idProperty().get(), newValue);
+        interactor.saveMarkup(teamItemModel.teamIdProperty().get(), newValue);
     }
 
     private void showVerifyProfiles(TeamItemModel teamItemModel, List<Profile> profilesToVerify) {
-        eventBus.publish(new ShowModalEvent(verifyProfilesController, new TeamData(teamItemModel.idProperty().get(), profilesToVerify)));
+        eventBus.publish(new ShowModalEvent(verifyProfilesController, new TeamData(teamItemModel.teamIdProperty().get(), profilesToVerify)));
     }
 
     private void archiveTeam(TeamItemModel teamItemModel) {

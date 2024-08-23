@@ -1,4 +1,5 @@
 package ecostruxure.rate.calculator.be;
+import ecostruxure.rate.calculator.bll.service.GeographyService;
 import javafx.beans.property.BooleanProperty;
 
 import java.math.BigDecimal;
@@ -21,7 +22,6 @@ public class Profile {
     //De 3 nederste skal måske slettes, afhængig af hvordan jeg skal håndtere geography. Cost og Hour skal refactors over i team
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
-    private Geography geography;
 
     // Implementer builder pattern, så jeg kan have 1 constructor.
 
@@ -40,10 +40,6 @@ public class Profile {
         this.updatedAt = builder.updatedAt;
         this.costAllocation = builder.costAllocation;
         this.hourAllocation = builder.hourAllocation;
-    }
-
-    public int geography() {
-        return geography.id();
     }
 
     public static class Builder{
@@ -237,18 +233,25 @@ public class Profile {
     }
 
     public BigDecimal getCostAllocation() {
-        return costAllocation;
+        return BigDecimal.valueOf(0.0);
     }
 
     public void setCostAllocation(BigDecimal costAllocation) {
-        this.costAllocation = costAllocation;
+        this.costAllocation = BigDecimal.valueOf(0.0);
     }
 
     public BigDecimal getHourAllocation() {
-        return hourAllocation;
+        return BigDecimal.valueOf(0.0);
     }
 
     public void setHourAllocation(BigDecimal hourAllocation) {
-        this.hourAllocation = hourAllocation;
+        this.hourAllocation = BigDecimal.valueOf(0.0);
+    }
+
+    public Geography fetchGeography(GeographyService geographyService) throws Exception{
+        if(this.countryId != 0) {
+            return geographyService.getByCountryId(this.countryId);
+        }
+        return null;
     }
 }

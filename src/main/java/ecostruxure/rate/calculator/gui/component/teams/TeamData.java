@@ -3,5 +3,6 @@ package ecostruxure.rate.calculator.gui.component.teams;
 import ecostruxure.rate.calculator.be.Profile;
 
 import java.util.List;
+import java.util.UUID;
 
-public record TeamData(int teamId, List<Profile> profiles) { }
+public record TeamData(UUID teamId, List<Profile> profiles) { }

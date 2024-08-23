@@ -3,9 +3,8 @@ package ecostruxure.rate.calculator.be;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 public class TeamHistory {
     public enum Reason {
@@ -16,20 +15,20 @@ public class TeamHistory {
         UTILIZATION_CHANGE,
     }
 
-    private int teamId;
+    private UUID teamId;
     private List<TeamProfileHistory> teamProfileHistories = new ArrayList<>();
     private Reason reason;
     private BigDecimal hourlyRate;
     private BigDecimal dayRate;
     private BigDecimal annualCost;
-    private BigDecimal totalHours;
+    private BigDecimal annualHours;
     private LocalDateTime updatedAt;
 
-    public int teamId() {
+    public UUID teamId() {
         return teamId;
     }
 
-    public void teamId(int teamId) {
+    public void teamId(UUID teamId) {
         this.teamId = teamId;
     }
 
@@ -73,12 +72,12 @@ public class TeamHistory {
         this.annualCost = annualCost;
     }
 
-    public BigDecimal totalHours() {
-        return totalHours;
+    public BigDecimal annualHours() {
+        return annualHours;
     }
 
-    public void totalHours(BigDecimal totalHours) {
-        this.totalHours = totalHours;
+    public void annualHours(BigDecimal totalHours) {
+        this.annualHours = totalHours;
     }
 
     public LocalDateTime updatedAt() {
@@ -97,7 +96,7 @@ public class TeamHistory {
                 ", hourlyRate=" + hourlyRate +
                 ", dayRate=" + dayRate +
                 ", annualCost=" + annualCost +
-                ", totalHours=" + totalHours +
+                ", annualHours=" + annualHours +
                 ", updatedAt=" + updatedAt +
                 '}';
     }

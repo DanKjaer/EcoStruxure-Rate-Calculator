@@ -4,9 +4,10 @@ import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class ProfileTeamItemModel {
-    private final IntegerProperty id = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> id = new SimpleObjectProperty<>();
     private final StringProperty name = new SimpleStringProperty();
     private final ObjectProperty<BigDecimal> utilizationCost = new SimpleObjectProperty<>();
     private final FinancialData hourlyRate = new FinancialData();
@@ -16,7 +17,7 @@ public class ProfileTeamItemModel {
     private final ObjectProperty<BigDecimal> annualTotalHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
 
-    public IntegerProperty idProperty() {
+    public ObjectProperty<UUID> idProperty() {
         return id;
     }
 

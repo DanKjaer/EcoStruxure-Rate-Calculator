@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TeamEditController implements ModalController {
     private final EventBus eventBus;
@@ -36,16 +37,16 @@ public class TeamEditController implements ModalController {
 
     @Override
     public void activate(Object teamId) {
-        if (teamId instanceof Integer) {
-            model.teamIdProperty().set((Integer) teamId);
+        if (teamId instanceof UUID) {
+            model.setTeamId(model.getTeamId());
             model.teamNameProperty().set("");
             model.newNameProperty().set("");
             model.teamFetchedProperty().set(false);
-            fetchTeam((int) teamId);
+            fetchTeam((UUID) teamId);
         }
     }
 
-    private void fetchTeam(int teamId) {
+    private void fetchTeam(UUID teamId) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {

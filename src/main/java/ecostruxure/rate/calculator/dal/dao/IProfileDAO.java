@@ -16,7 +16,7 @@ public interface IProfileDAO {
 
     List<Profile> allWithUtilization() throws Exception;
 
-    List<Profile> allWithUtilizationByTeam(int teamId) throws Exception;
+    List<Profile> allWithUtilizationByTeam(UUID teamId) throws Exception;
 
     Profile get(UUID id) throws Exception;
 
@@ -26,7 +26,7 @@ public interface IProfileDAO {
     List<Profile> allByCountry(String countryCode) throws Exception;
 
     List<Profile> allByTeam(Team team) throws Exception;
-    List<Profile> allByTeam(int teamId) throws Exception;
+    List<Profile> allByTeam(UUID teamId) throws Exception;
 
     List<Profile> allByGeography(Geography geography) throws Exception;
     List<Profile> allByGeography(int geographyId) throws Exception;
@@ -35,13 +35,13 @@ public interface IProfileDAO {
 
     BigDecimal getTotalHourAllocation(UUID id) throws Exception;
 
-    BigDecimal getProfileCostAllocationForTeam(UUID profileId, int teamId) throws Exception;
+    BigDecimal getProfileCostAllocationForTeam(UUID profileId, UUID teamId) throws Exception;
 
-    BigDecimal getProfileHourAllocationForTeam(UUID profileId, int teamId) throws Exception;
+    BigDecimal getProfileHourAllocationForTeam(UUID profileId, UUID teamId) throws Exception;
 
-    BigDecimal getProfileCostAllocationForTeam(TransactionContext context, UUID profileId, int teamId) throws Exception;
+    BigDecimal getProfileCostAllocationForTeam(TransactionContext context, UUID profileId, UUID teamId) throws Exception;
 
-    BigDecimal getProfileHourAllocationForTeam(TransactionContext context, UUID profileId, int teamId) throws Exception;
+    BigDecimal getProfileHourAllocationForTeam(TransactionContext context, UUID profileId, UUID teamId) throws Exception;
 
     List<Team> getTeams(Profile profile) throws Exception;
 

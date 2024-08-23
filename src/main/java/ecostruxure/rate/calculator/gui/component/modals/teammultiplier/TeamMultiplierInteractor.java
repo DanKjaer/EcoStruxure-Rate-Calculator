@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.bll.service.TeamService;
 import javafx.beans.binding.Bindings;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class TeamMultiplierInteractor {
     private final TeamMultiplierModel model;
@@ -30,7 +31,7 @@ public class TeamMultiplierInteractor {
         );
     }
 
-    public Boolean fetchMultipliers(int teamId) {
+    public Boolean fetchMultipliers(UUID teamId) {
         try {
             team = teamService.get(teamId);
             return true;
@@ -40,16 +41,16 @@ public class TeamMultiplierInteractor {
     }
 
     public void updateModel() {
-        model.markupProperty().set(team.markup().toString());
+        model.markupProperty().set(team.getMarkup().toString());
         model.markupFetchedProperty().set(true);
-        model.grossMarginProperty().set(team.grossMargin().toString());
+        model.grossMarginProperty().set(team.getGrossMargin().toString());
         model.grossMarginFetchedProperty().set(true);
     }
 
     public boolean saveMultipliers() {
         try {
             teamService.setMultipliers(
-                    model.teamIdProperty().get(),
+                    model.getTeamId(),
                     new BigDecimal(model.markupProperty().get()),
                     new BigDecimal(model.grossMarginProperty().get())
             );

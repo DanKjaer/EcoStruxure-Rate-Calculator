@@ -11,19 +11,16 @@ import ecostruxure.rate.calculator.gui.util.constants.LocalizedText;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TeamsInteractor {
     private final TeamsModel model;
     private TeamService teamService;
     private RateService rateService;
     private List<TeamItemModel> teamItemModels;
-    private Map<Integer, Rates> hourlyRates = new HashMap<>();
-    private Map<Integer, Rates> dayRates = new HashMap<>();
-    private Map<Integer, Rates> annualRates = new HashMap<>();
+    private Map<UUID, Rates> hourlyRates = new HashMap<>();
+    private Map<UUID, Rates> dayRates = new HashMap<>();
+    private Map<UUID, Rates> annualRates = new HashMap<>();
 
     public TeamsInteractor(TeamsModel model, Runnable onFetchError) {
         this.model = model;
@@ -42,7 +39,7 @@ public class TeamsInteractor {
             teamItemModels = convertToTeamItemModels(teams);
             return true;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -50,7 +47,7 @@ public class TeamsInteractor {
     public boolean exportTeamToExcel(File file, TeamItemModel teamItemModel) {
         ExportToExcel exportToExcel = new ExportToExcel();
         try {
-            exportToExcel.exportTeam(teamItemModel.idProperty().get(), file);
+            exportToExcel.exportTeam(teamItemModel.teamIdProperty().get(), file);
         } catch (Exception e) {
             return false;
         }
@@ -80,27 +77,32 @@ public class TeamsInteractor {
 
         for (Team team : teams) {
             TeamItemModel teamItemModel = new TeamItemModel();
-            teamItemModel.idProperty().set(team.id());
+            teamItemModel.teamIdProperty().set(team.getTeamId());
 
-            hourlyRates.put(team.id(), rateService.calculateRates(team, RateType.HOURLY));
-            dayRates.put(team.id(), rateService.calculateRates(team, RateType.DAY));
-            annualRates.put(team.id(), rateService.calculateRates(team, RateType.ANNUAL));
+            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
+            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
+            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
 
             Rates rates;
             switch (model.selectedRateTypeProperty().get()) {
-                case DAY -> rates = dayRates.get(team.id());
-                case ANNUAL -> rates = annualRates.get(team.id());
-                default -> rates = hourlyRates.get(team.id());
+                case DAY -> rates = dayRates.get(team.getTeamId());
+                case ANNUAL -> rates = annualRates.get(team.getTeamId());
+                default -> rates = hourlyRates.get(team.getTeamId());
             }
 
             teamItemModel.setRawRate(rates.rawRate());
             teamItemModel.setMarkupRate(rates.markupRate());
             teamItemModel.setGrossMarginRate(rates.grossMarginRate());
 
-            teamItemModel.nameProperty().set(team.name());
-            teamItemModel.markupProperty().set(team.markup());
-            teamItemModel.grossMarginProperty().set(team.grossMargin());
-            teamItemModel.archivedProperty().set(team.archived());
+            teamItemModel.nameProperty().set(team.getName());
+            teamItemModel.markupProperty().set(team.getMarkup());
+            teamItemModel.grossMarginProperty().set(team.getGrossMargin());
+            teamItemModel.archivedProperty().set(team.isArchived());
+            teamItemModel.updatedAtProperty().set(team.getUpdatedAt());
+            teamItemModel.dayRateProperty().set(team.getDayRate());
+            teamItemModel.hourlyRateProperty().set(team.getHourlyRate());
+            teamItemModel.totalAllocatedCostProperty().set(team.getTotalAllocatedCost());
+            teamItemModel.totalAllocatedHoursProperty().set(team.getTotalAllocatedHours());
 
             teamItemModels.add(teamItemModel);
         }
@@ -114,12 +116,13 @@ public class TeamsInteractor {
             if (checkArchived && teamItemModel.archivedProperty().get())
                 continue;
 
-            Team team = new Team();
-            team.id(teamItemModel.idProperty().get());
-            team.name(teamItemModel.nameProperty().get());
-            team.markup(teamItemModel.markupProperty().get());
-            team.grossMargin(teamItemModel.grossMarginProperty().get());
-            team.archived(teamItemModel.archivedProperty().get());
+            Team team = new Team.Builder()
+                    .teamId(teamItemModel.teamIdProperty().get())
+                    .name(teamItemModel.nameProperty().get())
+                    .markup(teamItemModel.markupProperty().get())
+                    .grossMargin(teamItemModel.grossMarginProperty().get())
+                    .archived(teamItemModel.archivedProperty().get())
+                    .build();
             teams.add(team);
         }
         return teams;
@@ -130,9 +133,9 @@ public class TeamsInteractor {
         for (TeamItemModel team : model.teams()) {
             Rates rates;
             switch (rateType) {
-                case DAY -> rates = dayRates.get(team.idProperty().get());
-                case ANNUAL -> rates = annualRates.get(team.idProperty().get());
-                default -> rates = hourlyRates.get(team.idProperty().get());
+                case DAY -> rates = dayRates.get(team.teamIdProperty());
+                case ANNUAL -> rates = annualRates.get(team.teamIdProperty());
+                default -> rates = hourlyRates.get(team.teamIdProperty());
             }
 
             team.setRawRate(rates.rawRate());
@@ -167,7 +170,7 @@ public class TeamsInteractor {
         }
     }
 
-    public boolean saveMarkup(int teamId, BigDecimal newValue) {
+    public boolean saveMarkup(UUID teamId, BigDecimal newValue) {
         try {
             teamService.setMarkup(teamId, newValue);
             return true;
@@ -178,7 +181,7 @@ public class TeamsInteractor {
 
     public boolean archiveTeam(TeamItemModel teamItemModel) {
         try {
-            Team team = teamService.get(teamItemModel.idProperty().get());
+            Team team = teamService.get(teamItemModel.teamIdProperty().get());
 
             return teamService.archive(team, true);
         } catch (Exception e) {
@@ -188,7 +191,7 @@ public class TeamsInteractor {
 
     public List<Profile> canUnarchiveTeam(TeamItemModel teamItemModel) {
         try {
-            Team team = teamService.get(teamItemModel.idProperty().get());
+            Team team = teamService.get(teamItemModel.teamIdProperty().get());
             return teamService.canUnarchive(team);
         } catch (Exception e) {
             return null;
@@ -197,7 +200,7 @@ public class TeamsInteractor {
 
     public boolean unArchiveTeam(TeamItemModel teamItemModel) {
         try {
-            Team team = teamService.get(teamItemModel.idProperty().get());
+            Team team = teamService.get(teamItemModel.teamIdProperty().get());
 
             boolean unArchived = teamService.archive(team, false);
             if (unArchived)

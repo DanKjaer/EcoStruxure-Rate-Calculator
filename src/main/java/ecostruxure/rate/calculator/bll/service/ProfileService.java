@@ -47,10 +47,10 @@ public class ProfileService {
     public List<Profile> allWithUtilizationByTeam(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
-        return profileDAO.allWithUtilizationByTeam(team.id());
+        return profileDAO.allWithUtilizationByTeam(team.getTeamId());
     }
 
-    public List<Profile> allWithUtilizationByTeam(int teamId) throws Exception {
+    public List<Profile> allWithUtilizationByTeam(UUID teamId) throws Exception {
         return profileDAO.allWithUtilizationByTeam(teamId);
     }
 
@@ -77,7 +77,7 @@ public class ProfileService {
     public BigDecimal hourlyRate(ProfileHistory profile) {
         Objects.requireNonNull(profile, "ProfileHistory cannot be null");
 
-        return annualCost(profile).divide(profile.totalHours(), GENERAL_SCALE, ROUNDING_MODE);
+        return annualCost(profile).divide(profile.annualHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
     public BigDecimal hourlyRate(Profile profile, BigDecimal utilizationPercentage) {
@@ -195,7 +195,7 @@ public class ProfileService {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(profile.getAnnualCost(), "Annual salary cannot be null");
         Objects.requireNonNull(profile.getEffectivenessPercentage(), "Effectiveness cannot be null");
-        Objects.requireNonNull(profile.getAnnualHours(), "Effective work hours cannot be null");
+        Objects.requireNonNull(profile.getEffectiveWorkHours(), "Effective work hours cannot be null");
         Objects.requireNonNull(profile.getName(), "Profile name cannot be null");
         Objects.requireNonNull(profile.getCurrency(), "Profile currency cannot be null");
     }
@@ -214,7 +214,7 @@ public class ProfileService {
         if (profile.getAnnualCost().compareTo(new BigDecimal("999999999999999.9999")) > 0)
             throw new IllegalArgumentException("Annual salary must be less than or equal to 999999999999999.9999");
 
-         if (profile.getAnnualHours().compareTo(new BigDecimal("8760")) > 0)
+         if (profile.getEffectiveWorkHours().compareTo(new BigDecimal("8760")) > 0)
             throw new IllegalArgumentException("Effective work hours must be less than or equal to 8760");
     }
 
@@ -224,7 +224,7 @@ public class ProfileService {
 
         // Tjek scale af numeriske felter
         if (profile.getEffectivenessPercentage().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
-        if (profile.getAnnualHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
+        if (profile.getEffectiveWorkHours().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
         if (profile.getHoursPerDay().scale() > GENERAL_SCALE) throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
     }
 
@@ -246,19 +246,19 @@ public class ProfileService {
         return profileDAO.getTotalHourAllocation(id);
     }
 
-    public BigDecimal getProfileCostAllocationForTeam(UUID id, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(UUID id, UUID teamId) throws Exception {
         return profileDAO.getProfileCostAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileHourAllocationForTeam(UUID id, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(UUID id, UUID teamId) throws Exception {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileCostAllocationForArchivedTeam(UUID id, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForArchivedTeam(UUID id, UUID teamId) throws Exception {
         return profileDAO.getProfileCostAllocationForTeam(id, teamId);
     }
 
-    public BigDecimal getProfileHourAllocationForArchivedTeam(UUID id, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForArchivedTeam(UUID id, UUID teamId) throws Exception {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 

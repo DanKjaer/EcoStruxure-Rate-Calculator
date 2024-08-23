@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class ExportToExcel {
     private TeamService teamService;
@@ -129,7 +130,7 @@ public class ExportToExcel {
     }
 
 
-    public void exportTeam(int teamId, File file) throws Exception {
+    public void exportTeam(UUID teamId, File file) throws Exception {
         Team getTeam = teamService.get(teamId);
         List<Profile> profiles = teamService.getTeamProfiles(teamId);
 
@@ -139,7 +140,7 @@ public class ExportToExcel {
         this.setWorkbookProperties(workbook,
                 "Team Export",
                 "EcoStruxure Rate Calculator",
-                "Team data of " + getTeam.name(),
+                "Team data of " + getTeam.getName(),
                 "EcoStruxure Rate Calculator",
                 "Schneider Electric");
 
@@ -148,7 +149,9 @@ public class ExportToExcel {
         Rates annualRates = rateService.calculateRates(getTeam, RateType.ANNUAL);
 
         String[] header1 = {"Team Name", "Markup", "Gross Margin", "Profiles", "Archived", "Currency"};
-        String[] data1 = {getTeam.name(), getTeam.markup() != null ? getTeam.markup().toString() : "", getTeam.grossMargin() != null ? getTeam.grossMargin().toString() : "", String.valueOf(profiles.size()), getTeam.archived() ? "Yes" : "No", "EURO"};
+        String[] data1 = {getTeam.getName(), getTeam.getMarkup() != null ? getTeam.getMarkup().toString()
+                : "", getTeam.getGrossMargin() != null ? getTeam.getGrossMargin().toString()
+                : "", String.valueOf(profiles.size()), getTeam.isArchived() ? "Yes" : "No", "EURO"};
         createHeaderAndDataRows(sheetTeam, 0, header1, data1, workbook);
 
         String[] header2 = {"Raw hourly rate", "Markup hourly rate", "GM hourly rate"};
@@ -198,10 +201,10 @@ public class ExportToExcel {
         Workbook workbook = WorkbookFactory.create(true);
         try {
             for (Team t : teams) {
-                Team getTeam = teamService.get(t.id());
-                List<Profile> profiles = teamService.getTeamProfiles(t.id());
+                Team getTeam = teamService.get(t.getTeamId());
+                List<Profile> profiles = teamService.getTeamProfiles(t.getTeamId());
 
-                String sheetName = t.name();
+                String sheetName = t.getName();
                 if (sheetName.length() > 31)
                     sheetName = sheetName.substring(0, 31);
 
@@ -218,7 +221,9 @@ public class ExportToExcel {
                 Rates annualRates = rateService.calculateRates(getTeam, RateType.ANNUAL);
 
                 String[] header1 = {"Team Name", "Markup", "Gross Margin", "Profiles", "Archived", "Currency"};
-                String[] data1 = {getTeam.name(), getTeam.markup() != null ? getTeam.markup().toString() : "", getTeam.grossMargin() != null ? getTeam.grossMargin().toString() : "", String.valueOf(profiles.size()), getTeam.archived() ? "Yes" : "No", "EURO"};
+                String[] data1 = {getTeam.getName(), getTeam.getMarkup() != null ? getTeam.getMarkup().toString() : "",
+                        getTeam.getGrossMargin() != null ? getTeam.getGrossMargin().toString()
+                                : "", String.valueOf(profiles.size()), getTeam.isArchived() ? "Yes" : "No", "EURO"};
                 createHeaderAndDataRows(sheetTeam, 0, header1, data1, workbook);
 
                 String[] header2 = {"Raw hourly rate", "Markup hourly rate", "GM hourly rate"};

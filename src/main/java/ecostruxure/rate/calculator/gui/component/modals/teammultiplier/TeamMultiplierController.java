@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TeamMultiplierController implements ModalController {
     private final TeamMultiplierModel model;
@@ -36,13 +37,13 @@ public class TeamMultiplierController implements ModalController {
 
     @Override
     public void activate(Object teamId) {
-        if (teamId instanceof Integer) {
-            model.teamIdProperty().set((Integer) teamId);
+        if (teamId instanceof UUID) {
+            model.setTeamId(model.getTeamId());
             model.markupFetchedProperty().set(false);
             model.markupProperty().set("");
             model.grossMarginFetchedProperty().set(false);
             model.grossMarginProperty().set("");
-            fetchMultipliers((int) teamId);
+            fetchMultipliers((UUID) teamId);
         }
     }
 
@@ -96,7 +97,7 @@ public class TeamMultiplierController implements ModalController {
         );
     }
 
-    private void fetchMultipliers(int teamId) {
+    private void fetchMultipliers(UUID teamId) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {
@@ -107,7 +108,7 @@ public class TeamMultiplierController implements ModalController {
         fetchTask.setOnSucceeded(evt -> {
             if (fetchTask.getValue()) {
                 interactor.updateModel();
-            } else {
+            } else{
                 eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_FETCH_MARKUP));
             }
         });

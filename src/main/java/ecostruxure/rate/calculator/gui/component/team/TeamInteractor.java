@@ -12,7 +12,6 @@ import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.HistoryService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
-import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.component.geography.geograph.GeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
@@ -22,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TeamInteractor {
     private final TeamModel model;
@@ -59,7 +59,7 @@ public class TeamInteractor {
         }
     }
 
-    public boolean fetchTeam(int id) {
+    public boolean fetchTeam(UUID id) {
         try {
             currentDateTime = LocalDateTime.now();
             totalHours = BigDecimal.ZERO;
@@ -86,7 +86,7 @@ public class TeamInteractor {
 
             historyModel.updatedAtProperty().set(team.updatedAt());
             historyModel.reasonProperty().set(team.reason());
-            historyModel.totalHoursProperty().set(team.totalHours());
+            historyModel.totalHoursProperty().set(team.annualHours());
             historyModel.setHourlyRate(team.hourlyRate());
             historyModel.setDayRate(team.dayRate());
 
@@ -103,7 +103,7 @@ public class TeamInteractor {
                 profileItemModel.setHourlyRate(teamProfileHistory.hourlyRate());
                 profileItemModel.setDayRate(teamProfileHistory.dayRate());
                 profileItemModel.setAnnualCost(teamProfileHistory.annualCost());
-                profileItemModel.totalHoursProperty().set(teamProfileHistory.totalHours());
+                profileItemModel.totalHoursProperty().set(teamProfileHistory.annualHours());
 
                 historyModel.details().add(profileItemModel);
             }
@@ -114,7 +114,7 @@ public class TeamInteractor {
         return historyModels;
     }
 
-    public List<ProfileItemModel> fetchTeamMembers(int teamId) throws Exception {
+    public List<ProfileItemModel> fetchTeamMembers(UUID teamId) throws Exception {
         List<Profile> profilesTeams = teamService.getTeamProfiles(teamId);
         return convertToProfileItemModels(profilesTeams);
     }
@@ -127,18 +127,19 @@ public class TeamInteractor {
             ProfileItemModel profileItemModel = new ProfileItemModel();
             profileItemModel.setIdProperty(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
-
-            profileItemModel.costAllocationProperty().set(profile.costAllocation());
-            profileItemModel.setHourlyRate(RateUtils.hourlyRate(profile, profile.costAllocation()));
-            profileItemModel.setDayRate(RateUtils.dayRate(profile, profile.costAllocation()));
             profileItemModel.setAnnualCost(profile.getAnnualCost());
-
-            profileItemModel.hourAllocationProperty().set(profile.hourAllocation());
+            profileItemModel.currencyProperty().set(profile.getCurrency());
+            profileItemModel.countryIdProperty().set(profile.getCountryId());
+            profileItemModel.hoursPerDayProperty().set(profile.getHoursPerDay());
+            profileItemModel.effectivenessProperty().set(profile.getEffectivenessPercentage());
             profileItemModel.annualHoursProperty().set(profile.getAnnualHours());
+            profileItemModel.effectiveWorkHoursProperty().set(profile.getEffectiveWorkHours());
+            profileItemModel.updatedAtProperty().set(profile.getUpdatedAt());
+            profileItemModel.resourceTypeProperty().set(profile.isResourceType());
+            profileItemModel.archivedProperty().set(profile.isArchived());
 
-            totalHours = totalHours.add(profileItemModel.annualHoursProperty().get());
 
-            String geographyName = geographyService.get(profile.geography()).name();
+            String geographyName = geographyService.getByCountryId(profile.getCountryId()).name();
             profileItemModel.locationProperty().set(geographyName);
 
             IGeographyItemModel geographyItemModel = new GeographyItemModel();
@@ -153,14 +154,14 @@ public class TeamInteractor {
 
     public boolean removeTeamMember(ProfileItemModel profileItemModel) {
         try {
-            return teamService.removeProfileFromTeam(model.idProperty().get(), profileItemModel.getUUID());
+            return teamService.removeProfileFromTeam(model.teamIdProperty().get(), profileItemModel.getUUID());
         } catch (Exception e) {
             return false;
         }
     }
 
     public void updateModel() {
-        model.idProperty().set(team.getTeamId());
+        model.teamIdProperty().set(team.getTeamId());
         model.teamNameProperty().set(team.getName());
         model.archivedProperty().set(team.isArchived());
         model.updatedAtProperty().set(updatedAt);
@@ -178,7 +179,7 @@ public class TeamInteractor {
         model.totalHoursProperty().set(totalHours.toString());
     }
 
-    public boolean exportTeamToExcel(File file, int teamId) {
+    public boolean exportTeamToExcel(File file, UUID teamId) {
         ExportToExcel exportToExcel = new ExportToExcel();
         try {
             exportToExcel.exportTeam(teamId, file);
@@ -190,7 +191,7 @@ public class TeamInteractor {
 
     public boolean archiveTeam() {
         try {
-            Team team = teamService.get(model.idProperty().get());
+            Team team = teamService.get(model.teamIdProperty().get());
             return teamService.archive(team, true);
         } catch (Exception e) {
             return false;
@@ -199,7 +200,7 @@ public class TeamInteractor {
 
     public List<Profile> canUnarchiveTeam() {
         try {
-            Team team = teamService.get(model.idProperty().get());
+            Team team = teamService.get(model.teamIdProperty().get());
             return teamService.canUnarchive(team);
         } catch (Exception e) {
             return null;
@@ -208,7 +209,7 @@ public class TeamInteractor {
 
     public boolean unArchiveTeam() {
         try {
-            Team team = teamService.get(model.idProperty().get());
+            Team team = teamService.get(model.teamIdProperty().get());
 
             boolean unArchived = teamService.archive(team, false);
             if (unArchived)

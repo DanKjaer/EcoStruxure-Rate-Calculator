@@ -4,6 +4,8 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.bll.service.TeamService;
 import javafx.beans.binding.Bindings;
 
+import java.util.UUID;
+
 public class TeamEditInteractor {
     private final TeamEditModel model;
     private TeamService teamService;
@@ -22,7 +24,7 @@ public class TeamEditInteractor {
         configureSaveBindings();
     }
 
-    public Boolean fetchTeam(int teamId) {
+    public Boolean fetchTeam(UUID teamId) {
         try {
             team = teamService.get(teamId);
             return true;
@@ -33,7 +35,7 @@ public class TeamEditInteractor {
 
     public boolean saveTeam() {
         try {
-            team.name(model.newNameProperty().get());
+            team.setName(model.newNameProperty().get());
             teamService.update(team);
             return true;
         } catch (Exception e) {
@@ -65,8 +67,8 @@ public class TeamEditInteractor {
     }
 
     public void updateModel() {
-        model.teamNameProperty().set(team.name());
-        model.newNameProperty().set(team.name());
+        model.teamNameProperty().set(team.getName());
+        model.newNameProperty().set(team.getName());
         model.teamFetchedProperty().set(true);
     }
 }

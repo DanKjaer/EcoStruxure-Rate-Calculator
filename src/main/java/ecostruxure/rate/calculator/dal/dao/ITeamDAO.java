@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface ITeamDAO {
     List<Team> all() throws Exception;
-    Team get(int id) throws Exception;
+    Team get(UUID id) throws Exception;
     Team create(Team team) throws Exception;
 
     Team create(TransactionContext context, Team team) throws Exception;
@@ -28,29 +28,29 @@ public interface ITeamDAO {
 
     boolean updateProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception;
 
-    boolean updateProfile(int teamId, Profile profile) throws Exception;
+    boolean updateProfile(UUID teamId, Profile profile) throws Exception;
 
-    boolean updateProfile(TransactionContext context, int teamId, Profile profile) throws Exception;
+    boolean updateProfile(TransactionContext context, UUID teamId, Profile profile) throws Exception;
 
     boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception;
 
     boolean removeAssignedProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception;
 
-    List<Profile> getTeamProfiles(int teamId) throws Exception;
+    List<Profile> getTeamProfiles(UUID teamId) throws Exception;
 
-    Profile getTeamProfile(int teamId, UUID profileId) throws Exception;
+    Profile getTeamProfile(UUID teamId, UUID profileId) throws Exception;
 
-    boolean archive(int teamId, boolean archive) throws Exception;
+    boolean archive(UUID teamId, boolean archive) throws Exception;
 
     boolean archive(List<Team> teams) throws Exception;
 
-    List<Profile> canUnarchive(int teamId) throws Exception;
+    List<Profile> canUnarchive(UUID teamId) throws Exception;
 
-    boolean removeProfileFromTeam(int teamId, UUID profileId) throws Exception;
+    boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception;
 
-    boolean removeProfileFromTeam(TransactionContext context, int teamId, UUID profileId) throws Exception;
+    boolean removeProfileFromTeam(TransactionContext context, UUID teamId, UUID profileId) throws Exception;
 
-    List<Profile> getTeamProfiles(TransactionContext context, int teamId) throws Exception;
+    List<Profile> getTeamProfiles(TransactionContext context, UUID teamId) throws Exception;
 
-    LocalDateTime getLastUpdated(int teamId) throws Exception;
+    LocalDateTime getLastUpdated(UUID teamId) throws Exception;
 }

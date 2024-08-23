@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class TeamModel {
     public enum TeamTableType {
@@ -16,7 +17,7 @@ public class TeamModel {
         HISTORY
     }
 
-    private final IntegerProperty id = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
     private final StringProperty teamName = new SimpleStringProperty();
     private final ObservableList<ProfileItemModel> profiles = FXCollections.observableArrayList();
     private final ObservableList<IGeographyItemModel> geographies = FXCollections.observableArrayList();
@@ -39,8 +40,8 @@ public class TeamModel {
     private final ObjectProperty<TeamHistoryItemModel> selectedHistoryItem = new SimpleObjectProperty<>();
     private final BooleanProperty historySelected = new SimpleBooleanProperty();
 
-    public IntegerProperty idProperty() {
-        return id;
+    public ObjectProperty<UUID> teamIdProperty() {
+        return teamId;
     }
 
     public StringProperty teamNameProperty() {

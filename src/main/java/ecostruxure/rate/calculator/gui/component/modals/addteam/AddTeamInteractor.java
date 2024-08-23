@@ -55,6 +55,7 @@ public class AddTeamInteractor {
             profileItemModels = convertToProfileItemModels(profiles);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -75,7 +76,7 @@ public class AddTeamInteractor {
             profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()));
             profileItemModel.setHourAllocationProperty().set(BigDecimal.ZERO);
 
-            profileItemModel.locationProperty().set(geographyService.get(profile.geography()).name());
+            profileItemModel.locationProperty().set(geographyService.getByCountryId(profile.getCountryId()).name());
 
             profileItemModels.add(profileItemModel);
         }
@@ -102,7 +103,12 @@ public class AddTeamInteractor {
 
     public Boolean addTeam() {
         try {
-            Team tempTeam = new Team(model.nameProperty().get(), BigDecimal.ZERO, BigDecimal.ZERO);
+            Team tempTeam = new Team.Builder()
+                    .name(model.nameProperty().get())
+                    .markup(BigDecimal.ZERO)
+                    .grossMargin(BigDecimal.ZERO)
+                    .build();
+
             List<Profile> profiles = model.profiles().stream()
                     .filter(addProfileItemModel -> addProfileItemModel.selectedProperty().get())
                     .map(this::createProfileFromModel)

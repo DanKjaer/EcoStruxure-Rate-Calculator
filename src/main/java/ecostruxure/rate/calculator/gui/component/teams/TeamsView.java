@@ -12,8 +12,7 @@ import ecostruxure.rate.calculator.gui.util.constants.LayoutConstants;
 import ecostruxure.rate.calculator.gui.util.constants.LocalizedText;
 import ecostruxure.rate.calculator.gui.widget.*;
 import ecostruxure.rate.calculator.gui.widget.tables.*;
-import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.CurrencyCellFactory;
-import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.PercentageCellFactory;
+import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.*;
 import ecostruxure.rate.calculator.gui.widget.tables.contextmenu.MenuItemInfo;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -30,6 +29,7 @@ import org.controlsfx.control.SegmentedButton;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
@@ -66,7 +66,7 @@ public class TeamsView implements View {
     private ComboBox<String> filterOptions;
 
     public TeamsView(TeamsModel model, Consumer<TeamItemModel> onShowTeam, Consumer<TeamItemModel> onAdjustMultipliers, BiConsumer<TeamItemModel, BigDecimal> onAdjustMarkup,
-                        Consumer<TeamItemModel> onAssignProfiles, Consumer<TeamItemModel> onEditTeam,
+                     Consumer<TeamItemModel> onAssignProfiles, Consumer<TeamItemModel> onEditTeam,
                      Runnable addTeam, Consumer<TeamItemModel> onArchiveTeam, Consumer<TeamItemModel> onUnArchiveTeam, Runnable onRefresh,
                      Consumer<TeamItemModel> onExportTeam, Runnable onChangeRateType, Consumer<List<TeamItemModel>> archiveTeams, Consumer<List<TeamItemModel>> onExportTeams) {
         this.model = model;
@@ -93,8 +93,7 @@ public class TeamsView implements View {
         setupListArchivedListener();
     }
 
-    private Predicate<TeamItemModel> filterPredicate()
-    {
+    private Predicate<TeamItemModel> filterPredicate() {
         String selected = filterOptions.getSelectionModel().getSelectedItem();
         String active = LocalizedText.ACTIVE.get();
         String archived = LocalizedText.ARCHIVED.get();
@@ -102,7 +101,7 @@ public class TeamsView implements View {
         if (active.equals(selected))
             return item -> !item.archivedProperty().get();
         else if (archived.equals(selected))
-                return item -> item.archivedProperty().get();
+            return item -> item.archivedProperty().get();
         else
             return item -> true;
     }
@@ -213,9 +212,9 @@ public class TeamsView implements View {
         return new StackPane(results, progressIndicator);
     }
 
-    private void selectItemById(long id) {
+    private void selectItemById(UUID id) {
         tableViewWithPagination.getItems().stream()
-                .filter(item -> item.idProperty().get() == id)
+                .filter(item -> item.teamIdProperty().get() == id)
                 .findFirst()
                 .ifPresent(item -> {
                     tableViewWithPagination.getSelectionModel().select(item);
@@ -251,7 +250,6 @@ public class TeamsView implements View {
     }
 
 
-
     private void configureTableColumns(ContextMenu contextMenu) {
         TableColumn<TeamItemModel, String> nameColumn = customTableView.createColumn(LocalizedText.NAME, TeamItemModel::nameProperty);
         nameColumn.setCellFactory(column -> {
@@ -259,6 +257,7 @@ public class TeamsView implements View {
                 private final VBox container = new VBox();
                 private final Label nameLabel = new Label("");
                 private final Label archived = new Label("");
+
                 {
                     archived.getStyleClass().add(Styles.TEXT_SUBTLE);
                     container.getChildren().addAll(nameLabel, archived);
@@ -289,13 +288,18 @@ public class TeamsView implements View {
             };
         });
 
-        TableColumn<TeamItemModel, BigDecimal> rawRateColumn = customTableView.createColumn(model.rawColumnNameProperty(), TeamItemModel::rawRateProperty, new CurrencyCellFactory<>());
-        TableColumn<TeamItemModel, BigDecimal> markupRateColumn = customTableView.createColumn(model.markupColumnNameProperty(), TeamItemModel::markupRateProperty, new CurrencyCellFactory<>());
-        TableColumn<TeamItemModel, BigDecimal> grossMarginRateColumn = customTableView.createColumn(model.grossMarginColumnNameProperty(), TeamItemModel::grossMarginRateProperty, new CurrencyCellFactory<>());
+        //TableColumn<TeamItemModel, BigDecimal> rawRateColumn = customTableView.createColumn(model.rawColumnNameProperty(), TeamItemModel::rawRateProperty, new CurrencyCellFactory<>());
+        //TableColumn<TeamItemModel, BigDecimal> markupRateColumn = customTableView.createColumn(model.markupColumnNameProperty(), TeamItemModel::markupRateProperty, new CurrencyCellFactory<>());
+        //TableColumn<TeamItemModel, BigDecimal> grossMarginRateColumn = customTableView.createColumn(model.grossMarginColumnNameProperty(), TeamItemModel::grossMarginRateProperty, new CurrencyCellFactory<>());
 
         TableColumn<TeamItemModel, BigDecimal> markupColumn = customTableView.createColumn(LocalizedText.MARKUP, TeamItemModel::markupProperty, new PercentageCellFactory<>());
         TableColumn<TeamItemModel, BigDecimal> grossMarginColumn = customTableView.createColumn(LocalizedText.GROSS_MARGIN_ABBREVIATION, TeamItemModel::grossMarginProperty, new PercentageCellFactory<>());
-
+        TableColumn<TeamItemModel, Boolean> isArchivedColumn = customTableView.createColumn(LocalizedText.ARCHIVED, TeamItemModel::archivedProperty, new IsArchivedCellFactory<>());
+        TableColumn<TeamItemModel, Timestamp> updatedAtColumn = customTableView.createColumn(LocalizedText.UPDATED_AT, TeamItemModel::updatedAtProperty, new UpdatedAtCellFactory<>());
+        TableColumn<TeamItemModel, BigDecimal> hourlyRateColumn = customTableView.createColumn(LocalizedText.HOURLY_RATE, TeamItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
+        TableColumn<TeamItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, TeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
+        TableColumn<TeamItemModel, BigDecimal> totalAllocatedCostColumn = customTableView.createColumn(LocalizedText.TOTAL_ANNUAL_COST, TeamItemModel::totalAllocatedCostProperty, new CurrencyCellFactory<>());
+        TableColumn<TeamItemModel, BigDecimal> totalAllocatedHoursColumn = customTableView.createColumn(LocalizedText.TOTAL_HOURS_ANNUALLY, TeamItemModel::totalAllocatedHoursProperty, new CurrencyCellFactory<>());
         markupColumn.setVisible(true);
         markupColumn.setResizable(false);
         markupColumn.setMinWidth(80);
@@ -315,7 +319,9 @@ public class TeamsView implements View {
         optionsColumn.setMaxWidth(50);
         optionsColumn.setPrefWidth(50);
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, rawRateColumn, markupRateColumn, grossMarginRateColumn, markupColumn, grossMarginColumn, optionsColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, markupColumn,
+                grossMarginColumn, isArchivedColumn, updatedAtColumn, hourlyRateColumn,
+                dayRateColumn, totalAllocatedCostColumn, totalAllocatedHoursColumn, optionsColumn));
 
         model.selectedRateTypeProperty().addListener((obs, ov, nv) -> onChangeRateType.run());
 
@@ -352,7 +358,7 @@ public class TeamsView implements View {
         BooleanBinding selectedArchive = Bindings.createBooleanBinding(() -> {
             var selected = tableView.getSelectionModel().getSelectedItem();
             var items = tableView.getSelectionModel().getSelectedItems();
-            return selected != null && items.size() == 1  && !selected.archivedProperty().get();
+            return selected != null && items.size() == 1 && !selected.archivedProperty().get();
         }, tableView.getSelectionModel().selectedItemProperty());
 
         BooleanBinding multipleSelectedBinding = Bindings.createBooleanBinding(() -> {
@@ -416,7 +422,7 @@ public class TeamsView implements View {
 
         Runnable doubleClickAction = () -> {
             if (tableView.getSelectionModel().getSelectedItem() != null) {
-                model.lastSelectedTeamIdProperty().set(tableView.getSelectionModel().getSelectedItem().idProperty().get());
+                model.lastSelectedTeamIdProperty().set(tableView.getSelectionModel().getSelectedItem().teamIdProperty().get());
                 onShowTeam.accept(tableView.getSelectionModel().getSelectedItem());
             }
         };

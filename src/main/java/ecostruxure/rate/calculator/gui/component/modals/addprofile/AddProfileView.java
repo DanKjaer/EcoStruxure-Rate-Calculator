@@ -87,23 +87,23 @@ public class AddProfileView implements View {
         var resourceTypeContainer = TwoColGridPane.withTitle(LocalizedText.RESOURCE_TYPE, resourceTypeGrid);
 
         var selectedCurrencyBinding = BindingsUtils.createStringBindingWithDefault(model.selectedCurrencyProperty(), "");
-        var salaryField = Fields.currencyTextField(model.annualSalaryProperty(), selectedCurrencyBinding, model.annualSalaryIsValidProperty());
-        var totalHoursField = Fields.hourTextField(model.annualTotalHoursProperty(), model.annualTotalHoursIsValidProperty(), 0, 8760);
+        var annualCostField = Fields.currencyTextField(model.annualSalaryProperty(), selectedCurrencyBinding, model.annualSalaryIsValidProperty());
+        var annualHoursField = Fields.hourTextField(model.annualTotalHoursProperty(), model.annualTotalHoursIsValidProperty(), 0, 8760);
 
         toggleGroup.selectedToggleProperty().addListener((obs, ov, nv) -> {
             if (nv != null) {
                 if (nv.getUserData() == ResourceType.OVERHEAD) {
-                    totalHoursField.setDisable(true);
+                    annualHoursField.setDisable(true);
                 } else if (nv.getUserData() == ResourceType.PRODUCTION) {
-                    totalHoursField.setDisable(false);
+                    annualHoursField.setDisable(false);
                 }
             }
         });
 
-        totalHoursField.setDisable(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
+        annualHoursField.setDisable(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);
         var annuallyGrid = TwoColGridPane.styled()
-                .add(Labels.bound(LocalizedText.SALARY), salaryField)
-                .add(Labels.bound(LocalizedText.TOTAL_HOURS), totalHoursField);
+                .add(Labels.bound(LocalizedText.ANNUAL_COST), annualCostField)
+                .add(Labels.bound(LocalizedText.ANNUAL_TOTAL_HOURS), annualHoursField);
         var annuallyContainer = TwoColGridPane.withTitle(LocalizedText.ANNUALLY, annuallyGrid);
 
         var effectivenessField = Fields.percentageTextField(model.effectivenessProperty(), model.effectivenessIsValidProperty());
@@ -122,8 +122,8 @@ public class AddProfileView implements View {
                 currencyBox,
                 overheadRadio,
                 productionRadio,
-                salaryField,
-                totalHoursField,
+                annualCostField,
+                annualHoursField,
                 effectivenessField,
                 hoursPerDayField
         );

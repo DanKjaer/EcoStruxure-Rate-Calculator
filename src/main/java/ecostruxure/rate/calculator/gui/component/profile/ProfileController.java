@@ -1,6 +1,5 @@
 package ecostruxure.rate.calculator.gui.component.profile;
 
-import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import ecostruxure.rate.calculator.gui.component.profiles.ProfilesController;
 import ecostruxure.rate.calculator.gui.component.teams.TeamsController;
 import ecostruxure.rate.calculator.gui.system.background.BackgroundTaskEvent;

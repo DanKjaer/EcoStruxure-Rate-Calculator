@@ -185,6 +185,7 @@ public class LocalizedText {
     public static final StringProperty REASON_UPDATED_PROFILE = new SimpleStringProperty("Profile updated");
     public static final StringProperty LAST_EDIT = new SimpleStringProperty("Last edit: ");
     public static final StringProperty REASON_UTILIZATION_CHANGE = new SimpleStringProperty("Utilization change");
+    public static final StringProperty UPDATED_AT = new SimpleStringProperty("Updated at: ");
 
     public static void loadBundle(ResourceBundle bundle) {
         CURRENT.set(bundle.getString("CURRENT"));
@@ -361,5 +362,6 @@ public class LocalizedText {
         REASON_UPDATED_PROFILE.set(bundle.getString("REASON_UPDATED_PROFILE"));
         LAST_EDIT.set(bundle.getString("LAST_EDIT"));
         REASON_UTILIZATION_CHANGE.set(bundle.getString("REASON_UTILIZATION_CHANGE"));
+        UPDATED_AT.set(bundle.getString("UPDATED_AT"));
     }
 }

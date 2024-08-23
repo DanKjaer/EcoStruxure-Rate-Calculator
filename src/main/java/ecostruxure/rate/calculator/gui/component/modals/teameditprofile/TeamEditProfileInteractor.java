@@ -28,7 +28,7 @@ public class TeamEditProfileInteractor {
 
     }
 
-    public Boolean fetchTeamProfile(int teamId, UUID profileId) {
+    public Boolean fetchTeamProfile(UUID teamId, UUID profileId) {
         try {
             profile = teamService.getTeamProfile(teamId, profileId);
             return true;
@@ -78,7 +78,7 @@ public class TeamEditProfileInteractor {
             profile.setCostAllocation(new BigDecimal(model.costAllocationProperty().get()));
             profile.setHourAllocation(new BigDecimal(model.hourAllocationProperty().get()));
 
-            return teamService.updateProfile(model.teamIdProperty().get(), profile);
+            return teamService.updateProfile(model.getProfileId(), profile);
         } catch (Exception e) {
             return false;
         }

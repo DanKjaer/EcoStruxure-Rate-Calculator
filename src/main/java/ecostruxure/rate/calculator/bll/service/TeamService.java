@@ -24,14 +24,14 @@ public class TeamService {
         return teamDAO.all();
     }
 
-    public Team get(int id) throws Exception {
+    public Team get(UUID id) throws Exception {
         return teamDAO.get(id);
     }
 
     public Team get(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
-        return this.get(team.id());
+        return this.get(team.getTeamId());
     }
 
     public boolean update(Team team) throws Exception {
@@ -51,8 +51,8 @@ public class TeamService {
      */
     public Team create(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
-        Objects.requireNonNull(team.name(), "Team name cannot be null");
-        if (team.name().isEmpty()) throw new IllegalArgumentException("Team name cannot be empty");
+        Objects.requireNonNull(team.getName(), "Team name cannot be null");
+        if (team.getName().isEmpty()) throw new IllegalArgumentException("Team name cannot be empty");
 
         return teamProfileManagementService.createTeam(team);
     }
@@ -81,22 +81,22 @@ public class TeamService {
         if (markup.compareTo(BigDecimal.ZERO) < 0 || markup.compareTo(BigDecimal.valueOf(100)) > 0)
             throw new IllegalArgumentException("Markup must be between 0 and 100%");
 
-        var oldMarkup = team.markup();
-        team.markup(markup);
+        var oldMarkup = team.getMarkup();
+        team.setMarkup(markup);
 
         // for at rollback i BLL hvis der sker in fejl i DAL.
         try {
             teamDAO.updateMultipliers(team);
         } catch (Exception e) {
-            team.markup(oldMarkup);
+            team.setMarkup(oldMarkup);
             throw e;
         }
     }
 
-    public void setMarkup(int teamId, BigDecimal markup) throws Exception {
+    public void setMarkup(UUID teamId, BigDecimal markup) throws Exception {
         Objects.requireNonNull(markup, "Markup cannot be null");
 
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
         this.setMarkup(this.get(teamId), markup);
     }
@@ -112,26 +112,26 @@ public class TeamService {
         if (grossMargin.compareTo(BigDecimal.ZERO) < 0 || grossMargin.compareTo(BigDecimal.valueOf(100)) > 0)
             throw new IllegalArgumentException("Gross margin must be between 0 and 100%");
 
-        var oldMarkup = team.markup();
-        var oldGrossMargin = team.grossMargin();
-        team.markup(markup);
-        team.grossMargin(grossMargin);
+        var oldMarkup = team.getMarkup();
+        var oldGrossMargin = team.getGrossMargin();
+        team.setMarkup(markup);
+        team.setGrossMargin(grossMargin);
 
         // for at rollback i BLL hvis der sker in fejl i DAL.
         try {
             teamDAO.updateMultipliers(team);
         } catch (Exception e) {
-            team.markup(oldMarkup);
-            team.grossMargin(oldGrossMargin);
+            team.setMarkup(oldMarkup);
+            team.setGrossMargin(oldGrossMargin);
             throw e;
         }
     }
 
-    public void setMultipliers(int teamId, BigDecimal markup, BigDecimal grossMargin) throws Exception {
+    public void setMultipliers(UUID teamId, BigDecimal markup, BigDecimal grossMargin) throws Exception {
         Objects.requireNonNull(markup, "Markup cannot be null");
         Objects.requireNonNull(grossMargin, "Gross margin cannot be null");
 
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
         this.setMultipliers(this.get(teamId), markup, grossMargin);
     }
@@ -150,8 +150,8 @@ public class TeamService {
         return teamProfileManagementService.updateTeamProfiles(team, profiles);
     }
 
-    public boolean updateProfile(int teamId, Profile profile) throws Exception {
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+    public boolean updateProfile(UUID teamId, Profile profile) throws Exception {
+        if (teamId != null) throw new IllegalArgumentException("Team ID must be greater than 0");
         Objects.requireNonNull(profile, "Profile cannot be null");
 
         return teamProfileManagementService.updateTeamProfile(teamId, profile);
@@ -167,24 +167,24 @@ public class TeamService {
     public List<Profile> getTeamProfiles(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
-        return getTeamProfiles(team.id());
+        return getTeamProfiles(team.getTeamId());
     }
 
-    public List<Profile> getTeamProfiles(int teamId) throws Exception {
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+    public List<Profile> getTeamProfiles(UUID teamId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
         return teamDAO.getTeamProfiles(teamId);
     }
 
-    public Profile getTeamProfile(int teamId, UUID profileId) throws Exception {
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+    public Profile getTeamProfile(UUID teamId, UUID profileId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
         if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return teamDAO.getTeamProfile(teamId, profileId);
     }
 
-    public boolean archive(int teamId, boolean archive) throws Exception {
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+    public boolean archive(UUID teamId, boolean archive) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
         return teamDAO.archive(teamId, archive);
     }
@@ -192,7 +192,7 @@ public class TeamService {
     public boolean archive(Team team, boolean archive) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
-        return archive(team.id(), archive);
+        return archive(team.getTeamId(), archive);
     }
 
     public boolean archive(List<Team> teams) throws Exception {
@@ -204,18 +204,18 @@ public class TeamService {
     public List<Profile> canUnarchive(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
-        return teamDAO.canUnarchive(team.id());
+        return teamDAO.canUnarchive(team.getTeamId());
     }
 
-    public boolean removeProfileFromTeam(int teamId, UUID profileId) throws Exception {
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+    public boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
         if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return teamProfileManagementService.removeProfileFromTeam(teamId, profileId);
     }
 
-    public LocalDateTime getLastUpdated(int teamId) throws Exception {
-        if (teamId <= 0) throw new IllegalArgumentException("Team ID must be greater than 0");
+    public LocalDateTime getLastUpdated(UUID teamId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
         return teamDAO.getLastUpdated(teamId);
     }

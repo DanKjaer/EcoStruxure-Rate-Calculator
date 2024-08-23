@@ -30,6 +30,14 @@ public class GeographyService {
         return geographyDAO.get(id);
     }
 
+    public Geography getByCountryId(int countryId) throws Exception {
+        List<Geography> geographies = geographyDAO.all();
+        return geographies.stream()
+                .filter(geography -> geography.id() == countryId)
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Creates a new geography.<br>
      * Removes all duplicate and empty countries from countries list, requires at least two countries.<br>

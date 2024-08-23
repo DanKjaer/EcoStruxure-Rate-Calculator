@@ -96,10 +96,12 @@ public class AddProfileInteractor {
 
         profile.setAnnualCost(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
         profile.setEffectivenessPercentage(new BigDecimal(model.effectivenessProperty().get()));
-        profile.setHourAllocation(new BigDecimal(model.annualTotalHoursProperty().get()));
+        profile.setAnnualHours(new BigDecimal(model.annualTotalHoursProperty().get()));
+        System.out.println("profile.getHourAllocation(): " + profile.getHourAllocation());
+        System.out.println("profile.getAnnualHours(): " + profile.getAnnualHours());
         profile.setHoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
 
-        BigDecimal effectiveWorkHours = RateUtils.utilizedHours(profile, profile.getEffectivenessPercentage());
+        BigDecimal effectiveWorkHours = RateUtils.effectiveWorkHours(profile);
         profile.setEffectiveWorkHours(effectiveWorkHours);
 
         return profile;

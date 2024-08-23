@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 import java.util.List;
+import java.util.UUID;
 
 public class VerifyProfilesController implements ModalController {
     private final VerifyProfilesModel model;
@@ -41,12 +42,12 @@ public class VerifyProfilesController implements ModalController {
     public void activate(Object data) {
         if (data instanceof TeamData team) {
             model.profiles().clear();
-            model.teamIdProperty().set(team.teamId());
+            model.setTeamId(model.getTeamId());
             convertProfiles(team.teamId(), team.profiles());
         }
     }
 
-    private void convertProfiles(int teamId, List<Profile> data) {
+    private void convertProfiles(UUID teamId, List<Profile> data) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {

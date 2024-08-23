@@ -35,8 +35,8 @@ public class RateService {
     // Metode til at udregne rates for et team, baseret på rate typen.
     public Rates calculateRates(Team team, RateType rateType) throws Exception {
         var rawRate = BigDecimal.ZERO;
-        var markup = team.markup();
-        var grossMargin = team.grossMargin();
+        var markup = team.getMarkup();
+        var grossMargin = team.getGrossMargin();
 
         // Bestemme raw rate ud fra hvilken rate type der er valgt
         switch (rateType) {
@@ -61,8 +61,8 @@ public class RateService {
         // Henter profilerne for et team og udregner den sammenlagte hourly rate.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
-            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.id());
+            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.getTeamId());
+            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.getTeamId());
 
             totalAnnualRate = totalAnnualRate.add(RateUtils.annualCost(profile, costAllocation));
             totalHours = totalHours.add(RateUtils.utilizedHours(profile, hourAllocation));
@@ -85,8 +85,8 @@ public class RateService {
         // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
-            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.id());
+            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.getTeamId());
+            var hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.getTeamId());
 
             annualRate = annualRate.add(RateUtils.annualCost(profile, costAllocation));
             hours = hours.add(RateUtils.utilizedHours(profile, hourAllocation));
@@ -107,7 +107,7 @@ public class RateService {
         // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
         for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
+            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.getTeamId());
             total = total.add(RateUtils.annualCost(profile, costAllocation));
         }
 
@@ -120,8 +120,8 @@ public class RateService {
 
         var totalBaseRate = BigDecimal.ZERO;
         var totalAdjustedRate = BigDecimal.ZERO;
-        var markup = team.markup();
-        var grossMargin = team.grossMargin();
+        var markup = team.getMarkup();
+        var grossMargin = team.getGrossMargin();
 
         // Bestemme total base rate ud fra hvilken rate type der er valgt
         switch (rateType) {

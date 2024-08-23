@@ -5,6 +5,8 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.UUID;
+
 public class TeamsModel {
     private final ObservableList<TeamItemModel> teams = FXCollections.observableArrayList();
     private final ObservableList<TeamItemModel> teamsToArchive = FXCollections.observableArrayList();
@@ -12,7 +14,7 @@ public class TeamsModel {
     private final StringProperty numTeams = new SimpleStringProperty();
     private final StringProperty search = new SimpleStringProperty("");
     private final ObjectProperty<RateType> selectedRateType = new SimpleObjectProperty<>(RateType.HOURLY);
-    private final IntegerProperty lastSelectedTeamId = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> lastSelectedTeamId = new SimpleObjectProperty<>();
     private final BooleanProperty teamsFetched = new SimpleBooleanProperty();
     private final BooleanProperty shouldReloadTable = new SimpleBooleanProperty();
 
@@ -44,7 +46,7 @@ public class TeamsModel {
         return selectedRateType;
     }
 
-    public IntegerProperty lastSelectedTeamIdProperty() {
+    public ObjectProperty<UUID> lastSelectedTeamIdProperty() {
         return lastSelectedTeamId;
     }
 

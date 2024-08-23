@@ -7,10 +7,10 @@ import java.util.UUID;
 public class ProfileHistory {
     private int historyId;
     private UUID profileId;
-    private boolean overhead;
+    private boolean resourceType;
     private BigDecimal annualSalary;
     private BigDecimal effectiveness;
-    private BigDecimal totalHours;
+    private BigDecimal annualHours;
     private BigDecimal effectiveWorkHours;
     private BigDecimal hoursPerDay;
     private LocalDateTime updatedAt;
@@ -18,13 +18,13 @@ public class ProfileHistory {
     public ProfileHistory() {
     }
 
-    public ProfileHistory(int historyId, UUID profileId, boolean overhead, BigDecimal annualSalary, BigDecimal effectiveness, BigDecimal totalHours, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
+    public ProfileHistory(int historyId, UUID profileId, boolean resourceType, BigDecimal annualSalary, BigDecimal effectiveness, BigDecimal annualHours, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
         this.historyId = historyId;
         this.profileId = profileId;
-        this.overhead = overhead;
+        this.resourceType = resourceType;
         this.annualSalary = annualSalary;
         this.effectiveness = effectiveness;
-        this.totalHours = totalHours;
+        this.annualHours = annualHours;
         this.effectiveWorkHours = effectiveWorkHours;
         this.hoursPerDay = hoursPerDay;
         this.updatedAt = updatedAt;
@@ -46,12 +46,12 @@ public class ProfileHistory {
         this.profileId = profileId;
     }
 
-    public boolean overhead() {
-        return overhead;
+    public boolean resourceType() {
+        return resourceType;
     }
 
-    public void overhead(boolean overhead) {
-        this.overhead = overhead;
+    public void resourceType(boolean resourceType) {
+        this.resourceType = resourceType;
     }
 
     public BigDecimal annualSalary() {
@@ -70,12 +70,12 @@ public class ProfileHistory {
         this.effectiveness = effectiveness;
     }
 
-    public BigDecimal totalHours() {
-        return totalHours;
+    public BigDecimal annualHours() {
+        return annualHours;
     }
 
-    public void totalHours(BigDecimal totalHours) {
-        this.totalHours = totalHours;
+    public void annualHours(BigDecimal annualHours) {
+        this.annualHours = annualHours;
     }
 
     public BigDecimal effectiveWorkHours() {

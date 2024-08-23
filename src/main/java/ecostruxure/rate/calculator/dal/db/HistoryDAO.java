@@ -39,10 +39,10 @@ public class HistoryDAO implements IHistoryDAO {
                 while (rs.next()) {
                     ProfileHistory profile = new ProfileHistory();
                     profile.profileId((UUID) rs.getObject("profile_id"));
-                    profile.overhead(rs.getBoolean("overhead"));
+                    profile.resourceType(rs.getBoolean("overhead"));
                     profile.annualSalary(rs.getBigDecimal("annual_salary"));
                     profile.effectiveness(rs.getBigDecimal("effectiveness"));
-                    profile.totalHours(rs.getBigDecimal("total_hours"));
+                    profile.annualHours(rs.getBigDecimal("annual_hours"));
                     profile.hoursPerDay(rs.getBigDecimal("hours_per_day"));
                     profile.updatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                     profiles.add(profile);
@@ -51,18 +51,19 @@ public class HistoryDAO implements IHistoryDAO {
 
             return profiles;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not get Profile History from Database.\n" + e.getMessage());
         }
     }
 
     @Override
-    public List<TeamHistory> getTeamHistory(int teamId) throws Exception {
+    public List<TeamHistory> getTeamHistory(UUID teamId) throws Exception {
         Map<LocalDateTime, TeamHistory> historyMap = new LinkedHashMap<>();
 
         String query = """
                         SELECT tph.team_id, tph.profile_id, tph.profile_history_id, tph.reason,
-                               tph.hourly_rate, tph.day_rate, tph.annual_cost, tph.total_hours, tph.cost_allocation, tph.hour_allocation,
-                               tph.profile_hourly_rate, tph.profile_day_rate, tph.profile_annual_cost, tph.profile_total_hours, tph.updated_at
+                               tph.hourly_rate, tph.day_rate, tph.annual_cost, tph.annual_hours, tph.cost_allocation, tph.hour_allocation,
+                               tph.profile_hourly_rate, tph.profile_day_rate, tph.profile_annual_cost, tph.profile_annual_hours, tph.updated_at
                         FROM dbo.Teams_profiles_history tph
                         WHERE tph.team_id = ?
                         ORDER BY tph.updated_at DESC;
@@ -70,7 +71,7 @@ public class HistoryDAO implements IHistoryDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, teamId);
+            stmt.setObject(1, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     LocalDateTime updatedAt = rs.getTimestamp("updated_at").toLocalDateTime();
@@ -78,12 +79,12 @@ public class HistoryDAO implements IHistoryDAO {
 
                     if (teamHistory == null) {
                         teamHistory = new TeamHistory();
-                        teamHistory.teamId(rs.getInt("team_id"));
+                        teamHistory.teamId((UUID) rs.getObject("team_id"));
                         teamHistory.reason(TeamHistory.Reason.valueOf(rs.getString("reason")));
                         teamHistory.hourlyRate(rs.getBigDecimal("hourly_rate"));
                         teamHistory.dayRate(rs.getBigDecimal("day_rate"));
                         teamHistory.annualCost(rs.getBigDecimal("annual_cost"));
-                        teamHistory.totalHours(rs.getBigDecimal("total_hours"));
+                        teamHistory.annualHours(rs.getBigDecimal("annual_hours"));
                         teamHistory.updatedAt(updatedAt);
                         historyMap.put(updatedAt, teamHistory);
                     }
@@ -94,7 +95,7 @@ public class HistoryDAO implements IHistoryDAO {
                     teamProfileHistory.hourlyRate(rs.getBigDecimal("profile_hourly_rate"));
                     teamProfileHistory.dayRate(rs.getBigDecimal("profile_day_rate"));
                     teamProfileHistory.annualCost(rs.getBigDecimal("profile_annual_cost"));
-                    teamProfileHistory.totalHours(rs.getBigDecimal("profile_total_hours"));
+                    teamProfileHistory.annualHours(rs.getBigDecimal("profile_annual_hours"));
                     teamProfileHistory.costAllocation(rs.getBigDecimal("cost_allocation"));
                     teamProfileHistory.hourAllocation(rs.getBigDecimal("hour_allocation"));
                     teamProfileHistory.updatedAt(updatedAt);
@@ -105,6 +106,7 @@ public class HistoryDAO implements IHistoryDAO {
 
             return new ArrayList<>(historyMap.values());
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new Exception("Could not retrieve team history from the database.\n" + e.getMessage(), e);
         }
     }
@@ -114,14 +116,13 @@ public class HistoryDAO implements IHistoryDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String insertProfileHistorySQL = """
                                          INSERT INTO dbo.Profiles_history (
-                                             profile_id, overhead, annual_salary, effectiveness,
-                                             total_hours, hours_per_day, updated_at
+                                             profile_id, resource_type, annual_salary, effectiveness,
+                                             annual_hours, hours_per_day, updated_at
                                          )
-                                         SELECT p.id, pd.overhead, p.annual_salary, p.effectiveness,
-                                                p.total_hours, p.hours_per_day, CURRENT_TIMESTAMP
+                                         SELECT p.profile_id, p.resource_type, p.annual_salary, p.effectiveness,
+                                                p.annual_hours, p.hours_per_day, CURRENT_TIMESTAMP
                                          FROM dbo.Profiles p
-                                         JOIN dbo.Profiles_data pd ON p.id = pd.id
-                                         WHERE p.id = ?
+                                         WHERE p.profile_id = ?
                                          """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertProfileHistorySQL, Statement.RETURN_GENERATED_KEYS)) {
@@ -137,54 +138,54 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public void insertEmptyTeamProfileHistory(TransactionContext context, int teamId, TeamMetrics metrics, Reason reason) throws Exception {
+    public void insertEmptyTeamProfileHistory(TransactionContext context, UUID teamId, TeamMetrics metrics, Reason reason) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
-                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, updated_at)
+                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, annual_hours, updated_at)
                     VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
                     """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
-            stmt.setInt(1, teamId);
+            stmt.setObject(1, teamId);
             stmt.setString(2, reason.name());
             stmt.setBigDecimal(3, metrics.hourlyRate());
             stmt.setBigDecimal(4, metrics.dayRate());
             stmt.setBigDecimal(5, metrics.annualCost());
-            stmt.setBigDecimal(6, metrics.totalHours());
+            stmt.setBigDecimal(6, metrics.annualHours());
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public void insertEmptyTeamProfileHistory(TransactionContext context, int teamId, TeamMetrics metrics, Reason reason, LocalDateTime now) throws Exception {
+    public void insertEmptyTeamProfileHistory(TransactionContext context, UUID teamId, TeamMetrics metrics, Reason reason, LocalDateTime now) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
-                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, updated_at)
+                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, annual_hours, updated_at)
                     VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, ?);
                     """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
-            stmt.setInt(1, teamId);
+            stmt.setObject(1, teamId);
             stmt.setString(2, reason.name());
             stmt.setBigDecimal(3, metrics.hourlyRate());
             stmt.setBigDecimal(4, metrics.dayRate());
             stmt.setBigDecimal(5, metrics.annualCost());
-            stmt.setBigDecimal(6, metrics.totalHours());
+            stmt.setBigDecimal(6, metrics.annualHours());
             stmt.setTimestamp(7, Timestamp.valueOf(now));
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public void insertTeamProfileHistory(TransactionContext context, int teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
+    public void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
-                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, cost_allocation, hour_allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
+                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, annual_hours, cost_allocation, hour_allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_annual_hours, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
                     """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
-            stmt.setInt(1, teamId);
+            stmt.setObject(1, teamId);
             stmt.setObject(2, profileId);
 
             if (profileHistoryId == null) stmt.setNull(3, Types.INTEGER);
@@ -194,28 +195,29 @@ public class HistoryDAO implements IHistoryDAO {
             stmt.setBigDecimal(5, teamMetrics.hourlyRate());
             stmt.setBigDecimal(6, teamMetrics.dayRate());
             stmt.setBigDecimal(7, teamMetrics.annualCost());
-            stmt.setBigDecimal(8, teamMetrics.totalHours());
+            stmt.setBigDecimal(8, teamMetrics.annualHours());
             stmt.setBigDecimal(9, profileMetrics.costAllocation());
             stmt.setBigDecimal(10, profileMetrics.hourAllocation());
             stmt.setBigDecimal(11, profileMetrics.hourlyRate());
             stmt.setBigDecimal(12, profileMetrics.dayRate());
             stmt.setBigDecimal(13, profileMetrics.annualCost());
-            stmt.setBigDecimal(14, profileMetrics.totalHours());
+            stmt.setBigDecimal(14, profileMetrics.annualHours());
             stmt.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new Exception("Could not insert team profile history into the database.\n" + e.getMessage(), e);
         }
     }
 
     @Override
-    public void insertTeamProfileHistory(TransactionContext context, int teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
+    public void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
-                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, total_hours, cost_allocation, hour_Allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_total_hours, updated_at)
+                    INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, annual_hours, cost_allocation, hour_Allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_annual_hours, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                     """;
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
-            stmt.setInt(1, teamId);
+            stmt.setObject(1, teamId);
             stmt.setObject(2, profileId);
 
             if (profileHistoryId == null) stmt.setNull(3, Types.INTEGER);
@@ -225,16 +227,17 @@ public class HistoryDAO implements IHistoryDAO {
             stmt.setBigDecimal(5, teamMetrics.hourlyRate());
             stmt.setBigDecimal(6, teamMetrics.dayRate());
             stmt.setBigDecimal(7, teamMetrics.annualCost());
-            stmt.setBigDecimal(8, teamMetrics.totalHours());
+            stmt.setBigDecimal(8, teamMetrics.annualHours());
             stmt.setBigDecimal(9, profileMetrics.costAllocation());
             stmt.setBigDecimal(10, profileMetrics.hourAllocation());
             stmt.setBigDecimal(11, profileMetrics.hourlyRate());
             stmt.setBigDecimal(12, profileMetrics.dayRate());
             stmt.setBigDecimal(13, profileMetrics.annualCost());
-            stmt.setBigDecimal(14, profileMetrics.totalHours());
+            stmt.setBigDecimal(14, profileMetrics.annualHours());
             stmt.setTimestamp(15, Timestamp.valueOf(now));
             stmt.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new Exception("Could not insert team profile history into the database.\n" + e.getMessage(), e);
         }
     }

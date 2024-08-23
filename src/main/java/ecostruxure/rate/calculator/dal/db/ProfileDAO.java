@@ -19,7 +19,7 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile profileResultSet(ResultSet rs) throws SQLException {
 
-        UUID profileId = (UUID) rs.getObject("profile_id");
+        UUID profileId = UUID.fromString(rs.getString("profile_id"));
         String name = rs.getString("name");
         String currency = rs.getString("currency");
         int countryId = rs.getInt("country_id");
@@ -30,7 +30,7 @@ public class ProfileDAO implements IProfileDAO {
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
         BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
         BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
-        boolean archived = rs.getBoolean("archived");
+        //boolean archived = rs.getBoolean("is_archived");
         Timestamp updatedAt = rs.getTimestamp("updated_at");
 
         return new Profile.Builder()
@@ -44,7 +44,7 @@ public class ProfileDAO implements IProfileDAO {
                 .setHoursPerDay(hoursPerDay)
                 .setEffectivenessPercentage(effectivenessPercentage)
                 .setEffectiveWorkHours(effectiveWorkHours)
-                .setArchived(archived)
+                //.setArchived(archived)
                 .setUpdatedAt(updatedAt)
                 .build();
     }
@@ -60,6 +60,7 @@ public class ProfileDAO implements IProfileDAO {
                 return createdProfile;
             } catch (Exception ex) {
                 conn.rollback();
+                ex.printStackTrace();
                 throw new Exception("Error occured, rolling back..\n" + ex.getMessage());
             }
         }
@@ -71,9 +72,9 @@ public class ProfileDAO implements IProfileDAO {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
-                       SELECT profile_id, name, currency, dbo.geography.name FROM dbo.Profiles
-                       INNER JOIN dbo.Geography ON dbo.Profiles.country_id = dbo.Geography.id
-                       ORDER BY dbo.Profiles.profile_id DESC
+                       SELECT p.*, dbo.geography.name FROM dbo.Profiles p
+                       INNER JOIN dbo.Geography ON p.country_id = dbo.Geography.id
+                       ORDER BY p.profile_id DESC
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -92,15 +93,15 @@ public class ProfileDAO implements IProfileDAO {
     }
     @Override
 
+    // Flyt cost_allocation_total til team fremfor team profile.
     public List<Profile> allWithUtilization() throws Exception {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
-                        SELECT p.*, pd.*,
+                        SELECT p.*,
                            COALESCE(tp.cost_allocation_total, 0) AS cost_allocation_total,
                            COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
                         FROM dbo.Profiles p
-                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id
                         LEFT JOIN (
                             SELECT profileID,
                                    SUM(cost_allocation) AS cost_allocation_total,
@@ -108,9 +109,9 @@ public class ProfileDAO implements IProfileDAO {
                             FROM dbo.Teams_profiles
                             WHERE archived = FALSE
                             GROUP BY profileID
-                        ) tp ON p.id = tp.profileID
-                        WHERE pd.archived = FALSE
-                        ORDER BY p.id DESC;                     
+                        ) tp ON p.profile_id = tp.profileID
+                        WHERE p.is_archived = FALSE
+                        ORDER BY p.profile_id DESC;                     
                         """;
 
         try (Connection conn = dbConnector.connection();
@@ -131,7 +132,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public List<Profile> allWithUtilizationByTeam(int teamId) throws Exception {
+    public List<Profile> allWithUtilizationByTeam(UUID teamId) throws Exception {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
@@ -155,8 +156,8 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, teamId);
-            stmt.setInt(2, teamId);
+            stmt.setObject(1, teamId);
+            stmt.setObject(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -169,6 +170,7 @@ public class ProfileDAO implements IProfileDAO {
 
             return profiles;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not get all Profiles from Database.\n" + e.getMessage());
         }
     }
@@ -176,23 +178,24 @@ public class ProfileDAO implements IProfileDAO {
     @Override
     public Profile get(UUID id) throws Exception {
         Profile profile = null;
-
+        //INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
         String query = """
                        SELECT * FROM dbo.Profiles
-                       INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
-                       WHERE dbo.Profiles.id = ?
+
+                       WHERE dbo.Profiles.profile_id = CAST(? AS uuid)
                        """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, id.toString());
+            stmt.setObject(1, id.toString());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not get Profile from Database. Profile ID: " + id + "\n" + e.getMessage());
         }
 
@@ -209,8 +212,7 @@ public class ProfileDAO implements IProfileDAO {
 
         String query = """
                        SELECT * FROM dbo.Profiles
-                       INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
-                       WHERE dbo.Profiles.id = ?
+                       WHERE dbo.Profiles.profile_id = ?
                        """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
@@ -222,6 +224,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not get Profile from Database. Profile ID: " + id + "\n" + e.getMessage());
         }
 
@@ -232,7 +235,7 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (name, currency, country_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (name, currency, country_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, profile.getName());
             stmt.setString(2, profile.getCurrency());
             stmt.setInt(3, profile.getCountryId());
@@ -302,6 +305,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting profileByCountry failed\n." + e.getMessage());
         }
 
@@ -310,11 +314,11 @@ public class ProfileDAO implements IProfileDAO {
 
     @Override
     public List<Profile> allByTeam(Team team) throws Exception {
-        return allByTeam(team.id());
+        return allByTeam(team.getTeamId());
     }
 
     @Override
-    public List<Profile> allByTeam(int teamId) throws Exception {
+    public List<Profile> allByTeam(UUID teamId) throws Exception {
         ArrayList<Profile> profilesByTeam = new ArrayList<>();
         String query = """
                         SELECT * FROM dbo.Profiles
@@ -325,7 +329,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, teamId);
+            stmt.setObject(1, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -333,6 +337,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting profileByTeam failed\n." + e.getMessage());
         }
 
@@ -363,6 +368,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting profileByGeography failed\n." + e.getMessage());
         }
 
@@ -390,6 +396,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting total utilization rate for profile failed\n." + e.getMessage());
         }
 
@@ -425,7 +432,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileCostAllocationForTeam(UUID profileId, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(UUID profileId, UUID teamId) throws Exception {
         BigDecimal allocation = BigDecimal.ZERO;
         String query = """
                         SELECT cost_allocation AS total_allocation
@@ -436,7 +443,7 @@ public class ProfileDAO implements IProfileDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setObject(1, profileId);
-            stmt.setInt(2, teamId);
+            stmt.setObject(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -454,7 +461,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileHourAllocationForTeam(UUID profileId, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(UUID profileId, UUID teamId) throws Exception {
         BigDecimal allocation = BigDecimal.ZERO;
         String query = """
                         SELECT hour_allocation AS total_allocation
@@ -465,7 +472,7 @@ public class ProfileDAO implements IProfileDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setObject(1, profileId);
-            stmt.setInt(2, teamId);
+            stmt.setObject(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -475,6 +482,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
@@ -482,7 +490,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileCostAllocationForTeam(TransactionContext context, UUID profileId, int teamId) throws Exception {
+    public BigDecimal getProfileCostAllocationForTeam(TransactionContext context, UUID profileId, UUID teamId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         BigDecimal allocation = BigDecimal.ZERO;
@@ -494,7 +502,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             stmt.setObject(1, profileId);
-            stmt.setInt(2, teamId);
+            stmt.setObject(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -504,6 +512,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
@@ -511,7 +520,7 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public BigDecimal getProfileHourAllocationForTeam(TransactionContext context, UUID profileId, int teamId) throws Exception {
+    public BigDecimal getProfileHourAllocationForTeam(TransactionContext context, UUID profileId, UUID teamId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         BigDecimal allocation = BigDecimal.ZERO;
@@ -523,7 +532,7 @@ public class ProfileDAO implements IProfileDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             stmt.setObject(1, profileId);
-            stmt.setInt(2, teamId);
+            stmt.setObject(2, teamId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -533,6 +542,7 @@ public class ProfileDAO implements IProfileDAO {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting profile allocation for team failed\n." + e.getMessage());
         }
 
@@ -556,17 +566,18 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Team team = new Team(
-                            rs.getInt("teamId"),
-                            rs.getString("name"),
-                            rs.getBigDecimal("markup"),
-                            rs.getBigDecimal("gross_margin"),
-                            rs.getBoolean("archived")
-                    );
+                    Team team = new Team.Builder()
+                            .teamId((UUID) rs.getObject("teamId"))
+                            .name(rs.getString("name"))
+                            .markup(rs.getBigDecimal("markup"))
+                            .grossMargin(rs.getBigDecimal("gross_margin"))
+                            .archived(rs.getBoolean("archived"))
+                            .build();
                     teams.add(team);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Getting teams for profile failed\n." + e.getMessage());
         }
 
@@ -591,13 +602,13 @@ public class ProfileDAO implements IProfileDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Team team = new Team(
-                            rs.getInt("teamId"),
-                            rs.getString("name"),
-                            rs.getBigDecimal("markup"),
-                            rs.getBigDecimal("gross_margin"),
-                            rs.getBoolean("archived")
-                    );
+                    Team team = new Team.Builder()
+                            .teamId((UUID) rs.getObject("teamId"))
+                            .name(rs.getString("name"))
+                            .markup(rs.getBigDecimal("markup"))
+                            .grossMargin(rs.getBigDecimal("gross_margin"))
+                            .archived(rs.getBoolean("archived"))
+                            .build();
                     teams.add(team);
                 }
             }
@@ -692,6 +703,7 @@ public class ProfileDAO implements IProfileDAO {
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not archive Profile in Database.\n" + e.getMessage());
         }
     }
@@ -716,6 +728,7 @@ public class ProfileDAO implements IProfileDAO {
             conn.commit();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Could not archive Profiles in Database.\n" + e.getMessage());
         }
     }

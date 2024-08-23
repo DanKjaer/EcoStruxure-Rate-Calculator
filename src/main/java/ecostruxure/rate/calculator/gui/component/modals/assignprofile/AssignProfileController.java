@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AssignProfileController implements ModalController {
     private final EventBus eventBus;
@@ -38,12 +39,12 @@ public class AssignProfileController implements ModalController {
 
     @Override
     public void activate(Object teamId) {
-        if (teamId instanceof Integer) {
-            model.teamIdProperty().set((Integer) teamId);
+        if (teamId instanceof UUID) {
+            model.setTeamId(((UUID) teamId));
             model.profilesFetchedProperty().set(false);
             model.profiles().clear();
             model.originalProfiles().clear();
-            fetchProfiles((int) teamId);
+            fetchProfiles((UUID) teamId);
         }
     }
 
@@ -72,7 +73,7 @@ public class AssignProfileController implements ModalController {
                 outerLookupHandler.run();
                 eventBus.publish(new RefreshEvent(TeamsController.class));
                 eventBus.publish(new RefreshEvent(ProfilesController.class));
-                fetchProfiles(model.teamIdProperty().get());
+                fetchProfiles(model.getTeamId());
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_ASSIGNED_PROFILES));
             } else {
                 eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_ASSIGN));
@@ -99,7 +100,7 @@ public class AssignProfileController implements ModalController {
         );
     }
 
-    private void fetchProfiles(int teamId) {
+    private void fetchProfiles(UUID teamId) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {

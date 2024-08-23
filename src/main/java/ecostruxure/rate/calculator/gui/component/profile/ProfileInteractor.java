@@ -270,12 +270,12 @@ public class ProfileInteractor {
 
             historyModel.setIdProperty(profile.profileId());
 
-            if (profile.overhead()) historyModel.resourceTypeProperty().set(ResourceType.OVERHEAD);
+            if (profile.resourceType()) historyModel.resourceTypeProperty().set(ResourceType.OVERHEAD);
             else historyModel.resourceTypeProperty().set(ResourceType.PRODUCTION);
 
             historyModel.setAnnualSalary(profile.annualSalary());
             historyModel.effectivenessProperty().set(profile.effectiveness());
-            historyModel.totalHoursProperty().set(profile.totalHours());
+            historyModel.totalHoursProperty().set(profile.annualHours());
             historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());
             historyModel.hoursPerDayProperty().set(profile.hoursPerDay());
             historyModel.updatedAtProperty().set(profile.updatedAt());
@@ -307,12 +307,12 @@ public class ProfileInteractor {
         List<ProfileTeamItemModel> teamModels = new ArrayList<>();
 
         for (Team team : teams) {
-            if (team.archived()) continue;
+            if (team.isArchived()) continue;
             ProfileTeamItemModel teamModel = new ProfileTeamItemModel();
-            teamModel.idProperty().set(team.id());
-            teamModel.nameProperty().set(team.name());
-            BigDecimal costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.id());
-            BigDecimal hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.id());
+            teamModel.idProperty().set(team.getTeamId());
+            teamModel.nameProperty().set(team.getName());
+            BigDecimal costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.getTeamId());
+            BigDecimal hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.getTeamId());
 
             teamModel.costAllocationProperty().set(costAllocation);
             teamModel.hourAllocationProperty().set(hourAllocation);

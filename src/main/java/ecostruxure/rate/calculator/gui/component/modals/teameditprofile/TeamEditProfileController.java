@@ -39,7 +39,7 @@ public class TeamEditProfileController implements ModalController {
     @Override
     public void activate(Object data) {
         if (data instanceof TeamDataId teamData) {
-            model.teamIdProperty().set(teamData.teamId());
+            model.setProfileId(model.getProfileId());
             model.setProfileId(teamData.profileId());
             model.profileNameProperty().set("");
             model.costAllocationFetchedProperty().set(false);
@@ -54,7 +54,7 @@ public class TeamEditProfileController implements ModalController {
         }
     }
 
-    private void fetchTeamProfile(int teamId, UUID profileId) {
+    private void fetchTeamProfile(UUID teamId, UUID profileId) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {
