@@ -308,14 +308,15 @@ public class ProfileInteractor {
 
         for (Team team : teams) {
             if (team.isArchived()) continue;
-            ProfileTeamItemModel teamModel = new ProfileTeamItemModel();
-            teamModel.idProperty().set(team.getTeamId());
-            teamModel.nameProperty().set(team.getName());
+            ProfileTeamItemModel profileTeamModel = new ProfileTeamItemModel();
+            profileTeamModel.teamIdProperty().set(team.getTeamId());
+            profileTeamModel.profileIdProperty().set(profile.getProfileId());
+            profileTeamModel.nameProperty().set(team.getName());
             BigDecimal costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.getTeamId());
             BigDecimal hourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), team.getTeamId());
 
-            teamModel.costAllocationProperty().set(costAllocation);
-            teamModel.hourAllocationProperty().set(hourAllocation);
+            profileTeamModel.costAllocationProperty().set(costAllocation);
+            profileTeamModel.hourAllocationProperty().set(hourAllocation);
 
             BigDecimal hourlyRate = RateUtils.hourlyRate(profile, costAllocation);
             BigDecimal dayRate = RateUtils.dayRate(profile, costAllocation);
@@ -324,11 +325,11 @@ public class ProfileInteractor {
             BigDecimal annualTotalHours = RateUtils.utilizedHours(profile, hourAllocation);
             BigDecimal effectiveWorkHours = RateUtils.effectiveWorkHours(profile);
 
-            teamModel.setHourlyRate(hourlyRate);
-            teamModel.setDayRate(dayRate);
-            teamModel.setAnnualCost(annualCost);
-            teamModel.annualTotalHoursProperty().set(annualTotalHours);
-            teamModel.effectiveWorkHoursProperty().set(effectiveWorkHours);
+            profileTeamModel.setHourlyRate(hourlyRate);
+            profileTeamModel.setDayRate(dayRate);
+            profileTeamModel.setAnnualCost(annualCost);
+            profileTeamModel.annualTotalHoursProperty().set(annualTotalHours);
+            profileTeamModel.effectiveWorkHoursProperty().set(effectiveWorkHours);
 
             contributedHours = contributedHours.add(annualTotalHours);
             totalHourlyRate = totalHourlyRate.add(hourlyRate);
@@ -336,7 +337,7 @@ public class ProfileInteractor {
             totalAnnualCost = totalAnnualCost.add(annualCost);
             effectiveWorkHours = effectiveWorkHours.add(effectiveWorkHours);
 
-            teamModels.add(teamModel);
+            teamModels.add(profileTeamModel);
         }
 
         return teamModels;

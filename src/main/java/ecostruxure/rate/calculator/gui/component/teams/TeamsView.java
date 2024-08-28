@@ -423,6 +423,7 @@ public class TeamsView implements View {
         Runnable doubleClickAction = () -> {
             if (tableView.getSelectionModel().getSelectedItem() != null) {
                 model.lastSelectedTeamIdProperty().set(tableView.getSelectionModel().getSelectedItem().teamIdProperty().get());
+                System.out.println("Se her ~~~" + tableView.getSelectionModel().getSelectedItem().teamIdProperty());
                 onShowTeam.accept(tableView.getSelectionModel().getSelectedItem());
             }
         };

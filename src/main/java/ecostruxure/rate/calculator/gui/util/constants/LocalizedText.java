@@ -36,6 +36,7 @@ public class LocalizedText {
     public static final StringProperty ALLOCATED_HOURS = new SimpleStringProperty("Allocated hours");
     public static final StringProperty HISTORY = new SimpleStringProperty("History");
     public static final StringProperty ANNUAL_COST = new SimpleStringProperty("Annual cost");
+    public static final StringProperty ANNUAL_COST_ON_TEAM = new SimpleStringProperty("Annual cost on team");
     public static final StringProperty ANNUAL_TOTAL_HOURS = new SimpleStringProperty("Annual hours");
     public static final StringProperty PAGE_DASHBOARD_HEADER = new SimpleStringProperty("Dashboard");
     public static final StringProperty PAGE_DASHBOARD_DESCRIPTION = new SimpleStringProperty("Details provided by the different categories.");
@@ -213,6 +214,7 @@ public class LocalizedText {
         ALLOCATED_HOURS.set(bundle.getString("ALLOCATED_HOURS"));
         HISTORY.set(bundle.getString("HISTORY"));
         ANNUAL_COST.set(bundle.getString("ANNUAL_COST"));
+        ANNUAL_COST_ON_TEAM.set(bundle.getString("ANNUAL_COST_ON_TEAM"));
         ANNUAL_TOTAL_HOURS.set(bundle.getString("ANNUAL_TOTAL_HOURS"));
         PAGE_DASHBOARD_HEADER.set(bundle.getString("PAGE_DASHBOARD_HEADER"));
         PAGE_DASHBOARD_DESCRIPTION.set(bundle.getString("PAGE_DASHBOARD_DESCRIPTION"));

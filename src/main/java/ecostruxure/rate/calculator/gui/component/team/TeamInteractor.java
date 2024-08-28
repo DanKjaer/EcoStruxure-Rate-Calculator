@@ -6,6 +6,7 @@ import ecostruxure.rate.calculator.be.TeamHistory;
 import ecostruxure.rate.calculator.bll.RateService;
 import ecostruxure.rate.calculator.be.enums.RateType;
 import ecostruxure.rate.calculator.be.data.Rates;
+import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 import ecostruxure.rate.calculator.gui.util.ExportToExcel;
 import ecostruxure.rate.calculator.be.TeamProfileHistory;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
@@ -152,9 +153,9 @@ public class TeamInteractor {
         return profileItemModels;
     }
 
-    public boolean removeTeamMember(ProfileItemModel profileItemModel) {
+    public boolean removeTeamMember(ProfileTeamItemModel profileItemModel) {
         try {
-            return teamService.removeProfileFromTeam(model.teamIdProperty().get(), profileItemModel.UUIDProperty().get());
+            return teamService.removeProfileFromTeam(model.teamIdProperty().get(), profileItemModel.profileIdProperty().get());
         } catch (Exception e) {
             return false;
         }

@@ -60,7 +60,7 @@ public class ProfileController implements Controller {
     }
 
     private void showTeam(ProfileTeamItemModel data) {
-        eventBus.publish(new ChangeViewEvent(TeamController.class, data.idProperty().get()));
+        eventBus.publish(new ChangeViewEvent(TeamController.class, data.teamIdProperty().get()));
     }
 
     private void selectHistoryItem(ProfileHistoryItemModel data) {

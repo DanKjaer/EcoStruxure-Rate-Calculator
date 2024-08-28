@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.bll.service;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamHistory.Reason;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.data.ProfileMetrics;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.be.data.TeamMetrics;
@@ -200,5 +201,11 @@ public class TeamProfileManagementService {
 
             return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
         }
+    }
+
+    public List<TeamProfile> getTeamProfiles(UUID teamId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team id must be greater than 0");
+
+        return teamDAO._getTeamProfiles(teamId);
     }
 }

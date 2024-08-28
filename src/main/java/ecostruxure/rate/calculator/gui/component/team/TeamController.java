@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.gui.component.team;
 
 import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 import ecostruxure.rate.calculator.gui.component.profiles.ProfilesController;
 import ecostruxure.rate.calculator.gui.util.ExportToExcel;
 import ecostruxure.rate.calculator.gui.component.modals.teamedit.TeamEditController;
@@ -14,7 +15,6 @@ import ecostruxure.rate.calculator.gui.component.modals.assignprofile.AssignProf
 import ecostruxure.rate.calculator.gui.component.modals.teameditprofile.TeamEditProfileController;
 import ecostruxure.rate.calculator.gui.component.modals.teammultiplier.TeamMultiplierController;
 import ecostruxure.rate.calculator.gui.component.profile.ProfileController;
-import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import ecostruxure.rate.calculator.gui.component.teams.TeamDataId;
 import ecostruxure.rate.calculator.gui.system.event.EventBus;
 import ecostruxure.rate.calculator.gui.common.ModalController;
@@ -61,6 +61,7 @@ public class TeamController implements Controller {
 
     @Override
     public void activate(Object teamId) {
+        System.out.println("afkapofjaepfkas: " + teamId.getClass().getSimpleName());
         if (teamId instanceof UUID) {
             model.teamNameProperty().set(LocalizedText.LOADING.get());
             model.numProfilesProperty().set(LocalizedText.LOADING.get());
@@ -90,7 +91,7 @@ public class TeamController implements Controller {
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
     }
 
-    private void teamRemoveProfile(ProfileItemModel profileItemModel) {
+    private void teamRemoveProfile(ProfileTeamItemModel profileItemModel) {
         Task<Boolean> fetchTask = new Task<>() {
             @Override
             protected Boolean call() {
@@ -126,13 +127,12 @@ public class TeamController implements Controller {
         eventBus.publish(new ShowModalEvent(assignProfileController, model.teamIdProperty()));
     }
 
-    private void teamEditProfile(ProfileItemModel profileItemModel) {
-        eventBus.publish(new ShowModalEvent(editTeamProfileController, new TeamDataId(model.teamIdProperty().get(), profileItemModel.UUIDProperty().get())));
+    private void teamEditProfile(ProfileTeamItemModel profileItemModel) {
+        eventBus.publish(new ShowModalEvent(editTeamProfileController, new TeamDataId(model.teamIdProperty().get(), profileItemModel.profileIdProperty().get())));
     }
 
-
-    private void showProfile(ProfileItemModel data) {
-        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.UUIDProperty()));
+    private void showProfile(ProfileTeamItemModel data) {
+        eventBus.publish(new ChangeViewEvent(ProfileController.class, data.profileIdProperty().get()));
     }
 
     private void showVerifyProfiles(UUID teamId, List<Profile> profilesToVerify) {

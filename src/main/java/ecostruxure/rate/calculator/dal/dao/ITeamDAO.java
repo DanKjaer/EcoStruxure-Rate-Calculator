@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.dal.dao;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 
 import java.time.LocalDate;
@@ -35,6 +36,8 @@ public interface ITeamDAO {
     boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception;
 
     boolean removeAssignedProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception;
+
+    List<TeamProfile> _getTeamProfiles(UUID teamId) throws Exception;
 
     List<Profile> getTeamProfiles(UUID teamId) throws Exception;
 

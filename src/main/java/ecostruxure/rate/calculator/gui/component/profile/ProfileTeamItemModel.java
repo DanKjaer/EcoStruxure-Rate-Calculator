@@ -7,18 +7,25 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ProfileTeamItemModel {
-    private final ObjectProperty<UUID> id = new SimpleObjectProperty<>();
+    private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
+    private final ObjectProperty<UUID> profileId = new SimpleObjectProperty<>();
     private final StringProperty name = new SimpleStringProperty();
-    private final ObjectProperty<BigDecimal> utilizationCost = new SimpleObjectProperty<>();
     private final FinancialData hourlyRate = new FinancialData();
     private final FinancialData dayRate = new FinancialData();
     private final FinancialData annualCost = new FinancialData();
+    private final ObjectProperty<BigDecimal> annualTotalCost = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> annualTotalHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> allocatedCostOnTeam = new SimpleObjectProperty<>();
 
-    public ObjectProperty<UUID> idProperty() {
-        return id;
+    public ObjectProperty<UUID> teamIdProperty() {
+        return teamId;
+    }
+
+    public ObjectProperty<UUID> profileIdProperty() {
+        return profileId;
     }
 
     public StringProperty nameProperty() {
@@ -26,7 +33,7 @@ public class ProfileTeamItemModel {
     }
 
     public ObjectProperty<BigDecimal> costAllocationProperty() {
-        return utilizationCost;
+        return costAllocation;
     }
 
     public ObjectProperty<BigDecimal> hourlyRateProperty() {
@@ -41,6 +48,10 @@ public class ProfileTeamItemModel {
         return annualCost.amountProperty();
     }
 
+    public ObjectProperty<BigDecimal> annualTotalCostProperty() {
+        return annualTotalCost;
+    }
+
     public ObjectProperty<BigDecimal> hourAllocationProperty() {
         return hourAllocation;
     }
@@ -49,8 +60,12 @@ public class ProfileTeamItemModel {
         return annualTotalHours;
     }
 
-    public ObjectProperty<BigDecimal> effectiveWorkHoursProperty(){
+    public ObjectProperty<BigDecimal> effectiveWorkHoursProperty() {
         return effectiveWorkHours;
+    }
+
+    public ObjectProperty<BigDecimal> allocatedCostOnTeamProperty() {
+        return allocatedCostOnTeam;
     }
 
     public void setHourlyRate(BigDecimal hourlyRate) {
@@ -65,7 +80,7 @@ public class ProfileTeamItemModel {
         this.annualCost.amount(annualCost);
     }
 
-    public void setEffectiveWorkHours(BigDecimal effectiveWorkHours){
+    public void setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
         this.effectiveWorkHours.set(effectiveWorkHours);
     }
 }

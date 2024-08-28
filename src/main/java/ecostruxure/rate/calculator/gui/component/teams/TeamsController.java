@@ -82,19 +82,19 @@ public class TeamsController implements Controller {
     }
 
     private void adjustMultipliers(TeamItemModel teamItemModel) {
-        eventBus.publish(new ShowModalEvent(teamMultiplierController, teamItemModel.teamIdProperty()));
+        eventBus.publish(new ShowModalEvent(teamMultiplierController, teamItemModel.teamIdProperty().get()));
     }
 
     public void assignProfiles(TeamItemModel teamItemModel) {
-        eventBus.publish(new ShowModalEvent(assignProfileController, teamItemModel.teamIdProperty()));
+        eventBus.publish(new ShowModalEvent(assignProfileController, teamItemModel.teamIdProperty().get()));
     }
 
     public void editTeam(TeamItemModel teamItemModel) {
-        eventBus.publish(new ShowModalEvent(teamEditController, teamItemModel.teamIdProperty()));
+        eventBus.publish(new ShowModalEvent(teamEditController, teamItemModel.teamIdProperty().get()));
     }
 
     private void showTeam(TeamItemModel teamItemModel) {
-        eventBus.publish(new ChangeViewEvent(TeamController.class, teamItemModel.teamIdProperty()));
+        eventBus.publish(new ChangeViewEvent(TeamController.class, teamItemModel.teamIdProperty().get()));
     }
 
     private void adjustMarkup(TeamItemModel teamItemModel, BigDecimal newValue) {

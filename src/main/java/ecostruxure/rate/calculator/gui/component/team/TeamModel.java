@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.gui.component.team;
 
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
+import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class TeamModel {
+
     public enum TeamTableType {
         PROFILE,
         HISTORY
@@ -20,6 +22,7 @@ public class TeamModel {
     private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
     private final StringProperty teamName = new SimpleStringProperty();
     private final ObservableList<ProfileItemModel> profiles = FXCollections.observableArrayList();
+    private final ObservableList<ProfileTeamItemModel> teamProfiles = FXCollections.observableArrayList();
     private final ObservableList<IGeographyItemModel> geographies = FXCollections.observableArrayList();
     private final ObservableList<TeamHistoryItemModel> history = FXCollections.observableArrayList();
     private final ObservableList<TeamHistoryProfileItemModel> historyDetails = FXCollections.observableArrayList();
@@ -50,6 +53,10 @@ public class TeamModel {
 
     public ObservableList<ProfileItemModel> profiles() {
         return profiles;
+    }
+
+    public ObservableList<ProfileTeamItemModel> getTeamProfiles() {
+        return teamProfiles;
     }
 
     public ObservableList<TeamHistoryItemModel> history() {

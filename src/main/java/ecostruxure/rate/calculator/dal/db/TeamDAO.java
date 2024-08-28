@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.dal.db;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 
@@ -382,6 +383,39 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
+    public List<TeamProfile> _getTeamProfiles(UUID teamId) throws Exception {
+        List<TeamProfile> teamProfiles = new ArrayList<>();
+        String query = """
+                       SELECT tp.*, p.name
+                       FROM dbo.Profiles p
+                       INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?;
+                       """;
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setObject(1, teamId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    UUID profileId = (UUID) rs.getObject("profile_id");
+                    String name = rs.getString("name");
+                    BigDecimal hourlyRate = rs.getBigDecimal("hourly_rate");
+                    BigDecimal dayRate = rs.getBigDecimal("day_rate");
+                    BigDecimal annualTotalCost = rs.getBigDecimal("annual_total_cost");
+                    BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                    BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
+                    BigDecimal annualTotalHours = rs.getBigDecimal("annual_total_hours");
+                    BigDecimal allocatedCostOnTeam = rs.getBigDecimal("allocated_cost_on_team");
+
+                    teamProfiles.add(new TeamProfile(teamId, profileId, name, hourlyRate, dayRate, annualTotalCost, costAllocation, hourAllocation, annualTotalHours, allocatedCostOnTeam));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception("Could not get Team Profiles from Database.\n" + e.getMessage());
+            }
+            return teamProfiles;
+        }
+    }
+    @Override
     public List<Profile> getTeamProfiles(UUID teamId) throws Exception {
         List<Profile> profiles = new ArrayList<>();
         String query = """
@@ -453,9 +487,9 @@ public class TeamDAO implements ITeamDAO {
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
                     int countryId = rs.getInt("country_id");
-                    boolean resourceType = rs.getBoolean("overhead");
+                    boolean resourceType = rs.getBoolean("resource_type");
 
-                    BigDecimal annualCost = rs.getBigDecimal("annual_salary");
+                    BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                     BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
                     BigDecimal annualHours = rs.getBigDecimal("annual_hours");
                     BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
