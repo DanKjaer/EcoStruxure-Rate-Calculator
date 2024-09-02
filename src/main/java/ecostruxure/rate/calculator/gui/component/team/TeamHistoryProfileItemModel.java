@@ -4,10 +4,11 @@ import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class TeamHistoryProfileItemModel {
-    private final IntegerProperty profileId = new SimpleIntegerProperty();
-    private final IntegerProperty profileHistoryId = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> profileId = new SimpleObjectProperty();
+    private final ObjectProperty<UUID> profileHistoryId = new SimpleObjectProperty();
     private final StringProperty name = new SimpleStringProperty();
     private final ObjectProperty<BigDecimal> costAllocation = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> hourAllocation = new SimpleObjectProperty<>();
@@ -16,11 +17,11 @@ public class TeamHistoryProfileItemModel {
     private final FinancialData annualCost = new FinancialData();
     private final ObjectProperty<BigDecimal> totalHours = new SimpleObjectProperty<>();
 
-    public IntegerProperty profileIdProperty() {
+    public ObjectProperty<UUID> profileIdProperty() {
         return profileId;
     }
 
-    public IntegerProperty profileHistoryIdProperty() {
+    public ObjectProperty<UUID> profileHistoryIdProperty() {
         return profileHistoryId;
     }
 

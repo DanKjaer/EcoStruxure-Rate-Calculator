@@ -273,7 +273,7 @@ public class ProfileInteractor {
             if (profile.resourceType()) historyModel.resourceTypeProperty().set(ResourceType.OVERHEAD);
             else historyModel.resourceTypeProperty().set(ResourceType.PRODUCTION);
 
-            historyModel.setAnnualSalary(profile.annualSalary());
+            historyModel.setAnnualSalary(profile.annualCost());
             historyModel.effectivenessProperty().set(profile.effectiveness());
             historyModel.totalHoursProperty().set(profile.annualHours());
             historyModel.effectiveWorkHoursProperty().set(profile.effectiveWorkHours());

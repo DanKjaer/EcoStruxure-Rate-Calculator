@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class TeamProfileHistory {
     private UUID profileId;
-    private int profileHistoryId;
+    private UUID profileHistoryId;
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
     private BigDecimal hourlyRate;
@@ -23,11 +23,11 @@ public class TeamProfileHistory {
         this.profileId = profileId;
     }
 
-    public int profileHistoryId() {
+    public UUID profileHistoryId() {
         return profileHistoryId;
     }
 
-    public void profileHistoryId(int profileHistoryId) {
+    public void profileHistoryId(UUID profileHistoryId) {
         this.profileHistoryId = profileHistoryId;
     }
 

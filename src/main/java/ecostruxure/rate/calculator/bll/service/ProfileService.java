@@ -54,8 +54,8 @@ public class ProfileService {
         return profileDAO.allWithUtilizationByTeam(teamId);
     }
 
-    public Profile get(UUID id) throws Exception {
-        return profileDAO.get(id);
+    public Profile get(UUID profileId) throws Exception {
+        return profileDAO.get(profileId);
     }
 
     public BigDecimal totalHoursPercentage(Profile profile, BigDecimal utilizationPercentage) {
@@ -174,7 +174,7 @@ public class ProfileService {
     public BigDecimal annualCost(ProfileHistory profile) {
         Objects.requireNonNull(profile, "ProfileHistory cannot be null");
 
-        return profile.annualSalary().multiply(profile.effectiveness());
+        return profile.annualCost().multiply(profile.effectiveness());
     }
 
     public BigDecimal annualCost(List<Profile> profiles) {

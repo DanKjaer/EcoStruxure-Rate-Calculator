@@ -5,7 +5,6 @@ import atlantafx.base.theme.Styles;
 import ecostruxure.rate.calculator.be.TeamHistory.Reason;
 import ecostruxure.rate.calculator.gui.common.View;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
-import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 import ecostruxure.rate.calculator.gui.component.team.TeamModel.TeamTableType;
 import ecostruxure.rate.calculator.gui.util.*;
@@ -107,7 +106,7 @@ public class TeamView implements View {
         this.onArchiveTeam = onArchiveTeam;
         this.onUnarchiveTeam = onUnarchiveTeam;
 
-        this.filteredProfileItems = new FilteredList<ProfileTeamItemModel>(model.getTeamProfiles());
+        this.filteredProfileItems = new FilteredList<>(model.teamProfilesProperty());
         this.profileItemModels = new SortedList<>(filteredProfileItems);
 
         this.filteredGeographyItems = new FilteredList<>(model.geographies());
@@ -122,7 +121,7 @@ public class TeamView implements View {
         model.profilesFetchedProperty().addListener((obs, ov, nv) -> {
             if (nv != null) {
                 tableViewWithPagination.refresh();
-                customTableView.setData(model.getTeamProfiles());
+                customTableView.setData(model.teamProfilesProperty());
                 geographyCustomTableView.setData(model.geographies());
                 customTableViewHistory.setData(model.history());
 
@@ -187,8 +186,6 @@ public class TeamView implements View {
                 Informative.statsBox(LocalizedText.GM_HOURLY_RATE, BindingsUtils.createCurrencyStringBinding(model.grossMarginRateProperty()), CssClasses.ORANGE, CarbonIcons.CHART_BUBBLE),
                 Informative.statsBox(LocalizedText.TOTAL_HOURS_ANNUALLY, BindingsUtils.createIntegerStringBinding(model.totalHoursProperty()), CssClasses.RED, Feather.CLOCK)
         );
-
-
 
 
         var content = new VBox(LayoutConstants.STANDARD_SPACING);
@@ -368,14 +365,14 @@ public class TeamView implements View {
             };
         });
 
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileTeamItemModel::hourAllocationProperty, new HourCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualCostAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::annualTotalCostProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualCostProperty, new CurrencyCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualCostAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::annualCostProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualTotalCostProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> allocatedCostOnTeamColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST_ON_TEAM, ProfileTeamItemModel::allocatedCostOnTeamProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileTeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHourAllocationColumn, hourAllocationColumn, annualCostAllocationColumn, annualCostColumn, allocatedCostOnTeamColumn, dayRateColumn)); //, dayRateColumn, hourRateColumn hourAllocationColumn, costAllocationColumn,
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHourAllocationColumn, hourAllocationColumn, annualCostAllocationColumn, annualCostColumn, allocatedCostOnTeamColumn, dayRateColumn));
     }
 
     private void profileConfigureContextMenu(TableView<ProfileTeamItemModel> tableView) {
@@ -421,7 +418,7 @@ public class TeamView implements View {
         geographyTableViewWithPagination = geographyCustomTableView.setupPagination(geographyCustomTableView.createTableView());
 
         geographyConfigureTableColumns();
-       // geographyConfigureContextMenu(geographyTableViewWithPagination);
+        //geographyConfigureContextMenu(geographyTableViewWithPagination);
 
         geographyTableViewWithPagination.getStyleClass().add(Styles.STRIPED);
         geographyItemModels.comparatorProperty().bind(geographyTableViewWithPagination.comparatorProperty());
@@ -487,7 +484,8 @@ public class TeamView implements View {
         TableColumn<TeamHistoryItemModel, BigDecimal> hourlyRate = customTableViewHistory.createColumn(LocalizedText.HOURLY_RATE, TeamHistoryItemModel::hourlyRateProperty, new CurrencyCellFactory<>());
         TableColumn<TeamHistoryItemModel, BigDecimal> dayRate = customTableViewHistory.createColumn(LocalizedText.DAY_RATE, TeamHistoryItemModel::dayRateProperty, new CurrencyCellFactory<>());
 
-        List<MenuItemInfo<TeamHistoryItemModel>> menuItemInfos = List.of(new MenuItemInfo<>(Icons.PROFILES, LocalizedText.SHOW, teamHistoryItemModel -> {}));
+        List<MenuItemInfo<TeamHistoryItemModel>> menuItemInfos = List.of(new MenuItemInfo<>(Icons.PROFILES, LocalizedText.SHOW, teamHistoryItemModel -> {
+        }));
         ContextMenu contextMenu = CustomContextMenu.createContextMenu(menuItemInfos, tableViewWithPaginationHistory);
 
         Runnable doubleClickAction = () -> {
@@ -541,10 +539,12 @@ public class TeamView implements View {
 
         detailTableViewWithPagination.getStyleClass().add(Styles.STRIPED);
 
-        List<MenuItemInfo<TeamHistoryProfileItemModel>> menuItemInfos = List.of(new MenuItemInfo<>(Icons.PROFILES, LocalizedText.SHOW, teamHistoryItemModel -> {}));
+        List<MenuItemInfo<TeamHistoryProfileItemModel>> menuItemInfos = List.of(new MenuItemInfo<>(Icons.PROFILES, LocalizedText.SHOW, teamHistoryItemModel -> {
+        }));
         ContextMenu contextMenu = CustomContextMenu.createContextMenu(menuItemInfos, detailTableViewWithPagination);
 
-        Runnable doubleClickAction = () -> {};
+        Runnable doubleClickAction = () -> {
+        };
 
 //        detailTableView.addRowClickHandler(detailTableViewWithPagination, contextMenu, doubleClickAction);
 

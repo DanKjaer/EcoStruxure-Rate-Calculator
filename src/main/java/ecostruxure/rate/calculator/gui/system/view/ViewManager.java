@@ -40,7 +40,6 @@ public class ViewManager {
 
         Controller controller = controllers.get(controllerClass);
         if (controller == null) return;
-        System.out.println("Dav: " + data);
         controller.activate(data);
         activeControllerClass.set(controllerClass);
         currentData.set(data);

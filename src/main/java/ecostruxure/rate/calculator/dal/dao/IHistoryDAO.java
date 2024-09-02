@@ -17,15 +17,15 @@ public interface IHistoryDAO {
 
     List<TeamHistory> getTeamHistory(UUID teamId) throws Exception;
 
-    int insertProfileHistory(TransactionContext context, Profile profile) throws Exception;
+    UUID insertProfileHistory(TransactionContext context, Profile profile) throws Exception;
 
     void insertEmptyTeamProfileHistory(TransactionContext context, UUID teamId, TeamMetrics metrics, Reason reason) throws Exception;
 
     void insertEmptyTeamProfileHistory(TransactionContext context, UUID teamId, TeamMetrics metrics, Reason reason, LocalDateTime now) throws Exception;
 
-    void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception;
+    void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, UUID profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception;
 
-    void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception;
+    void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, UUID profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception;
 
-    Integer getLatestProfileHistoryId(TransactionContext context, UUID profileId) throws Exception;
+    UUID getLatestProfileHistoryId(TransactionContext context, UUID profileId) throws Exception;
 }

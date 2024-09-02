@@ -1,18 +1,12 @@
 package ecostruxure.rate.calculator.gui.component.team;
 
-import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.be.TeamHistory;
+import ecostruxure.rate.calculator.be.*;
 import ecostruxure.rate.calculator.bll.RateService;
 import ecostruxure.rate.calculator.be.enums.RateType;
 import ecostruxure.rate.calculator.be.data.Rates;
+import ecostruxure.rate.calculator.bll.service.*;
 import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 import ecostruxure.rate.calculator.gui.util.ExportToExcel;
-import ecostruxure.rate.calculator.be.TeamProfileHistory;
-import ecostruxure.rate.calculator.bll.service.GeographyService;
-import ecostruxure.rate.calculator.bll.service.HistoryService;
-import ecostruxure.rate.calculator.bll.service.ProfileService;
-import ecostruxure.rate.calculator.bll.service.TeamService;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.component.geography.geograph.GeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
@@ -28,6 +22,7 @@ public class TeamInteractor {
     private final TeamModel model;
 
     private TeamService teamService;
+    private TeamProfileManagementService teamProfileManagementService;
     private GeographyService geographyService;
     private HistoryService historyService;
     private ProfileService profileService;
@@ -45,12 +40,14 @@ public class TeamInteractor {
     private Rates dayRates;
     private Rates annualRates;
     private BigDecimal totalHours = BigDecimal.ZERO;
+    private List<ProfileTeamItemModel> teamProfilesModels;
 
-    public TeamInteractor(TeamModel model,Runnable onFetchError) {
+    public TeamInteractor(TeamModel model, Runnable onFetchError) {
         this.model = model;
 
         try {
             teamService = new TeamService();
+            teamProfileManagementService = new TeamProfileManagementService();
             geographyService = new GeographyService();
             historyService = new HistoryService();
             profileService = new ProfileService();
@@ -68,14 +65,39 @@ public class TeamInteractor {
             updatedAt = teamService.getLastUpdated(id);
             historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
             profileItemModels = fetchTeamMembers(id);
+            List<TeamProfile> teamProfiles = teamProfileManagementService.getTeamProfiles(id);
+            teamProfilesModels = convertToTeamProfileModels(teamProfiles);
+
             hourlyRates = rateService.calculateRates(team, RateType.HOURLY);
             dayRates = rateService.calculateRates(team, RateType.DAY);
             annualRates = rateService.calculateRates(team, RateType.ANNUAL);
+
+            System.out.println("Team profiles: " + teamProfilesModels);
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
+    }
+
+    private List<ProfileTeamItemModel> convertToTeamProfileModels(List<TeamProfile> teamProfiles) {
+        List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
+
+        for (TeamProfile teamProfile : teamProfiles) {
+            ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
+
+            teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
+            teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
+            teamProfileModel.nameProperty().set(teamProfile.getName());
+            //teamProfileModel.dayRateProperty().set(teamProfile.getDayRateOnTeam());
+            teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
+            teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
+            teamProfileModel.allocatedCostOnTeamProperty().set(teamProfile.getAllocatedHoursOnTeam());
+
+            teamProfileModels.add(teamProfileModel);
+        }
+
+        return teamProfileModels;
     }
 
     private List<TeamHistoryItemModel> convertToHistoryModels(List<TeamHistory> history) throws Exception {
@@ -93,12 +115,13 @@ public class TeamInteractor {
 
             for (TeamProfileHistory teamProfileHistory : team.teamProfileHistories()) {
                 TeamHistoryProfileItemModel profileItemModel = new TeamHistoryProfileItemModel();
-                if (teamProfileHistory.profileId() != null) continue;
+                if (teamProfileHistory.profileId() == null) continue;
 
                 Profile profile = profileService.get(teamProfileHistory.profileId());
 
                 profileItemModel.nameProperty().set(profile.getName());
                 profileItemModel.profileIdProperty().set(teamProfileHistory.profileHistoryId());
+                profileItemModel.profileHistoryIdProperty().set(teamProfileHistory.profileId());
                 profileItemModel.costAllocationProperty().set(teamProfileHistory.costAllocation());
                 profileItemModel.hourAllocationProperty().set(teamProfileHistory.hourAllocation());
                 profileItemModel.setHourlyRate(teamProfileHistory.hourlyRate());
@@ -118,6 +141,11 @@ public class TeamInteractor {
     public List<ProfileItemModel> fetchTeamMembers(UUID teamId) throws Exception {
         List<Profile> profilesTeams = teamService.getTeamProfiles(teamId);
         return convertToProfileItemModels(profilesTeams);
+    }
+
+    public List<ProfileTeamItemModel> fetchTeamProfileMembers(UUID teamId) throws Exception {
+        List<TeamProfile> teamProfiles = teamProfileManagementService.getTeamProfiles(teamId);
+        return convertToTeamProfileModels(teamProfiles);
     }
 
     private List<ProfileItemModel> convertToProfileItemModels(List<Profile> profiles) throws Exception {
@@ -171,6 +199,7 @@ public class TeamInteractor {
         model.history().setAll(historyItemModels);
         model.profilesFetchedProperty().set(true);
         model.numProfilesProperty().set("" + profileItemModels.size());
+        model.teamProfilesProperty().setAll(teamProfilesModels);
 
         model.currentDateProperty().set(currentDateTime);
 
@@ -178,6 +207,7 @@ public class TeamInteractor {
         model.setMarkupRate(hourlyRates.markupRate());
         model.setGrossMarginRate(hourlyRates.grossMarginRate());
         model.totalHoursProperty().set(totalHours.toString());
+        System.out.println("Kommer vi her ned??: " + teamProfilesModels);
     }
 
     public boolean exportTeamToExcel(File file, UUID teamId) {

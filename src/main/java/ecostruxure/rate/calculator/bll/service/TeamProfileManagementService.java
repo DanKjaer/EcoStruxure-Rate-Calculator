@@ -51,7 +51,7 @@ public class TeamProfileManagementService {
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, createdTeam.getTeamId());
             TeamMetrics metrics = calculateMetrics(createdTeam.getTeamId(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
-                Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
+                UUID profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
 
                 historyDAO.insertTeamProfileHistory(context, createdTeam.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.TEAM_CREATED, profileMetrics, now);
@@ -72,7 +72,7 @@ public class TeamProfileManagementService {
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, team.getTeamId());
             TeamMetrics metrics = calculateMetrics(team.getTeamId(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
-                Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
+                UUID profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
                 historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.ASSIGNED_PROFILE, profileMetrics, now);
             }
@@ -89,7 +89,7 @@ public class TeamProfileManagementService {
             List<Profile> assignedProfiles = teamDAO.getTeamProfiles(context, team.getTeamId());
             TeamMetrics metrics = calculateMetrics(team.getTeamId(), assignedProfiles, context);
             for (Profile profile : assignedProfiles) {
-                Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
+                UUID profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
                 historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.REMOVED_PROFILE, profileMetrics, now);
             }
@@ -113,7 +113,7 @@ public class TeamProfileManagementService {
             ProfileMetrics removedProfileMetrics = calculateMetrics(removedProfile, teamId, context);
             List<Profile> remainingProfiles = teamDAO.getTeamProfiles(context, teamId);
             TeamMetrics updatedTeamMetrics = calculateMetrics(teamId, remainingProfiles, context);
-            Integer profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profileId);
+            UUID profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profileId);
             historyDAO.insertTeamProfileHistory(context, teamId, profileId, profileHistoryId, updatedTeamMetrics, Reason.REMOVED_PROFILE, removedProfileMetrics, now);
 
             return true;
@@ -123,7 +123,7 @@ public class TeamProfileManagementService {
     public boolean updateTeamProfile(UUID teamId, Profile profile) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
-            int profileHistoryId = historyDAO.insertProfileHistory(context, profile);
+            UUID profileHistoryId = historyDAO.insertProfileHistory(context, profile);
             boolean updated = teamDAO.updateProfile(context, teamId, profile);
             if (!updated) return false;
 
@@ -147,7 +147,7 @@ public class TeamProfileManagementService {
             TeamMetrics updatedTeamMetrics = calculateMetrics(team.getTeamId(), updatedProfiles, context);
 
             for (Profile profile : updatedProfiles) {
-                Integer profileHistoryId = historyDAO.insertProfileHistory(context, profile);
+                UUID profileHistoryId = historyDAO.insertProfileHistory(context, profile);
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team.getTeamId(), context);
                 historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, updatedTeamMetrics, Reason.UTILIZATION_CHANGE, profileMetrics, now);
             }
@@ -157,7 +157,7 @@ public class TeamProfileManagementService {
 
     public boolean updateProfile(Profile toUpdate) throws Exception {
         return transactionManager.executeTransaction(context -> {
-            int profileHistoryId = historyDAO.insertProfileHistory(context, toUpdate);
+            UUID profileHistoryId = historyDAO.insertProfileHistory(context, toUpdate);
             profileDAO.update(context, toUpdate);
             List<Team> teams = profileDAO.getTeams(context, toUpdate);
             for (Team team : teams) {

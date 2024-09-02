@@ -47,8 +47,8 @@ public class TeamController implements Controller {
         model = new TeamModel();
         interactor = new TeamInteractor(model, () -> eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_CONNECTION)));
         view = new TeamView(model, this::adjustMultipliers, this::assignProfiles, this::teamEditProfile,
-                            this::showProfile, this::teamRemoveProfile, this::refresh, this::exportTeam, this::editTeam,
-                            this::archiveTeam, this::unArchiveTeam);
+                this::showProfile, this::teamRemoveProfile, this::refresh, this::exportTeam, this::editTeam,
+                this::archiveTeam, this::unArchiveTeam);
         this.eventBus = eventBus;
 
         this.teamMultiplierController = new TeamMultiplierController(eventBus, this::refresh);
@@ -61,7 +61,7 @@ public class TeamController implements Controller {
 
     @Override
     public void activate(Object teamId) {
-        System.out.println("afkapofjaepfkas: " + teamId.getClass().getSimpleName());
+        System.out.println("Activate method called with teamId: " + teamId);
         if (teamId instanceof UUID) {
             model.teamNameProperty().set(LocalizedText.LOADING.get());
             model.numProfilesProperty().set(LocalizedText.LOADING.get());
@@ -82,10 +82,10 @@ public class TeamController implements Controller {
                 return interactor.fetchTeam(id);
             }
         };
-
         fetchTask.setOnSucceeded(evt -> {
-            if (fetchTask.getValue()) interactor.updateModel();
-            else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_FETCH_TEAM));
+            if (fetchTask.getValue()) {
+                interactor.updateModel();
+            } else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_FETCH_TEAM));
         });
 
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
@@ -105,8 +105,8 @@ public class TeamController implements Controller {
                 eventBus.publish(new RefreshEvent(ProfilesController.class));
                 eventBus.publish(new RefreshEvent(TeamsController.class));
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_TEAM_PROFILE_REMOVE));
-            }
-            else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_PROFILE_REMOVE));
+            } else
+                eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_PROFILE_REMOVE));
         });
 
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
@@ -157,8 +157,7 @@ public class TeamController implements Controller {
                 eventBus.publish(new RefreshEvent(TeamsController.class));
                 eventBus.publish(new RefreshEvent(ProfilesController.class));
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_TEAM_ARCHIVE));
-            }
-            else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_ARCHIVE));
+            } else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_ARCHIVE));
         });
 
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
@@ -175,8 +174,7 @@ public class TeamController implements Controller {
             eventBus.publish(new RefreshEvent(TeamsController.class));
             eventBus.publish(new RefreshEvent(ProfilesController.class));
             eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_TEAM_UNARCHIVE));
-        }
-        else
+        } else
             eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_UNARCHIVE));
 
     }
@@ -192,7 +190,8 @@ public class TeamController implements Controller {
             };
 
             fetchTask.setOnSucceeded(evt -> {
-                if (fetchTask.getValue()) eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_EXPORT_TEAM));
+                if (fetchTask.getValue())
+                    eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_EXPORT_TEAM));
                 else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_EXPORT_TEAM));
             });
 

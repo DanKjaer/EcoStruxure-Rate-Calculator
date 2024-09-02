@@ -8,10 +8,13 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class ProfileDAO implements IProfileDAO {
     private final DBConnector dbConnector;
+    private static final Logger logger = Logger.getLogger(ProfileDAO.class.getName());
 
     public ProfileDAO() throws Exception {
         this.dbConnector = new DBConnector();
@@ -19,7 +22,7 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile profileResultSet(ResultSet rs) throws SQLException {
 
-        UUID profileId = UUID.fromString(rs.getString("profile_id"));
+        UUID profileId = (UUID) (rs.getObject("profile_id"));
         String name = rs.getString("name");
         String currency = rs.getString("currency");
         int countryId = rs.getInt("country_id");
@@ -177,19 +180,18 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public Profile get(UUID id) throws Exception {
+    public Profile get(UUID profileId) throws Exception {
         Profile profile = null;
         //INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
         String query = """
                        SELECT * FROM dbo.Profiles
 
-                       WHERE dbo.Profiles.profile_id = CAST(? AS uuid)
+                       WHERE dbo.Profiles.profile_id = ?
                        """;
-
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setObject(1, id.toString());
+            stmt.setObject(1, profileId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
@@ -197,10 +199,10 @@ public class ProfileDAO implements IProfileDAO {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Could not get Profile from Database. Profile ID: " + id + "\n" + e.getMessage());
+            throw new Exception("Could not get Profile from Database. Profile ID: " + profileId + "\n" + e.getMessage());
         }
-
-        if (profile == null) throw new Exception("Profile with ID " + id + " not found.");
+        //System.out.println("Profile id: " + Objects.requireNonNull(profile).getProfileId());
+        if (profile == null) throw new Exception("Profile with ID " + profileId + " not found.");
 
         return profile;
     }
@@ -209,11 +211,14 @@ public class ProfileDAO implements IProfileDAO {
     public Profile get(TransactionContext context, UUID id) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
+        if (id == null){
+            throw new Exception("Profile id is null.");
+        }
         Profile profile = null;
 
         String query = """
                        SELECT * FROM dbo.Profiles
-                       WHERE dbo.Profiles.profile_id = ?
+                       WHERE dbo.Profiles.profile_id = CAST(? AS UUID)
                        """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
@@ -222,6 +227,7 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
+                    logger.info("ProfileDAO fetched profile: " +profile);
                 }
             }
         } catch (Exception e) {
@@ -236,17 +242,19 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (name, currency, country_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, profile.getName());
-            stmt.setString(2, profile.getCurrency());
-            stmt.setInt(3, profile.getCountryId());
-            stmt.setBoolean(4, profile.isResourceType());
-            stmt.setBigDecimal(5, profile.getAnnualCost());
-            stmt.setBigDecimal(6, profile.getEffectivenessPercentage());
-            stmt.setBigDecimal(7, profile.getAnnualHours());
-            stmt.setBigDecimal(8, profile.getEffectiveWorkHours());
-            stmt.setBigDecimal(9, profile.getHoursPerDay());
-            stmt.setBoolean(10, profile.isArchived());
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (profile_id, name, currency, country_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            UUID profileId = UUID.randomUUID();
+            stmt.setObject(1, profileId);
+            stmt.setString(2, profile.getName());
+            stmt.setString(3, profile.getCurrency());
+            stmt.setInt(4, profile.getCountryId());
+            stmt.setBoolean(5, profile.isResourceType());
+            stmt.setBigDecimal(6, profile.getAnnualCost());
+            stmt.setBigDecimal(7, profile.getEffectivenessPercentage());
+            stmt.setBigDecimal(8, profile.getAnnualHours());
+            stmt.setBigDecimal(9, profile.getEffectiveWorkHours());
+            stmt.setBigDecimal(10, profile.getHoursPerDay());
+            stmt.setBoolean(11, profile.isArchived());
 
             int affectedRows = stmt.executeUpdate();
 

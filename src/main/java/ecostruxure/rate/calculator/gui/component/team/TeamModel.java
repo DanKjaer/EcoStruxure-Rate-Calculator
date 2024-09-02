@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class TeamModel {
@@ -42,6 +43,15 @@ public class TeamModel {
     private final ObjectProperty<LocalDateTime> currentDate = new SimpleObjectProperty<>();
     private final ObjectProperty<TeamHistoryItemModel> selectedHistoryItem = new SimpleObjectProperty<>();
     private final BooleanProperty historySelected = new SimpleBooleanProperty();
+//    private List<ProfileTeamItemModel> _teamProfiles;
+//
+//    public List<ProfileTeamItemModel> get_teamProfiles() {
+//        return _teamProfiles;
+//    }
+//
+//    public void set_teamProfiles(List<ProfileTeamItemModel> _teamProfiles) {
+//        this._teamProfiles = _teamProfiles;
+//    }
 
     public ObjectProperty<UUID> teamIdProperty() {
         return teamId;
@@ -55,7 +65,7 @@ public class TeamModel {
         return profiles;
     }
 
-    public ObservableList<ProfileTeamItemModel> getTeamProfiles() {
+    public ObservableList<ProfileTeamItemModel> teamProfilesProperty() {
         return teamProfiles;
     }
 

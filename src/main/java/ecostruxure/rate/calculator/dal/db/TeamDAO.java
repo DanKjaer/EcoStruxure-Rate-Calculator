@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class TeamDAO implements ITeamDAO {
     private final DBConnector dbConnector;
+    private static final Logger logger = Logger.getLogger(TeamDAO.class.getName());
 
     public TeamDAO() throws Exception {
         this.dbConnector = new DBConnector();
@@ -47,12 +49,11 @@ public class TeamDAO implements ITeamDAO {
                         .build();
                 teams.add(team);
             }
-
-            return teams;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Could not get all Teams from Database.\n" + e.getMessage());
         }
+        return teams;
     }
 
     @Override
@@ -95,7 +96,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public Team create(Team team) throws Exception {
         String query = """
-                       INSERT INTO Teams (name, markup, gross_margin) VALUES (?, ?, ?)
+                       INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, ?, ?, FALSE, ?)
                        """;
 
         try (Connection conn = dbConnector.connection();
@@ -103,6 +104,8 @@ public class TeamDAO implements ITeamDAO {
             stmt.setString(1, team.getName());
             stmt.setBigDecimal(2, team.getMarkup());
             stmt.setBigDecimal(3, team.getGrossMargin());
+            stmt.setBoolean(4, team.isArchived());
+            stmt.setTimestamp(5, team.getUpdatedAt());
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -111,7 +114,7 @@ public class TeamDAO implements ITeamDAO {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
             throw new Exception("Could not create Team in Database.\n" + e.getMessage());
         }
 
@@ -196,6 +199,8 @@ public class TeamDAO implements ITeamDAO {
                 stmt.setObject(2, profile.getProfileId());
                 stmt.setBigDecimal(3, profile.getCostAllocation());
                 stmt.setBigDecimal(4, profile.getHourAllocation());
+                logger.info("assignProfiles in teamDAO:: Assigning profile with profileId: " + profile.getProfileId() + " to team with teamId: " + team.getTeamId());
+
                 stmt.addBatch();
             }
 
@@ -224,6 +229,7 @@ public class TeamDAO implements ITeamDAO {
                 stmt.setObject(2, profile.getProfileId());
                 stmt.setBigDecimal(3, profile.getCostAllocation());
                 stmt.setBigDecimal(4, profile.getHourAllocation());
+                logger.info("Assigning profile with profileId: " + profile.getProfileId() + " to team with teamId: " + team.getTeamId());
                 stmt.addBatch();
             }
 
@@ -396,17 +402,15 @@ public class TeamDAO implements ITeamDAO {
             stmt.setObject(1, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    UUID profileId = (UUID) rs.getObject("profile_id");
+                    UUID profileId = (UUID) rs.getObject("profileId");
                     String name = rs.getString("name");
-                    BigDecimal hourlyRate = rs.getBigDecimal("hourly_rate");
-                    BigDecimal dayRate = rs.getBigDecimal("day_rate");
-                    BigDecimal annualTotalCost = rs.getBigDecimal("annual_total_cost");
+                    BigDecimal dayRate = rs.getBigDecimal("day_rate_on_team");
                     BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
                     BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
-                    BigDecimal annualTotalHours = rs.getBigDecimal("annual_total_hours");
                     BigDecimal allocatedCostOnTeam = rs.getBigDecimal("allocated_cost_on_team");
+                    BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
 
-                    teamProfiles.add(new TeamProfile(teamId, profileId, name, hourlyRate, dayRate, annualTotalCost, costAllocation, hourAllocation, annualTotalHours, allocatedCostOnTeam));
+                    teamProfiles.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation, allocatedCostOnTeam, allocatedHoursOnTeam));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -768,14 +772,4 @@ public class TeamDAO implements ITeamDAO {
 
         return null;
     }
-    // Method for testing teamDAO - Kan nok blive slettet
-//    public static void main(String[] args) throws Exception {
-//        TeamDAO teamDAO = new TeamDAO();
-//        ProfileDAO profileDAO = new ProfileDAO();
-//        System.out.println(teamDAO.canUnarchive(20));
-//        System.out.println(teamDAO.canUnarchive(19));
-//
-//        System.out.println(profileDAO.getProfileHourAllocationForTeam(20, 20));
-//        System.out.println(profileDAO.getProfileCostAllocationForTeam(20, 19));
-//    }
 }

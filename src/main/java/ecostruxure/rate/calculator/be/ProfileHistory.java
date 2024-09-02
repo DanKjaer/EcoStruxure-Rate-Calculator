@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ProfileHistory {
-    private int historyId;
+    private UUID historyId;
     private UUID profileId;
     private boolean resourceType;
-    private BigDecimal annualSalary;
+    private BigDecimal annualCost;
     private BigDecimal effectiveness;
     private BigDecimal annualHours;
     private BigDecimal effectiveWorkHours;
@@ -18,11 +18,11 @@ public class ProfileHistory {
     public ProfileHistory() {
     }
 
-    public ProfileHistory(int historyId, UUID profileId, boolean resourceType, BigDecimal annualSalary, BigDecimal effectiveness, BigDecimal annualHours, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
+    public ProfileHistory(UUID historyId, UUID profileId, boolean resourceType, BigDecimal annualCost, BigDecimal effectiveness, BigDecimal annualHours, BigDecimal effectiveWorkHours, BigDecimal hoursPerDay, LocalDateTime updatedAt) {
         this.historyId = historyId;
         this.profileId = profileId;
         this.resourceType = resourceType;
-        this.annualSalary = annualSalary;
+        this.annualCost = annualCost;
         this.effectiveness = effectiveness;
         this.annualHours = annualHours;
         this.effectiveWorkHours = effectiveWorkHours;
@@ -30,11 +30,11 @@ public class ProfileHistory {
         this.updatedAt = updatedAt;
     }
 
-    public int historyId() {
+    public UUID historyId() {
         return historyId;
     }
 
-    public void historyId(int historyId) {
+    public void historyId(UUID historyId) {
         this.historyId = historyId;
     }
 
@@ -54,12 +54,12 @@ public class ProfileHistory {
         this.resourceType = resourceType;
     }
 
-    public BigDecimal annualSalary() {
-        return annualSalary;
+    public BigDecimal annualCost() {
+        return annualCost;
     }
 
-    public void annualSalary(BigDecimal annualSalary) {
-        this.annualSalary = annualSalary;
+    public void annualCost(BigDecimal annualCost) {
+        this.annualCost = annualCost;
     }
 
     public BigDecimal effectiveness() {

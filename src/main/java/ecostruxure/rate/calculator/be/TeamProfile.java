@@ -7,26 +7,26 @@ public class TeamProfile {
     private UUID teamId;
     private UUID profileId;
     private String name;
-    private BigDecimal hourlyRate;
-    private BigDecimal dayRate;
-    private BigDecimal annualCost;
-    private BigDecimal annualTotalCost;
+    private BigDecimal dayRateOnTeam;
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
-    private BigDecimal annualTotalHours;
     private BigDecimal allocatedCostOnTeam;
+    private BigDecimal allocatedHoursOnTeam;
 
-    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRate, BigDecimal annualCost, BigDecimal annualTotalCost, BigDecimal costAllocation, BigDecimal hourAllocation, BigDecimal annualTotalHours, BigDecimal allocatedCostOnTeam) {
+    public TeamProfile() {
+
+    }
+    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRateOnTeam,
+                       BigDecimal costAllocation, BigDecimal hourAllocation,
+                       BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam) {
         this.teamId = teamId;
         this.profileId = profileId;
         this.name = name;
-        this.dayRate = dayRate;
-        this.annualCost = annualCost;
-        this.annualTotalCost = annualTotalCost;
+        this.dayRateOnTeam = dayRateOnTeam;
         this.costAllocation = costAllocation;
         this.hourAllocation = hourAllocation;
-        this.annualTotalHours = annualTotalHours;
         this.allocatedCostOnTeam = allocatedCostOnTeam;
+        this.allocatedHoursOnTeam = allocatedHoursOnTeam;
     }
 
     public UUID getTeamId() {
@@ -41,20 +41,8 @@ public class TeamProfile {
         return name;
     }
 
-    public BigDecimal getHourlyRate() {
-        return hourlyRate;
-    }
-
-    public BigDecimal getDayRate() {
-        return dayRate;
-    }
-
-    public BigDecimal getAnnualCost() {
-        return annualCost;
-    }
-
-    public BigDecimal getAnnualTotalCost() {
-        return annualTotalCost;
+    public BigDecimal getDayRateOnTeam() {
+        return dayRateOnTeam;
     }
 
     public BigDecimal getCostAllocation() {
@@ -65,11 +53,43 @@ public class TeamProfile {
         return hourAllocation;
     }
 
-    public BigDecimal getAnnualTotalHours() {
-        return annualTotalHours;
-    }
-
     public BigDecimal getAllocatedCostOnTeam() {
         return allocatedCostOnTeam;
+    }
+
+    public BigDecimal getAllocatedHoursOnTeam() {
+        return allocatedHoursOnTeam;
+    }
+
+    public void setTeamId(UUID teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setProfileId(UUID profileId) {
+        this.profileId = profileId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDayRateOnTeam(BigDecimal dayRateOnTeam) {
+        this.dayRateOnTeam = dayRateOnTeam;
+    }
+
+    public void setCostAllocation(BigDecimal costAllocation) {
+        this.costAllocation = costAllocation;
+    }
+
+    public void setHourAllocation(BigDecimal hourAllocation) {
+        this.hourAllocation = hourAllocation;
+    }
+
+    public void setAllocatedCostOnTeam(BigDecimal allocatedCostOnTeam) {
+        this.allocatedCostOnTeam = allocatedCostOnTeam;
+    }
+
+    public void setAllocatedHoursOnTeam(BigDecimal allocatedHoursOnTeam) {
+        this.allocatedHoursOnTeam = allocatedHoursOnTeam;
     }
 }

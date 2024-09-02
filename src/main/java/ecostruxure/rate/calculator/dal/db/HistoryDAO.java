@@ -13,9 +13,11 @@ import ecostruxure.rate.calculator.dal.dao.IHistoryDAO;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class HistoryDAO implements IHistoryDAO {
     private final DBConnector dbConnector;
+    private static final Logger logger = Logger.getLogger(HistoryDAO.class.getName());
 
     public HistoryDAO() throws Exception {
         this.dbConnector = new DBConnector();
@@ -39,8 +41,8 @@ public class HistoryDAO implements IHistoryDAO {
                 while (rs.next()) {
                     ProfileHistory profile = new ProfileHistory();
                     profile.profileId((UUID) rs.getObject("profile_id"));
-                    profile.resourceType(rs.getBoolean("overhead"));
-                    profile.annualSalary(rs.getBigDecimal("annual_salary"));
+                    profile.resourceType(rs.getBoolean("resource_type"));
+                    profile.annualCost(rs.getBigDecimal("annual_cost"));
                     profile.effectiveness(rs.getBigDecimal("effectiveness"));
                     profile.annualHours(rs.getBigDecimal("annual_hours"));
                     profile.hoursPerDay(rs.getBigDecimal("hours_per_day"));
@@ -91,7 +93,7 @@ public class HistoryDAO implements IHistoryDAO {
 
                     TeamProfileHistory teamProfileHistory = new TeamProfileHistory();
                     teamProfileHistory.profileId((UUID) rs.getObject("profile_id"));
-                    teamProfileHistory.profileHistoryId(rs.getInt("profile_history_id"));
+                    teamProfileHistory.profileHistoryId((UUID) rs.getObject("profile_history_id"));
                     teamProfileHistory.hourlyRate(rs.getBigDecimal("profile_hourly_rate"));
                     teamProfileHistory.dayRate(rs.getBigDecimal("profile_day_rate"));
                     teamProfileHistory.annualCost(rs.getBigDecimal("profile_annual_cost"));
@@ -112,29 +114,32 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public int insertProfileHistory(TransactionContext context, Profile profile) throws Exception {
+    public UUID insertProfileHistory(TransactionContext context, Profile profile) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String insertProfileHistorySQL = """
                                          INSERT INTO dbo.Profiles_history (
-                                             profile_id, resource_type, annual_salary, effectiveness,
+                                             profile_id, resource_type, annual_cost, effectiveness,
                                              annual_hours, hours_per_day, updated_at
                                          )
-                                         SELECT p.profile_id, p.resource_type, p.annual_salary, p.effectiveness,
+                                         SELECT p.profile_id, p.resource_type, p.annual_cost, p.effectiveness,
                                                 p.annual_hours, p.hours_per_day, CURRENT_TIMESTAMP
                                          FROM dbo.Profiles p
                                          WHERE p.profile_id = ?
                                          """;
+        logger.info("InsertProfileHistory HistoryDAO::Inserting profile history for profileId: " + profile.getProfileId());
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertProfileHistorySQL, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setObject(1, profile.getProfileId());
             stmt.executeUpdate();
 
-            int profileHistoryId = -1;
+            UUID profileHistoryId = null;
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) profileHistoryId = generatedKeys.getInt(1);
+                if (generatedKeys.next())  profileHistoryId = (UUID) generatedKeys.getObject(1);
             }
             return profileHistoryId;
-        }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } throw new Exception("Could not insert profile history into the database");
     }
 
     @Override
@@ -164,6 +169,8 @@ public class HistoryDAO implements IHistoryDAO {
                     VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, ?);
                     """;
 
+        logger.info("Inserting empty team profile history for teamId: " + teamId + " with reason: " + reason);
+
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
             stmt.setObject(1, teamId);
             stmt.setString(2, reason.name());
@@ -177,19 +184,21 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
+    public void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, UUID profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
                     INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, annual_hours, cost_allocation, hour_allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_annual_hours, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
                     """;
 
+        logger.info("Inserting team profile history with profileid: " + profileId);
+
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(sql)) {
             stmt.setObject(1, teamId);
             stmt.setObject(2, profileId);
 
-            if (profileHistoryId == null) stmt.setNull(3, Types.INTEGER);
-            else stmt.setInt(3, profileHistoryId);
+            if (profileHistoryId == null) stmt.setNull(3, Types.OTHER);
+            else stmt.setObject(3, profileHistoryId, Types.OTHER);
 
             stmt.setString(4, reason.name());
             stmt.setBigDecimal(5, teamMetrics.hourlyRate());
@@ -210,7 +219,7 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, Integer profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
+    public void insertTeamProfileHistory(TransactionContext context, UUID teamId, UUID profileId, UUID profileHistoryId, TeamMetrics teamMetrics, Reason reason, ProfileMetrics profileMetrics, LocalDateTime now) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = """
                     INSERT INTO dbo.Teams_profiles_history (team_id, profile_id, profile_history_id, reason, hourly_rate, day_rate, annual_cost, annual_hours, cost_allocation, hour_Allocation, profile_hourly_rate, profile_day_rate, profile_annual_cost, profile_annual_hours, updated_at)
@@ -220,8 +229,8 @@ public class HistoryDAO implements IHistoryDAO {
             stmt.setObject(1, teamId);
             stmt.setObject(2, profileId);
 
-            if (profileHistoryId == null) stmt.setNull(3, Types.INTEGER);
-            else stmt.setInt(3, profileHistoryId);
+            if (profileHistoryId == null) stmt.setNull(3, Types.OTHER);
+            else stmt.setObject(3, profileHistoryId, Types.OTHER);
 
             stmt.setString(4, reason.name());
             stmt.setBigDecimal(5, teamMetrics.hourlyRate());
@@ -243,7 +252,7 @@ public class HistoryDAO implements IHistoryDAO {
     }
 
     @Override
-    public Integer getLatestProfileHistoryId(TransactionContext context, UUID profileId) throws Exception {
+    public UUID getLatestProfileHistoryId(TransactionContext context, UUID profileId) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String sql = "SELECT history_id FROM dbo.Profiles_history WHERE profile_id = ? ORDER BY updated_at DESC LIMIT 1";
 
@@ -251,10 +260,15 @@ public class HistoryDAO implements IHistoryDAO {
             stmt.setObject(1, profileId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt("history_id");
+                UUID historyId = (UUID) rs.getObject("history_id");
+                return historyId;
             } else {
                 return null;
             }
+        } catch (SQLException e){
+            logger.severe("SQL Exception: " + e.getMessage());
+            e.printStackTrace();
+            throw new Exception("Could not retrieve latest profile history id from the database");
         }
     }
 }

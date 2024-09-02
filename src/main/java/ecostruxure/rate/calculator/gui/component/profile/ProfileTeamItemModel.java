@@ -83,4 +83,17 @@ public class ProfileTeamItemModel {
     public void setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
         this.effectiveWorkHours.set(effectiveWorkHours);
     }
+
+    @Override
+    public String toString() {
+        return "ProfileTeamItemModel{" +
+                "teamId = " + teamId.get() +
+                ", profileId = " + profileId.get() +
+                ", name = " + name.get() +
+                ", dayRate = " + dayRate.amountProperty().get() +
+                ", costAllocation = " + costAllocation.get() +
+                ", hourAllocation = " + hourAllocation.get() +
+                ", allocatedCostOnTeam = " + allocatedCostOnTeam.get() +
+                '}';
+    }
 }
