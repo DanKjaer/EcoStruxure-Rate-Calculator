@@ -49,7 +49,6 @@ import java.util.function.Predicate;
 
 import static ecostruxure.rate.calculator.gui.widget.tables.contextmenu.CustomContextMenu.addKeyEventHandler;
 import static ecostruxure.rate.calculator.gui.widget.tables.contextmenu.CustomContextMenu.createContextMenu;
-import static org.controlsfx.control.action.ActionUtils.createSegmentedButton;
 
 public class TeamView implements View {
     private final TeamModel model;
@@ -365,14 +364,14 @@ public class TeamView implements View {
             };
         });
 
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualCostAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::annualCostProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualTotalCostProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> allocatedCostOnTeamColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST_ON_TEAM, ProfileTeamItemModel::allocatedCostOnTeamProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileTeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHourAllocationColumn, hourAllocationColumn, annualCostAllocationColumn, annualCostColumn, allocatedCostOnTeamColumn, dayRateColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, annualHourAllocationColumn, annualCostAllocationColumn, annualCostColumn, allocatedCostOnTeamColumn, dayRateColumn));
     }
 
     private void profileConfigureContextMenu(TableView<ProfileTeamItemModel> tableView) {

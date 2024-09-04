@@ -92,7 +92,8 @@ public class TeamInteractor {
             //teamProfileModel.dayRateProperty().set(teamProfile.getDayRateOnTeam());
             teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
             teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
-            teamProfileModel.allocatedCostOnTeamProperty().set(teamProfile.getAllocatedHoursOnTeam());
+            teamProfileModel.annualTotalHoursProperty().set(teamProfile.getAllocatedHoursOnTeam());
+            teamProfileModel.allocatedCostOnTeamProperty().set(teamProfile.getAllocatedCostOnTeam());
 
             teamProfileModels.add(teamProfileModel);
         }
