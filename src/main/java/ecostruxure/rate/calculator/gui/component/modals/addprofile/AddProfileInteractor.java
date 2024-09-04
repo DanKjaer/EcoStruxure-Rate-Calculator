@@ -84,11 +84,10 @@ public class AddProfileInteractor {
     private Profile createProfileFromModel() {
         var profile = new Profile();
 
-
         var currencyItemModel = model.selectedCurrencyProperty().get();
         BigDecimal eurConversionRate = new BigDecimal(currencyItemModel.eurConversionRateProperty().get());
 
-        profile.setName((model.nameProperty().get()));
+        profile.setName(model.nameProperty().get());
         profile.setCurrency(currencyItemModel.currencyCodeProperty().get());
         profile.setCountryId(model.selectedGeographyProperty().get().idProperty().get());
         profile.setResourceType(model.selectedResourceTypeProperty().get() == ResourceType.OVERHEAD);

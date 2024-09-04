@@ -21,6 +21,7 @@ import ecostruxure.rate.calculator.gui.widget.tables.*;
 import ecostruxure.rate.calculator.gui.widget.tables.cellfactory.*;
 import ecostruxure.rate.calculator.gui.widget.tables.contextmenu.CustomContextMenu;
 import ecostruxure.rate.calculator.gui.widget.tables.contextmenu.MenuItemInfo;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.transformation.FilteredList;
@@ -119,15 +120,16 @@ public class TeamView implements View {
 
         model.profilesFetchedProperty().addListener((obs, ov, nv) -> {
             if (nv != null) {
-                tableViewWithPagination.refresh();
-                customTableView.setData(model.teamProfilesProperty());
-                geographyCustomTableView.setData(model.geographies());
-                customTableViewHistory.setData(model.history());
+                Platform.runLater(() -> {
+                    tableViewWithPagination.refresh();
+                    customTableView.setData(model.teamProfilesProperty());
+                    geographyCustomTableView.setData(model.geographies());
+                    customTableViewHistory.setData(model.history());
 
-                detailTableView.setData(model.historyDetails());
+                    detailTableView.setData(model.historyDetails());
+                });
             }
         });
-
         this.onShowProfile = onShowProfile;
 
         setupSearchFilter();
@@ -320,6 +322,7 @@ public class TeamView implements View {
 
     private Pagination profileCreateTable(int itemsPerPage) {
         customTableView = new CustomTableView<>(itemsPerPage, profileItemModels);
+        System.out.println("customTableView ~~ " + (customTableView != null));
         tableViewWithPagination = customTableView.setupPagination(customTableView.createTableView());
 
         profileConfigureTableColumns();
@@ -341,11 +344,11 @@ public class TeamView implements View {
             return new TableCell<ProfileTeamItemModel, String>() {
                 private final VBox container = new VBox();
                 private final Label nameLabel = new Label("");
-//                private final Label locationLabel = new Label("");
-//                {
-//                    locationLabel.getStyleClass().add(Styles.TEXT_SUBTLE);
-//                    container.getChildren().addAll(nameLabel, locationLabel);
-//                }
+                private final Label locationLabel = new Label("");
+                {
+                    locationLabel.getStyleClass().add(Styles.TEXT_SUBTLE);
+                    container.getChildren().addAll(nameLabel, locationLabel);
+                }
 
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -366,15 +369,15 @@ public class TeamView implements View {
 
         TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualCostAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::annualCostProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualCostColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST, ProfileTeamItemModel::annualTotalCostProperty, new CurrencyCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> costAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::costAllocationProperty, new PercentageCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> allocatedCostOnTeamColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST_ON_TEAM, ProfileTeamItemModel::allocatedCostOnTeamProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileTeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, annualHourAllocationColumn, annualCostAllocationColumn, annualCostColumn, allocatedCostOnTeamColumn, dayRateColumn));
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, annualHourAllocationColumn, costAllocationColumn, allocatedCostOnTeamColumn, dayRateColumn));
     }
 
     private void profileConfigureContextMenu(TableView<ProfileTeamItemModel> tableView) {
+        System.out.println("Setting up context menu");
         var edit = new MenuItemInfo<ProfileTeamItemModel>(Icons.EDIT, LocalizedText.EDIT, onTeamEditProfile, new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
         var remove = new MenuItemInfo<ProfileTeamItemModel>(Icons.DELETE, LocalizedText.REMOVE, onTeamRemoveProfile, new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
         var dividerToHide = new MenuItemInfo<ProfileTeamItemModel>(true);
@@ -406,6 +409,7 @@ public class TeamView implements View {
         customTableView.addColumnToPagination(optionsColumn);
         optionsColumn.setMaxWidth(50);
         optionsColumn.setMinWidth(50);
+        System.out.println("Context menu setup complete");
     }
 
     private void refreshTable(ProfileTeamItemModel ProfileTeamItemModel) {

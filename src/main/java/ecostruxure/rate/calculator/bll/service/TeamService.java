@@ -151,7 +151,7 @@ public class TeamService {
     }
 
     public boolean updateProfile(UUID teamId, Profile profile) throws Exception {
-        if (teamId != null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
         Objects.requireNonNull(profile, "Profile cannot be null");
 
         return teamProfileManagementService.updateTeamProfile(teamId, profile);

@@ -117,30 +117,59 @@ public class HistoryDAO implements IHistoryDAO {
     public UUID insertProfileHistory(TransactionContext context, Profile profile) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String insertProfileHistorySQL = """
-                                         INSERT INTO dbo.Profiles_history (
-                                             profile_id, resource_type, annual_cost, effectiveness,
-                                             annual_hours, hours_per_day, updated_at
-                                         )
-                                         SELECT p.profile_id, p.resource_type, p.annual_cost, p.effectiveness,
-                                                p.annual_hours, p.hours_per_day, CURRENT_TIMESTAMP
-                                         FROM dbo.Profiles p
-                                         WHERE p.profile_id = ?
-                                         """;
+                                     INSERT INTO dbo.Profiles_history (
+                                         history_id, profile_id, resource_type, annual_cost, effectiveness,
+                                         annual_hours, hours_per_day, updated_at
+                                     )
+                                     VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                                     """;
         logger.info("InsertProfileHistory HistoryDAO::Inserting profile history for profileId: " + profile.getProfileId());
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertProfileHistorySQL, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setObject(1, profile.getProfileId());
+            UUID historyId = UUID.randomUUID();
+            stmt.setObject(1, historyId);
+            stmt.setObject(2, profile.getProfileId());
+            stmt.setBoolean(3, profile.isResourceType());
+            stmt.setBigDecimal(4, profile.getAnnualCost());
+            stmt.setBigDecimal(5, profile.getEffectivenessPercentage());
+            stmt.setBigDecimal(6, profile.getAnnualHours());
+            stmt.setBigDecimal(7, profile.getHoursPerDay());
             stmt.executeUpdate();
 
-            UUID profileHistoryId = null;
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next())  profileHistoryId = (UUID) generatedKeys.getObject(1);
-            }
-            return profileHistoryId;
+            return historyId;
         } catch(SQLException e) {
             e.printStackTrace();
-        } throw new Exception("Could not insert profile history into the database");
+            throw new Exception("Could not insert profile history into the database");
+        }
     }
+//    @Override
+//    public UUID insertProfileHistory(TransactionContext context, Profile profile) throws Exception {
+//        SqlTransactionContext sqlContext = (SqlTransactionContext) context;
+//        String insertProfileHistorySQL = """
+//                                         INSERT INTO dbo.Profiles_history (
+//                                             history_id, profile_id, resource_type, annual_cost, effectiveness,
+//                                             annual_hours, hours_per_day, updated_at
+//                                         )
+//                                         SELECT p.profile_id, p.resource_type, p.annual_cost, p.effectiveness,
+//                                                p.annual_hours, p.hours_per_day, CURRENT_TIMESTAMP
+//                                         FROM dbo.Profiles p
+//                                         WHERE p.profile_id = ?
+//                                         """;
+//        logger.info("InsertProfileHistory HistoryDAO::Inserting profile history for profileId: " + profile.getProfileId());
+//
+//        try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertProfileHistorySQL, Statement.RETURN_GENERATED_KEYS)) {
+//            stmt.setObject(1, profile.getProfileId());
+//            stmt.executeUpdate();
+//
+//            UUID profileHistoryId = null;
+//            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+//                if (generatedKeys.next())  profileHistoryId = (UUID) generatedKeys.getObject(1);
+//            }
+//            return profileHistoryId;
+//        } catch(SQLException e) {
+//            e.printStackTrace();
+//        } throw new Exception("Could not insert profile history into the database");
+//    }
 
     @Override
     public void insertEmptyTeamProfileHistory(TransactionContext context, UUID teamId, TeamMetrics metrics, Reason reason) throws Exception {

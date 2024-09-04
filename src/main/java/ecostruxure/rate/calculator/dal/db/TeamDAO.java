@@ -478,7 +478,7 @@ public class TeamDAO implements ITeamDAO {
         String query = """
                         SELECT p.*, tp.cost_allocation, tp.hour_allocation
                         FROM dbo.Profiles p
-                        INNER JOIN dbo.Teams_profiles tp ON p.id = tp.profileID AND tp.teamID = ? AND tp.profileID = ? p.is_archived = FALSE;                    
+                        INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileid WHERE tp.teamid = ? AND tp.profileid = ? AND p.is_archived = FALSE;                    
                         """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -487,7 +487,7 @@ public class TeamDAO implements ITeamDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    UUID id = (UUID) rs.getObject("id");
+                    UUID id = (UUID) rs.getObject("profile_id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
                     int countryId = rs.getInt("country_id");

@@ -17,6 +17,7 @@ public class TeamEditInteractor {
         try {
             teamService = new TeamService();
         } catch (Exception e) {
+            e.printStackTrace();
             onFetchError.run();
         }
 
@@ -29,6 +30,7 @@ public class TeamEditInteractor {
             team = teamService.get(teamId);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -39,6 +41,7 @@ public class TeamEditInteractor {
             teamService.update(team);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

@@ -10,6 +10,7 @@ import ecostruxure.rate.calculator.gui.util.ExportToExcel;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.component.geography.geograph.GeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
+import javafx.application.Platform;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -65,14 +66,10 @@ public class TeamInteractor {
             updatedAt = teamService.getLastUpdated(id);
             historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
             profileItemModels = fetchTeamMembers(id);
-            List<TeamProfile> teamProfiles = teamProfileManagementService.getTeamProfiles(id);
-            teamProfilesModels = convertToTeamProfileModels(teamProfiles);
-
+            teamProfilesModels = fetchTeamProfileMembers(id);
             hourlyRates = rateService.calculateRates(team, RateType.HOURLY);
             dayRates = rateService.calculateRates(team, RateType.DAY);
             annualRates = rateService.calculateRates(team, RateType.ANNUAL);
-
-            System.out.println("Team profiles: " + teamProfilesModels);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,15 +77,17 @@ public class TeamInteractor {
         }
     }
 
-    private List<ProfileTeamItemModel> convertToTeamProfileModels(List<TeamProfile> teamProfiles) {
+    private List<ProfileTeamItemModel> convertToTeamProfileModels(List<TeamProfile> teamProfiles) throws Exception {
         List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
 
         for (TeamProfile teamProfile : teamProfiles) {
             ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
 
+            Profile profile = profileService.get(teamProfile.getProfileId());
+            teamProfileModel.setName(profile.getName());
+
             teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
             teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
-            teamProfileModel.nameProperty().set(teamProfile.getName());
             //teamProfileModel.dayRateProperty().set(teamProfile.getDayRateOnTeam());
             teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
             teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
@@ -167,6 +166,7 @@ public class TeamInteractor {
             profileItemModel.updatedAtProperty().set(profile.getUpdatedAt());
             profileItemModel.resourceTypeProperty().set(profile.isResourceType());
             profileItemModel.archivedProperty().set(profile.isArchived());
+            profileItemModels.add(profileItemModel);
 
 
             String geographyName = geographyService.getByCountryId(profile.getCountryId()).name();
@@ -178,7 +178,6 @@ public class TeamInteractor {
             geographyItemModels.add(geographyItemModel);
             profileItemModels.add(profileItemModel);
         }
-
         return profileItemModels;
     }
 
@@ -201,14 +200,12 @@ public class TeamInteractor {
         model.profilesFetchedProperty().set(true);
         model.numProfilesProperty().set("" + profileItemModels.size());
         model.teamProfilesProperty().setAll(teamProfilesModels);
-
         model.currentDateProperty().set(currentDateTime);
 
         model.setRawRate(hourlyRates.rawRate());
         model.setMarkupRate(hourlyRates.markupRate());
         model.setGrossMarginRate(hourlyRates.grossMarginRate());
         model.totalHoursProperty().set(totalHours.toString());
-        System.out.println("Kommer vi her ned??: " + teamProfilesModels);
     }
 
     public boolean exportTeamToExcel(File file, UUID teamId) {

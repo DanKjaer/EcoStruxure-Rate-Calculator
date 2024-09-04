@@ -1,5 +1,6 @@
 package ecostruxure.rate.calculator.gui.component.profile;
 
+import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
 import javafx.beans.property.*;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ProfileTeamItemModel {
+    private final Profile profile = new Profile();
     private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
     private final ObjectProperty<UUID> profileId = new SimpleObjectProperty<>();
     private final StringProperty name = new SimpleStringProperty();
@@ -20,6 +22,9 @@ public class ProfileTeamItemModel {
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> allocatedCostOnTeam = new SimpleObjectProperty<>();
 
+    public Profile getProfile() {
+        return profile;
+    }
     public ObjectProperty<UUID> teamIdProperty() {
         return teamId;
     }
@@ -82,6 +87,14 @@ public class ProfileTeamItemModel {
 
     public void setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
         this.effectiveWorkHours.set(effectiveWorkHours);
+    }
+
+    public String getName(){
+        return name.get();
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
     }
 
     @Override
