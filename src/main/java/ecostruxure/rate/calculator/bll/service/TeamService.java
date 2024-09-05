@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
@@ -150,11 +151,11 @@ public class TeamService {
         return teamProfileManagementService.updateTeamProfiles(team, profiles);
     }
 
-    public boolean updateProfile(UUID teamId, Profile profile) throws Exception {
+    public boolean updateProfile(UUID teamId, TeamProfile teamProfile) throws Exception {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        Objects.requireNonNull(profile, "Profile cannot be null");
+        Objects.requireNonNull(teamProfile, "Profile cannot be null");
 
-        return teamProfileManagementService.updateTeamProfile(teamId, profile);
+        return teamProfileManagementService.updateTeamProfile(teamId, teamProfile);
     }
 
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {

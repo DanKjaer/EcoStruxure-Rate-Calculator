@@ -318,7 +318,7 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public boolean updateProfile(TransactionContext context, UUID teamId, Profile profile) throws Exception {
+    public boolean updateProfile(TransactionContext context, UUID teamId, TeamProfile teamProfile) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
@@ -327,10 +327,10 @@ public class TeamDAO implements ITeamDAO {
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
-            stmt.setBigDecimal(1, profile.getCostAllocation());
-            stmt.setBigDecimal(2, profile.getHourAllocation());
-            stmt.setObject(3, teamId);
-            stmt.setObject(4, profile.getProfileId());
+            stmt.setBigDecimal(1, teamProfile.getCostAllocation());
+            stmt.setBigDecimal(2, teamProfile.getHourAllocation());
+            stmt.setObject(3, teamProfile.getTeamId());
+            stmt.setObject(4, teamProfile.getProfileId());
 
             stmt.executeUpdate();
         } catch (Exception e) {

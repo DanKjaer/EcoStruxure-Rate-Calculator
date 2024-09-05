@@ -39,6 +39,7 @@ public class TeamEditProfileInteractor {
             profile = teamService.getTeamProfile(teamId, profileId);
             teamProfile.setProfile(profile);
             teamProfile.setTeamId(teamId);
+            teamProfile.setProfileId(profileId);
             Platform.runLater(() -> {
                 model.profileNameProperty().set(profile.getName());
             });
@@ -95,7 +96,7 @@ public class TeamEditProfileInteractor {
             UUID teamId = model.teamIdProperty().get();
             teamProfile.setCostAllocation(new BigDecimal(model.costAllocationProperty().get()));
             teamProfile.setHourAllocation(new BigDecimal(model.hourAllocationProperty().get()));
-            return teamService.updateProfile(teamId, profile);
+            return teamService.updateProfile(teamId, teamProfile);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

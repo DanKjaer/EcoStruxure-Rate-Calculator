@@ -120,18 +120,20 @@ public class TeamProfileManagementService {
         });
     }
 
-    public boolean updateTeamProfile(UUID teamId, Profile profile) throws Exception {
+    public boolean updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
-            UUID profileHistoryId = historyDAO.insertProfileHistory(context, profile);
-            boolean updated = teamDAO.updateProfile(context, teamId, profile);
+            UUID profileHistoryId = historyDAO.insertProfileHistory(context, teamProfile.getProfile());
+
+            boolean updated = teamDAO.updateProfile(context, teamId, teamProfile);
+
             if (!updated) return false;
 
             List<Profile> teamProfiles = teamDAO.getTeamProfiles(context, teamId);
             TeamMetrics teamMetrics = calculateMetrics(teamId, teamProfiles, context);
-            ProfileMetrics profileMetrics = calculateMetrics(profile, teamId, context);
+            ProfileMetrics profileMetrics = calculateMetrics(teamProfile.getProfile(), teamId, context);
 
-            historyDAO.insertTeamProfileHistory(context, teamId, profile.getProfileId(), profileHistoryId, teamMetrics, Reason.UTILIZATION_CHANGE, profileMetrics, now);
+            historyDAO.insertTeamProfileHistory(context, teamId, teamProfile.getProfileId(), profileHistoryId, teamMetrics, Reason.UTILIZATION_CHANGE, profileMetrics, now);
             return true;
         });
     }

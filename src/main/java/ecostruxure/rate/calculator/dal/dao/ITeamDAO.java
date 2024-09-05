@@ -31,7 +31,7 @@ public interface ITeamDAO {
 
     boolean updateProfile(UUID teamId, Profile profile) throws Exception;
 
-    boolean updateProfile(TransactionContext context, UUID teamId, Profile profile) throws Exception;
+    boolean updateProfile(TransactionContext context, UUID teamId, TeamProfile teamProfile) throws Exception;
 
     boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception;
 
