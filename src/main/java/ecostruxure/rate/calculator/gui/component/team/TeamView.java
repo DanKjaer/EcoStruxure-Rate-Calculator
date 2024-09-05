@@ -322,7 +322,6 @@ public class TeamView implements View {
 
     private Pagination profileCreateTable(int itemsPerPage) {
         customTableView = new CustomTableView<>(itemsPerPage, profileItemModels);
-        System.out.println("customTableView ~~ " + (customTableView != null));
         tableViewWithPagination = customTableView.setupPagination(customTableView.createTableView());
 
         profileConfigureTableColumns();
@@ -377,7 +376,6 @@ public class TeamView implements View {
     }
 
     private void profileConfigureContextMenu(TableView<ProfileTeamItemModel> tableView) {
-        System.out.println("Setting up context menu");
         var edit = new MenuItemInfo<ProfileTeamItemModel>(Icons.EDIT, LocalizedText.EDIT, onTeamEditProfile, new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
         var remove = new MenuItemInfo<ProfileTeamItemModel>(Icons.DELETE, LocalizedText.REMOVE, onTeamRemoveProfile, new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
         var dividerToHide = new MenuItemInfo<ProfileTeamItemModel>(true);
@@ -409,7 +407,6 @@ public class TeamView implements View {
         customTableView.addColumnToPagination(optionsColumn);
         optionsColumn.setMaxWidth(50);
         optionsColumn.setMinWidth(50);
-        System.out.println("Context menu setup complete");
     }
 
     private void refreshTable(ProfileTeamItemModel ProfileTeamItemModel) {

@@ -26,7 +26,6 @@ public class TeamEditProfileView implements View {
     @Override
     public Region build() {
         StringExpression combinedTitle = Bindings.concat(LocalizedText.TEAM_PROFILE_EDIT_TITLE, " ", model.profileNameProperty());
-
         var nameLabel = Labels.bound(combinedTitle);
         var rateField = Fields.percentageTextField(model.costAllocationProperty(), model.costAllocationIsValidProperty());
         rateField.disableProperty().bind(model.costAllocationFetchedProperty().not());

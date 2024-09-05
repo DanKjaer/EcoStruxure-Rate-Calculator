@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.gui.component.modals.assignprofile;
 import ecostruxure.rate.calculator.be.Geography;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
@@ -82,12 +83,15 @@ public class AssignProfileInteractor {
     }
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
+        var teamProfile = new TeamProfile();
+        teamProfile.setCostAllocation(model.setCostAllocationProperty().get());
+        teamProfile.setHourAllocation(model.setHourAllocationProperty().get());
+
         var profile = new Profile();
         profile.setProfileId(model.UUIDProperty().get());
         profile.setName((model.nameProperty().get()));
-
-        profile.setCostAllocation(model.setCostAllocationProperty().get());
-        profile.setHourAllocation(model.setHourAllocationProperty().get());
+        profile.setCostAllocation(teamProfile.getCostAllocation());
+        profile.setHourAllocation(teamProfile.getCostAllocation());
 
         return profile;
     }

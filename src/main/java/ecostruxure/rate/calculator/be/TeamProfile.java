@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class TeamProfile {
+    private Profile profile;
     private UUID teamId;
     private UUID profileId;
     private String name;
@@ -27,6 +28,14 @@ public class TeamProfile {
         this.hourAllocation = hourAllocation;
         this.allocatedCostOnTeam = allocatedCostOnTeam;
         this.allocatedHoursOnTeam = allocatedHoursOnTeam;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
     public UUID getTeamId() {

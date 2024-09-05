@@ -10,7 +10,6 @@ import ecostruxure.rate.calculator.gui.util.ExportToExcel;
 import ecostruxure.rate.calculator.gui.component.geography.IGeographyItemModel;
 import ecostruxure.rate.calculator.gui.component.geography.geograph.GeographyItemModel;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
-import javafx.application.Platform;
 
 import java.io.File;
 import java.math.BigDecimal;

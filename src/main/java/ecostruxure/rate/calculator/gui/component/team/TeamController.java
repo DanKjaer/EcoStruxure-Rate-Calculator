@@ -61,7 +61,6 @@ public class TeamController implements Controller {
 
     @Override
     public void activate(Object teamId) {
-        System.out.println("Activate method called with teamId: " + teamId);
         if (teamId instanceof UUID) {
             model.teamNameProperty().set(LocalizedText.LOADING.get());
             model.numProfilesProperty().set(LocalizedText.LOADING.get());

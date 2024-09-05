@@ -574,7 +574,7 @@ public class TeamDAO implements ITeamDAO {
             } catch (Exception e) {
                 conn.rollback();
                 e.printStackTrace();
-                throw new Exception("Error occured, rolling back..\n" + e.getMessage());
+                throw new Exception("Error occurred, rolling back..\n" + e.getMessage());
             }
         }
     }

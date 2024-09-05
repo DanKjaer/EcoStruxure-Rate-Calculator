@@ -41,6 +41,7 @@ public class TeamEditProfileController implements ModalController {
         if (data instanceof TeamDataId teamData) {
             model.setProfileId(model.getProfileId());
             model.setProfileId(teamData.profileId());
+            model.teamIdProperty().set(teamData.teamId());
             model.profileNameProperty().set("");
             model.costAllocationFetchedProperty().set(false);
             model.costAllocationProperty().set("");

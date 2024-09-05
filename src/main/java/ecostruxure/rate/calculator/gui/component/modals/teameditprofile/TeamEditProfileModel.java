@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class TeamEditProfileModel {
     private static UUID profileId;
-    private final IntegerProperty teamId = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
     private final StringProperty profileName = new SimpleStringProperty("");
 
     private final StringProperty costAllocation = new SimpleStringProperty("");
@@ -28,7 +28,7 @@ public class TeamEditProfileModel {
         TeamEditProfileModel.profileId = profileId;
     }
 
-    public IntegerProperty teamIdProperty() {
+    public ObjectProperty<UUID> teamIdProperty() {
         return teamId;
     }
 
