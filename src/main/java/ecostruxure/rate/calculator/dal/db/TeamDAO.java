@@ -772,4 +772,39 @@ public class TeamDAO implements ITeamDAO {
 
         return null;
     }
+
+    @Override
+    public BigDecimal getCostAllocation(UUID teamId, UUID profileId) throws Exception{
+        String sql = "SELECT cost_allocation FROM teams_profiles WHERE teamid = ? AND profileid = ?";
+        try (Connection connection = dbConnector.connection();
+        PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setObject(1, teamId);
+            pstmt.setObject(2, profileId);
+            try (ResultSet resultSet = pstmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBigDecimal("cost_allocation");
+                } else {
+                    return BigDecimal.ZERO;
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception{
+        String sql = "SELECT hour_allocation FROM teams_profiles WHERE teamid = ? AND profileid = ?";
+        try(Connection connection = dbConnector.connection();
+        PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setObject(1, teamId);
+            pstmt.setObject(2, profileId);
+            try (ResultSet resultSet = pstmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBigDecimal("hour_allocation");
+                } else {
+                    return BigDecimal.ZERO;
+                }
+            }
+        }
+    }
 }

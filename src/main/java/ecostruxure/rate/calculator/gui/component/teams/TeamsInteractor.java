@@ -101,8 +101,9 @@ public class TeamsInteractor {
             teamItemModel.updatedAtProperty().set(team.getUpdatedAt());
             teamItemModel.dayRateProperty().set(team.getDayRate());
             teamItemModel.hourlyRateProperty().set(team.getHourlyRate());
-            teamItemModel.totalAllocatedCostProperty().set(team.getTotalAllocatedCost());
-            teamItemModel.totalAllocatedHoursProperty().set(team.getTotalAllocatedHours());
+            teamItemModel.totalAllocatedCostProperty().set(calculateTotalAllocatedCost(team.getTeamId()));
+            teamItemModel.totalAllocatedHoursProperty().set(calculateTotalAllocatedHours(team.getTeamId()));
+            System.out.println("total hours team: " + calculateTotalAllocatedHours(team.getTeamId()));
 
             teamItemModels.add(teamItemModel);
         }
@@ -228,5 +229,13 @@ public class TeamsInteractor {
 
     public void updateArchivedTeam() {
         model.teamToArchiveProperty().get().archivedProperty().set(true);
+    }
+
+    private BigDecimal calculateTotalAllocatedCost(UUID teamId) throws Exception {
+        return teamService.calculateTotalAllocatedCostFromProfiles(teamId);
+    }
+
+    private BigDecimal calculateTotalAllocatedHours(UUID teamId) throws Exception {
+        return teamService.calculateTotalAllocatedHoursFromProfile(teamId);
     }
 }

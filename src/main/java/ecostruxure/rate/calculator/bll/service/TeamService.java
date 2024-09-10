@@ -7,6 +7,7 @@ import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -219,5 +220,50 @@ public class TeamService {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
         return teamDAO.getLastUpdated(teamId);
+    }
+
+    public BigDecimal getCostAllocationFromDatabase(UUID teamId, UUID profileId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
+
+        return teamDAO.getCostAllocation(teamId, profileId);
+    }
+
+    public BigDecimal getHourAllocationFromDatabase(UUID teamId, UUID profileId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
+
+        return teamDAO.getHourAllocation(teamId, profileId);
+    }
+
+    // To nederste metoder skal måske flyttes til en anden klasse
+    public BigDecimal calculateTotalAllocatedHoursFromProfile(UUID teamId) throws Exception{
+        List<Profile> profiles = getTeamProfiles(teamId);
+        BigDecimal totalAllocatedHours = BigDecimal.ZERO;
+
+        for (Profile profile: profiles) {
+            BigDecimal hourAllocationPercentage = getHourAllocationFromDatabase(teamId, profile.getProfileId());
+            BigDecimal annualHours = profile.getAnnualHours();
+
+            BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            totalAllocatedHours = totalAllocatedHours.add(allocatedHours);
+        }
+
+        return totalAllocatedHours;
+    }
+
+    public BigDecimal calculateTotalAllocatedCostFromProfiles(UUID teamId) throws Exception {
+        List<Profile> profiles = getTeamProfiles(teamId);
+        BigDecimal totalAllocatedCost = BigDecimal.ZERO;
+
+        for (Profile profile : profiles) {
+            BigDecimal annualCost = profile.getAnnualCost();
+            BigDecimal costAllocationPercentage = getCostAllocationFromDatabase(teamId, profile.getProfileId());
+
+            BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+            totalAllocatedCost = totalAllocatedCost.add(allocatedCost);
+        }
+        return totalAllocatedCost;
     }
 }

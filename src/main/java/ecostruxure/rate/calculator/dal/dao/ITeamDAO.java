@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,4 +57,8 @@ public interface ITeamDAO {
     List<Profile> getTeamProfiles(TransactionContext context, UUID teamId) throws Exception;
 
     LocalDateTime getLastUpdated(UUID teamId) throws Exception;
+
+    BigDecimal getCostAllocation(UUID teamId, UUID profileId) throws Exception;
+
+    BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception;
 }

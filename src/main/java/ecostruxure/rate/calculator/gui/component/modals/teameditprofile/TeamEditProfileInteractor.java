@@ -65,6 +65,7 @@ public class TeamEditProfileInteractor {
     }
 
     public void updateModel() {
+        // Kan nok fjerne != null check, og sætte dem op som det udkommenterede kode i bunden.
         if(teamProfile != null){
         model.costAllocationProperty().set(teamProfile.getCostAllocation() != null? teamProfile.getCostAllocation().toString() : "");
         model.originalCostAllocationProperty().set(teamProfile.getCostAllocation() != null? teamProfile.getCostAllocation().toString() : "");
