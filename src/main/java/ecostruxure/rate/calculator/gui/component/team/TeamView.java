@@ -367,9 +367,9 @@ public class TeamView implements View {
         });
 
         TableColumn<ProfileTeamItemModel, BigDecimal> hourAllocationColumn = customTableView.createColumn(LocalizedText.HOUR_ALLOCATION, ProfileTeamItemModel::hourAllocationProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS, ProfileTeamItemModel::annualTotalHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> annualHourAllocationColumn = customTableView.createColumn(LocalizedText.HOURS_ON_TEAM, ProfileTeamItemModel::allocatedHoursOnTeamProperty, new HourCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> costAllocationColumn = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileTeamItemModel::costAllocationProperty, new PercentageCellFactory<>());
-        TableColumn<ProfileTeamItemModel, BigDecimal> allocatedCostOnTeamColumn = customTableView.createColumn(LocalizedText.ANNUAL_COST_ON_TEAM, ProfileTeamItemModel::allocatedCostOnTeamProperty, new CurrencyCellFactory<>());
+        TableColumn<ProfileTeamItemModel, BigDecimal> allocatedCostOnTeamColumn = customTableView.createColumn(LocalizedText.COST_ON_TEAM, ProfileTeamItemModel::allocatedCostOnTeamProperty, new CurrencyCellFactory<>());
         TableColumn<ProfileTeamItemModel, BigDecimal> dayRateColumn = customTableView.createColumn(LocalizedText.DAY_RATE, ProfileTeamItemModel::dayRateProperty, new CurrencyCellFactory<>());
 
         customTableView.addColumnsToPagination(Arrays.asList(nameColumn, hourAllocationColumn, annualHourAllocationColumn, costAllocationColumn, allocatedCostOnTeamColumn, dayRateColumn));

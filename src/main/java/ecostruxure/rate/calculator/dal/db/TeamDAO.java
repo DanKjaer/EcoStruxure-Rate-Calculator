@@ -27,8 +27,8 @@ public class TeamDAO implements ITeamDAO {
         List<Team> teams = new ArrayList<>();
 
         String query = """
-                       SELECT * FROM Teams ORDER BY id DESC
-                       """;
+                SELECT * FROM Teams ORDER BY id DESC
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -61,8 +61,8 @@ public class TeamDAO implements ITeamDAO {
         Team team = null;
 
         String query = """
-                       SELECT * FROM Teams WHERE id = ?
-                       """;
+                SELECT * FROM Teams WHERE id = ?
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -96,8 +96,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public Team create(Team team) throws Exception {
         String query = """
-                       INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, ?, ?, FALSE, ?)
-                       """;
+                INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, ?, ?, FALSE, ?)
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -127,8 +127,8 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       INSERT INTO Teams (name, markup, gross_margin) VALUES (?, ?, ?)
-                       """;
+                INSERT INTO Teams (name, markup, gross_margin) VALUES (?, ?, ?)
+                """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, team.getName());
@@ -151,8 +151,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean update(Team team) throws Exception {
         String query = """
-                       UPDATE Teams SET name = ? WHERE id = ?
-                       """;
+                UPDATE Teams SET name = ? WHERE id = ?
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -170,8 +170,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateMultipliers(Team team) throws Exception {
         String query = """
-                       UPDATE Teams SET markup = ?, gross_margin = ? WHERE id = ?
-                       """;
+                UPDATE Teams SET markup = ?, gross_margin = ? WHERE id = ?
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -188,8 +188,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean assignProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                       INSERT INTO Teams_profiles (teamId, profileId, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)
-                       """;
+                INSERT INTO Teams_profiles (teamId, profileId, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -220,8 +220,8 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       INSERT INTO Teams_profiles (teamId, profileId, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)
-                       """;
+                INSERT INTO Teams_profiles (teamId, profileId, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)
+                """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             for (Profile profile : profiles) {
@@ -244,8 +244,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean updateProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
-                       """;
+                UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -273,8 +273,8 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
-                       """;
+                UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
+                """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
@@ -298,8 +298,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean updateProfile(UUID teamId, Profile profile) throws Exception {
         String query = """
-                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
-                       """;
+                UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -322,8 +322,8 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
-                       """;
+                UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
+                """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
 
@@ -344,8 +344,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {
         String query = """
-                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
-                       """; //false
+                 DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
+                """; //false
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -370,8 +370,8 @@ public class TeamDAO implements ITeamDAO {
     public boolean removeAssignedProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String query = """
-                        DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
-                       """; //false
+                 DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
+                """; //false
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             for (Profile profile : profiles) {
@@ -392,10 +392,10 @@ public class TeamDAO implements ITeamDAO {
     public List<TeamProfile> _getTeamProfiles(UUID teamId) throws Exception {
         List<TeamProfile> teamProfiles = new ArrayList<>();
         String query = """
-                       SELECT tp.*, p.name
-                       FROM dbo.Profiles p
-                       INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?;
-                       """;
+                SELECT tp.*, p.name
+                FROM dbo.Profiles p
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?;
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -419,14 +419,15 @@ public class TeamDAO implements ITeamDAO {
             return teamProfiles;
         }
     }
+
     @Override
     public List<Profile> getTeamProfiles(UUID teamId) throws Exception {
         List<Profile> profiles = new ArrayList<>();
         String query = """
-                        SELECT p.*, tp.cost_allocation, tp.hour_allocation
-                        FROM dbo.Profiles p
-                        INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileID AND tp.teamID = ?;                  
-                        """;
+                SELECT p.*, tp.cost_allocation, tp.hour_allocation
+                FROM dbo.Profiles p
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileID AND tp.teamID = ?;                  
+                """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setObject(1, teamId);
@@ -476,10 +477,10 @@ public class TeamDAO implements ITeamDAO {
     public Profile getTeamProfile(UUID teamId, UUID profileId) throws Exception {
         Profile profile = null;
         String query = """
-                        SELECT p.*, tp.cost_allocation, tp.hour_allocation
-                        FROM dbo.Profiles p
-                        INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileid WHERE tp.teamid = ? AND tp.profileid = ? AND p.is_archived = FALSE;                    
-                        """;
+                SELECT p.*, tp.cost_allocation, tp.hour_allocation
+                FROM dbo.Profiles p
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileid WHERE tp.teamid = ? AND tp.profileid = ? AND p.is_archived = FALSE;                    
+                """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setObject(1, teamId);
@@ -524,7 +525,8 @@ public class TeamDAO implements ITeamDAO {
                 throw new Exception("Could not get Profile for Team from Database.\n" + e.getMessage());
             }
 
-            if (profile == null) throw new Exception("Profile with ID " + profileId + " not found in team ID " + teamId + ".");
+            if (profile == null)
+                throw new Exception("Profile with ID " + profileId + " not found in team ID " + teamId + ".");
             return profile;
         }
     }
@@ -567,8 +569,8 @@ public class TeamDAO implements ITeamDAO {
         try (Connection conn = dbConnector.connection()) {
             conn.setAutoCommit(false);
             try {
-                 archiveTeam(conn, teamId, archive);
-                 archiveTeamMembers(conn, teamId, archive);
+                archiveTeam(conn, teamId, archive);
+                archiveTeamMembers(conn, teamId, archive);
                 conn.commit();
                 return true;
             } catch (Exception e) {
@@ -581,8 +583,8 @@ public class TeamDAO implements ITeamDAO {
 
     private void archiveTeamMembers(Connection conn, UUID teamId, boolean archive) throws Exception {
         String query = """
-                       UPDATE Teams_profiles SET is_archived = ? WHERE teamId = ?
-                       """;
+                UPDATE Teams_profiles SET is_archived = ? WHERE teamId = ?
+                """;
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, archive);
             stmt.setObject(2, teamId);
@@ -595,8 +597,8 @@ public class TeamDAO implements ITeamDAO {
 
     private void archiveTeam(Connection conn, UUID teamId, boolean archive) throws Exception {
         String query = """
-                       UPDATE Teams SET is_archived = ? WHERE id = ?
-                       """;
+                UPDATE Teams SET is_archived = ? WHERE id = ?
+                """;
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, archive);
             stmt.setObject(2, teamId);
@@ -694,8 +696,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception {
         String query = """
-                       DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?
-                       """;
+                DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?
+                """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -714,8 +716,8 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                       DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?
-                       """;
+                DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?
+                """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             stmt.setObject(1, teamId);
@@ -732,10 +734,10 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                        SELECT * FROM dbo.Profiles
-                        INNER JOIN dbo.Teams_profiles ON dbo.Profiles.profile_id = dbo.Teams_profiles.profileId
-                        WHERE dbo.Teams_profiles.teamId = ?;
-                        """;
+                SELECT * FROM dbo.Profiles
+                INNER JOIN dbo.Teams_profiles ON dbo.Profiles.profile_id = dbo.Teams_profiles.profileId
+                WHERE dbo.Teams_profiles.teamId = ?;
+                """;
         List<Profile> profiles = new ArrayList<>();
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
             stmt.setObject(1, teamId);
@@ -744,7 +746,7 @@ public class TeamDAO implements ITeamDAO {
                 while (rs.next()) {
                     profiles.add(ResultSetMappers.profileResultSet(rs));
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -774,10 +776,10 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public BigDecimal getCostAllocation(UUID teamId, UUID profileId) throws Exception{
+    public BigDecimal getCostAllocation(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT cost_allocation FROM teams_profiles WHERE teamid = ? AND profileid = ?";
         try (Connection connection = dbConnector.connection();
-        PreparedStatement pstmt = connection.prepareStatement(sql)) {
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setObject(1, teamId);
             pstmt.setObject(2, profileId);
             try (ResultSet resultSet = pstmt.executeQuery()) {
@@ -792,10 +794,10 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception{
+    public BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT hour_allocation FROM teams_profiles WHERE teamid = ? AND profileid = ?";
-        try(Connection connection = dbConnector.connection();
-        PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setObject(1, teamId);
             pstmt.setObject(2, profileId);
             try (ResultSet resultSet = pstmt.executeQuery()) {
@@ -807,4 +809,27 @@ public class TeamDAO implements ITeamDAO {
             }
         }
     }
+
+    @Override
+    public void updateAllocatedCost(UUID teamId, UUID profileId, BigDecimal allocatedCost) throws SQLException {
+        String sql = "UPDATE teams_profiles SET allocated_cost_on_team = ? WHERE teamid = ? AND profileid = ?";
+        try(Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setBigDecimal(1, allocatedCost);
+            preparedStatement.setObject(2, teamId);
+            preparedStatement.setObject(3, profileId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException {
+        String sql = "UPDATE teams_profiles SET allocated_hours_on_team = ? WHERE teamid = ? AND profileid = ?";
+        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBigDecimal(1, allocatedHour);
+            pstmt.setObject(2, teamId);
+            pstmt.setObject(3, profileId);
+            pstmt.executeUpdate();
+        }
+    }
 }
+

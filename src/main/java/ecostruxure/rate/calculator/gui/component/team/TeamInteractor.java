@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class TeamInteractor {
@@ -78,6 +79,10 @@ public class TeamInteractor {
 
     private List<ProfileTeamItemModel> convertToTeamProfileModels(List<TeamProfile> teamProfiles) throws Exception {
         List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
+        Map<UUID, BigDecimal> profileDayRates = teamService.calculateIndividualDayRates(teamProfiles.get(0).getTeamId());
+        Map<UUID, BigDecimal> allocatedCostOnTeam = teamService.updateAllocatedCost(teamProfiles.get(0).getTeamId());
+        Map<UUID, BigDecimal> allocatedHoursOnTeam = teamService.updateAllocatedHours(teamProfiles.get(0).getTeamId());
+
 
         for (TeamProfile teamProfile : teamProfiles) {
             ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
@@ -87,13 +92,14 @@ public class TeamInteractor {
 
             teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
             teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
-            BigDecimal dayRate = calculateDayRate(teamProfile.getTeamId());
+            BigDecimal dayRate = profileDayRates.get(teamProfile.getProfileId());
             teamProfileModel.setDayRate(dayRate);
-            System.out.println("teamProfile.getDayRateOnTeam(): " + calculateDayRate(teamProfile.getTeamId()));
             teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
             teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
-            teamProfileModel.annualTotalHoursProperty().set(teamProfile.getAllocatedHoursOnTeam());
-            teamProfileModel.allocatedCostOnTeamProperty().set(teamProfile.getAllocatedCostOnTeam());
+            BigDecimal allocatedCost = allocatedCostOnTeam.get(teamProfile.getProfileId());
+            BigDecimal allocatedHours = allocatedHoursOnTeam.get(teamProfile.getProfileId());
+            teamProfileModel.allocatedCostOnTeamProperty().set(allocatedCost);
+            teamProfileModel.allocatedHoursOnTeamProperty().set(allocatedHours);
 
             teamProfileModels.add(teamProfileModel);
         }
@@ -249,9 +255,5 @@ public class TeamInteractor {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private BigDecimal calculateDayRate(UUID teamId) throws Exception {
-        return teamService.calculateTotalDailyRateFromProfiles(teamId);
     }
 }

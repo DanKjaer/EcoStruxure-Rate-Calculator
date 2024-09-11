@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 public class ProfileTeamItemModel {
@@ -21,6 +22,7 @@ public class ProfileTeamItemModel {
     private final ObjectProperty<BigDecimal> annualTotalHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> effectiveWorkHours = new SimpleObjectProperty<>();
     private final ObjectProperty<BigDecimal> allocatedCostOnTeam = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> allocatedHoursOnTeam = new SimpleObjectProperty<>();
 
     public Profile getProfile() {
         return profile;
@@ -71,6 +73,10 @@ public class ProfileTeamItemModel {
 
     public ObjectProperty<BigDecimal> allocatedCostOnTeamProperty() {
         return allocatedCostOnTeam;
+    }
+
+    public ObjectProperty<BigDecimal> allocatedHoursOnTeamProperty(){
+        return allocatedHoursOnTeam;
     }
 
     public void setHourlyRate(BigDecimal hourlyRate) {
