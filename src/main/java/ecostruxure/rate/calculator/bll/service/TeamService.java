@@ -237,7 +237,14 @@ public class TeamService {
         return teamDAO.getHourAllocation(teamId, profileId);
     }
 
-    // To nederste metoder skal måske flyttes til en anden klasse
+//  Alle metoder herfra og ned, skal måske flyttes til et andet sted end teamService.
+
+    /**
+     * Calculate the total allocated hours from all profiles on a team.
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
     public BigDecimal calculateTotalAllocatedHoursFromProfile(UUID teamId) throws Exception {
         List<Profile> profiles = getTeamProfiles(teamId);
         BigDecimal totalAllocatedHours = BigDecimal.ZERO;
@@ -253,6 +260,12 @@ public class TeamService {
         return totalAllocatedHours;
     }
 
+    /**
+     * Calculate the total allocated cost from all profiles on a team.
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
     public BigDecimal calculateTotalAllocatedCostFromProfiles(UUID teamId) throws Exception {
         List<Profile> profiles = getTeamProfiles(teamId);
         BigDecimal totalAllocatedCost = BigDecimal.ZERO;
@@ -268,50 +281,68 @@ public class TeamService {
         return totalAllocatedCost;
     }
 
+    /**
+     * Calculate the total hourly rate from all profiles on a team. Utilizing the total allocated cost and total allocated hours.
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
     public BigDecimal calculateTotalHourlyRateFromProfiles(UUID teamId) throws Exception {
         BigDecimal totalAllocatedCost = calculateTotalAllocatedCostFromProfiles(teamId);
         BigDecimal totalAllocatedHours = calculateTotalAllocatedHoursFromProfile(teamId);
+        if(totalAllocatedCost.compareTo(BigDecimal.ZERO) == 0 || totalAllocatedHours.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
 
         return totalAllocatedCost.divide(totalAllocatedHours, 2, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal calculateHourlyRateFromProfiles(UUID teamId) throws Exception {
-        List<Profile> profiles = getTeamProfiles(teamId);
-        BigDecimal hourlyRate = BigDecimal.ZERO;
-
-        for (Profile profile : profiles) {
-            BigDecimal annualCost = profile.getAnnualCost();
-            if (profile.getAnnualCost().compareTo(BigDecimal.ZERO) == 0) {
-                continue;
-            }
-            System.out.println("Annual cost teamSerivce: " + annualCost);
-            BigDecimal costAllocationPercentage = getCostAllocationFromDatabase(teamId, profile.getProfileId());
-            BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-            BigDecimal annualHours = profile.getAnnualHours();
-            if(annualHours.compareTo(BigDecimal.ZERO) == 0) {
-                continue;
-            }
-            System.out.println("Annual hours teamService: " + annualHours);
-            BigDecimal hourAllocationPercentage = getHourAllocationFromDatabase(teamId, profile.getProfileId());
-
-            BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-            hourlyRate = hourlyRate.add(allocatedCost.divide(allocatedHours, 2, RoundingMode.HALF_UP));
-        }
-        return hourlyRate;
-    }
-
-    public BigDecimal calculateDailyRateFromProfiles(UUID teamId) throws Exception {
-        BigDecimal hourlyRate = calculateHourlyRateFromProfiles(teamId);
-        System.out.println("Hourly rate teamService: " + hourlyRate);
-        BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
-        System.out.println("Daily rate teamService: " + dailyRate);
-        return dailyRate;
-    }
-
+    /**
+     * Calculate the total daily rate from all profiles on a team. Utilizing the total hourly rate.
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
     public BigDecimal calculateTotalDailyRateFromProfiles(UUID teamId) throws Exception {
         BigDecimal hourlyRate = calculateTotalHourlyRateFromProfiles(teamId);
         return hourlyRate.multiply(BigDecimal.valueOf(8));
     }
+
+//    public BigDecimal calculateHourlyRateFromProfiles(UUID teamId) throws Exception {
+//        List<Profile> profiles = getTeamProfiles(teamId);
+//        BigDecimal totalAllocatedCostOnTeam = BigDecimal.ZERO;
+//        BigDecimal totalAllocatedHoursOnTeam = BigDecimal.ZERO;
+//        BigDecimal hourlyRate = BigDecimal.ZERO;
+//
+//        for (Profile profile : profiles) {
+//            BigDecimal annualCost = profile.getAnnualCost();
+//            BigDecimal annualHours = profile.getAnnualHours();
+//
+//            if (annualCost.compareTo(BigDecimal.ZERO) == 0 || annualHours.compareTo(BigDecimal.ZERO)  == 0) {
+//                continue;
+//            }
+//            System.out.println("calculateHourlyRateFromProfiles ~~ Annual cost: " + annualCost + ", Annual hours: " + annualHours);
+//            BigDecimal costAllocationPercentage = getCostAllocationFromDatabase(teamId, profile.getProfileId());
+//            BigDecimal hourAllocationPercentage = getHourAllocationFromDatabase(teamId, profile.getProfileId());
+//
+//            BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+//            BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+//
+//            totalAllocatedCostOnTeam = totalAllocatedCostOnTeam.add(allocatedCost);
+//            totalAllocatedHoursOnTeam = totalAllocatedHoursOnTeam.add(allocatedHours);
+//
+//            hourlyRate = totalAllocatedCostOnTeam.divide(totalAllocatedHoursOnTeam, 2, RoundingMode.HALF_UP);
+//
+//        }
+//        return hourlyRate;
+//    }
+//
+//    public BigDecimal calculateDailyRateFromProfiles(UUID teamId) throws Exception {
+//        BigDecimal hourlyRate = calculateHourlyRateFromProfiles(teamId);
+//        System.out.println("Hourly rate teamService: " + hourlyRate);
+//        BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
+//        System.out.println("Daily rate teamService: " + dailyRate);
+//        return dailyRate;
+//    }
+//
 }
