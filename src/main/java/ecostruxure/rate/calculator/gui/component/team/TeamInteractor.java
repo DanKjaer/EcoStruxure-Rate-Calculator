@@ -87,7 +87,10 @@ public class TeamInteractor {
 
             teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
             teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
-            //teamProfileModel.dayRateProperty().set(teamProfile.getDayRateOnTeam());
+            BigDecimal dayRate = calculateDayRate(teamProfile.getTeamId());
+            //teamProfileModel.dayRateProperty().set(dayRate);
+            System.out.println("dayrateproperty: " + teamProfileModel.dayRateProperty().get());
+            System.out.println("teamProfile.getDayRateOnTeam(): " + calculateDayRate(teamProfile.getTeamId()));
             teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
             teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
             teamProfileModel.annualTotalHoursProperty().set(teamProfile.getAllocatedHoursOnTeam());
@@ -247,5 +250,13 @@ public class TeamInteractor {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private BigDecimal calculateHourlyRate(UUID teamId) throws Exception {
+        return teamService.calculateHourlyRateFromProfiles(teamId);
+    }
+
+    private BigDecimal calculateDayRate(UUID teamId) throws Exception {
+        return teamService.calculateDailyRateFromProfiles(teamId);
     }
 }

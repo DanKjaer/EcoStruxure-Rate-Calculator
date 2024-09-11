@@ -79,32 +79,31 @@ public class TeamsInteractor {
             TeamItemModel teamItemModel = new TeamItemModel();
             teamItemModel.teamIdProperty().set(team.getTeamId());
 
-            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
-            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
-            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
-
-            Rates rates;
-            switch (model.selectedRateTypeProperty().get()) {
-                case DAY -> rates = dayRates.get(team.getTeamId());
-                case ANNUAL -> rates = annualRates.get(team.getTeamId());
-                default -> rates = hourlyRates.get(team.getTeamId());
-            }
-
-            teamItemModel.setRawRate(rates.rawRate());
-            teamItemModel.setMarkupRate(rates.markupRate());
-            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
+            // ~~~~~~~~~~ Tør ikke slette nedenstående kode på bagrund af jeg ikke ved hvad det gør ~~~~~~~~~~
+//            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
+//            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
+//            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
+//
+//            Rates rates;
+//            switch (model.selectedRateTypeProperty().get()) {
+//                case DAY -> rates = dayRates.get(team.getTeamId());
+//                case ANNUAL -> rates = annualRates.get(team.getTeamId());
+//                default -> rates = hourlyRates.get(team.getTeamId());
+//            }
+//
+//            teamItemModel.setRawRate(rates.rawRate());
+//            teamItemModel.setMarkupRate(rates.markupRate());
+//            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
 
             teamItemModel.nameProperty().set(team.getName());
             teamItemModel.markupProperty().set(team.getMarkup());
             teamItemModel.grossMarginProperty().set(team.getGrossMargin());
             teamItemModel.archivedProperty().set(team.isArchived());
             teamItemModel.updatedAtProperty().set(team.getUpdatedAt());
-            teamItemModel.dayRateProperty().set(team.getDayRate());
-            teamItemModel.hourlyRateProperty().set(team.getHourlyRate());
+            teamItemModel.dayRateProperty().set(calculateDayRate(team.getTeamId()));
+            teamItemModel.hourlyRateProperty().set(calculateHourlyRate(team.getTeamId()));
             teamItemModel.totalAllocatedCostProperty().set(calculateTotalAllocatedCost(team.getTeamId()));
             teamItemModel.totalAllocatedHoursProperty().set(calculateTotalAllocatedHours(team.getTeamId()));
-            System.out.println("total hours team: " + calculateTotalAllocatedHours(team.getTeamId()));
-
             teamItemModels.add(teamItemModel);
         }
 
@@ -237,5 +236,13 @@ public class TeamsInteractor {
 
     private BigDecimal calculateTotalAllocatedHours(UUID teamId) throws Exception {
         return teamService.calculateTotalAllocatedHoursFromProfile(teamId);
+    }
+
+    private BigDecimal calculateHourlyRate(UUID teamId) throws Exception {
+        return teamService.calculateTotalHourlyRateFromProfiles(teamId);
+    }
+
+    private BigDecimal calculateDayRate(UUID teamId) throws Exception {
+        return teamService.calculateTotalDailyRateFromProfiles(teamId);
     }
 }
