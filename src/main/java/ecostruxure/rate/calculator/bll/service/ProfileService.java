@@ -76,7 +76,9 @@ public class ProfileService {
 
     public BigDecimal hourlyRate(ProfileHistory profile) {
         Objects.requireNonNull(profile, "ProfileHistory cannot be null");
-
+        if(profile.annualCost().compareTo(BigDecimal.ZERO) == 0 || profile.annualHours().compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
         return annualCost(profile).divide(profile.annualHours(), GENERAL_SCALE, ROUNDING_MODE);
     }
 
