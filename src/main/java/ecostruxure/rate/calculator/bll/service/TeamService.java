@@ -324,6 +324,8 @@ public class TeamService {
             } else {
                 BigDecimal hourlyRate = allocatedCost.divide(allocatedHours, 2, RoundingMode.HALF_UP);
                 BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
+
+                teamDAO.updateDayRateOnTeam(teamId, profile.getProfileId(), dailyRate);
                 profileDayRates.put(profile.getProfileId(), dailyRate);
             }
         }
@@ -337,7 +339,6 @@ public class TeamService {
         for(Profile profile : profiles) {
             BigDecimal annualCost = profile.getAnnualCost();
             BigDecimal costAllocationPercentage = getCostAllocationFromDatabase(teamId, profile.getProfileId());
-
 
             BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
@@ -354,7 +355,6 @@ public class TeamService {
         for(Profile profile : profiles) {
             BigDecimal annualHours = profile.getAnnualHours();
             BigDecimal hourAllocationPercentage = getHourAllocationFromDatabase(teamId, profile.getProfileId());
-
 
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 

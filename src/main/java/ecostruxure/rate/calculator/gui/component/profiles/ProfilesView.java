@@ -373,10 +373,10 @@ public class ProfilesView implements View {
         //TableColumn<ProfileItemModel, String> teamColumn = customTableView.createColumn(LocalizedText.TEAMS, ProfileItemModel::teamsProperty);
 
         // Ændres til locationColumn istedet for allocatedHours, når jeg har fikset den column,
-        allocatedHours.setResizable(false);
-        allocatedHours.setMinWidth(80);
-        allocatedHours.setMaxWidth(80);
-        allocatedHours.setPrefWidth(80);
+//        allocatedHours.setResizable(false);
+//        allocatedHours.setMinWidth(80);
+//        allocatedHours.setMaxWidth(80);
+//        allocatedHours.setPrefWidth(80);
 
         TableColumn<ProfileItemModel, Void> optionsColumn = customTableView.createColumnWithMenu(new FontIcon(Icons.GEAR), tableViewWithPagination, contextMenu);
         optionsColumn.setResizable(false);

@@ -63,7 +63,14 @@ public interface ITeamDAO {
 
     BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception;
 
+    BigDecimal getAllocatedCostOnTeam(UUID teamId, UUID profileId) throws Exception;
+
+    BigDecimal getAllocatedHoursOnTeam(UUID teamId, UUID profileId) throws Exception;
+
     void updateAllocatedCost(UUID teamId, UUID profileId, BigDecimal allocatedCost) throws SQLException;
 
     void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException;
+
+    void updateDayRateOnTeam(UUID teamid, UUID profileId, BigDecimal dayRate) throws SQLException;
+
 }
