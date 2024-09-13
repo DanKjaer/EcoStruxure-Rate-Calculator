@@ -253,7 +253,7 @@ public class TeamService {
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             totalAllocatedHours = totalAllocatedHours.add(allocatedHours);
         }
-
+        teamDAO.updateTeamsTotalAllocatedHours(teamId, totalAllocatedHours);
         return totalAllocatedHours;
     }
 
@@ -275,6 +275,7 @@ public class TeamService {
 
             totalAllocatedCost = totalAllocatedCost.add(allocatedCost);
         }
+        teamDAO.updateTeamsTotalAllocatedCost(teamId, totalAllocatedCost);
         return totalAllocatedCost;
     }
 
@@ -290,8 +291,9 @@ public class TeamService {
         if(totalAllocatedCost.compareTo(BigDecimal.ZERO) == 0 || totalAllocatedHours.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
-
-        return totalAllocatedCost.divide(totalAllocatedHours, 2, RoundingMode.HALF_UP);
+        BigDecimal hourlyRate = totalAllocatedCost.divide(totalAllocatedHours, 2, RoundingMode.HALF_UP);
+        teamDAO.updateTeamsHourlyRate(teamId, hourlyRate);
+            return hourlyRate;
     }
 
     /**
@@ -302,7 +304,9 @@ public class TeamService {
      */
     public BigDecimal calculateTotalDailyRateFromProfiles(UUID teamId) throws Exception {
         BigDecimal hourlyRate = calculateTotalHourlyRateFromProfiles(teamId);
-        return hourlyRate.multiply(BigDecimal.valueOf(8));
+        BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
+        teamDAO.updateTeamsDayRate(teamId, dailyRate);
+        return dailyRate;
     }
 
     public Map<UUID, BigDecimal> calculateIndividualDayRates(UUID teamId) throws Exception{

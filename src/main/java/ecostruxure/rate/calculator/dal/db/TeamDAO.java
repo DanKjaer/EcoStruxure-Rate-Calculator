@@ -874,5 +874,45 @@ public class TeamDAO implements ITeamDAO {
             pstmt.executeUpdate();
         }
     }
+
+    @Override
+    public void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException {
+        String sql = "UPDATE teams SET day_rate = ? WHERE id = ?";
+        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBigDecimal(1, dayRate);
+            pstmt.setObject(2, teamId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateTeamsHourlyRate(UUID teamId, BigDecimal hourlyRate) throws SQLException {
+        String sql = "UPDATE teams SET hourly_rate = ? WHERE id = ?";
+        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBigDecimal(1, hourlyRate);
+            pstmt.setObject(2, teamId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateTeamsTotalAllocatedCost(UUID teamId, BigDecimal totalAllocatedCost) throws SQLException {
+        String sql = "UPDATE teams SET total_allocated_cost = ? WHERE id = ?";
+        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBigDecimal(1, totalAllocatedCost);
+            pstmt.setObject(2, teamId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateTeamsTotalAllocatedHours(UUID teamId, BigDecimal totalAllocatedHours) throws SQLException {
+        String sql = "UPDATE teams SET total_allocated_hours = ? WHERE id = ?";
+        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setBigDecimal(1, totalAllocatedHours);
+            pstmt.setObject(2, teamId);
+            pstmt.executeUpdate();
+        }
+    }
 }
 

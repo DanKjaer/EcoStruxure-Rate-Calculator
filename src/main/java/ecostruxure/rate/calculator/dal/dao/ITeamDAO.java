@@ -7,7 +7,6 @@ import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -72,5 +71,13 @@ public interface ITeamDAO {
     void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException;
 
     void updateDayRateOnTeam(UUID teamid, UUID profileId, BigDecimal dayRate) throws SQLException;
+
+    void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException;
+
+    void updateTeamsHourlyRate(UUID teamId, BigDecimal hourlyRate) throws SQLException;
+
+    void updateTeamsTotalAllocatedCost(UUID teamId, BigDecimal totalAllocatedCost) throws SQLException;
+
+    void updateTeamsTotalAllocatedHours(UUID teamId, BigDecimal totalAllocatedHours) throws SQLException;
 
 }

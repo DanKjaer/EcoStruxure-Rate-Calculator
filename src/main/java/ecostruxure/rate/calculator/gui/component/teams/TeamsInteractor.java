@@ -80,20 +80,20 @@ public class TeamsInteractor {
             teamItemModel.teamIdProperty().set(team.getTeamId());
 
             // ~~~~~~~~~~ Tør ikke slette nedenstående kode på bagrund af jeg ikke ved hvad det gør ~~~~~~~~~~
-//            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
-//            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
-//            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
-//
-//            Rates rates;
-//            switch (model.selectedRateTypeProperty().get()) {
-//                case DAY -> rates = dayRates.get(team.getTeamId());
-//                case ANNUAL -> rates = annualRates.get(team.getTeamId());
-//                default -> rates = hourlyRates.get(team.getTeamId());
-//            }
-//
-//            teamItemModel.setRawRate(rates.rawRate());
-//            teamItemModel.setMarkupRate(rates.markupRate());
-//            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
+            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
+            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
+            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
+
+            Rates rates;
+            switch (model.selectedRateTypeProperty().get()) {
+                case DAY -> rates = dayRates.get(team.getTeamId());
+                case ANNUAL -> rates = annualRates.get(team.getTeamId());
+                default -> rates = hourlyRates.get(team.getTeamId());
+            }
+
+            teamItemModel.setRawRate(rates.rawRate());
+            teamItemModel.setMarkupRate(rates.markupRate());
+            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
 
             teamItemModel.nameProperty().set(team.getName());
             teamItemModel.markupProperty().set(team.getMarkup());
