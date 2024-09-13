@@ -94,9 +94,8 @@ public class ProfileDAO implements IProfileDAO {
             throw new Exception("Could not get all Profiles from Database.\n" + e.getMessage());
         }
     }
-    @Override
 
-    // Flyt cost_allocation_total til team fremfor team profile.
+    @Override
     public List<Profile> allWithUtilization() throws Exception {
         List<Profile> profiles = new ArrayList<>();
 
@@ -106,13 +105,13 @@ public class ProfileDAO implements IProfileDAO {
                            COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
                         FROM dbo.Profiles p
                         LEFT JOIN LATERAL (
-                            SELECT profileID,
+                            SELECT profileId,
                                    SUM(cost_allocation) AS cost_allocation_total,
                                    SUM(hour_allocation) AS hour_allocation_total
-                            FROM dbo.Teams_profiles
-                            WHERE is_archived = FALSE
-                            GROUP BY profileID
-                        ) tp ON p.profile_id = tp.profileID
+                            FROM dbo.Teams_profiles tp
+                            WHERE p.is_archived = FALSE
+                            GROUP BY profileId
+                        ) tp ON p.profile_id = tp.profileId
                         WHERE p.is_archived = FALSE
                         ORDER BY p.profile_id DESC;                     
                         """;
@@ -144,7 +143,6 @@ public class ProfileDAO implements IProfileDAO {
                                COALESCE(tp.cost_allocation_total, 0) AS cost_allocation_total,
                                COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
                         FROM dbo.Profiles p
-                        INNER JOIN dbo.Profiles_data pd ON p.id = pd.id
                         LEFT JOIN (
                             SELECT profileID,
                                    SUM(cost_allocation) AS cost_allocation_total,
@@ -152,10 +150,10 @@ public class ProfileDAO implements IProfileDAO {
                             FROM dbo.Teams_profiles
                             WHERE teamId = ?
                             GROUP BY profileID
-                        ) tp ON p.id = tp.profileID
-                        LEFT JOIN dbo.Teams_profiles tp2 ON p.id = tp2.profileId
+                        ) tp ON p.profile_id = tp.profileID
+                        LEFT JOIN dbo.Teams_profiles tp2 ON p.profile_id = tp2.profileId
                         WHERE tp2.teamId = ?
-                        ORDER BY p.id DESC;
+                        ORDER BY p.profile_id DESC;
                     """;
 
         try (Connection conn = dbConnector.connection();

@@ -31,6 +31,7 @@ public class AssignProfileInteractor {
             profileService = new ProfileService();
             geographyService = new GeographyService();
         } catch (Exception e) {
+            e.printStackTrace();
             onFetchError.run();
         }
 
@@ -66,13 +67,11 @@ public class AssignProfileInteractor {
 
                 profileItemModel.locationProperty().set(geography.name());
             } else {
-                System.out.println("Unknown location property");
                 profileItemModel.locationProperty().set("Unknown location property");
             }
 
             profileItemModels.add(profileItemModel);
         }
-
         return profileItemModels;
     }
 
@@ -119,6 +118,7 @@ public class AssignProfileInteractor {
 
             return shouldInsert && shouldDelete && shouldUpdate;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -212,8 +212,10 @@ public class AssignProfileInteractor {
         try {
             List<Profile> profiles = profileService.allWithUtilization();
             profileItemModels = convertToProfileItemModels(profiles, teamId);
+            System.out.println("Fetched " + profileItemModels.size() + " profiles");
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

@@ -12,6 +12,7 @@ import ecostruxure.rate.calculator.gui.system.notification.NotificationEvent;
 import ecostruxure.rate.calculator.gui.system.notification.NotificationType;
 import ecostruxure.rate.calculator.gui.util.constants.LocalizedText;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
@@ -39,12 +40,15 @@ public class AssignProfileController implements ModalController {
 
     @Override
     public void activate(Object teamId) {
-        if (teamId instanceof UUID) {
-            model.setTeamId(((UUID) teamId));
-            model.profilesFetchedProperty().set(false);
-            model.profiles().clear();
-            model.originalProfiles().clear();
-            fetchProfiles((UUID) teamId);
+        if (teamId instanceof SimpleObjectProperty) {
+            Object value = ((SimpleObjectProperty<?>) teamId).getValue();
+            if (value instanceof UUID) {
+                model.setTeamId(((UUID) value));
+                model.profilesFetchedProperty().set(false);
+                model.profiles().clear();
+                model.originalProfiles().clear();
+                fetchProfiles((UUID) value);
+            }
         }
     }
 
