@@ -29,6 +29,7 @@ public class TeamsInteractor {
             this.teamService = new TeamService();
             this.rateService = new RateService();
         } catch (Exception e) {
+            e.printStackTrace();
             onFetchError.run();
         }
     }
@@ -49,6 +50,7 @@ public class TeamsInteractor {
         try {
             exportToExcel.exportTeam(teamItemModel.teamIdProperty().get(), file);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -60,6 +62,7 @@ public class TeamsInteractor {
             List<Team> teamList = convertModelsToEntity(teams, false);
             exportToExcel.exportTeams(teamList, file);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -80,20 +83,20 @@ public class TeamsInteractor {
             teamItemModel.teamIdProperty().set(team.getTeamId());
 
             // ~~~~~~~~~~ Tør ikke slette nedenstående kode på bagrund af jeg ikke ved hvad det gør ~~~~~~~~~~
-            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
-            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
-            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
-
-            Rates rates;
-            switch (model.selectedRateTypeProperty().get()) {
-                case DAY -> rates = dayRates.get(team.getTeamId());
-                case ANNUAL -> rates = annualRates.get(team.getTeamId());
-                default -> rates = hourlyRates.get(team.getTeamId());
-            }
-
-            teamItemModel.setRawRate(rates.rawRate());
-            teamItemModel.setMarkupRate(rates.markupRate());
-            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
+//            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
+//            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
+//            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
+//
+//            Rates rates;
+//            switch (model.selectedRateTypeProperty().get()) {
+//                case DAY -> rates = dayRates.get(team.getTeamId());
+//                case ANNUAL -> rates = annualRates.get(team.getTeamId());
+//                default -> rates = hourlyRates.get(team.getTeamId());
+//            }
+//
+//            teamItemModel.setRawRate(rates.rawRate());
+//            teamItemModel.setMarkupRate(rates.markupRate());
+//            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
 
             teamItemModel.nameProperty().set(team.getName());
             teamItemModel.markupProperty().set(team.getMarkup());
@@ -175,6 +178,7 @@ public class TeamsInteractor {
             teamService.setMarkup(teamId, newValue);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -185,6 +189,7 @@ public class TeamsInteractor {
 
             return teamService.archive(team, true);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -194,6 +199,7 @@ public class TeamsInteractor {
             Team team = teamService.get(teamItemModel.teamIdProperty().get());
             return teamService.canUnarchive(team);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -208,6 +214,7 @@ public class TeamsInteractor {
 
             return unArchived;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -217,6 +224,7 @@ public class TeamsInteractor {
             List<Team> teams = convertModelsToEntity(model.teamsToArchive(), true);
             return teamService.archive(teams);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

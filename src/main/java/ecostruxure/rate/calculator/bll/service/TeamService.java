@@ -88,6 +88,7 @@ public class TeamService {
         try {
             teamDAO.updateMultipliers(team);
         } catch (Exception e) {
+            e.printStackTrace();
             team.setMarkup(oldMarkup);
             throw e;
         }
@@ -121,6 +122,7 @@ public class TeamService {
         try {
             teamDAO.updateMultipliers(team);
         } catch (Exception e) {
+            e.printStackTrace();
             team.setMarkup(oldMarkup);
             team.setGrossMargin(oldGrossMargin);
             throw e;

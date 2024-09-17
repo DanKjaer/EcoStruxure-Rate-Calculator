@@ -97,7 +97,7 @@ public class AssignProfileInteractor {
 
     private Team createTeamFromModel(AssignProfileModel model) {
         return new Team.Builder()
-                .teamId(model.getTeamId())
+                .teamId(model.teamIdProperty().get())
                 .build();
     }
 

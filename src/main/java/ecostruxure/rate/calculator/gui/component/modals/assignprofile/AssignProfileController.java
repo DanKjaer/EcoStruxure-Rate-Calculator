@@ -2,7 +2,6 @@ package ecostruxure.rate.calculator.gui.component.modals.assignprofile;
 
 import ecostruxure.rate.calculator.gui.component.profiles.ProfilesController;
 import ecostruxure.rate.calculator.gui.system.background.BackgroundTaskEvent;
-import ecostruxure.rate.calculator.gui.common.View;
 import ecostruxure.rate.calculator.gui.component.teams.TeamsController;
 import ecostruxure.rate.calculator.gui.system.event.EventBus;
 import ecostruxure.rate.calculator.gui.system.event.RefreshEvent;
@@ -43,7 +42,7 @@ public class AssignProfileController implements ModalController {
         if (teamId instanceof SimpleObjectProperty) {
             Object value = ((SimpleObjectProperty<?>) teamId).getValue();
             if (value instanceof UUID) {
-                model.setTeamId(((UUID) value));
+                model.teamIdProperty().set((UUID) value);
                 model.profilesFetchedProperty().set(false);
                 model.profiles().clear();
                 model.originalProfiles().clear();
@@ -77,7 +76,7 @@ public class AssignProfileController implements ModalController {
                 outerLookupHandler.run();
                 eventBus.publish(new RefreshEvent(TeamsController.class));
                 eventBus.publish(new RefreshEvent(ProfilesController.class));
-                fetchProfiles(model.getTeamId());
+                fetchProfiles(model.teamIdProperty().get());
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_ASSIGNED_PROFILES));
             } else {
                 eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_TEAM_ASSIGN));

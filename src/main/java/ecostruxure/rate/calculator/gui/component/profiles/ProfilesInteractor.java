@@ -1,10 +1,12 @@
 package ecostruxure.rate.calculator.gui.component.profiles;
 
 import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import javafx.collections.ObservableList;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +44,7 @@ public class ProfilesInteractor {
         List<ProfileItemModel> profileItemModels = new ArrayList<>();
 
         for (Profile profile : profiles) {
+            TeamProfile teamProfile = new TeamProfile();
             ProfileItemModel profileItemModel = new ProfileItemModel();
             profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
@@ -55,6 +58,13 @@ public class ProfilesInteractor {
             profileItemModel.hoursPerDayProperty().set(profile.getHoursPerDay());
             profileItemModel.updatedAtProperty().set(profile.getUpdatedAt());
             profileItemModel.archivedProperty().set(profile.isArchived());
+
+            BigDecimal costAllocation = profileService.getTotalCostAllocation(profile.getProfileId());
+            BigDecimal hourAllocation = profileService.getTotalHourAllocation(profile.getProfileId());
+            profileItemModel.allocatedCostProperty().set(costAllocation);
+            profileItemModel.allocatedHoursProperty().set(hourAllocation);
+            System.out.println("hour allocation: " + hourAllocation);
+            System.out.println("cost allocation: " + costAllocation);
 
             profileItemModels.add(profileItemModel);
         }

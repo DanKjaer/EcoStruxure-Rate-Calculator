@@ -365,7 +365,8 @@ public class ProfilesView implements View {
         TableColumn<ProfileItemModel, BigDecimal> effectivenessColumn = customTableView.createColumn(LocalizedText.EFFECTIVENESS, ProfileItemModel::effectivenessProperty, new PercentageCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> annualHoursColumn = customTableView.createColumn(LocalizedText.ANNUAL_HOURS, ProfileItemModel::annualHoursProperty, new HourCellFactory<>());
         TableColumn<ProfileItemModel, BigDecimal> effectiveWorkHoursColumn = customTableView.createColumn(LocalizedText.EFFECTIVE_WORK_HOURS, ProfileItemModel::effectiveWorkHoursProperty, new HourCellFactory<>());
-        TableColumn<ProfileItemModel, BigDecimal> allocatedHours = customTableView.createColumn(LocalizedText.ALLOCATED_HOURS, ProfileItemModel::allocatedHoursProperty, new HourCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> allocatedHours = customTableView.createColumn(LocalizedText.ALLOCATED_HOURS, ProfileItemModel::allocatedHoursProperty, new PercentageCellFactory<>());
+        TableColumn<ProfileItemModel, BigDecimal> allocatedCost = customTableView.createColumn(LocalizedText.COST_ALLOCATION, ProfileItemModel::allocatedCostProperty, new PercentageCellFactory<>());
 
         // Fixes senere når jeg ved hvad jeg skal gøre med geography for at få den ind
         //TableColumn<ProfileItemModel, String> locationColumn = customTableView.createColumn(LocalizedText.LOCATION, ProfileItemModel::property);
@@ -385,7 +386,7 @@ public class ProfilesView implements View {
         optionsColumn.setMaxWidth(50);
         optionsColumn.setPrefWidth(50);
 
-        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, effectivenessColumn, annualCostColumn, allocatedHours, optionsColumn)); //locationColumn,
+        customTableView.addColumnsToPagination(Arrays.asList(nameColumn, annualHoursColumn, effectiveWorkHoursColumn, effectivenessColumn, annualCostColumn, allocatedHours, allocatedCost, optionsColumn)); //locationColumn,
 
         tableViewWithPagination.setEditable(true);
     }

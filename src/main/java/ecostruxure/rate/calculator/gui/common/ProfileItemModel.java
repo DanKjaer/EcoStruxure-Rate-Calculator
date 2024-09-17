@@ -66,6 +66,10 @@ public class ProfileItemModel {
         this.allocatedHours.set(allocatedHours);
     }
 
+    public ObjectProperty<BigDecimal> allocatedCostProperty() {
+        return allocatedCost;
+    }
+
     public void setAnnualCost(BigDecimal annualCost) {
         this.annualCost.amount(annualCost);
     }

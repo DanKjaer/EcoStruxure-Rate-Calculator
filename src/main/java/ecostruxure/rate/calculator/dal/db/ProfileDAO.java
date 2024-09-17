@@ -388,18 +388,18 @@ public class ProfileDAO implements IProfileDAO {
         String query = """
                         SELECT SUM(cost_allocation) AS total_allocation
                         FROM Teams_profiles
-                        WHERE profileId = ? AND Teams_profiles.archived = FALSE;
+                        WHERE profileId = ?;
                         """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, profileId.toString());
+            stmt.setObject(1, profileId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        totalUtilization = rs.getBigDecimal("total_allocation");
+                        totalUtilization = column;
                 }
             }
         } catch (Exception e) {
@@ -416,18 +416,18 @@ public class ProfileDAO implements IProfileDAO {
         String query = """
                         SELECT SUM(hour_allocation) AS total_allocation
                         FROM Teams_profiles
-                        WHERE profileId = ? AND Teams_profiles.archived = FALSE;
+                        WHERE profileId = ?;
                         """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, profileId.toString());
+            stmt.setObject(1, profileId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     BigDecimal column = rs.getBigDecimal("total_allocation");
                     if (column != null)
-                        totalAllocation = rs.getBigDecimal("total_allocation");
+                        totalAllocation = column;
                 }
             }
         } catch (Exception e) {
