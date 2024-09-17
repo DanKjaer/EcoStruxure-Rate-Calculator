@@ -7,6 +7,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,4 +55,6 @@ public interface IProfileDAO {
     boolean archive(Profile profile, boolean shouldArchive) throws Exception;
 
     boolean archive(List<Profile> profiles) throws Exception;
+
+    void updateAllocation(UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) throws SQLException;
 }

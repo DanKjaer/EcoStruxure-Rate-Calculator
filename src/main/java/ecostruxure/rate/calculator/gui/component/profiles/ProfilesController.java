@@ -18,7 +18,10 @@ import ecostruxure.rate.calculator.gui.system.view.ChangeViewEvent;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Region;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class ProfilesController implements Controller {
     private final ProfilesModel model;
@@ -74,6 +77,8 @@ public class ProfilesController implements Controller {
 
     private void refresh() {
         fetchProfiles();
+        updateAllocation();
+        System.out.println("Jeg bliver kaldt :)");
     }
 
     private void showProfile(ProfileItemModel data) {
@@ -95,8 +100,8 @@ public class ProfilesController implements Controller {
                 interactor.updateArchivedProfile(true);
                 eventBus.publish(new RefreshEvent(TeamsController.class));
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_PROFILE_ARCHIVE));
-            }
-            else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_PROFILE_ARCHIVE));
+            } else
+                eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_PROFILE_ARCHIVE));
         });
 
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
@@ -117,8 +122,8 @@ public class ProfilesController implements Controller {
                 interactor.updateArchivedProfile(false);
                 eventBus.publish(new RefreshEvent(TeamsController.class));
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_PROFILE_UNARCHIVE));
-            }
-            else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_PROFILE_UNARCHIVE));
+            } else
+                eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_PROFILE_UNARCHIVE));
         });
 
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
@@ -139,10 +144,20 @@ public class ProfilesController implements Controller {
                 interactor.updateModel();
                 interactor.updateArchivedProfiles();
                 eventBus.publish(new NotificationEvent(NotificationType.SUCCESS, LocalizedText.SUCCESS_PROFILES_ARCHIVE));
-            }
-            else eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_PROFILES_ARCHIVE));
+            } else
+                eventBus.publish(new NotificationEvent(NotificationType.FAILURE, LocalizedText.ERROR_PROFILES_ARCHIVE));
         });
 
         eventBus.publish(new BackgroundTaskEvent<>(fetchTask));
     }
+
+    public void updateAllocation() {
+        Task<Boolean> updateTask = new Task<>() {
+            protected Boolean call() throws SQLException {
+                return interactor.updateAllocation();
+            }
+        };
+    }
+
+
 }

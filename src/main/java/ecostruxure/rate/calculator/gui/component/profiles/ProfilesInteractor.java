@@ -7,6 +7,7 @@ import ecostruxure.rate.calculator.gui.common.ProfileItemModel;
 import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,9 @@ public class ProfilesInteractor {
     private final ProfilesModel model;
     private ProfileService profileService;
     private List<ProfileItemModel> profileItemModels;
+    private UUID profileId;
+    private BigDecimal costAllocation;
+    private BigDecimal hourAllocation;
 
     private Profile profile;
 
@@ -44,7 +48,6 @@ public class ProfilesInteractor {
         List<ProfileItemModel> profileItemModels = new ArrayList<>();
 
         for (Profile profile : profiles) {
-            TeamProfile teamProfile = new TeamProfile();
             ProfileItemModel profileItemModel = new ProfileItemModel();
             profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
@@ -142,6 +145,17 @@ public class ProfilesInteractor {
 
     public void updateArchivedProfile(boolean archived) {
         model.profileToArchive().get().archivedProperty().set(archived);
+    }
+
+    public boolean updateAllocation() throws SQLException {
+        profileService.updateAllocation(profileId, costAllocation, hourAllocation);
+        return true;
+    }
+
+    public void setAllocationData(UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) {
+        this.profileId = profileId;
+        this.costAllocation = costAllocation;
+        this.hourAllocation = hourAllocation;
     }
 
 }

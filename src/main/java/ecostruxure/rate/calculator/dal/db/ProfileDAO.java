@@ -739,4 +739,25 @@ public class ProfileDAO implements IProfileDAO {
             throw new Exception("Could not archive Profiles in Database.\n" + e.getMessage());
         }
     }
+
+    @Override
+    public void updateAllocation(UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) throws SQLException {
+        String query = """
+                       UPDATE dbo.Teams_profiles
+                       SET cost_allocation = ?, hour_allocation = ?
+                       WHERE profile_id = ?;
+                       """;
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setBigDecimal(1, costAllocation);
+            stmt.setBigDecimal(2, hourAllocation);
+            stmt.setObject(3, profileId);
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException("Could not update Profile allocation in Database.\n" + e.getMessage());
+        }
+    }
 }

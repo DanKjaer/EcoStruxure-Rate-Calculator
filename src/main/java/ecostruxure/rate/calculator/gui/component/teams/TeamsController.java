@@ -75,6 +75,7 @@ public class TeamsController implements Controller {
     private void refresh() {
         model.teamsFetchedProperty().set(false);
         fetchTeams();
+        eventBus.publish(new RefreshEvent(ProfilesController.class));
     }
 
     private void addTeam() {
