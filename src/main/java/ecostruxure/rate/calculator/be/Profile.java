@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Profile {
+    private TeamProfile teamProfile;
     private UUID profileId;
     private String name;
     private String currency;
@@ -38,8 +39,8 @@ public class Profile {
         this.effectiveWorkHours = builder.effectiveWorkHours;
         this.archived = builder.archived;
         this.updatedAt = builder.updatedAt;
-        this.costAllocation = builder.costAllocation;
-        this.hourAllocation = builder.hourAllocation;
+//        this.costAllocation = builder.costAllocation;
+//        this.hourAllocation = builder.hourAllocation;
     }
 
     public static class Builder{
@@ -55,8 +56,8 @@ public class Profile {
         private BigDecimal effectiveWorkHours;
         private boolean archived;
         private Timestamp updatedAt;
-        private BigDecimal costAllocation;
-        private BigDecimal hourAllocation;
+//        private BigDecimal costAllocation;
+//        private BigDecimal hourAllocation;
 
         public Builder setProfileId(UUID profileId){
             this.profileId = profileId;
@@ -118,15 +119,15 @@ public class Profile {
             return this;
         }
 
-        public Builder setCostAllocation(BigDecimal costAllocation){
-            this.costAllocation = costAllocation;
-            return this;
-        }
-
-        public Builder setHourAllocation(BigDecimal hourAllocation){
-            this.hourAllocation = hourAllocation;
-            return this;
-        }
+//        public Builder setCostAllocation(BigDecimal costAllocation){
+//            this.costAllocation = costAllocation;
+//            return this;
+//        }
+//
+//        public Builder setHourAllocation(BigDecimal hourAllocation){
+//            this.hourAllocation = hourAllocation;
+//            return this;
+//        }
 
         public Profile build(){
             return new Profile(this);
@@ -232,21 +233,29 @@ public class Profile {
         this.updatedAt = updatedAt;
     }
 
-    public BigDecimal getCostAllocation() {
-        return BigDecimal.valueOf(0.0);
+    public TeamProfile getTeamProfile() {
+        return teamProfile;
     }
 
-    public void setCostAllocation(BigDecimal costAllocation) {
-        this.costAllocation = BigDecimal.valueOf(0.0);
+    public void setTeamProfile(TeamProfile teamProfile) {
+        this.teamProfile = teamProfile;
     }
 
-    public BigDecimal getHourAllocation() {
-        return BigDecimal.valueOf(0.0);
-    }
-
-    public void setHourAllocation(BigDecimal hourAllocation) {
-        this.hourAllocation = BigDecimal.valueOf(0.0);
-    }
+    //    public BigDecimal getCostAllocation() {
+//        return BigDecimal.valueOf(0.0);
+//    }
+//
+//    public void setCostAllocation(BigDecimal costAllocation) {
+//        this.costAllocation = BigDecimal.valueOf(0.0);
+//    }
+//
+//    public BigDecimal getHourAllocation() {
+//        return BigDecimal.valueOf(0.0);
+//    }
+//
+//    public void setHourAllocation(BigDecimal hourAllocation) {
+//        this.hourAllocation = BigDecimal.valueOf(0.0);
+//    }
 
     public Geography fetchGeography(GeographyService geographyService) throws Exception{
         if(this.countryId != 0) {

@@ -270,15 +270,6 @@ public class ProfileService {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-
-    public boolean isValidTeamUtilization(BigDecimal utilization) {
-        return utilization.compareTo(BigDecimal.ZERO) >= 0 && utilization.compareTo(HUNDRED) <= 0;
-    }
-
-    public boolean shouldProcessUtilization(BigDecimal utilization) {
-        return isValidTeamUtilization(utilization) && HUNDRED.compareTo(utilization) != 0;
-    }
-
     public boolean update(Profile original, Profile updated) throws Exception {
         validateProfile(updated);
         if (updated.getProfileId() == null) throw new IllegalArgumentException("Profile ID must be greater than 0");

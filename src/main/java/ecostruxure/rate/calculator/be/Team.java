@@ -17,6 +17,8 @@ public class Team {
     private Timestamp updatedAt;
     private boolean archived;
 
+    public Team() {}
+
     private Team(Builder builder) {
         this.teamId = builder.teamId;
         this.name = builder.name;

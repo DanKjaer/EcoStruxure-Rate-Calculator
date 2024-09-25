@@ -2,10 +2,12 @@ package ecostruxure.rate.calculator.gui.component.modals.verifyprofiles;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
 import ecostruxure.rate.calculator.gui.component.modals.addteam.AddProfileItemModel;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class VerifyProfilesInteractor {
     private List<AddProfileItemModel> convertToProfileItemModels(List<Profile> profiles, UUID teamId) throws Exception {
         List<AddProfileItemModel> profileItemModels = new ArrayList<>();
         List<Profile> profilesTeams = teamService.getTeamProfiles(teamId);
+        TeamProfile teamProfile = new TeamProfile();
 
         for (Profile profile : profiles) {
             AddProfileItemModel profileItemModel = new AddProfileItemModel();
@@ -58,11 +61,11 @@ public class VerifyProfilesInteractor {
                     .anyMatch(profileTeam -> profileTeam.getProfileId() == profile.getProfileId()));
 
             BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), teamId);
-            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.getCostAllocation()).add(profileCostAllocation));
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(teamProfile.getCostAllocation()).add(profileCostAllocation));
             profileItemModel.setCostAllocationProperty().set(profileCostAllocation);
 
             BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), teamId);
-            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(teamProfile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
             
             profileItemModel.locationProperty().set(geographyService.getByCountryId(profile.getCountryId()).name());
@@ -117,13 +120,20 @@ public class VerifyProfilesInteractor {
     }
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
-        var profile = new Profile();
-        profile.setProfileId(model.UUIDProperty().get());
-        profile.setName(model.nameProperty().getName());
+        List<Profile> profiles = new ArrayList<>();
+        Profile profile;
+        try {
+            profile = new Profile();
+            profile.setProfileId(model.UUIDProperty().get());
+            profile.setName(model.nameProperty().getName());
 
-        profile.setCostAllocation(model.setCostAllocationProperty().get());
-        profile.setHourAllocation(model.setHourAllocationProperty().get());
-
+            TeamProfile teamProfile = new TeamProfile();
+            teamProfile.setCostAllocation(model.setCostAllocationProperty().get());
+            teamProfile.setHourAllocation(model.setHourAllocationProperty().get());
+            teamService.assignProfiles(teamProfile.getTeam(), profiles);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return profile;
     }
 

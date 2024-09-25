@@ -21,8 +21,6 @@ public class ResultSetMappers {
                 .setEffectiveWorkHours(rs.getBigDecimal("effective_work_hours"))
                 .setHoursPerDay(rs.getBigDecimal("hours_per_day"))
                 .setArchived(rs.getBoolean("is_archived"))
-                .setCostAllocation(rs.getBigDecimal("cost_allocation"))
-                .setHourAllocation(rs.getBigDecimal("hour_allocation"))
                 .build();
     }
 }

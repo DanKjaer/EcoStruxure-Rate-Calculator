@@ -41,25 +41,23 @@ public class AssignProfileInteractor {
     private List<AddProfileItemModel> convertToProfileItemModels(List<Profile> profiles, UUID teamId) throws Exception {
         List<AddProfileItemModel> profileItemModels = new ArrayList<>();
         List<Profile> profilesTeams = teamService.getTeamProfiles(teamId);
+        TeamProfile teamProfile = new TeamProfile();
 
         for (Profile profile : profiles) {
             AddProfileItemModel profileItemModel = new AddProfileItemModel();
             boolean isProfileInTeam = profilesTeams.stream()
                     .anyMatch(profileTeam -> profileTeam.getProfileId() == profile.getProfileId());
 
-            if (!isProfileInTeam && !profileService.shouldProcessUtilization(profile.getCostAllocation()) && !profileService.shouldProcessUtilization(profile.getHourAllocation()))
-                continue;
-
             profileItemModel.UUIDProperty().set(profile.getProfileId());
             profileItemModel.nameProperty().set(profile.getName());
             profileItemModel.selectedProperty().set(isProfileInTeam);
 
             BigDecimal profileCostAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), teamId);
-            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(profile.getCostAllocation()).add(profileCostAllocation));
+            profileItemModel.currentCostAllocationProperty().set(new BigDecimal(100).subtract(teamProfile.getCostAllocation()).add(profileCostAllocation));
             profileItemModel.setCostAllocationProperty().set(profileCostAllocation);
 
             BigDecimal profileHourAllocation = profileService.getProfileHourAllocationForTeam(profile.getProfileId(), teamId);
-            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(profile.getHourAllocation()).add(profileHourAllocation));
+            profileItemModel.currentHourAllocationProperty().set(new BigDecimal(100).subtract(teamProfile.getHourAllocation()).add(profileHourAllocation));
             profileItemModel.setHourAllocationProperty().set(profileHourAllocation);
 
             Geography geography = profile.fetchGeography(geographyService);
@@ -82,15 +80,21 @@ public class AssignProfileInteractor {
     }
 
     private Profile createProfileFromModel(AddProfileItemModel model) {
-        var teamProfile = new TeamProfile();
-        teamProfile.setCostAllocation(model.setCostAllocationProperty().get());
-        teamProfile.setHourAllocation(model.setHourAllocationProperty().get());
 
-        var profile = new Profile();
-        profile.setProfileId(model.UUIDProperty().get());
-        profile.setName((model.nameProperty().get()));
-        profile.setCostAllocation(teamProfile.getCostAllocation());
-        profile.setHourAllocation(teamProfile.getCostAllocation());
+        Profile profile;
+        try {
+            var teamProfile = new TeamProfile();
+            teamProfile.setCostAllocation(model.setCostAllocationProperty().get());
+            teamProfile.setHourAllocation(model.setHourAllocationProperty().get());
+
+            profile = new Profile();
+            profile.setProfileId(model.UUIDProperty().get());
+            profile.setName((model.nameProperty().get()));
+
+            teamService.assignProfiles(teamProfile.getTeam(), List.of(profile));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return profile;
     }
@@ -132,8 +136,8 @@ public class AssignProfileInteractor {
     /**
      * Get the profiles that are selected in the current profiles list but not in the original profiles list
      *
-     * @param currentSelectedProfiles   The current selected profiles
-     * @param originalSelectedProfiles  The original selected profiles
+     * @param currentSelectedProfiles  The current selected profiles
+     * @param originalSelectedProfiles The original selected profiles
      * @return The profiles to insert
      */
     private List<Profile> getProfilesToInsert(List<AddProfileItemModel> currentSelectedProfiles, List<AddProfileItemModel> originalSelectedProfiles) {
@@ -152,8 +156,8 @@ public class AssignProfileInteractor {
     /**
      * Get the profiles that are selected in the original profiles list but not in the current profiles list
      *
-     * @param currentSelectedProfiles   The current selected profiles
-     * @param originalSelectedProfiles  The original selected profiles
+     * @param currentSelectedProfiles  The current selected profiles
+     * @param originalSelectedProfiles The original selected profiles
      * @return The profiles to delete
      */
     private List<Profile> getProfilesToDelete(List<AddProfileItemModel> currentSelectedProfiles, List<AddProfileItemModel> originalSelectedProfiles) {
@@ -171,8 +175,8 @@ public class AssignProfileInteractor {
     /**
      * Get the profiles that are selected in the current profiles list and the utilization is different from the original profiles list
      *
-     * @param currentSelectedProfiles   The current selected profiles
-     * @param originalSelectedProfiles  The original selected profiles
+     * @param currentSelectedProfiles  The current selected profiles
+     * @param originalSelectedProfiles The original selected profiles
      * @return The profiles to update
      */
     private List<Profile> getProfilesToUpdate(List<AddProfileItemModel> currentSelectedProfiles, List<AddProfileItemModel> originalSelectedProfiles) {
@@ -196,8 +200,8 @@ public class AssignProfileInteractor {
     /**
      * Find a profile by ID
      *
-     * @param profiles  The profiles to search in
-     * @param id        The ID to search for
+     * @param profiles The profiles to search in
+     * @param id       The ID to search for
      * @return The profile if found, otherwise null
      */
     private AddProfileItemModel findProfileById(List<AddProfileItemModel> profiles, UUID id) {

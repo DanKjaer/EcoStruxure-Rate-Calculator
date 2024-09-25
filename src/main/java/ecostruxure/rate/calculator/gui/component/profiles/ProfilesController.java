@@ -78,7 +78,6 @@ public class ProfilesController implements Controller {
     private void refresh() {
         fetchProfiles();
         updateAllocation();
-        System.out.println("Jeg bliver kaldt :)");
     }
 
     private void showProfile(ProfileItemModel data) {

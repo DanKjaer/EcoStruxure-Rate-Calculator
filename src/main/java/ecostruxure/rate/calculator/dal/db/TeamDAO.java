@@ -5,16 +5,19 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
 import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class TeamDAO implements ITeamDAO {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(TeamDAO.class);
     private final DBConnector dbConnector;
     private static final Logger logger = Logger.getLogger(TeamDAO.class.getName());
 
@@ -194,11 +197,12 @@ public class TeamDAO implements ITeamDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             conn.setAutoCommit(false);
+            TeamProfile teamProfile = new TeamProfile();
             for (Profile profile : profiles) {
                 stmt.setObject(1, team.getTeamId());
                 stmt.setObject(2, profile.getProfileId());
-                stmt.setBigDecimal(3, profile.getCostAllocation());
-                stmt.setBigDecimal(4, profile.getHourAllocation());
+                stmt.setBigDecimal(3, teamProfile.getCostAllocation());
+                stmt.setBigDecimal(4, teamProfile.getHourAllocation());
                 logger.info("assignProfiles in teamDAO:: Assigning profile with profileId: " + profile.getProfileId() + " to team with teamId: " + team.getTeamId());
 
                 stmt.addBatch();
@@ -224,11 +228,15 @@ public class TeamDAO implements ITeamDAO {
                 """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            TeamProfile teamProfile = new TeamProfile();
             for (Profile profile : profiles) {
+                BigDecimal costAllocation = getCostAllocation(team.getTeamId(), profile.getProfileId());
+                BigDecimal hourAllocation = getHourAllocation(team.getTeamId(), profile.getProfileId());
                 stmt.setObject(1, team.getTeamId());
                 stmt.setObject(2, profile.getProfileId());
-                stmt.setBigDecimal(3, profile.getCostAllocation());
-                stmt.setBigDecimal(4, profile.getHourAllocation());
+                stmt.setBigDecimal(3, costAllocation);
+                stmt.setBigDecimal(4, hourAllocation);
+                logger.info("Assigning cost allocation: " + teamProfile.getCostAllocation() + " and hour allocation: " + teamProfile.getHourAllocation() + " to profile with profileId: " + profile.getProfileId() + " to team with teamId: " + team.getTeamId());
                 logger.info("Assigning profile with profileId: " + profile.getProfileId() + " to team with teamId: " + team.getTeamId());
                 stmt.addBatch();
             }
@@ -251,9 +259,10 @@ public class TeamDAO implements ITeamDAO {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             conn.setAutoCommit(false);
 
+            TeamProfile teamProfile = new TeamProfile();
             for (Profile profile : profiles) {
-                stmt.setBigDecimal(1, profile.getCostAllocation());
-                stmt.setBigDecimal(2, profile.getHourAllocation());
+                stmt.setBigDecimal(1, teamProfile.getCostAllocation());
+                stmt.setBigDecimal(2, teamProfile.getHourAllocation());
                 stmt.setObject(3, team.getTeamId());
                 stmt.setObject(4, profile.getProfileId());
                 stmt.addBatch();
@@ -277,10 +286,10 @@ public class TeamDAO implements ITeamDAO {
                 """;
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
-
+            TeamProfile teamProfile = new TeamProfile();
             for (Profile profile : profiles) {
-                stmt.setBigDecimal(1, profile.getCostAllocation());
-                stmt.setBigDecimal(2, profile.getHourAllocation());
+                stmt.setBigDecimal(1, teamProfile.getCostAllocation());
+                stmt.setBigDecimal(2, teamProfile.getHourAllocation());
                 stmt.setObject(3, team.getTeamId());
                 stmt.setObject(4, profile.getProfileId());
                 stmt.addBatch();
@@ -300,12 +309,12 @@ public class TeamDAO implements ITeamDAO {
         String query = """
                 UPDATE Teams_profiles SET cost_allocation = ?, hour_allocation = ? WHERE teamId = ? AND profileId = ?
                 """;
-
+        TeamProfile teamProfile = new TeamProfile();
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setBigDecimal(1, profile.getCostAllocation());
-            stmt.setBigDecimal(2, profile.getHourAllocation());
+            stmt.setBigDecimal(1, teamProfile.getCostAllocation());
+            stmt.setBigDecimal(2, teamProfile.getHourAllocation());
             stmt.setObject(3, teamId);
             stmt.setObject(4, profile.getProfileId());
 
@@ -449,7 +458,7 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
                     BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
 
-                    profiles.add(new Profile.Builder()
+                    Profile profile = new Profile.Builder()
                             .setProfileId(id)
                             .setName(name)
                             .setCurrency(currency)
@@ -461,9 +470,16 @@ public class TeamDAO implements ITeamDAO {
                             .setEffectivenessPercentage(effectivenessPercentage)
                             .setEffectiveWorkHours(effectiveWorkHours)
                             .setArchived(is_archived)
-                            .setCostAllocation(costAllocation)
-                            .setHourAllocation(hourAllocation)
-                            .build());
+                            .build();
+
+                    TeamProfile teamProfile = new TeamProfile();
+                    teamProfile.setProfileId(id);
+                    teamProfile.setTeamId(teamId);
+                    teamProfile.setCostAllocation(costAllocation);
+                    teamProfile.setHourAllocation(hourAllocation);
+
+                    profile.setTeamProfile(teamProfile);
+                    profiles.add(profile);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -504,7 +520,7 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
                     BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
 
-                    return new Profile.Builder()
+                    profile = new Profile.Builder()
                             .setProfileId(id)
                             .setName(name)
                             .setCurrency(currency)
@@ -516,9 +532,15 @@ public class TeamDAO implements ITeamDAO {
                             .setEffectivenessPercentage(effectivenessPercentage)
                             .setEffectiveWorkHours(effectiveWorkHours)
                             .setArchived(is_archived)
-                            .setCostAllocation(costAllocation)
-                            .setHourAllocation(hourAllocation)
                             .build();
+
+                    TeamProfile teamProfile = new TeamProfile();
+                    teamProfile.setProfileId(id);
+                    teamProfile.setTeamId(teamId);
+                    teamProfile.setCostAllocation(costAllocation);
+                    teamProfile.setHourAllocation(hourAllocation);
+
+                    profile.setTeamProfile(teamProfile);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -668,7 +690,7 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal costAllocation = costAllocationTotal.add(addedRate);
                     BigDecimal hourAllocation = hourAllocationTotal.add(addedHour);
 
-                    profiles.add(new Profile.Builder()
+                    Profile profile = new Profile.Builder()
                             .setProfileId(id)
                             .setName(name)
                             .setCurrency(currency)
@@ -680,10 +702,16 @@ public class TeamDAO implements ITeamDAO {
                             .setEffectivenessPercentage(effectivenessPercentage)
                             .setEffectiveWorkHours(effectiveWorkHours)
                             .setArchived(archived)
-                            .setCostAllocation(costAllocation)
-                            .setHourAllocation(hourAllocation)
-                            .build());
+                            .build();
 
+                    TeamProfile teamProfile = new TeamProfile();
+                    teamProfile.setProfileId(id);
+                    teamProfile.setTeamId(teamId);
+                    teamProfile.setCostAllocation(costAllocation);
+                    teamProfile.setHourAllocation(hourAllocation);
+
+                    profile.setTeamProfile(teamProfile);
+                    profiles.add(profile);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -788,9 +816,9 @@ public class TeamDAO implements ITeamDAO {
                 } else {
                     return BigDecimal.ZERO;
                 }
+                }
             }
 
-        }
     }
 
     @Override
@@ -811,6 +839,49 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
+    public void setAllocation(UUID teamid, UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) throws SQLException {
+        String sql = "INSERT INTO teams_profiles(teamid, profileid, cost_allocation, hour_allocation) VALUES (?, ?, ?, ?)";
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, teamid);
+            pstmt.setObject(2, profileId);
+            pstmt.setBigDecimal(3, costAllocation);
+            pstmt.setBigDecimal(4, hourAllocation);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not set allocation for Team in Database.\n" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void setCostAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation) throws SQLException {
+        String sql = "INSERT INTO teams_profiles (teamid, profileid, cost_allocation) VALUES (?, ?, ?)";
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, teamId);
+            pstmt.setObject(2, profileId);
+            pstmt.setBigDecimal(3, costAllocation);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not set cost allocation for Team in Database.\n" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void setHourAllocation(UUID teamId, UUID profileId, BigDecimal hourAllocation) throws SQLException {
+        String sql = "INSERT INTO teams_profiles (teamid, profileid, hour_allocation) VALUES (?, ?, ?)";
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, teamId);
+            pstmt.setObject(2, profileId);
+            pstmt.setBigDecimal(3, hourAllocation);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not set hour allocation for Team in Database.\n" + e.getMessage());
+        }
+    }
+
+    @Override
     public BigDecimal getAllocatedCostOnTeam(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT allocated_cost_on_team FROM teams_profiles WHERE teamid = ? AND profileid = ?";
         try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -826,7 +897,7 @@ public class TeamDAO implements ITeamDAO {
         }
     }
 
-    @Override
+     @Override
     public BigDecimal getAllocatedHoursOnTeam(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT allocated_Hours_on_team FROM teams_profiles WHERE teamid = ? AND profileid = ?";
         try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -845,7 +916,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateAllocatedCost(UUID teamId, UUID profileId, BigDecimal allocatedCost) throws SQLException {
         String sql = "UPDATE teams_profiles SET allocated_cost_on_team = ? WHERE teamid = ? AND profileid = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setBigDecimal(1, allocatedCost);
             preparedStatement.setObject(2, teamId);
             preparedStatement.setObject(3, profileId);
@@ -856,8 +927,30 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException {
         String sql = "UPDATE teams_profiles SET allocated_hours_on_team = ? WHERE teamid = ? AND profileid = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBigDecimal(1, allocatedHour);
+            pstmt.setObject(2, teamId);
+            pstmt.setObject(3, profileId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateCostAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation) throws SQLException {
+        String sql = "UPDATE teams_profiles SET cost_allocation = ? WHERE teamid = ? AND profileid = ?";
+        try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setBigDecimal(1, costAllocation);
+            preparedStatement.setObject(2, teamId);
+            preparedStatement.setObject(3, profileId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateHourAllocation(UUID teamId, UUID profileId, BigDecimal hourAllocation) throws SQLException {
+        String sql = "UPDATE teams_profiles SET hour_allocation = ? WHERE teamid = ? AND profileid = ?";
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBigDecimal(1, hourAllocation);
             pstmt.setObject(2, teamId);
             pstmt.setObject(3, profileId);
             pstmt.executeUpdate();
@@ -867,7 +960,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateDayRateOnTeam(UUID teamid, UUID profileId, BigDecimal dayRate) throws SQLException {
         String sql = "UPDATE teams_profiles SET day_rate_on_team = ? WHERE teamid = ? AND profileid = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBigDecimal(1, dayRate);
             pstmt.setObject(2, teamid);
             pstmt.setObject(3, profileId);
@@ -878,7 +971,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException {
         String sql = "UPDATE teams SET day_rate = ? WHERE id = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBigDecimal(1, dayRate);
             pstmt.setObject(2, teamId);
             pstmt.executeUpdate();
@@ -888,7 +981,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateTeamsHourlyRate(UUID teamId, BigDecimal hourlyRate) throws SQLException {
         String sql = "UPDATE teams SET hourly_rate = ? WHERE id = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBigDecimal(1, hourlyRate);
             pstmt.setObject(2, teamId);
             pstmt.executeUpdate();
@@ -898,7 +991,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateTeamsTotalAllocatedCost(UUID teamId, BigDecimal totalAllocatedCost) throws SQLException {
         String sql = "UPDATE teams SET total_allocated_cost = ? WHERE id = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBigDecimal(1, totalAllocatedCost);
             pstmt.setObject(2, teamId);
             pstmt.executeUpdate();
@@ -908,7 +1001,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public void updateTeamsTotalAllocatedHours(UUID teamId, BigDecimal totalAllocatedHours) throws SQLException {
         String sql = "UPDATE teams SET total_allocated_hours = ? WHERE id = ?";
-        try(Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBigDecimal(1, totalAllocatedHours);
             pstmt.setObject(2, teamId);
             pstmt.executeUpdate();

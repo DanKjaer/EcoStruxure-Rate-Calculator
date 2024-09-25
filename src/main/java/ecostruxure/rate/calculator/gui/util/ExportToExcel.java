@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.gui.util;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.bll.RateService;
 import ecostruxure.rate.calculator.be.enums.RateType;
 import ecostruxure.rate.calculator.be.data.Rates;
@@ -175,11 +176,12 @@ public class ExportToExcel {
                 headerRow.createCell(i).setCellValue(profileHeader[i]);
             }
             int rowIndex = 1;
+            TeamProfile tp = new TeamProfile();
             for (Profile p : profiles) {
-                String[] profileData = {p.getName(), p.getHourAllocation().toString(),
-                        profileService.totalHoursPercentage(p, p.getHourAllocation()).toString(),
-                        p.getCostAllocation().toString(), profileService.hourlyRate(p, p.getCostAllocation()).toString(),
-                        profileService.dayRate(p, p.getCostAllocation()).toString()};
+                String[] profileData = {p.getName(), tp.getHourAllocation().toString(),
+                        profileService.totalHoursPercentage(p, tp.getHourAllocation()).toString(),
+                        tp.getCostAllocation().toString(), profileService.hourlyRate(p, tp.getCostAllocation()).toString(),
+                        profileService.dayRate(p, tp.getCostAllocation()).toString()};
                 createDataRows(sheetProfiles, rowIndex++, profileData, workbook);
             }
         } else {
@@ -246,14 +248,15 @@ public class ExportToExcel {
                         headerRow.createCell(i).setCellValue(profileHeader[i]);
 
                     int rowIndex = profileHeaderIndex + 1;
+                    TeamProfile tp = new TeamProfile();
                     for (Profile p : profiles) {
                         String[] profileData = {
                                 p.getName(),
-                                p.getHourAllocation() != null ? p.getHourAllocation().toString() : "",
-                                profileService.totalHoursPercentage(p, p.getHourAllocation()) != null ? profileService.totalHoursPercentage(p, p.getHourAllocation()).toString() : "",
-                                p.getCostAllocation() != null ? p.getCostAllocation().toString() : "",
-                                profileService.hourlyRate(p, p.getCostAllocation()) != null ? profileService.hourlyRate(p, p.getCostAllocation()).toString() : "",
-                                profileService.dayRate(p, p.getCostAllocation()) != null ? profileService.dayRate(p, p.getCostAllocation()).toString() : ""
+                                tp.getHourAllocation() != null ? tp.getHourAllocation().toString() : "",
+                                profileService.totalHoursPercentage(p, tp.getHourAllocation()) != null ? profileService.totalHoursPercentage(p, tp.getHourAllocation()).toString() : "",
+                                tp.getCostAllocation() != null ? tp.getCostAllocation().toString() : "",
+                                profileService.hourlyRate(p, tp.getCostAllocation()) != null ? profileService.hourlyRate(p, tp.getCostAllocation()).toString() : "",
+                                profileService.dayRate(p, tp.getCostAllocation()) != null ? profileService.dayRate(p, tp.getCostAllocation()).toString() : ""
                         };
                         createDataRows(sheetTeam, rowIndex++, profileData, workbook);
                     }

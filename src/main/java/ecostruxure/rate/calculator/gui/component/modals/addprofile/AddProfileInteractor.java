@@ -8,6 +8,7 @@ import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.gui.common.CurrencyItemModel;
 import javafx.beans.binding.Bindings;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ public class AddProfileInteractor {
 
     private Profile createProfileFromModel() {
         var profile = new Profile();
+        TeamProfile teamProfile = new TeamProfile();
 
         var currencyItemModel = model.selectedCurrencyProperty().get();
         BigDecimal eurConversionRate = new BigDecimal(currencyItemModel.eurConversionRateProperty().get());
@@ -96,7 +98,7 @@ public class AddProfileInteractor {
         profile.setAnnualCost(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
         profile.setEffectivenessPercentage(new BigDecimal(model.effectivenessProperty().get()));
         profile.setAnnualHours(new BigDecimal(model.annualTotalHoursProperty().get()));
-        System.out.println("profile.getHourAllocation(): " + profile.getHourAllocation());
+        System.out.println("teamProfile.getHourAllocation(): " + teamProfile.getHourAllocation());
         System.out.println("profile.getAnnualHours(): " + profile.getAnnualHours());
         profile.setHoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
 

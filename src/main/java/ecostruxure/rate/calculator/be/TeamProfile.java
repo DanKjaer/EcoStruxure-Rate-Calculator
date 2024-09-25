@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public class TeamProfile {
     private Profile profile;
+    private Team team;
     private UUID teamId;
     private UUID profileId;
     private String name;
@@ -100,5 +101,13 @@ public class TeamProfile {
 
     public void setAllocatedHoursOnTeam(BigDecimal allocatedHoursOnTeam) {
         this.allocatedHoursOnTeam = allocatedHoursOnTeam;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team){
+        this.team = team;
     }
 }

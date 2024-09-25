@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -122,8 +121,12 @@ public class ProfileDAO implements IProfileDAO {
 
             while (rs.next()) {
                 Profile profile = profileResultSet(rs);
-                profile.setCostAllocation(rs.getBigDecimal("cost_allocation_total"));
-                profile.setHourAllocation(rs.getBigDecimal("hour_allocation_total"));
+
+                TeamProfile teamProfile = new TeamProfile();
+                teamProfile.setProfile(profile);
+                teamProfile.setCostAllocation(rs.getBigDecimal("cost_allocation_total"));
+                teamProfile.setHourAllocation(rs.getBigDecimal("hour_allocation_total"));
+
                 profiles.add(profile);
             }
 
@@ -164,8 +167,12 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Profile profile = profileResultSet(rs);
-                    profile.setCostAllocation(rs.getBigDecimal("cost_allocation_total"));
-                    profile.setHourAllocation(rs.getBigDecimal("hour_allocation_total"));
+
+                    TeamProfile teamProfile = new TeamProfile();
+                    teamProfile.setCostAllocation(rs.getBigDecimal("cost_allocation_total"));
+                    teamProfile.setHourAllocation(rs.getBigDecimal("hour_allocation_total"));
+
+                    profile.setTeamProfile(teamProfile);
                     profiles.add(profile);
                 }
             }

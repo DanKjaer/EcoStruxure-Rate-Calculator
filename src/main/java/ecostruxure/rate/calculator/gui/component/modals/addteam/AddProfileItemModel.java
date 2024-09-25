@@ -16,7 +16,7 @@ public class AddProfileItemModel {
     private final ObjectProperty<BigDecimal> currentHourAllocation = new SimpleObjectProperty<>();
 
     private final BooleanProperty utilizationPercentageIsValidProperty = new SimpleBooleanProperty();
-    private final IntegerProperty teamId = new SimpleIntegerProperty();
+    private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
 
     private final StringProperty location = new SimpleStringProperty("");
     private final BooleanProperty selected = new SimpleBooleanProperty();
@@ -64,7 +64,7 @@ public class AddProfileItemModel {
         return selected;
     }
 
-    public IntegerProperty teamIdProperty() {
+    public ObjectProperty<UUID> teamIdProperty() {
         return teamId;
     }
 
