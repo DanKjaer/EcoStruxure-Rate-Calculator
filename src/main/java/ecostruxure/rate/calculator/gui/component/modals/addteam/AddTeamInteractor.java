@@ -134,27 +134,6 @@ public class AddTeamInteractor {
         return profile;
     }
 
-    public Boolean addTeam() {
-        try {
-            Team tempTeam = new Team.Builder()
-                    .name(model.nameProperty().get())
-                    .markup(BigDecimal.ZERO)
-                    .grossMargin(BigDecimal.ZERO)
-                    .build();
-
-            List<Profile> profiles = model.profiles().stream()
-                    .filter(addProfileItemModel -> addProfileItemModel.selectedProperty().get())
-                    .map(addProfileItemModel -> createProfileFromModel(addProfileItemModel, tempTeam.getTeamId()))
-                    .collect(Collectors.toList());
-
-            teamService.create(tempTeam, profiles);
-            System.out.println("addTeam teamId: " + tempTeam.getTeamId());
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     public boolean saveTeamWithProfiles() {
         try {
@@ -210,6 +189,29 @@ public class AddTeamInteractor {
 //            teamService.assignProfiles(teamProfile.getTeam(), profiles);
 //        } catch (Exception e) {
 //            e.printStackTrace();
+//        }
+//    }
+
+
+//    public Boolean addTeam() {
+//        try {
+//            Team tempTeam = new Team.Builder()
+//                    .name(model.nameProperty().get())
+//                    .markup(BigDecimal.ZERO)
+//                    .grossMargin(BigDecimal.ZERO)
+//                    .build();
+//
+//            List<Profile> profiles = model.profiles().stream()
+//                    .filter(addProfileItemModel -> addProfileItemModel.selectedProperty().get())
+//                    .map(addProfileItemModel -> createProfileFromModel(addProfileItemModel, tempTeam.getTeamId()))
+//                    .collect(Collectors.toList());
+//
+//            teamService.create(tempTeam, profiles);
+//            System.out.println("addTeam teamId: " + tempTeam.getTeamId());
+//            return true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
 //        }
 //    }
 }
