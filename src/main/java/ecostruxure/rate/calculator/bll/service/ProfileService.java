@@ -63,7 +63,7 @@ public class ProfileService {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
 
-        BigDecimal percentageAsDecimal = utilizationPercentage.divide(new BigDecimal("100.00"), GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return profile.getAnnualHours().multiply(percentageAsDecimal);
     }
 
@@ -86,7 +86,7 @@ public class ProfileService {
     public BigDecimal hourlyRate(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        BigDecimal percentageAsDecimal = utilizationPercentage.divide(new BigDecimal("100.00"), GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return hourlyRate(profile).multiply(percentageAsDecimal);
     }
 
@@ -105,14 +105,14 @@ public class ProfileService {
                 .map(this::hourlyRate)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        var markupFactor = BigDecimal.ONE.add(markup.divide(new BigDecimal("100"), GENERAL_SCALE, ROUNDING_MODE));
+        var markupFactor = BigDecimal.ONE.add(markup.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE));
         return totalHourlyRate.multiply(markupFactor);
     }
 
     public BigDecimal hourlyRate(List<Profile> profiles, BigDecimal markup, BigDecimal grossMargin) {
         Objects.requireNonNull(profiles, "Profiles cannot be null");
         var hourlyRateWithMarkup = hourlyRate(profiles, markup);
-        var grossMarginFactor = BigDecimal.ONE.add(grossMargin.divide(new BigDecimal("100"), GENERAL_SCALE, ROUNDING_MODE));
+        var grossMarginFactor = BigDecimal.ONE.add(grossMargin.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE));
         return hourlyRateWithMarkup.multiply(grossMarginFactor).setScale(GENERAL_SCALE, ROUNDING_MODE);
     }
 
@@ -131,7 +131,7 @@ public class ProfileService {
     public BigDecimal dayRate(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        BigDecimal percentageAsDecimal = utilizationPercentage.divide(new BigDecimal("100.00"), GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return dayRate(profile).multiply(percentageAsDecimal);
     }
 
@@ -149,7 +149,7 @@ public class ProfileService {
         var totalDayRate = profiles.stream()
                 .map(this::dayRate)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        var markupFactor = BigDecimal.ONE.add(markup.divide(new BigDecimal("100"), GENERAL_SCALE, ROUNDING_MODE));
+        var markupFactor = BigDecimal.ONE.add(markup.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE));
         return totalDayRate.multiply(markupFactor);
     }
 
@@ -157,7 +157,7 @@ public class ProfileService {
         Objects.requireNonNull(profiles, "Profiles cannot be null");
 
         var dayRateWithMarkup = dayRate(profiles, markup);
-        var grossMarginFactor = BigDecimal.ONE.add(grossMargin.divide(new BigDecimal("100"), GENERAL_SCALE, ROUNDING_MODE));
+        var grossMarginFactor = BigDecimal.ONE.add(grossMargin.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE));
         return dayRateWithMarkup.multiply(grossMarginFactor).setScale(GENERAL_SCALE, ROUNDING_MODE);
     }
 
@@ -170,7 +170,7 @@ public class ProfileService {
     public BigDecimal annualCost(Profile profile, BigDecimal utilizationPercentage) {
         Objects.requireNonNull(profile, "Profile cannot be null");
 
-        BigDecimal percentageAsDecimal = utilizationPercentage.divide(new BigDecimal("100.00"), GENERAL_SCALE, ROUNDING_MODE);
+        BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         return annualCost(profile).multiply(percentageAsDecimal);
     }
 

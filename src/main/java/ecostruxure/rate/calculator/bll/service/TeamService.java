@@ -223,54 +223,17 @@ public class TeamService {
     }
 
     public BigDecimal getCostAllocationFromDatabase(UUID teamId, UUID profileId) throws Exception {
-//        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
         if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return teamDAO.getCostAllocation(teamId, profileId);
     }
 
     public BigDecimal getHourAllocationFromDatabase(UUID teamId, UUID profileId) throws Exception {
-//        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
         if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
 
         return teamDAO.getHourAllocation(teamId, profileId);
-    }
-
-
-
-    public void setAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-
-        teamDAO.setAllocation(teamId, profileId, costAllocation, hourAllocation);
-    }
-
-    public void setCostAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-
-        teamDAO.setCostAllocation(teamId, profileId, costAllocation);
-    }
-
-    public void setHourAllocation(UUID teamId, UUID profileId, BigDecimal hourAllocation) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-
-        teamDAO.setHourAllocation(teamId, profileId, hourAllocation);
-    }
-
-    public void updateCostAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-
-        teamDAO.updateCostAllocation(teamId, profileId, costAllocation);
-    }
-
-    public void updateHourAllocation(UUID teamId, UUID profileId, BigDecimal hourAllocation) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-
-        teamDAO.updateHourAllocation(teamId, profileId, hourAllocation);
     }
 
 //  Alle metoder herfra og ned, skal måske flyttes til et andet sted end teamService.
@@ -406,4 +369,9 @@ public class TeamService {
         }
         return allocatedHoursOnTeam;
     }
+
+    public boolean storeTeamProfiles(Team team, List<TeamProfile> teamProfiles) throws Exception {
+        return teamProfileManagementService.storeProfilesToTeam(team, teamProfiles);
+    }
+
 }

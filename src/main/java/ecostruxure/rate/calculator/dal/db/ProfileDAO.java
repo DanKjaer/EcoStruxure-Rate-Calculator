@@ -214,6 +214,7 @@ public class ProfileDAO implements IProfileDAO {
 
     @Override
     public Profile get(TransactionContext context, UUID id) throws Exception {
+        System.out.println("Entering get profileDAO");
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         if (id == null){
@@ -241,7 +242,7 @@ public class ProfileDAO implements IProfileDAO {
         }
 
         if (profile == null) throw new Exception("Profile with ID " + id + " not found.");
-
+        System.out.println("Exiting get profileDAO");
         return profile;
     }
 
@@ -277,24 +278,6 @@ public class ProfileDAO implements IProfileDAO {
             }
         }
     }
-
-//    private ProfileData createProfileData(Connection connection, Profile profile, ProfileData profileData) throws Exception {
-//        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles_data (id, name, currency, geography, overhead, archived) VALUES (?, ?, ?, ?, ?, ?)")) {
-//            stmt.setInt(1, profile.id());
-//            stmt.setString(2, profileData.name());
-//            stmt.setString(3, profileData.currency());
-//            stmt.setInt(4, profileData.geography());
-//            stmt.setBoolean(5, profileData.overhead());
-//            stmt.setBoolean(6, profileData.archived()); // Er dog false fra default, måske fjernes...
-//
-//            int affectedRows = stmt.executeUpdate();
-//
-//            if (affectedRows == 0)
-//                throw new SQLException("Creating profile data failed, no rows affected.");
-//
-//            return profileData;
-//        }
-//    }
 
     public List<Profile> allByCountry(Country country) throws Exception {
         return allByCountry(country.code());

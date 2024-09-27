@@ -173,8 +173,6 @@ public class TeamInteractor {
             profileItemModel.updatedAtProperty().set(profile.getUpdatedAt());
             profileItemModel.resourceTypeProperty().set(profile.isResourceType());
             profileItemModel.archivedProperty().set(profile.isArchived());
-            profileItemModels.add(profileItemModel);
-
 
             String geographyName = geographyService.getByCountryId(profile.getCountryId()).name();
             profileItemModel.locationProperty().set(geographyName);

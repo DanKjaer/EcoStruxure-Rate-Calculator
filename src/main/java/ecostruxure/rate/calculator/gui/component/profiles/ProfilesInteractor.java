@@ -66,8 +66,6 @@ public class ProfilesInteractor {
             BigDecimal hourAllocation = profileService.getTotalHourAllocation(profile.getProfileId());
             profileItemModel.allocatedCostProperty().set(costAllocation);
             profileItemModel.allocatedHoursProperty().set(hourAllocation);
-            System.out.println("hour allocation: " + hourAllocation);
-            System.out.println("cost allocation: " + costAllocation);
 
             profileItemModels.add(profileItemModel);
         }

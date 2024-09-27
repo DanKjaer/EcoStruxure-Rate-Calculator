@@ -62,11 +62,6 @@ public interface ITeamDAO {
 
     BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception;
 
-    void setAllocation(UUID teamid, UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) throws SQLException;
-
-    void setCostAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation) throws SQLException;
-
-    void setHourAllocation(UUID teamId, UUID profileId, BigDecimal hourAllocation) throws SQLException;
 
     BigDecimal getAllocatedCostOnTeam(UUID teamId, UUID profileId) throws Exception;
 
@@ -76,8 +71,6 @@ public interface ITeamDAO {
 
     void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException;
 
-    void updateCostAllocation(UUID teamId, UUID profileId, BigDecimal costAllocation) throws SQLException;
-    void updateHourAllocation(UUID teamId, UUID profileId, BigDecimal hourAllocation) throws SQLException;
 
     void updateDayRateOnTeam(UUID teamid, UUID profileId, BigDecimal dayRate) throws SQLException;
 
@@ -88,5 +81,7 @@ public interface ITeamDAO {
     void updateTeamsTotalAllocatedCost(UUID teamId, BigDecimal totalAllocatedCost) throws SQLException;
 
     void updateTeamsTotalAllocatedHours(UUID teamId, BigDecimal totalAllocatedHours) throws SQLException;
+
+    boolean storeTeamProfiles(TransactionContext context, List<TeamProfile> teamProfiles) throws Exception;
 
 }

@@ -69,8 +69,6 @@ public class AddTeamInteractor {
         TeamProfile teamProfile = new TeamProfile();
         team = new Team();
         UUID teamId = team.getTeamId();
-        System.out.println("team: " + team.getName());
-        System.out.println("convert teamId: " + teamId);
         team.setTeamId(teamId);
         teamProfile.setTeam(team);
         teamProfile.setTeamId(teamId);
@@ -102,35 +100,42 @@ public class AddTeamInteractor {
         model.profilesFetchedProperty().set(true);
     }
 
+//
+//    private Profile createProfileFromModel(AddProfileItemModel model, UUID teamId) {
+//        Profile profile = new Profile();
+//        UUID profileId = model.UUIDProperty().get();
+//
+//        TeamProfile teamProfile = new TeamProfile();
+//        teamProfile.setTeam(team);
+//        teamProfile.setTeamId(teamId);
+//        try {
+//            profile.setProfileId(profileId);
+//            profile.setName((model.nameProperty().get()));
+//
+//            BigDecimal costAllocation = model.setCostAllocationProperty().get();
+//            BigDecimal hourAllocation = model.setHourAllocationProperty().get();
+//
+//            teamService.setAllocation(teamId, profileId, costAllocation, hourAllocation);
+//
+//            teamProfile.setCostAllocation(costAllocation);
+//            teamProfile.setHourAllocation(hourAllocation);
+//
+//            //List<Profile> profiles = new ArrayList<>();
+//            //teamService.assignProfiles(teamProfile.getTeam(), profiles);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return profile;
+//    }
 
-    private Profile createProfileFromModel(AddProfileItemModel model, UUID teamId) {
+
+    private Profile createProfileFromModel(AddProfileItemModel model) {
         Profile profile = new Profile();
         UUID profileId = model.UUIDProperty().get();
 
-        TeamProfile teamProfile = new TeamProfile();
-        teamProfile.setTeam(team);
-        teamProfile.setTeamId(teamId);
-        try {
-            System.out.println("create teamId: " + teamId);
             profile.setProfileId(profileId);
             profile.setName((model.nameProperty().get()));
 
-            BigDecimal costAllocation = model.setCostAllocationProperty().get();
-            BigDecimal hourAllocation = model.setHourAllocationProperty().get();
-
-            System.out.println("cost allocation som er null: " + costAllocation);
-            System.out.println("hour allocation som er null: " + hourAllocation);
-
-            teamService.setAllocation(teamId, profileId, costAllocation, hourAllocation);
-
-            teamProfile.setCostAllocation(costAllocation);
-            teamProfile.setHourAllocation(hourAllocation);
-
-            List<Profile> profiles = new ArrayList<>();
-            teamService.assignProfiles(teamProfile.getTeam(), profiles);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return profile;
     }
 
@@ -143,19 +148,53 @@ public class AddTeamInteractor {
                     .grossMargin(BigDecimal.ZERO)
                     .build();
             Team team = saveTeamWithoutProfiles(tempTeam);
-            System.out.println("saveTeamWithProfiles teamId: " + team.getTeamId());
 
-            List<Profile> profiles = model.profiles().stream()
-                    .filter(addProfileItemModel -> addProfileItemModel.selectedProperty().get())
-                    .map(addProfileItemModel -> createProfileFromModel(addProfileItemModel, team.getTeamId()))
-                    .collect(Collectors.toList());
+            List<Profile> profiles = new ArrayList<>();
+            List<TeamProfile> teamProfiles = new ArrayList<>();
 
-            teamService.assignProfiles(team, profiles);
+            for(AddProfileItemModel addProfileItemModel : model.profiles()) {
+                if(addProfileItemModel.selectedProperty().get()) {
+                    Profile profile = createProfileFromModel(addProfileItemModel);
+                    profiles.add(profile);
+
+                    TeamProfile teamProfile = new TeamProfile();
+                    teamProfile.setTeam(team);
+                    teamProfile.setTeamId(team.getTeamId());
+                    teamProfile.setProfile(profile);
+                    teamProfile.setProfileId(profile.getProfileId());
+                    teamProfile.setCostAllocation(addProfileItemModel.setCostAllocationProperty().get());
+                    teamProfile.setHourAllocation(addProfileItemModel.setHourAllocationProperty().get());
+                    teamProfiles.add(teamProfile);
+                }
+            }
+
+            teamService.storeTeamProfiles(tempTeam, teamProfiles);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
     }
+
+//    public boolean saveTeamWithProfiles() {
+//        try {
+//            Team tempTeam = new Team.Builder()
+//                    .name(model.nameProperty().get())
+//                    .markup(BigDecimal.ZERO)
+//                    .grossMargin(BigDecimal.ZERO)
+//                    .build();
+//            Team team = saveTeamWithoutProfiles(tempTeam);
+//
+//            List<Profile> profiles = model.profiles().stream()
+//                    .filter(addProfileItemModel -> addProfileItemModel.selectedProperty().get())
+//                    .map(addProfileItemModel -> createProfileFromModel(addProfileItemModel, team.getTeamId()))
+//                    .collect(Collectors.toList());
+//
+//            teamService.assignProfiles(team, profiles);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return true;
+//    }
 
     public Team saveTeamWithoutProfiles(Team _team) throws Exception {
         Team team = new Team.Builder()

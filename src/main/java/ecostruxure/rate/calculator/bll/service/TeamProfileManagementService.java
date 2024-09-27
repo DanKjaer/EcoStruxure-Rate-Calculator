@@ -16,6 +16,7 @@ import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -77,6 +78,32 @@ public class TeamProfileManagementService {
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
                 historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.ASSIGNED_PROFILE, profileMetrics, now);
             }
+            return true;
+        });
+    }
+
+    public boolean storeProfilesToTeam(Team team, List<TeamProfile> teamProfiles) throws Exception {
+        return transactionManager.executeTransaction(context -> {
+            LocalDateTime now = LocalDateTime.now();
+            boolean assigned = teamDAO.storeTeamProfiles(context, teamProfiles);
+
+            if(!assigned) return false;
+            List<Profile> storedProfiles = teamDAO.getTeamProfiles(context, team.getTeamId());
+
+            System.out.println("Stored Profiles Size: " + (storedProfiles != null ? storedProfiles.size() : "null"));
+
+            TeamMetrics metrics = calculateMetrics(team.getTeamId(), storedProfiles, context);
+
+            for (Profile profile : storedProfiles) {
+                UUID profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
+                ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
+                System.out.println("Profile ID: " + profile.getProfileId());
+                System.out.println("Profile History ID: " + profileHistoryId);
+                System.out.println("Profile Metrics: " + profileMetrics);
+
+                historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.ASSIGNED_PROFILE, profileMetrics, now);
+            }
+
             return true;
         });
     }
@@ -176,9 +203,9 @@ public class TeamProfileManagementService {
         return calculateMetrics(profile, team.getTeamId(), context);
     }
 
-    private ProfileMetrics calculateMetrics(Profile profile, UUID teamid, TransactionContext context) throws Exception {
-        BigDecimal costAllocation = profileDAO.getProfileCostAllocationForTeam(context, profile.getProfileId(), teamid);
-        BigDecimal hourAllocation = profileDAO.getProfileHourAllocationForTeam(context, profile.getProfileId(), teamid);
+    private ProfileMetrics calculateMetrics(Profile profile, UUID teamId, TransactionContext context) throws Exception {
+        BigDecimal costAllocation = profileDAO.getProfileCostAllocationForTeam(context, profile.getProfileId(), teamId);
+        BigDecimal hourAllocation = profileDAO.getProfileHourAllocationForTeam(context, profile.getProfileId(), teamId);
 
         profileDAO.get(context, profile.getProfileId());
 
