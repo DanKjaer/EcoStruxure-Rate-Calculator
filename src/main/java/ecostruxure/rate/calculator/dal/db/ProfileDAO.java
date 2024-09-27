@@ -659,9 +659,9 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_salary = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
-                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_arhived = ?, updated_at = CURRENT_TIMESTAMP
-                                  WHERE id = ?;
+                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
+                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
+                                  WHERE profile_id = ?;
                                   """;
         try (PreparedStatement updateProfileStmt = sqlContext.connection().prepareStatement(updateProfileSQL)) {
             updateProfileStmt.setBigDecimal(1, profile.getAnnualCost());

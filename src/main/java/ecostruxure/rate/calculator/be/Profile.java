@@ -20,12 +20,8 @@ public class Profile {
     private BigDecimal effectiveWorkHours;
     private boolean archived;
     private Timestamp updatedAt;
-    //De 3 nederste skal måske slettes, afhængig af hvordan jeg skal håndtere geography. Cost og Hour skal refactors over i team
-    private BigDecimal costAllocation;
-    private BigDecimal hourAllocation;
 
     // Implementer builder pattern, så jeg kan have 1 constructor.
-
     private Profile(Builder builder){
         this.profileId = builder.profileId;
         this.name = builder.name;
@@ -39,8 +35,6 @@ public class Profile {
         this.effectiveWorkHours = builder.effectiveWorkHours;
         this.archived = builder.archived;
         this.updatedAt = builder.updatedAt;
-//        this.costAllocation = builder.costAllocation;
-//        this.hourAllocation = builder.hourAllocation;
     }
 
     public static class Builder{
@@ -56,8 +50,6 @@ public class Profile {
         private BigDecimal effectiveWorkHours;
         private boolean archived;
         private Timestamp updatedAt;
-//        private BigDecimal costAllocation;
-//        private BigDecimal hourAllocation;
 
         public Builder setProfileId(UUID profileId){
             this.profileId = profileId;
@@ -118,16 +110,6 @@ public class Profile {
             this.updatedAt = updatedAt;
             return this;
         }
-
-//        public Builder setCostAllocation(BigDecimal costAllocation){
-//            this.costAllocation = costAllocation;
-//            return this;
-//        }
-//
-//        public Builder setHourAllocation(BigDecimal hourAllocation){
-//            this.hourAllocation = hourAllocation;
-//            return this;
-//        }
 
         public Profile build(){
             return new Profile(this);
@@ -240,22 +222,6 @@ public class Profile {
     public void setTeamProfile(TeamProfile teamProfile) {
         this.teamProfile = teamProfile;
     }
-
-    //    public BigDecimal getCostAllocation() {
-//        return BigDecimal.valueOf(0.0);
-//    }
-//
-//    public void setCostAllocation(BigDecimal costAllocation) {
-//        this.costAllocation = BigDecimal.valueOf(0.0);
-//    }
-//
-//    public BigDecimal getHourAllocation() {
-//        return BigDecimal.valueOf(0.0);
-//    }
-//
-//    public void setHourAllocation(BigDecimal hourAllocation) {
-//        this.hourAllocation = BigDecimal.valueOf(0.0);
-//    }
 
     public Geography fetchGeography(GeographyService geographyService) throws Exception{
         if(this.countryId != 0) {

@@ -90,6 +90,7 @@ public class ProfileInteractor {
 
         model.saveModel().annualSalaryProperty().set(String.valueOf(profile.getAnnualCost()));
         model.saveModel().effectivenessProperty().set(String.valueOf(profile.getEffectivenessPercentage()));
+        model.saveModel().effectiveWorkHoursProperty().set(String.valueOf(profile.getEffectiveWorkHours()));
         model.saveModel().annualTotalHoursProperty().set(String.valueOf(profile.getAnnualHours()));
         model.saveModel().hoursPerDayProperty().set(String.valueOf(profile.getHoursPerDay()));
 
@@ -217,7 +218,8 @@ public class ProfileInteractor {
         profile.setAnnualCost(new BigDecimal(saveModel.annualSalaryProperty().get()));
         profile.setEffectivenessPercentage(new BigDecimal(saveModel.effectivenessProperty().get()));
         profile.setAnnualHours(new BigDecimal(saveModel.annualTotalHoursProperty().get()));
-        profile.setEffectiveWorkHours(new BigDecimal(saveModel.effectiveWorkHoursProperty().get()));
+        BigDecimal effectiveWorkHours = RateUtils.effectiveWorkHours(profile);
+        profile.setEffectiveWorkHours(effectiveWorkHours);
         profile.setHoursPerDay(new BigDecimal(saveModel.hoursPerDayProperty().get()));
 
         return profile;

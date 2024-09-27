@@ -77,28 +77,6 @@ public class ProfilesInteractor {
     public void updateModel(){
         model.profiles().setAll(profileItemModels);
     }
-    /**
-     * Unødvendig metode. Eftersom totalHourly og totalDaily rate skal udregnes på teams fremfor profile?
-
-
-    public void updateModel() {
-        model.profiles().setAll(profileList);
-
-        BigDecimal totalHourly = BigDecimal.ZERO;
-        BigDecimal totalDaily = BigDecimal.ZERO;
-        Set<String> uniqueGeographies = new HashSet<>();
-
-        for (Profile profile : model.profiles()) {
-            totalHourly = totalHourly.add(profileItemModel.hourlyRateProperty().get());
-            totalDaily = totalDaily.add(profileItemModel.dayRateProperty().get());
-            uniqueGeographies.add(profileItemModel.locationProperty().get());
-        }
-
-        model.setTotalHourlyRate(totalHourly);
-        model.setTotalDayRate(totalDaily);
-        model.numProfiles().set(String.valueOf(model.profiles().size()));
-        model.uniqueGeographies().set(String.valueOf(uniqueGeographies.size()));
-    } */
 
     private List<Profile> convertModelsToEntity(ObservableList<ProfileItemModel> profile, boolean checkArchived) {
         List<Profile> profileList = new ArrayList<>();

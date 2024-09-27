@@ -84,7 +84,6 @@ public class AddProfileInteractor {
 
     private Profile createProfileFromModel() {
         var profile = new Profile();
-        TeamProfile teamProfile = new TeamProfile();
 
         var currencyItemModel = model.selectedCurrencyProperty().get();
         BigDecimal eurConversionRate = new BigDecimal(currencyItemModel.eurConversionRateProperty().get());
@@ -98,8 +97,6 @@ public class AddProfileInteractor {
         profile.setAnnualCost(new BigDecimal(model.annualSalaryProperty().get()).multiply(eurConversionRate));
         profile.setEffectivenessPercentage(new BigDecimal(model.effectivenessProperty().get()));
         profile.setAnnualHours(new BigDecimal(model.annualTotalHoursProperty().get()));
-        System.out.println("teamProfile.getHourAllocation(): " + teamProfile.getHourAllocation());
-        System.out.println("profile.getAnnualHours(): " + profile.getAnnualHours());
         profile.setHoursPerDay(new BigDecimal(model.hoursPerDayProperty().get()));
 
         BigDecimal effectiveWorkHours = RateUtils.effectiveWorkHours(profile);
