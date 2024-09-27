@@ -38,7 +38,7 @@ public class TeamMultiplierController implements ModalController {
     @Override
     public void activate(Object teamId) {
         if (teamId instanceof UUID) {
-            model.setTeamId(model.getTeamId());
+            model.teamIdProperty().get();
             model.markupFetchedProperty().set(false);
             model.markupProperty().set("");
             model.grossMarginFetchedProperty().set(false);

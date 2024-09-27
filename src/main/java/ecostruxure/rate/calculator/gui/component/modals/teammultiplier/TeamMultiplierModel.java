@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 import java.util.UUID;
 
 public class TeamMultiplierModel {
-    private static UUID teamId;
+    private final ObjectProperty<UUID> teamId = new SimpleObjectProperty<>();
     private final StringProperty markup = new SimpleStringProperty("");
     private final BooleanProperty markupIsValid = new SimpleBooleanProperty(false);
     private final BooleanProperty markupFetched = new SimpleBooleanProperty(false);
@@ -14,12 +14,8 @@ public class TeamMultiplierModel {
     private final BooleanProperty grossMarginFetched = new SimpleBooleanProperty(false);
     private final BooleanProperty okToSave = new SimpleBooleanProperty(false);
 
-    public UUID getTeamId() {
+    public ObjectProperty<UUID> teamIdProperty() {
         return teamId;
-    }
-
-    public void setTeamId(UUID teamId) {
-        TeamMultiplierModel.teamId = teamId;
     }
 
     public StringProperty markupProperty() {

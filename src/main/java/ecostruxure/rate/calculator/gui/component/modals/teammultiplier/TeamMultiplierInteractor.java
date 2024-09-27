@@ -18,6 +18,7 @@ public class TeamMultiplierInteractor {
         try {
             teamService = new TeamService();
         } catch (Exception e) {
+            e.printStackTrace();
             onFetchError.run();
         }
 
@@ -34,8 +35,10 @@ public class TeamMultiplierInteractor {
     public Boolean fetchMultipliers(UUID teamId) {
         try {
             team = teamService.get(teamId);
+            model.teamIdProperty().set(teamId);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -50,12 +53,13 @@ public class TeamMultiplierInteractor {
     public boolean saveMultipliers() {
         try {
             teamService.setMultipliers(
-                    model.getTeamId(),
+                    model.teamIdProperty().get(),
                     new BigDecimal(model.markupProperty().get()),
                     new BigDecimal(model.grossMarginProperty().get())
             );
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
