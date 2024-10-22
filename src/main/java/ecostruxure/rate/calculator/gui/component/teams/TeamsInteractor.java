@@ -78,35 +78,18 @@ public class TeamsInteractor {
     List<TeamItemModel> convertToTeamItemModels(List<Team> teams) throws Exception {
         List<TeamItemModel> teamItemModels = new ArrayList<>();
 
-        for (Team team : teams) {
+        for(Team team : teams) {
             TeamItemModel teamItemModel = new TeamItemModel();
             teamItemModel.teamIdProperty().set(team.getTeamId());
-
-            // ~~~~~~~~~~ Tør ikke slette nedenstående kode på bagrund af jeg ikke ved hvad det gør ~~~~~~~~~~
-//            hourlyRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.HOURLY));
-//            dayRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.DAY));
-//            annualRates.put(team.getTeamId(), rateService.calculateRates(team, RateType.ANNUAL));
-//
-//            Rates rates;
-//            switch (model.selectedRateTypeProperty().get()) {
-//                case DAY -> rates = dayRates.get(team.getTeamId());
-//                case ANNUAL -> rates = annualRates.get(team.getTeamId());
-//                default -> rates = hourlyRates.get(team.getTeamId());
-//            }
-//
-//            teamItemModel.setRawRate(rates.rawRate());
-//            teamItemModel.setMarkupRate(rates.markupRate());
-//            teamItemModel.setGrossMarginRate(rates.grossMarginRate());
-
             teamItemModel.nameProperty().set(team.getName());
             teamItemModel.markupProperty().set(team.getMarkup());
             teamItemModel.grossMarginProperty().set(team.getGrossMargin());
             teamItemModel.archivedProperty().set(team.isArchived());
             teamItemModel.updatedAtProperty().set(team.getUpdatedAt());
-            teamItemModel.dayRateProperty().set(calculateDayRate(team.getTeamId()));
-            teamItemModel.hourlyRateProperty().set(calculateHourlyRate(team.getTeamId()));
-            teamItemModel.totalAllocatedCostProperty().set(calculateTotalAllocatedCost(team.getTeamId()));
-            teamItemModel.totalAllocatedHoursProperty().set(calculateTotalAllocatedHours(team.getTeamId()));
+            teamItemModel.hourlyRateProperty().set(team.getHourlyRate());
+            teamItemModel.dayRateProperty().set(team.getDayRate());
+            teamItemModel.totalAllocatedCostProperty().set(team.getTotalAllocatedCost());
+            teamItemModel.totalAllocatedHoursProperty().set(team.getTotalAllocatedHours());
             teamItemModels.add(teamItemModel);
         }
 
