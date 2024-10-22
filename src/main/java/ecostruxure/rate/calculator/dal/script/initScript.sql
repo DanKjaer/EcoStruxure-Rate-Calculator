@@ -1062,18 +1062,3 @@ VALUES
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '92ac4d45-af92-475c-acb1-af2c626d86b0', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-19 22:54:50.373'),
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-20 22:54:50.373'),
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '50b601e3-dd42-422b-ac43-1aae17dff125', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-20 22:54:50.373');
-
-SELECT p.*,
-       COALESCE(tp.cost_allocation_total, 0) AS cost_allocation_total,
-       COALESCE(tp.hour_allocation_total, 0) AS hour_allocation_total
-FROM dbo.Profiles p
-         LEFT JOIN LATERAL (
-    SELECT profileId,
-           SUM(cost_allocation) AS cost_allocation_total,
-           SUM(hour_allocation) AS hour_allocation_total
-    FROM dbo.Teams_profiles tp
-    WHERE p.is_archived = FALSE
-    GROUP BY profileId
-        ) tp ON p.profile_id = tp.profileId
-WHERE p.is_archived = FALSE
-ORDER BY p.profile_id DESC;
