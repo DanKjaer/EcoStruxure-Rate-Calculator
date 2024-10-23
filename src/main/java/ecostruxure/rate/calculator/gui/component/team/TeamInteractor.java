@@ -79,25 +79,20 @@ public class TeamInteractor {
 
     private List<ProfileTeamItemModel> convertToTeamProfileModels(List<TeamProfile> teamProfiles) throws Exception {
         List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
-        Map<UUID, BigDecimal> profileDayRates = teamService.calculateIndividualDayRates(teamProfiles.get(0).getTeamId());
-        Map<UUID, BigDecimal> allocatedCostOnTeam = teamService.updateAllocatedCost(teamProfiles.get(0).getTeamId());
-        Map<UUID, BigDecimal> allocatedHoursOnTeam = teamService.updateAllocatedHours(teamProfiles.get(0).getTeamId());
-
 
         for (TeamProfile teamProfile : teamProfiles) {
             ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
 
-            Profile profile = profileService.get(teamProfile.getProfileId());
-            teamProfileModel.setName(profile.getName());
+            teamProfileModel.setName(teamProfile.getName());
 
             teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
             teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
-            BigDecimal dayRate = profileDayRates.get(teamProfile.getProfileId());
+            BigDecimal dayRate = teamProfile.getDayRateOnTeam();
             teamProfileModel.setDayRate(dayRate);
             teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
             teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
-            BigDecimal allocatedCost = allocatedCostOnTeam.get(teamProfile.getProfileId());
-            BigDecimal allocatedHours = allocatedHoursOnTeam.get(teamProfile.getProfileId());
+            BigDecimal allocatedCost = teamProfile.getAllocatedCostOnTeam();
+            BigDecimal allocatedHours = teamProfile.getAllocatedHoursOnTeam();
             teamProfileModel.allocatedCostOnTeamProperty().set(allocatedCost);
             teamProfileModel.allocatedHoursOnTeamProperty().set(allocatedHours);
 
