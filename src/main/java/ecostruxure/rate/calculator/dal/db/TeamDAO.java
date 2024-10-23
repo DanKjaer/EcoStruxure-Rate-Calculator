@@ -811,8 +811,8 @@ public class TeamDAO implements ITeamDAO {
                 } else {
                     return BigDecimal.ZERO;
                 }
-                }
             }
+        }
 
     }
 
