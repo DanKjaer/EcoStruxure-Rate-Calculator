@@ -430,7 +430,7 @@ public class TeamDAO implements ITeamDAO {
         String query = """
                 SELECT p.*, tp.cost_allocation, tp.hour_allocation
                 FROM dbo.Profiles p
-                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileID AND tp.teamID = ?;                  
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileID AND tp.teamID = ?;
                 """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {

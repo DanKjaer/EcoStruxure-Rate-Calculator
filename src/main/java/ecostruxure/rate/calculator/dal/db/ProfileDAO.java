@@ -604,7 +604,7 @@ public class ProfileDAO implements IProfileDAO {
                             .name(rs.getString("name"))
                             .markup(rs.getBigDecimal("markup"))
                             .grossMargin(rs.getBigDecimal("gross_margin"))
-                            .archived(rs.getBoolean("archived"))
+                            .archived(rs.getBoolean("is_archived"))
                             .build();
                     teams.add(team);
                 }
