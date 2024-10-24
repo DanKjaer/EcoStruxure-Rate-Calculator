@@ -8,7 +8,9 @@ import ecostruxure.rate.calculator.be.enums.RateType;
 import ecostruxure.rate.calculator.be.data.Rates;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
+import ecostruxure.rate.calculator.bll.service.TeamProfileManagementService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
+import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -23,6 +25,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,9 +35,11 @@ public class ExportToExcel {
     private ProfileService profileService;
     private GeographyService geographyService;
     private RateService rateService;
+    private TeamProfileManagementService teamProfileManagementService;
 
     public ExportToExcel() {
         try {
+            teamProfileManagementService = new TeamProfileManagementService();
             teamService = new TeamService();
             profileService = new ProfileService();
             geographyService = new GeographyService();
@@ -130,10 +136,36 @@ public class ExportToExcel {
         }
     }
 
+    private List<ProfileTeamItemModel> convertToTeamProfileModels(UUID teamId) throws Exception {
+        List<TeamProfile> teamProfiles = teamProfileManagementService.getTeamProfiles(teamId);;
+        List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
+
+        for (TeamProfile teamProfile : teamProfiles) {
+            ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
+
+            teamProfileModel.setName(teamProfile.getName());
+
+            teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
+            teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
+            BigDecimal dayRate = teamProfile.getDayRateOnTeam();
+            teamProfileModel.setDayRate(dayRate);
+            teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
+            teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
+            BigDecimal allocatedCost = teamProfile.getAllocatedCostOnTeam();
+            BigDecimal allocatedHours = teamProfile.getAllocatedHoursOnTeam();
+            teamProfileModel.allocatedCostOnTeamProperty().set(allocatedCost);
+            teamProfileModel.allocatedHoursOnTeamProperty().set(allocatedHours);
+
+            teamProfileModels.add(teamProfileModel);
+        }
+
+        return teamProfileModels;
+    }
 
     public void exportTeam(UUID teamId, File file) throws Exception {
         Team getTeam = teamService.get(teamId);
         List<Profile> profiles = teamService.getTeamProfiles(teamId);
+        List<ProfileTeamItemModel> profileTeamItemModelList = convertToTeamProfileModels(teamId);
 
         Workbook workbook = WorkbookFactory.create(true);
         Sheet sheetTeam = workbook.createSheet("Team");
@@ -145,9 +177,9 @@ public class ExportToExcel {
                 "EcoStruxure Rate Calculator",
                 "Schneider Electric");
 
-        Rates hourlyRates = rateService.calculateRates(getTeam, RateType.HOURLY);
-        Rates dayRates = rateService.calculateRates(getTeam, RateType.DAY);
-        Rates annualRates = rateService.calculateRates(getTeam, RateType.ANNUAL);
+        Rates hourlyRates = rateService.calculateRates(getTeam, RateType.HOURLY, profileTeamItemModelList);
+        Rates dayRates = rateService.calculateRates(getTeam, RateType.DAY, profileTeamItemModelList);
+        Rates annualRates = rateService.calculateRates(getTeam, RateType.ANNUAL, profileTeamItemModelList);
 
         String[] header1 = {"Team Name", "Markup", "Gross Margin", "Profiles", "Archived", "Currency"};
         String[] data1 = {getTeam.getName(), getTeam.getMarkup() != null ? getTeam.getMarkup().toString()
@@ -205,6 +237,7 @@ public class ExportToExcel {
             for (Team t : teams) {
                 Team getTeam = teamService.get(t.getTeamId());
                 List<Profile> profiles = teamService.getTeamProfiles(t.getTeamId());
+                List<ProfileTeamItemModel> profileTeamItemModelList = convertToTeamProfileModels(t.getTeamId());
 
                 String sheetName = t.getName();
                 if (sheetName.length() > 31)
@@ -218,9 +251,9 @@ public class ExportToExcel {
                         "EcoStruxure Rate Calculator",
                         "Schneider Electric");
 
-                Rates hourlyRates = rateService.calculateRates(getTeam, RateType.HOURLY);
-                Rates dayRates = rateService.calculateRates(getTeam, RateType.DAY);
-                Rates annualRates = rateService.calculateRates(getTeam, RateType.ANNUAL);
+                Rates hourlyRates = rateService.calculateRates(getTeam, RateType.HOURLY, profileTeamItemModelList);
+                Rates dayRates = rateService.calculateRates(getTeam, RateType.DAY, profileTeamItemModelList);
+                Rates annualRates = rateService.calculateRates(getTeam, RateType.ANNUAL, profileTeamItemModelList);
 
                 String[] header1 = {"Team Name", "Markup", "Gross Margin", "Profiles", "Archived", "Currency"};
                 String[] data1 = {getTeam.getName(), getTeam.getMarkup() != null ? getTeam.getMarkup().toString() : "",

@@ -61,15 +61,15 @@ public class TeamInteractor {
     public boolean fetchTeam(UUID id) {
         try {
             currentDateTime = LocalDateTime.now();
-            totalHours = BigDecimal.ZERO;
             team = teamService.get(id);
             updatedAt = teamService.getLastUpdated(id);
-            historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
-            profileItemModels = fetchTeamMembers(id);
+            //historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
+            //profileItemModels = fetchTeamMembers(id);
             teamProfilesModels = fetchTeamProfileMembers(id);
-            hourlyRates = rateService.calculateRates(team, RateType.HOURLY);
-            dayRates = rateService.calculateRates(team, RateType.DAY);
-            annualRates = rateService.calculateRates(team, RateType.ANNUAL);
+            hourlyRates = rateService.calculateRates(team, RateType.HOURLY, teamProfilesModels);
+            dayRates = rateService.calculateRates(team, RateType.DAY, teamProfilesModels);
+            //annualRates = rateService.calculateRates(team, RateType.ANNUAL, teamProfilesModels);
+            totalHours = team.getTotalAllocatedHours();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,11 +194,11 @@ public class TeamInteractor {
         model.teamNameProperty().set(team.getName());
         model.archivedProperty().set(team.isArchived());
         model.updatedAtProperty().set(updatedAt);
-        model.profiles().setAll(profileItemModels);
+        //model.profiles().setAll(profileItemModels);
         model.geographies().setAll(geographyItemModels);
-        model.history().setAll(historyItemModels);
+        //model.history().setAll(historyItemModels);
         model.profilesFetchedProperty().set(true);
-        model.numProfilesProperty().set("" + profileItemModels.size());
+        model.numProfilesProperty().set("" + teamProfilesModels.size());
         model.teamProfilesProperty().setAll(teamProfilesModels);
         model.currentDateProperty().set(currentDateTime);
 
