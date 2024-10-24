@@ -120,18 +120,15 @@ public class AddTeamInteractor {
                     .build();
             Team team = saveTeamWithoutProfiles(tempTeam);
 
-            List<Profile> profiles = new ArrayList<>();
             List<TeamProfile> teamProfiles = new ArrayList<>();
 
             for(AddProfileItemModel addProfileItemModel : model.profiles()) {
                 if(addProfileItemModel.selectedProperty().get()) {
                     Profile profile = createProfileFromModel(addProfileItemModel);
-                    profiles.add(profile);
 
                     TeamProfile teamProfile = new TeamProfile();
                     teamProfile.setTeam(team);
                     teamProfile.setTeamId(team.getTeamId());
-                    teamProfile.setProfile(profile);
                     teamProfile.setProfileId(profile.getProfileId());
                     teamProfile.setCostAllocation(addProfileItemModel.setCostAllocationProperty().get());
                     teamProfile.setHourAllocation(addProfileItemModel.setHourAllocationProperty().get());
@@ -139,10 +136,10 @@ public class AddTeamInteractor {
                     System.out.println("teamProfile: " + teamProfile);
                 }
             }
-            teamService.storeTeamProfiles(tempTeam, teamProfiles);
-            teamService.calculateTotalAllocatedHoursFromProfile(team.getTeamId());
-            teamService.calculateTotalAllocatedCostFromProfiles(team.getTeamId());
-            teamService.calculateTotalDailyRateFromProfiles(team.getTeamId());
+            //teamService.storeTeamProfiles(tempTeam, teamProfiles);
+            var updatedTeamProfiles = teamService.saveTeamProfiles(team.getTeamId(), teamProfiles);
+            teamService.updateAllocatedCostAndHours(team.getTeamId(), updatedTeamProfiles);
+            teamService.calculateTotalDailyRateFromProfiles(team.getTeamId(), updatedTeamProfiles);
         } catch (Exception e) {
             e.printStackTrace();
         }

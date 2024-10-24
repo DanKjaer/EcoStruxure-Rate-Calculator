@@ -374,7 +374,7 @@ public class TeamDAO implements ITeamDAO {
     public boolean removeAssignedProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         String query = """
-                 DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ? AND is_archived = FALSE;
+                 DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?;
                 """; //false
 
         try (PreparedStatement stmt = sqlContext.connection().prepareStatement(query)) {
@@ -600,11 +600,10 @@ public class TeamDAO implements ITeamDAO {
 
     private void archiveTeamMembers(Connection conn, UUID teamId, boolean archive) throws Exception {
         String query = """
-                UPDATE Teams_profiles SET is_archived = ? WHERE teamId = ?
+                DELETE FROM Teams_profiles WHERE teamId = ?
                 """;
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setBoolean(1, archive);
-            stmt.setObject(2, teamId);
+            stmt.setObject(1, teamId);
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -868,6 +867,27 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
+    public void updateAllocatedCostAndHour(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException{
+        String sql = """
+                UPDATE dbo.teams_profiles SET allocated_cost_on_team = ?, allocated_hours_on_team = ?, day_rate_on_team = ? 
+                WHERE teamid = ? AND profileid = ?
+                """;
+
+        try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            for(TeamProfile teamProfile : teamProfiles) {
+                preparedStatement.setBigDecimal(1, teamProfile.getAllocatedCostOnTeam());
+                preparedStatement.setBigDecimal(2, teamProfile.getAllocatedHoursOnTeam());
+                preparedStatement.setBigDecimal(3, teamProfile.getDayRateOnTeam());
+                preparedStatement.setObject(4, teamId);
+                preparedStatement.setObject(5, teamProfile.getProfileId());
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+        }
+    }
+
+    @Override
     public void updateAllocatedCost(UUID teamId, UUID profileId, BigDecimal allocatedCost) throws SQLException {
         String sql = "UPDATE teams_profiles SET allocated_cost_on_team = ? WHERE teamid = ? AND profileid = ?";
         try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -940,14 +960,61 @@ public class TeamDAO implements ITeamDAO {
         }
     }
 
+    @Override
+    public List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException {
+        String insertSql = """
+            INSERT INTO teams_profiles (teamid, profileid, cost_allocation, hour_allocation, allocated_cost_on_team, allocated_hours_on_team)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """;
+        String selectSql = """
+                SELECT tp.*, p.annual_cost, p.annual_hours
+                FROM dbo.Profiles p
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?;
+            """;
+        List<TeamProfile> insertedProfiles = new ArrayList<>();
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+
+            for (TeamProfile teamProfile : teamProfiles) {
+                insertStmt.setObject(1, teamId);
+                insertStmt.setObject(2, teamProfile.getProfileId());
+                insertStmt.setBigDecimal(3, teamProfile.getCostAllocation());
+                insertStmt.setBigDecimal(4, teamProfile.getHourAllocation());
+                insertStmt.setBigDecimal(5, teamProfile.getAllocatedCostOnTeam());
+                insertStmt.setBigDecimal(6, teamProfile.getAllocatedHoursOnTeam());
+                insertStmt.addBatch();
+            }
+            insertStmt.executeBatch();
+
+            selectStmt.setObject(1, teamId);
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                while (rs.next()) {
+                    TeamProfile insertedProfile = new TeamProfile();
+                    insertedProfile.setTeamId((UUID) rs.getObject("teamid"));
+                    insertedProfile.setProfileId((UUID) rs.getObject("profileid"));
+                    insertedProfile.setCostAllocation(rs.getBigDecimal("cost_allocation"));
+                    insertedProfile.setHourAllocation(rs.getBigDecimal("hour_allocation"));
+                    insertedProfile.setAllocatedCostOnTeam(rs.getBigDecimal("allocated_cost_on_team"));
+                    insertedProfile.setAllocatedHoursOnTeam(rs.getBigDecimal("allocated_hours_on_team"));
+                    insertedProfile.setAnnualCost(rs.getBigDecimal("annual_cost"));
+                    insertedProfile.setAnnualHours(rs.getBigDecimal("annual_hours"));
+                    insertedProfiles.add(insertedProfile);
+                }
+            }
+        }
+        return insertedProfiles;
+    }
+
     public boolean storeTeamProfiles(TransactionContext context, List<TeamProfile> teamProfiles) throws Exception {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
         try (Connection conn = dbConnector.connection()) {
             conn.setAutoCommit(false);
 
             String insertTeamProfileSQL = """
-            INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, hour_allocation)
-            VALUES (?, ?, ?, ?);
+            INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, allocated_cost_on_team, hour_allocation, allocated_hours_on_team)
+            VALUES (?, ?, ?, ?, ?, ?);
         """;
 
             try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertTeamProfileSQL)) {
@@ -955,7 +1022,9 @@ public class TeamDAO implements ITeamDAO {
                     stmt.setObject(1, teamProfile.getTeamId());
                     stmt.setObject(2, teamProfile.getProfileId());
                     stmt.setBigDecimal(3, teamProfile.getCostAllocation());
-                    stmt.setBigDecimal(4, teamProfile.getHourAllocation());
+                    stmt.setBigDecimal(4, teamProfile.getAllocatedCostOnTeam());
+                    stmt.setBigDecimal(5, teamProfile.getHourAllocation());
+                    stmt.setBigDecimal(6, teamProfile.getAllocatedHoursOnTeam());
                     stmt.addBatch();
                 }
                 stmt.executeBatch();
