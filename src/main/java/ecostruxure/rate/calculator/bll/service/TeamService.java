@@ -268,7 +268,6 @@ public class TeamService {
      * @throws Exception
      */
     public BigDecimal calculateTotalAllocatedHoursFromProfile(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
-        //List<Profile> profiles = getTeamProfiles(teamId);
         BigDecimal totalAllocatedHours = BigDecimal.ZERO;
 
         for (TeamProfile teamProfile : teamProfiles) {
@@ -278,7 +277,6 @@ public class TeamService {
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             totalAllocatedHours = totalAllocatedHours.add(allocatedHours);
         }
-        teamDAO.updateTeamsTotalAllocatedHours(teamId, totalAllocatedHours);
         return totalAllocatedHours;
     }
 
@@ -289,7 +287,6 @@ public class TeamService {
      * @throws Exception
      */
     public BigDecimal calculateTotalAllocatedCostFromProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
-        //List<Profile> profiles = getTeamProfiles(teamId);
         BigDecimal totalAllocatedCost = BigDecimal.ZERO;
 
         for (TeamProfile teamProfile : teamProfiles) {
@@ -300,7 +297,6 @@ public class TeamService {
 
             totalAllocatedCost = totalAllocatedCost.add(allocatedCost);
         }
-        teamDAO.updateTeamsTotalAllocatedCost(teamId, totalAllocatedCost);
         return totalAllocatedCost;
     }
 
@@ -317,7 +313,7 @@ public class TeamService {
             return BigDecimal.ZERO;
         }
         BigDecimal hourlyRate = totalAllocatedCost.divide(totalAllocatedHours, 2, RoundingMode.HALF_UP);
-        teamDAO.updateTeamsHourlyRate(teamId, hourlyRate);
+        teamDAO.updateTeamRateCostHours(teamId, hourlyRate, totalAllocatedCost, totalAllocatedHours);
             return hourlyRate;
     }
 
@@ -361,7 +357,7 @@ public class TeamService {
         return profileDayRates;
     }
 
-    public void updateAllocatedCostAndHours(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
+    public List<TeamProfile> updateAllocatedCostAndHours(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
         List<Profile> profiles = getTeamProfiles(teamId);
 
         for(int profileIndex = 0; profileIndex < profiles.size(); profileIndex++) {
@@ -389,7 +385,7 @@ public class TeamService {
             teamProfiles.get(profileIndex).setDayRateOnTeam(dayRate);
         }
         teamDAO.updateAllocatedCostAndHour(teamId, teamProfiles);
-
+        return teamProfiles;
     }
 
     public List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {

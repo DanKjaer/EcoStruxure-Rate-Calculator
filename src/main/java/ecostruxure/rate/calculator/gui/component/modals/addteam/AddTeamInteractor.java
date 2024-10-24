@@ -136,9 +136,9 @@ public class AddTeamInteractor {
                     System.out.println("teamProfile: " + teamProfile);
                 }
             }
-            //teamService.storeTeamProfiles(tempTeam, teamProfiles);
+
             var updatedTeamProfiles = teamService.saveTeamProfiles(team.getTeamId(), teamProfiles);
-            teamService.updateAllocatedCostAndHours(team.getTeamId(), updatedTeamProfiles);
+            updatedTeamProfiles = teamService.updateAllocatedCostAndHours(team.getTeamId(), updatedTeamProfiles);
             teamService.calculateTotalDailyRateFromProfiles(team.getTeamId(), updatedTeamProfiles);
         } catch (Exception e) {
             e.printStackTrace();
