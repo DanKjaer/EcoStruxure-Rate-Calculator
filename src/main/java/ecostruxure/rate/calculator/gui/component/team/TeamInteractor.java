@@ -61,15 +61,15 @@ public class TeamInteractor {
     public boolean fetchTeam(UUID id) {
         try {
             currentDateTime = LocalDateTime.now();
-            totalHours = BigDecimal.ZERO;
             team = teamService.get(id);
             updatedAt = teamService.getLastUpdated(id);
-            historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
-            profileItemModels = fetchTeamMembers(id);
+            //historyItemModels = convertToHistoryModels(historyService.getTeamHistory(id));
+            //profileItemModels = fetchTeamMembers(id);
             teamProfilesModels = fetchTeamProfileMembers(id);
-            hourlyRates = rateService.calculateRates(team, RateType.HOURLY);
-            dayRates = rateService.calculateRates(team, RateType.DAY);
-            annualRates = rateService.calculateRates(team, RateType.ANNUAL);
+            hourlyRates = rateService.calculateRates(team, RateType.HOURLY, teamProfilesModels);
+            dayRates = rateService.calculateRates(team, RateType.DAY, teamProfilesModels);
+            //annualRates = rateService.calculateRates(team, RateType.ANNUAL, teamProfilesModels);
+            totalHours = team.getTotalAllocatedHours();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,25 +79,20 @@ public class TeamInteractor {
 
     private List<ProfileTeamItemModel> convertToTeamProfileModels(List<TeamProfile> teamProfiles) throws Exception {
         List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
-        Map<UUID, BigDecimal> profileDayRates = teamService.calculateIndividualDayRates(teamProfiles.get(0).getTeamId());
-        Map<UUID, BigDecimal> allocatedCostOnTeam = teamService.updateAllocatedCost(teamProfiles.get(0).getTeamId());
-        Map<UUID, BigDecimal> allocatedHoursOnTeam = teamService.updateAllocatedHours(teamProfiles.get(0).getTeamId());
-
 
         for (TeamProfile teamProfile : teamProfiles) {
             ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
 
-            Profile profile = profileService.get(teamProfile.getProfileId());
-            teamProfileModel.setName(profile.getName());
+            teamProfileModel.setName(teamProfile.getName());
 
             teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
             teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
-            BigDecimal dayRate = profileDayRates.get(teamProfile.getProfileId());
+            BigDecimal dayRate = teamProfile.getDayRateOnTeam();
             teamProfileModel.setDayRate(dayRate);
             teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
             teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
-            BigDecimal allocatedCost = allocatedCostOnTeam.get(teamProfile.getProfileId());
-            BigDecimal allocatedHours = allocatedHoursOnTeam.get(teamProfile.getProfileId());
+            BigDecimal allocatedCost = teamProfile.getAllocatedCostOnTeam();
+            BigDecimal allocatedHours = teamProfile.getAllocatedHoursOnTeam();
             teamProfileModel.allocatedCostOnTeamProperty().set(allocatedCost);
             teamProfileModel.allocatedHoursOnTeamProperty().set(allocatedHours);
 
@@ -199,11 +194,11 @@ public class TeamInteractor {
         model.teamNameProperty().set(team.getName());
         model.archivedProperty().set(team.isArchived());
         model.updatedAtProperty().set(updatedAt);
-        model.profiles().setAll(profileItemModels);
+        //model.profiles().setAll(profileItemModels);
         model.geographies().setAll(geographyItemModels);
-        model.history().setAll(historyItemModels);
+        //model.history().setAll(historyItemModels);
         model.profilesFetchedProperty().set(true);
-        model.numProfilesProperty().set("" + profileItemModels.size());
+        model.numProfilesProperty().set("" + teamProfilesModels.size());
         model.teamProfilesProperty().setAll(teamProfilesModels);
         model.currentDateProperty().set(currentDateTime);
 

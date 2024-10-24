@@ -798,6 +798,8 @@ public class TeamDAO implements ITeamDAO {
         return null;
     }
 
+
+
     @Override
     public BigDecimal getCostAllocation(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT cost_allocation FROM teams_profiles WHERE teamid = ? AND profileid = ?";

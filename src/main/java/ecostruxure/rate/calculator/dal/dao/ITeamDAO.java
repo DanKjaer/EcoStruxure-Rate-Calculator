@@ -62,7 +62,6 @@ public interface ITeamDAO {
 
     BigDecimal getHourAllocation(UUID teamId, UUID profileId) throws Exception;
 
-
     BigDecimal getAllocatedCostOnTeam(UUID teamId, UUID profileId) throws Exception;
 
     BigDecimal getAllocatedHoursOnTeam(UUID teamId, UUID profileId) throws Exception;

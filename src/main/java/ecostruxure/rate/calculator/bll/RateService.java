@@ -2,16 +2,19 @@ package ecostruxure.rate.calculator.bll;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.enums.AdjustmentType;
 import ecostruxure.rate.calculator.be.enums.RateType;
 import ecostruxure.rate.calculator.be.data.Rates;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
+import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.List;
 
 /**
  * RateServices funktionalitet er at udregne priser/lønninger for teams og profiler.
@@ -33,16 +36,16 @@ public class RateService {
     }
 
     // Metode til at udregne rates for et team, baseret på rate typen.
-    public Rates calculateRates(Team team, RateType rateType) throws Exception {
+    public Rates calculateRates(Team team, RateType rateType, List<ProfileTeamItemModel> teamProfileList) throws Exception {
         var rawRate = BigDecimal.ZERO;
         var markup = team.getMarkup();
         var grossMargin = team.getGrossMargin();
 
         // Bestemme raw rate ud fra hvilken rate type der er valgt
         switch (rateType) {
-            case HOURLY -> rawRate = utilizedHourlyRate(team);
-            case DAY -> rawRate = utilizedDayRate(team);
-            case ANNUAL -> rawRate = utilizedAnnualCost(team);
+            case HOURLY -> rawRate = team.getHourlyRate();
+            case DAY -> rawRate = team.getDayRate();
+            case ANNUAL -> rawRate = utilizedAnnualCost(team, teamProfileList);
         }
 
         // Tilføjer markup og gross margin til raw rate
@@ -101,14 +104,14 @@ public class RateService {
 
 
     // Metode til at udregne den udnyttede årlige omkostning for et team
-    public BigDecimal utilizedAnnualCost(Team team) throws Exception {
+    public BigDecimal utilizedAnnualCost(Team team, List<ProfileTeamItemModel> teamProfileList) throws Exception {
         var total = BigDecimal.ZERO;
 
         // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
-        for (Profile profile : profiles) {
-            var costAllocation = profileService.getProfileCostAllocationForTeam(profile.getProfileId(), team.getTeamId());
-            total = total.add(RateUtils.annualCost(profile, costAllocation));
+        for (int profileIndex = 0; profileIndex < profiles.size(); profileIndex++) {
+            var costAllocation = teamProfileList.get(profileIndex).costAllocationProperty().get();
+            total = total.add(RateUtils.annualCost(profiles.get(profileIndex), costAllocation));
         }
 
         return total;
