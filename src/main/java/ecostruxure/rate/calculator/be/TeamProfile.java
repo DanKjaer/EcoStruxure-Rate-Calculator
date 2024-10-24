@@ -9,6 +9,8 @@ public class TeamProfile {
     private UUID teamId;
     private UUID profileId;
     private String name;
+    private BigDecimal annualCost;
+    private BigDecimal annualHours;
     private BigDecimal dayRateOnTeam;
     private BigDecimal costAllocation;
     private BigDecimal hourAllocation;
@@ -37,6 +39,22 @@ public class TeamProfile {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public BigDecimal getAnnualCost() {
+        return annualCost;
+    }
+
+    public void setAnnualCost(BigDecimal annualCost) {
+        this.annualCost = annualCost;
+    }
+
+    public BigDecimal getAnnualHours() {
+        return annualHours;
+    }
+
+    public void setAnnualHours(BigDecimal annualHours) {
+        this.annualHours = annualHours;
     }
 
     public UUID getTeamId() {

@@ -220,20 +220,4 @@ public class TeamsInteractor {
     public void updateArchivedTeam() {
         model.teamToArchiveProperty().get().archivedProperty().set(true);
     }
-
-    private BigDecimal calculateTotalAllocatedCost(UUID teamId) throws Exception {
-        return teamService.calculateTotalAllocatedCostFromProfiles(teamId);
-    }
-
-    private BigDecimal calculateTotalAllocatedHours(UUID teamId) throws Exception {
-        return teamService.calculateTotalAllocatedHoursFromProfile(teamId);
-    }
-
-    private BigDecimal calculateHourlyRate(UUID teamId) throws Exception {
-        return teamService.calculateTotalHourlyRateFromProfiles(teamId);
-    }
-
-    private BigDecimal calculateDayRate(UUID teamId) throws Exception {
-        return teamService.calculateTotalDailyRateFromProfiles(teamId);
-    }
 }

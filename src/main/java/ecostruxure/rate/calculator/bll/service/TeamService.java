@@ -5,6 +5,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 import ecostruxure.rate.calculator.dal.db.TeamDAO;
+import ecostruxure.rate.calculator.gui.component.modals.addteam.AddProfileItemModel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -239,23 +240,43 @@ public class TeamService {
 //  Alle metoder herfra og ned, skal måske flyttes til et andet sted end teamService.
 
     /**
+     * Calculate the total allocated hours for a profile to a team.
+     */
+    public BigDecimal calculateTotalAllocatedHours(AddProfileItemModel profile) throws Exception {
+        BigDecimal hourAllocationPercentage = profile.currentHourAllocationProperty().get();
+        BigDecimal annualHours = profile.annualHourAllocationProperty().get();
+
+        BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        return allocatedHours;
+    }
+
+    /**
+     * Calculate the total allocated cost for a profile to a team.
+     */
+    public BigDecimal calculateTotalAllocatedCost(AddProfileItemModel profile) throws Exception {
+        BigDecimal annualCost = profile.annualCostAllocationProperty().get();
+        BigDecimal costAllocationPercentage = profile.currentCostAllocationProperty().get();
+
+        BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        return allocatedCost;
+    }
+
+    /**
      * Calculate the total allocated hours from all profiles on a team.
      * @param teamId
      * @return
      * @throws Exception
      */
-    public BigDecimal calculateTotalAllocatedHoursFromProfile(UUID teamId) throws Exception {
-        List<Profile> profiles = getTeamProfiles(teamId);
+    public BigDecimal calculateTotalAllocatedHoursFromProfile(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
         BigDecimal totalAllocatedHours = BigDecimal.ZERO;
 
-        for (Profile profile : profiles) {
-            BigDecimal hourAllocationPercentage = getHourAllocationFromDatabase(teamId, profile.getProfileId());
-            BigDecimal annualHours = profile.getAnnualHours();
+        for (TeamProfile teamProfile : teamProfiles) {
+            BigDecimal hourAllocationPercentage = teamProfile.getHourAllocation();
+            BigDecimal annualHours = teamProfile.getAnnualHours();
 
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             totalAllocatedHours = totalAllocatedHours.add(allocatedHours);
         }
-        teamDAO.updateTeamsTotalAllocatedHours(teamId, totalAllocatedHours);
         return totalAllocatedHours;
     }
 
@@ -265,19 +286,17 @@ public class TeamService {
      * @return
      * @throws Exception
      */
-    public BigDecimal calculateTotalAllocatedCostFromProfiles(UUID teamId) throws Exception {
-        List<Profile> profiles = getTeamProfiles(teamId);
+    public BigDecimal calculateTotalAllocatedCostFromProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
         BigDecimal totalAllocatedCost = BigDecimal.ZERO;
 
-        for (Profile profile : profiles) {
-            BigDecimal annualCost = profile.getAnnualCost();
-            BigDecimal costAllocationPercentage = getCostAllocationFromDatabase(teamId, profile.getProfileId());
+        for (TeamProfile teamProfile : teamProfiles) {
+            BigDecimal annualCost = teamProfile.getAnnualCost();
+            BigDecimal costAllocationPercentage = teamProfile.getCostAllocation();
 
             BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
             totalAllocatedCost = totalAllocatedCost.add(allocatedCost);
         }
-        teamDAO.updateTeamsTotalAllocatedCost(teamId, totalAllocatedCost);
         return totalAllocatedCost;
     }
 
@@ -287,14 +306,14 @@ public class TeamService {
      * @return
      * @throws Exception
      */
-    public BigDecimal calculateTotalHourlyRateFromProfiles(UUID teamId) throws Exception {
-        BigDecimal totalAllocatedCost = calculateTotalAllocatedCostFromProfiles(teamId);
-        BigDecimal totalAllocatedHours = calculateTotalAllocatedHoursFromProfile(teamId);
+    public BigDecimal calculateTotalHourlyRateFromProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
+        BigDecimal totalAllocatedCost = calculateTotalAllocatedCostFromProfiles(teamId, teamProfiles);
+        BigDecimal totalAllocatedHours = calculateTotalAllocatedHoursFromProfile(teamId, teamProfiles);
         if(totalAllocatedCost.compareTo(BigDecimal.ZERO) == 0 || totalAllocatedHours.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
         BigDecimal hourlyRate = totalAllocatedCost.divide(totalAllocatedHours, 2, RoundingMode.HALF_UP);
-        teamDAO.updateTeamsHourlyRate(teamId, hourlyRate);
+        teamDAO.updateTeamRateCostHours(teamId, hourlyRate, totalAllocatedCost, totalAllocatedHours);
             return hourlyRate;
     }
 
@@ -304,8 +323,8 @@ public class TeamService {
      * @return
      * @throws Exception
      */
-    public BigDecimal calculateTotalDailyRateFromProfiles(UUID teamId) throws Exception {
-        BigDecimal hourlyRate = calculateTotalHourlyRateFromProfiles(teamId);
+    public BigDecimal calculateTotalDailyRateFromProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
+        BigDecimal hourlyRate = calculateTotalHourlyRateFromProfiles(teamId, teamProfiles);
         BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
         teamDAO.updateTeamsDayRate(teamId, dailyRate);
         return dailyRate;
@@ -338,40 +357,39 @@ public class TeamService {
         return profileDayRates;
     }
 
-    public Map<UUID, BigDecimal> updateAllocatedCost(UUID teamId) throws Exception {
+    public List<TeamProfile> updateAllocatedCostAndHours(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
         List<Profile> profiles = getTeamProfiles(teamId);
-        Map<UUID, BigDecimal> allocatedCostOnTeam = new HashMap<>();
 
-        for(Profile profile : profiles) {
-            BigDecimal annualCost = profile.getAnnualCost();
-            BigDecimal costAllocationPercentage = getCostAllocationFromDatabase(teamId, profile.getProfileId());
+        for(int profileIndex = 0; profileIndex < profiles.size(); profileIndex++) {
+            BigDecimal annualCost = profiles.get(profileIndex).getAnnualCost();
+            BigDecimal annualHours = profiles.get(profileIndex).getAnnualHours();
+
+            BigDecimal costAllocationPercentage;
+            BigDecimal hourAllocationPercentage;
+            BigDecimal dayRate;
+
+            costAllocationPercentage = teamProfiles.get(profileIndex).getCostAllocation();
+            hourAllocationPercentage = teamProfiles.get(profileIndex).getHourAllocation();
 
             BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-            teamDAO.updateAllocatedCost(teamId, profile.getProfileId(), allocatedCost);
-            allocatedCostOnTeam.put(profile.getProfileId(), allocatedCost);
-        }
-        return allocatedCostOnTeam;
-    }
-
-    public Map<UUID, BigDecimal> updateAllocatedHours(UUID teamId) throws Exception {
-        List<Profile> profiles = getTeamProfiles(teamId);
-        Map<UUID, BigDecimal> allocatedHoursOnTeam = new HashMap<>();
-
-        for(Profile profile : profiles) {
-            BigDecimal annualHours = profile.getAnnualHours();
-            BigDecimal hourAllocationPercentage = getHourAllocationFromDatabase(teamId, profile.getProfileId());
-
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
-            teamDAO.updateAllocatedHour(teamId, profile.getProfileId(), allocatedHours);
-            allocatedHoursOnTeam.put(profile.getProfileId(), allocatedHours);
+            if (annualHours.compareTo(BigDecimal.ZERO) == 0) {
+                dayRate = BigDecimal.ZERO;
+            } else {
+                dayRate = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(8));
+            }
+
+            teamProfiles.get(profileIndex).setAllocatedCostOnTeam(allocatedCost);
+            teamProfiles.get(profileIndex).setAllocatedHoursOnTeam(allocatedHours);
+            teamProfiles.get(profileIndex).setDayRateOnTeam(dayRate);
         }
-        return allocatedHoursOnTeam;
+        teamDAO.updateAllocatedCostAndHour(teamId, teamProfiles);
+        return teamProfiles;
     }
 
-    public boolean storeTeamProfiles(Team team, List<TeamProfile> teamProfiles) throws Exception {
-        return teamProfileManagementService.storeProfilesToTeam(team, teamProfiles);
+    public List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
+        return teamDAO.saveTeamProfiles(teamId, teamProfiles);
     }
 
 }
