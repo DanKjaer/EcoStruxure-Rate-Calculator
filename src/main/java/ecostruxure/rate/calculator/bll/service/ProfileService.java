@@ -270,16 +270,6 @@ public class ProfileService {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-/*    public boolean update(Profile original, Profile updated) throws Exception {
-        validateProfile(updated);
-        if (updated.getProfileId() == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-        if (updated.isArchived()) throw new IllegalArgumentException("Profile cannot be archived upon update");
-
-        if (original.equals(updated)) return profileDAO.update(updated);
-
-        return teamProfileManagementService.updateProfile(updated);
-    }*/
-
     public boolean update(UUID profileId, Profile profile) throws Exception{
         return profileDAO.update(profileId, profile);
     }
