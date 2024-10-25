@@ -19,4 +19,19 @@ public class ProfileController {
     public Profile getProfile(@PathVariable UUID id) throws Exception {
         return profileService.get(id);
     }
+
+    @PostMapping
+    public Profile createProfile(@RequestBody Profile profile) throws Exception {
+        return profileService.create(profile);
+    }
+
+    @PutMapping("/{id}")
+    public boolean updateProfile(@PathVariable UUID id, @RequestBody Profile profile) throws Exception {
+        return profileService.update(id, profile);
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean deleteProfile(@PathVariable UUID id) throws Exception {
+        return profileService.archive(id, true);
+    }
 }

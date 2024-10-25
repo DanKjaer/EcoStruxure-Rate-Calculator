@@ -46,13 +46,13 @@ public interface IProfileDAO {
 
     List<Team> getTeams(Profile profile) throws Exception;
 
-    boolean update(Profile profile) throws Exception;
+    boolean update(UUID profileId, Profile profile) throws Exception;
 
     boolean update(TransactionContext context, Profile profile) throws Exception;
 
     List<Team> getTeams(TransactionContext context, Profile profile) throws Exception;
 
-    boolean archive(Profile profile, boolean shouldArchive) throws Exception;
+    boolean archive(UUID profileId, boolean shouldArchive) throws Exception;
 
     boolean archive(List<Profile> profiles) throws Exception;
 
