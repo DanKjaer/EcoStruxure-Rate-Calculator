@@ -9,7 +9,7 @@ import ecostruxure.rate.calculator.be.data.Rates;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import ecostruxure.rate.calculator.bll.service.TeamService;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
-import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
+import ecostruxure.rate.calculator.be.ProfileTeamItemModel;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
