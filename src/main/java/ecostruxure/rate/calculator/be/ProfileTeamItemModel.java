@@ -1,7 +1,7 @@
-package ecostruxure.rate.calculator.gui.component.profile;
+package ecostruxure.rate.calculator.be;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.gui.system.currency.FinancialData;
+import ecostruxure.rate.calculator.be.data.FinancialData;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;

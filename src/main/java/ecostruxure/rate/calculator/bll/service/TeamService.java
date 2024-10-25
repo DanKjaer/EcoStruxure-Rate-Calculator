@@ -5,7 +5,6 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 import ecostruxure.rate.calculator.dal.db.TeamDAO;
-import ecostruxure.rate.calculator.gui.component.modals.addteam.AddProfileItemModel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -238,28 +237,6 @@ public class TeamService {
     }
 
 //  Alle metoder herfra og ned, skal måske flyttes til et andet sted end teamService.
-
-    /**
-     * Calculate the total allocated hours for a profile to a team.
-     */
-    public BigDecimal calculateTotalAllocatedHours(AddProfileItemModel profile) throws Exception {
-        BigDecimal hourAllocationPercentage = profile.currentHourAllocationProperty().get();
-        BigDecimal annualHours = profile.annualHourAllocationProperty().get();
-
-        BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-        return allocatedHours;
-    }
-
-    /**
-     * Calculate the total allocated cost for a profile to a team.
-     */
-    public BigDecimal calculateTotalAllocatedCost(AddProfileItemModel profile) throws Exception {
-        BigDecimal annualCost = profile.annualCostAllocationProperty().get();
-        BigDecimal costAllocationPercentage = profile.currentCostAllocationProperty().get();
-
-        BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-        return allocatedCost;
-    }
 
     /**
      * Calculate the total allocated hours from all profiles on a team.

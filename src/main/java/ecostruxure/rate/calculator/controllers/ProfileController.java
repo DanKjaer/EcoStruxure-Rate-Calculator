@@ -16,7 +16,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public Profile getProfile(@PathVariable UUID profileId) throws Exception {
-        return profileService.get(profileId);
+    public Profile getProfile(@PathVariable UUID id) throws Exception {
+        return profileService.get(id);
     }
 }

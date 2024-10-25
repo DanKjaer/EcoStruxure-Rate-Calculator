@@ -1,4 +1,4 @@
-package ecostruxure.rate.calculator.gui.component.modals.addteam;
+package ecostruxure.rate.calculator.be;
 
 import javafx.beans.property.*;
 

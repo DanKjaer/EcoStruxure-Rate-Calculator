@@ -1,4 +1,4 @@
-package ecostruxure.rate.calculator.gui.system.currency;
+package ecostruxure.rate.calculator.be.data;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
