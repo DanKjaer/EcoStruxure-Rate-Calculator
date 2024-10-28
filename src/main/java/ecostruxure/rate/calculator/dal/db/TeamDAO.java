@@ -963,7 +963,7 @@ public class TeamDAO implements ITeamDAO {
                 stmt.setBigDecimal(6, teamProfile.getAllocatedHoursOnTeam());
                 stmt.setBigDecimal(7, teamProfile.getDayRateOnTeam());
 
-                logger.info("assignProfiles in teamDAO:: Assigning profile with profileId: " + teamProfile.getProfileId() + " to team with teamId: " + team.getTeamId());
+                logger.info("assignProfiles in teamDAO:: Assigning profile with profileId: " + teamProfile.getProfileId() + " to team with teamId: " + teamId);
 
                 stmt.addBatch();
             }

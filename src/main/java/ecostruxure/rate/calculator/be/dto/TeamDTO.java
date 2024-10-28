@@ -9,6 +9,26 @@ public class TeamDTO {
     private Team team;
     private List<TeamProfile> profiles;
 
-    public TeamDTO(TeamDTO team, List<TeamProfile> profiles) {
+    public TeamDTO(Team team, List<TeamProfile> profiles) {
+    }
+
+    public TeamDTO() {
+
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public List<TeamProfile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(List<TeamProfile> profiles) {
+        this.profiles = profiles;
     }
 }

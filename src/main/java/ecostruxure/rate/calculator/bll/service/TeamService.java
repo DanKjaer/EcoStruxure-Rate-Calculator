@@ -42,6 +42,7 @@ public class TeamService {
             List<TeamProfile> profiles = teamProfileManagementService.getTeamProfiles(teamId);
             teamAndProfiles.put("team", team);
             teamAndProfiles.put("profiles", profiles);
+            System.out.println("Hey mom, I'm in the team service! And this checks the map profiles: " + profiles.get(1).getName());
             return teamAndProfiles;
         } catch (Exception e) {
             e.printStackTrace();

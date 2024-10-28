@@ -34,6 +34,16 @@ public class TeamProfile {
     }
 
     public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRate, BigDecimal costAllocation, BigDecimal hourAllocation, BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam, BigDecimal annualCost, BigDecimal annualHours) {
+        this.teamId = teamId;
+        this.profileId = profileId;
+        this.name = name;
+        this.dayRateOnTeam = dayRate;
+        this.costAllocation = costAllocation;
+        this.hourAllocation = hourAllocation;
+        this.allocatedCostOnTeam = allocatedCostOnTeam;
+        this.allocatedHoursOnTeam = allocatedHoursOnTeam;
+        this.annualCost = annualCost;
+        this.annualHours = annualHours;
     }
 
     public Profile getProfile() {
