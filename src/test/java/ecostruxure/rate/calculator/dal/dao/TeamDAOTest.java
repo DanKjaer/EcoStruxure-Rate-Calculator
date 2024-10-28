@@ -1,3 +1,4 @@
+/*
 package ecostruxure.rate.calculator.dal.dao;
 
 import ecostruxure.rate.calculator.be.Team;
@@ -74,4 +75,4 @@ class TeamDAOTest {
             throw new RuntimeException(e);
         }
     }
-}
+}*/

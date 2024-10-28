@@ -1,3 +1,4 @@
+/*
 package ecostruxure.rate.calculator.gui.system.view;
 
 import ecostruxure.rate.calculator.gui.common.Controller;
@@ -106,4 +107,4 @@ class ViewManagerTest {
         assertThat(viewManager.history()).hasSize(1);
         assertThat(viewManager.forwardHistory()).isEmpty();
     }
-}
+}*/

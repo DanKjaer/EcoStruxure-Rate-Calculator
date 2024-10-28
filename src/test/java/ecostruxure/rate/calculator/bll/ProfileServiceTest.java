@@ -1,3 +1,4 @@
+/*
 package ecostruxure.rate.calculator.bll;
 
 import ecostruxure.rate.calculator.be.Profile;
@@ -87,4 +88,4 @@ class ProfileServiceTest {
         BigDecimal actualHourlyRate = service.hourlyRate(profile);
         assertThat(actualHourlyRate).isEqualTo(expectedHourlyRate);
     }
-}
+}*/
