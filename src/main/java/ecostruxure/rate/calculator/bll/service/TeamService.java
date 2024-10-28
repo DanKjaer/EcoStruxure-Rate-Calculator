@@ -8,6 +8,7 @@ import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,6 +33,20 @@ public class TeamService {
         Objects.requireNonNull(team, "Team cannot be null");
 
         return this.get(team.getTeamId());
+    }
+
+    public Map<String, Object> getTeamAndProfiles(UUID teamId) {
+        Map<String, Object> teamAndProfiles = new HashMap<>();
+        try {
+            Team team = get(teamId);
+            List<TeamProfile> profiles = teamProfileManagementService.getTeamProfiles(teamId);
+            teamAndProfiles.put("team", team);
+            teamAndProfiles.put("profiles", profiles);
+            return teamAndProfiles;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean update(Team team) throws Exception {
@@ -138,11 +153,14 @@ public class TeamService {
         this.setMultipliers(this.get(teamId), markup, grossMargin);
     }
 
-    public boolean assignProfiles(Team team, List<Profile> profiles) throws Exception {
-        Objects.requireNonNull(team, "Team cannot be null");
-        Objects.requireNonNull(profiles, "Profiles cannot be null");
+    public List<TeamProfile> assignProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
+        Objects.requireNonNull(teamId, "Team cannot be null");
+        Objects.requireNonNull(teamProfiles, "Profiles cannot be null");
 
-        return teamProfileManagementService.assignProfilesToTeam(team, profiles);
+        teamProfiles = calculateIndividualDayRatesV2(teamProfiles);
+        teamProfiles = updateAllocatedCostAndHoursV2(teamProfiles);
+        teamDAO.assignProfilesToTeam(teamId, teamProfiles);
+        return teamProfiles;
     }
 
     public boolean updateProfiles(Team team, List<Profile> profiles) throws Exception {
@@ -207,13 +225,6 @@ public class TeamService {
         Objects.requireNonNull(team, "Team cannot be null");
 
         return teamDAO.canUnarchive(team.getTeamId());
-    }
-
-    public boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
-        if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
-
-        return teamProfileManagementService.removeProfileFromTeam(teamId, profileId);
     }
 
     public LocalDateTime getLastUpdated(UUID teamId) throws Exception {
@@ -334,6 +345,35 @@ public class TeamService {
         return profileDayRates;
     }
 
+    public List<TeamProfile> calculateIndividualDayRatesV2(List<TeamProfile> teamProfiles) throws Exception{
+        //List<Profile> profiles = getTeamProfiles(teamId);
+        //Map<UUID, BigDecimal> profileDayRates = new HashMap<>();
+
+        for (TeamProfile teamProfile : teamProfiles) {
+            BigDecimal annualCost = teamProfile.getAnnualCost();
+            BigDecimal annualHours = teamProfile.getAnnualHours();
+            BigDecimal costAllocationPercentage = teamProfile.getCostAllocation();
+            BigDecimal hourAllocationPercentage = teamProfile.getHourAllocation();
+
+            BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+
+            if (allocatedCost.compareTo(BigDecimal.ZERO) == 0 || allocatedHours.compareTo(BigDecimal.ZERO) == 0) {
+                //profileDayRates.put(teamProfile.getProfileId(), BigDecimal.ZERO);
+            } else {
+                BigDecimal hourlyRate = allocatedCost.divide(allocatedHours, 2, RoundingMode.HALF_UP);
+                BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
+
+                //teamDAO.updateDayRateOnTeam(teamId, teamProfile.getProfileId(), dailyRate);
+                teamProfile.setDayRateOnTeam(dailyRate);
+                //profileDayRates.put(teamProfile.getProfileId(), dailyRate);
+            }
+        }
+        //teamDAO.updateDayRateOnTeam(teamProfiles);
+        return teamProfiles;
+    }
+
     public List<TeamProfile> updateAllocatedCostAndHours(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
         List<Profile> profiles = getTeamProfiles(teamId);
 
@@ -365,8 +405,59 @@ public class TeamService {
         return teamProfiles;
     }
 
+    public List<TeamProfile> updateAllocatedCostAndHoursV2(List<TeamProfile> teamProfiles) throws Exception {
+        //List<Profile> profiles = getTeamProfiles(teamId);
+
+        for(TeamProfile teamProfile : teamProfiles) {
+            BigDecimal annualCost = teamProfile.getAnnualCost();
+            BigDecimal annualHours = teamProfile.getAnnualHours();
+
+            BigDecimal costAllocationPercentage;
+            BigDecimal hourAllocationPercentage;
+            BigDecimal dayRate;
+
+            costAllocationPercentage = teamProfile.getCostAllocation();
+            hourAllocationPercentage = teamProfile.getHourAllocation();
+
+            BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+            if (annualHours.compareTo(BigDecimal.ZERO) == 0) {
+                dayRate = BigDecimal.ZERO;
+            } else {
+                dayRate = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(8));
+            }
+
+            teamProfile.setAllocatedCostOnTeam(allocatedCost);
+            teamProfile.setAllocatedHoursOnTeam(allocatedHours);
+            teamProfile.setDayRateOnTeam(dayRate);
+        }
+        //teamDAO.updateAllocatedCostAndHour(teamId, teamProfiles);
+        return teamProfiles;
+    }
+
     public List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws Exception {
         return teamDAO.saveTeamProfiles(teamId, teamProfiles);
     }
 
+    public boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws SQLException {
+        try {
+            if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+            return teamDAO.removeProfileFromTeam(teamId, profileId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) {
+        try {
+            if (teamId == null) throw new IllegalArgumentException("Team ID must not be empty");
+            var updatedProfileList = updateAllocatedCostAndHoursV2(Collections.singletonList(teamProfile));
+            return teamDAO.updateTeamProfile(teamId, updatedProfileList.get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

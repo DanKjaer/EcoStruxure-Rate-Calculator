@@ -396,7 +396,7 @@ public class TeamDAO implements ITeamDAO {
     public List<TeamProfile> _getTeamProfiles(UUID teamId) throws Exception {
         List<TeamProfile> teamProfiles = new ArrayList<>();
         String query = """
-                SELECT tp.*, p.name
+                SELECT tp.*, p.name, p.annual_cost, p.annual_hours
                 FROM dbo.Profiles p
                 INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?;
                 """;
@@ -413,8 +413,11 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
                     BigDecimal allocatedCostOnTeam = rs.getBigDecimal("allocated_cost_on_team");
                     BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
+                    BigDecimal annualCost = rs.getBigDecimal("annual_cost");
+                    BigDecimal annualHours = rs.getBigDecimal("annual_hours");
 
-                    teamProfiles.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation, allocatedCostOnTeam, allocatedHoursOnTeam));
+                    teamProfiles.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
+                            allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -716,7 +719,7 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception {
+    public boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws SQLException {
         String query = """
                 DELETE FROM Teams_profiles WHERE teamId = ? AND profileId = ?
                 """;
@@ -726,9 +729,9 @@ public class TeamDAO implements ITeamDAO {
             stmt.setObject(1, teamId);
             stmt.setObject(2, profileId);
             stmt.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            throw new Exception("Could not remove Profile from Team in Database.\n" + e.getMessage());
+            throw new SQLException("Could not remove Profile from Team in Database.\n" + e.getMessage());
         }
         return true;
     }
@@ -940,6 +943,92 @@ public class TeamDAO implements ITeamDAO {
             pstmt.setObject(4, teamId);
             pstmt.executeUpdate();
         }
+    }
+
+    @Override
+    public void assignProfilesToTeam(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException {
+        String query = """
+                INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, allocated_cost_on_team, hour_allocation, allocated_hours_on_team, day_rate_on_team) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            conn.setAutoCommit(false);
+            for (TeamProfile teamProfile : teamProfiles) {
+                stmt.setObject(1, teamId);
+                stmt.setObject(2, teamProfile.getProfileId());
+                stmt.setBigDecimal(3, teamProfile.getCostAllocation());
+                stmt.setBigDecimal(4, teamProfile.getAllocatedCostOnTeam());
+                stmt.setBigDecimal(5, teamProfile.getHourAllocation());
+                stmt.setBigDecimal(6, teamProfile.getAllocatedHoursOnTeam());
+                stmt.setBigDecimal(7, teamProfile.getDayRateOnTeam());
+
+                logger.info("assignProfiles in teamDAO:: Assigning profile with profileId: " + teamProfile.getProfileId() + " to team with teamId: " + team.getTeamId());
+
+                stmt.addBatch();
+            }
+
+            stmt.executeBatch();
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not assign Profiles to Team in Database.\n" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateDayRateOnTeam(List<TeamProfile> teamProfiles) throws SQLException {
+        String sql = "UPDATE dbo.teams_profiles SET day_rate_on_team = ? WHERE teamid = ? AND profileid = ?";
+        try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            for (TeamProfile teamProfile : teamProfiles) {
+                preparedStatement.setBigDecimal(1, teamProfile.getDayRateOnTeam());
+                preparedStatement.setObject(2, teamProfile.getTeamId());
+                preparedStatement.setObject(3, teamProfile.getProfileId());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+    }
+
+    @Override
+    public boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException {
+        String query = """
+                DELETE FROM dbo.Teams_profiles WHERE teamId = ? AND profileId = ?
+                """;
+        try (Connection conn = dbConnector.connection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            for (UUID profileId : profileIds) {
+                stmt.setObject(1, teamId);
+                stmt.setObject(2, profileId);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not remove Profiles from Team in Database.\n" + e.getMessage());
+        }
+        return true;
+    }
+
+    @Override
+    public TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException {
+        String query = """
+                UPDATE dbo.Teams_profiles SET cost_allocation = ?, hour_allocation = ?, allocated_cost_on_team = ?, allocated_hours_on_team = ?, day_rate_on_team = ?
+                WHERE teamId = ? AND profileId = ?
+                """;
+        try (Connection conn = dbConnector.connection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setBigDecimal(1, teamProfile.getCostAllocation());
+            stmt.setBigDecimal(2, teamProfile.getHourAllocation());
+            stmt.setBigDecimal(3, teamProfile.getAllocatedCostOnTeam());
+            stmt.setBigDecimal(4, teamProfile.getAllocatedHoursOnTeam());
+            stmt.setBigDecimal(5, teamProfile.getDayRateOnTeam());
+            stmt.setObject(6, teamId);
+            stmt.setObject(7, teamProfile.getProfileId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not update Team Profile in Database.\n" + e.getMessage());
+        }
+        return teamProfile;
     }
 
     @Override

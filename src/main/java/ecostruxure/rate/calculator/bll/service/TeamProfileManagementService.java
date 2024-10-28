@@ -65,6 +65,12 @@ public class TeamProfileManagementService {
         });
     }
 
+    public List<TeamProfile> getTeamProfiles(UUID teamId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team id must be greater than 0");
+
+        return teamDAO._getTeamProfiles(teamId);
+    }
+
     public boolean assignProfilesToTeam(Team team, List<Profile> profiles) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
@@ -231,11 +237,5 @@ public class TeamProfileManagementService {
 
             return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
         }
-    }
-
-    public List<TeamProfile> getTeamProfiles(UUID teamId) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team id must be greater than 0");
-
-        return teamDAO._getTeamProfiles(teamId);
     }
 }

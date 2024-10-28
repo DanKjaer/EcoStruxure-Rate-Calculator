@@ -33,6 +33,9 @@ public class TeamProfile {
         this.allocatedHoursOnTeam = allocatedHoursOnTeam;
     }
 
+    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRate, BigDecimal costAllocation, BigDecimal hourAllocation, BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam, BigDecimal annualCost, BigDecimal annualHours) {
+    }
+
     public Profile getProfile() {
         return profile;
     }

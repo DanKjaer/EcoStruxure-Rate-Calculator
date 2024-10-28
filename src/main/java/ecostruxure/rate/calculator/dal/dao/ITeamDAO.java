@@ -50,7 +50,7 @@ public interface ITeamDAO {
 
     List<Profile> canUnarchive(UUID teamId) throws Exception;
 
-    boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception;
+    boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws SQLException;
 
     boolean removeProfileFromTeam(TransactionContext context, UUID teamId, UUID profileId) throws Exception;
 
@@ -82,4 +82,12 @@ public interface ITeamDAO {
     List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
     void updateTeamRateCostHours(UUID teamId, BigDecimal hourlyRate, BigDecimal totalAllocatedCost, BigDecimal totalAllocatedHours) throws SQLException;
+
+    void assignProfilesToTeam(UUID teamId, List<TeamProfile> profiles) throws SQLException;
+
+    void updateDayRateOnTeam(List<TeamProfile> teamProfiles) throws SQLException;
+
+    boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException;
+
+    TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException;
 }
