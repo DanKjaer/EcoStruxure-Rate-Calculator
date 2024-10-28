@@ -34,10 +34,10 @@ public class TeamService {
         return this.get(team.getTeamId());
     }
 
-    public boolean update(Team team) throws Exception {
+    public boolean update(UUID teamId,Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
-        return teamDAO.update(team);
+        return teamDAO.update(teamId, team);
     }
 
     /**

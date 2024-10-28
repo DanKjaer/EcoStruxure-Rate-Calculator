@@ -18,7 +18,7 @@ public interface ITeamDAO {
 
     Team create(TransactionContext context, Team team) throws Exception;
 
-    boolean update(Team team) throws Exception;
+    boolean update(UUID teamId, Team team) throws Exception;
 
     void updateMultipliers(Team team) throws Exception;
 

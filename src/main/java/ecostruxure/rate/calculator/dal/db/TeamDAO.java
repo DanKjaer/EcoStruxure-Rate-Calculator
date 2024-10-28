@@ -149,7 +149,7 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public boolean update(Team team) throws Exception {
+    public boolean update(UUID teamId, Team team) throws Exception {
         String query = """
                 UPDATE Teams SET name = ? WHERE id = ?
                 """;
@@ -157,7 +157,7 @@ public class TeamDAO implements ITeamDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, team.getName());
-            stmt.setObject(2, team.getTeamId());
+            stmt.setObject(2, teamId);
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
