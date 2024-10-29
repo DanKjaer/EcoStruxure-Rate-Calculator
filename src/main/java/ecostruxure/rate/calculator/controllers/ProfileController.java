@@ -4,6 +4,7 @@ import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,6 +19,11 @@ public class ProfileController {
     @GetMapping("/{id}")
     public Profile getProfile(@PathVariable UUID id) throws Exception {
         return profileService.get(id);
+    }
+
+    @GetMapping()
+    public List<Profile> getProfiles() throws Exception {
+        return profileService.all();
     }
 
     @PostMapping

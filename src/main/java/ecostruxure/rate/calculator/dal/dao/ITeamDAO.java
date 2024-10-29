@@ -76,7 +76,7 @@ public interface ITeamDAO {
 
     List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
-    void updateTeamRateCostHours(UUID teamId, BigDecimal hourlyRate, BigDecimal dayRate, BigDecimal totalAllocatedCost, BigDecimal totalAllocatedHours) throws SQLException;
+    void updateTeamRateCostHours(Team team) throws SQLException;
 
     void assignProfilesToTeam(UUID teamId, List<TeamProfile> profiles) throws SQLException;
 
@@ -85,4 +85,6 @@ public interface ITeamDAO {
     boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException;
 
     TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException;
+
+    void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException;
 }
