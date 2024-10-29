@@ -59,7 +59,7 @@
   "UNIQUE_LOCATIONS": "Unique locations",
   "CONTRIBUTED_HOURLY_RATE": "Cont. hourly rate",
   "CONTRIBUTED_DAY_RATE": "Cont. day rate",
-  "CONTRIBUTED_ANNUAL_COST": "Cont. annual cost",
+  "ANNUAL_COST": "Annual cost",
   "ANNUAL_HOURS": "Annual hours",
   "SEARCH_PROMPT": "Search",
   "THEME_SELECTOR": "Theme selector",
@@ -175,5 +175,8 @@
   "REASON_UPDATED_PROFILE": "Profile updated",
   "LAST_EDIT": "Last edit:",
   "REASON_UTILIZATION_CHANGE": "Utilization change",
-  "UPDATED_AT": "Updated at: "
+  "UPDATED_AT": "Updated at: ",
+  "LOGOUT": "Logout",
+  "LANGUAGE": "Change language",
+  "OPTIONS": "Options"
 }

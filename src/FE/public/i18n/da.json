@@ -59,8 +59,8 @@
   "UNIQUE_LOCATIONS": "Unikke placeringer",
   "CONTRIBUTED_HOURLY_RATE": "Kont. timerate",
   "CONTRIBUTED_DAY_RATE": "Kont. dagsrate",
-  "CONTRIBUTED_ANNUAL_COST": "Kont. årlige omkostninger",
-  "CONTRIBUTED_ANNUAL_HOURS": "Kont. årlige timer",
+  "ANNUAL_COST": "Årlige omkostninger",
+  "ANNUAL_HOURS": "Årlige timer",
   "SEARCH_PROMPT": "Søg",
   "THEME_SELECTOR": "Tema vælger",
   "ADD_NEW_PROFILE": "Tilføj ny profil",
@@ -174,5 +174,8 @@
   "REASON_UPDATED_PROFILE": "Profil opdateret",
   "LAST_EDIT": "Sidst redigeret: ",
   "REASON_UTILIZATION_CHANGE": "Utilization ændring",
-  "UPDATED_AT": "Opdateret: "
+  "UPDATED_AT": "Opdateret: ",
+  "LOGOUT": "Log ud",
+  "LANGUAGE": "Skift sprog",
+  "OPTIONS": "Indstillinger"
 }
