@@ -42,7 +42,6 @@ public class TeamService {
             List<TeamProfile> profiles = teamProfileManagementService.getTeamProfiles(teamId);
             teamAndProfiles.put("team", team);
             teamAndProfiles.put("profiles", profiles);
-            System.out.println("Hey mom, I'm in the team service! And this checks the map profiles: " + profiles.get(1).getName());
             return teamAndProfiles;
         } catch (Exception e) {
             e.printStackTrace();
@@ -347,8 +346,6 @@ public class TeamService {
     }
 
     public List<TeamProfile> calculateIndividualDayRatesV2(List<TeamProfile> teamProfiles) throws Exception{
-        //List<Profile> profiles = getTeamProfiles(teamId);
-        //Map<UUID, BigDecimal> profileDayRates = new HashMap<>();
 
         for (TeamProfile teamProfile : teamProfiles) {
             BigDecimal annualCost = teamProfile.getAnnualCost();
@@ -361,17 +358,14 @@ public class TeamService {
 
 
             if (allocatedCost.compareTo(BigDecimal.ZERO) == 0 || allocatedHours.compareTo(BigDecimal.ZERO) == 0) {
-                //profileDayRates.put(teamProfile.getProfileId(), BigDecimal.ZERO);
+                teamProfile.setDayRateOnTeam(BigDecimal.ZERO);
             } else {
                 BigDecimal hourlyRate = allocatedCost.divide(allocatedHours, 2, RoundingMode.HALF_UP);
                 BigDecimal dailyRate = hourlyRate.multiply(BigDecimal.valueOf(8));
 
-                //teamDAO.updateDayRateOnTeam(teamId, teamProfile.getProfileId(), dailyRate);
                 teamProfile.setDayRateOnTeam(dailyRate);
-                //profileDayRates.put(teamProfile.getProfileId(), dailyRate);
             }
         }
-        //teamDAO.updateDayRateOnTeam(teamProfiles);
         return teamProfiles;
     }
 
@@ -407,7 +401,6 @@ public class TeamService {
     }
 
     public List<TeamProfile> updateAllocatedCostAndHoursV2(List<TeamProfile> teamProfiles) throws Exception {
-        //List<Profile> profiles = getTeamProfiles(teamId);
 
         for(TeamProfile teamProfile : teamProfiles) {
             BigDecimal annualCost = teamProfile.getAnnualCost();
@@ -433,7 +426,6 @@ public class TeamService {
             teamProfile.setAllocatedHoursOnTeam(allocatedHours);
             teamProfile.setDayRateOnTeam(dayRate);
         }
-        //teamDAO.updateAllocatedCostAndHour(teamId, teamProfiles);
         return teamProfiles;
     }
 

@@ -22,14 +22,13 @@ public class TeamProfileController {
     @GetMapping(produces = "application/json")
     public TeamDTO getTeamProfile(@RequestParam UUID teamId) {
         Map<String, Object> teamProfileMap = teamService.getTeamAndProfiles(teamId);
-        System.out.println("Hey mom, I'm in the team profile controller! And the map is: " + teamProfileMap);
         if (teamProfileMap == null) {
             return null;
         }
+
         TeamDTO teamDTO = new TeamDTO();
         teamDTO.setTeam((Team) teamProfileMap.get("team"));
         teamDTO.setProfiles((List<TeamProfile>) teamProfileMap.get("profiles"));
-        System.out.println("Hey mom, I'm in the team profile controller! And the profiles are: " + teamDTO.getProfiles().get(1).getName());
         return teamDTO;
     }
 
