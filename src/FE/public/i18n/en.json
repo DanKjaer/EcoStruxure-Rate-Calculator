@@ -175,5 +175,8 @@
   "REASON_UPDATED_PROFILE": "Profile updated",
   "LAST_EDIT": "Last edit:",
   "REASON_UTILIZATION_CHANGE": "Utilization change",
-  "UPDATED_AT": "Updated at: "
+  "UPDATED_AT": "Updated at: ",
+  "LOGOUT": "Logout",
+  "LANGUAGE": "Change language",
+  "OPTIONS": "Options"
 }

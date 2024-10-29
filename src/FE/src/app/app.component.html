@@ -1,7 +1,8 @@
-<div>
-  <app-sidemenu/>
-  <main>
-    <h1>{{ title }}</h1>
-  </main>
+<div class="layout">
+  <div class="menu">
+    <app-sidemenu/>
+  </div>
+  <div class="mainContent">
+    <router-outlet/>
+  </div>
 </div>
-<router-outlet/>

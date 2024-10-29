@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="titleContainer">
+    <span>
+      {{ 'PROFILES' | translate }}
+    </span>
+    <div class="buttonContainer">
+      <button mat-raised-button>
+        <mat-icon>
+          add
+        </mat-icon>
+        {{ 'ADD_NEW_PROFILE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="paginatorContainer">
+    <mat-paginator class="paginator" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+
+  <div class="tableContainer">
+
+    <table class="profilesTable" mat-table [dataSource]="datasource" matSort>
+      <!-- name -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'NAME' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['name'] }}
+        </td>
+      </ng-container>
+
+      <!-- annual hours -->
+      <ng-container matColumnDef="annual hours">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'ANNUAL_HOURS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['annual hours'] }}
+        </td>
+      </ng-container>
+
+      <!-- effective work hours -->
+      <ng-container matColumnDef="effective work hours">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'EFFECTIVE_WORK_HOURS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['effective work hours'] }}
+        </td>
+      </ng-container>
+
+      <!-- effectiveness -->
+      <ng-container matColumnDef="effectiveness">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'EFFECTIVENESS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['effectiveness'] }}
+        </td>
+      </ng-container>
+
+      <!-- contributed annual cost -->
+      <ng-container matColumnDef="contributed annual cost">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'CONTRIBUTED_ANNUAL_COST' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['contributed annual cost'] }}
+        </td>
+      </ng-container>
+
+      <!-- allocated hours -->
+      <ng-container matColumnDef="allocated hours">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'ALLOCATED_HOURS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['allocated hours'] }}
+        </td>
+      </ng-container>
+
+      <!-- cost allocation -->
+      <ng-container matColumnDef="cost allocation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'COST_ALLOCATION' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['cost allocation'] }}
+        </td>
+      </ng-container>
+
+      <!-- options button -->
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'OPTIONS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="!loading">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <div class="spinnerContainer" *ngIf="loading">
+      <!-- Display spinner when loading -->
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>edit</mat-icon>
+    {{ 'EDIT' | translate }}
+  </button>
+  <button mat-menu-item>
+    <mat-icon>delete</mat-icon>
+    {{ 'DELETE' | translate }}
+  </button>
+</mat-menu>
