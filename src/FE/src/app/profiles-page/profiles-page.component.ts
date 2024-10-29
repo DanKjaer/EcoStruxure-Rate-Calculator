@@ -42,7 +42,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     'allocated hours',
     'cost allocation',
     'options'
-  ]
+  ];
 
   datasource = new MatTableDataSource([{}]);
   loading = true;
