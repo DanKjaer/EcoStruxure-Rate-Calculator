@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "ecostruxure.rate.calculator.controllers")
+//@ComponentScan(basePackages = "ecostruxure.rate.calculator.controllers")
 public class Launcher {
     public static void main(String[] args) {
         SpringApplication.run(Launcher.class, args);

@@ -91,7 +91,7 @@ CREATE TABLE dbo.Profiles_history (
 
 CREATE TABLE dbo.Teams_profiles (
                                     teamId                       UUID NOT NULL,
-                                    profileId                    UUID,
+                                    profileId                    UUID NOT NULL,
                                     cost_allocation              DECIMAL(10, 2) NOT NULL,
                                     allocated_cost_on_team       DECIMAL(10, 2),
                                     hour_allocation              DECIMAL(10, 2) NOT NULL,
