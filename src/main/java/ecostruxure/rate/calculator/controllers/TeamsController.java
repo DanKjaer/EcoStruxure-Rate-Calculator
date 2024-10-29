@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
+import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.bll.service.TeamService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,20 +29,10 @@ public class TeamsController {
         return teamService.get(id);
     }
 
-/*
     @PostMapping
-    public Team create(@RequestBody Team team, @RequestBody List<TeamProfile> teamProfiles) throws Exception {
-        Team createdTeam = teamService.create(team);
-        teamService.saveTeamProfiles(createdTeam.getTeamId(), teamProfiles);
-        return createdTeam;
-    }
-*/
-
-    @PostMapping
-    public Team create(@RequestBody Map<String, Object> request) throws Exception {
-        Team team = objectMapper.convertValue(request.get("team"), Team.class);
-        List<TeamProfile> teamProfiles = objectMapper.convertValue(request.get("teamProfiles"),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, TeamProfile.class));
+    public Team create(@RequestBody TeamDTO teamDTO) throws Exception {
+        Team team = teamDTO.getTeam();
+        List<TeamProfile> teamProfiles = teamDTO.getProfiles();
 
         return teamService.create(team, teamProfiles);
     }
