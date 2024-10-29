@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {TranslateModule} from '@ngx-translate/core';
@@ -10,6 +10,8 @@ import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
 
 @Component({
   selector: 'app-profiles-page',
@@ -27,12 +29,19 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
     NgIf,
     MatMenuTrigger,
     MatMenuModule,
-    MatMenuItem
+    MatMenuItem,
+    MatDialogModule
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit {
+  readonly dialog = inject(MatDialog);
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileDialogComponent);
+  }
+
   displayedColumns: string[] = [
     'name',
     'annual hours',
