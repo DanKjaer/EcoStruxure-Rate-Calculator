@@ -57,11 +57,12 @@ public class TeamService {
         return teamProfileManagementService.createTeam(team);
     }
 
-    public Team create(Team team, List<Profile> profiles) throws Exception {
+    public Team create(Team team, List<TeamProfile> teamProfiles) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
-        Objects.requireNonNull(profiles, "Profiles cannot be null");
-
-        return teamProfileManagementService.createTeam(team, profiles);
+        Objects.requireNonNull(teamProfiles, "Profiles cannot be null");
+        Team createdTeam = teamDAO.create(team);
+        teamDAO.assignProfiles(createdTeam, teamProfiles);
+        return teamProfileManagementService.createTeam(team, teamProfiles);
     }
 
 
