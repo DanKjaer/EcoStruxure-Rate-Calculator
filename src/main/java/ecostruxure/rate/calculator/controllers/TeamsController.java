@@ -17,11 +17,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/teams")
 public class TeamsController {
     private final TeamService teamService;
-    private final ObjectMapper objectMapper;
 
     public TeamsController() throws Exception{
         this.teamService = new TeamService();
-        this.objectMapper = new ObjectMapper();
     }
 
     @GetMapping("/{id}")

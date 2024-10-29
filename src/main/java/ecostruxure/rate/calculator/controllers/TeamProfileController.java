@@ -43,7 +43,7 @@ public class TeamProfileController {
     }
 
     @PutMapping()
-    public TeamProfile updateOrCostAllocation(@RequestParam UUID teamId, @RequestBody TeamProfile teamProfile) throws Exception {
+    public TeamProfile updateHourOrCostAllocation(@RequestParam UUID teamId, @RequestBody TeamProfile teamProfile) throws Exception {
         return teamService.updateTeamProfile(teamId, teamProfile);
     }
 }

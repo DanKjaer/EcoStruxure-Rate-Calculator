@@ -211,7 +211,6 @@ public class TeamDAO implements ITeamDAO {
         }
 
         return true;
-
     }
 
     @Override
@@ -910,14 +909,14 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public void updateTeamRateCostHours(UUID teamId, BigDecimal hourlyRate, BigDecimal dayRate, BigDecimal totalAllocatedCost, BigDecimal totalAllocatedHours) throws SQLException {
+    public void updateTeamRateCostHours(Team team) throws SQLException {
         String sql = "UPDATE dbo.teams SET hourly_rate = ?, day_rate = ?, total_allocated_cost = ?, total_allocated_hours = ?  WHERE id = ?";
         try (Connection conn = dbConnector.connection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setBigDecimal(1, hourlyRate);
-            pstmt.setBigDecimal(2, dayRate);
-            pstmt.setBigDecimal(3, totalAllocatedCost);
-            pstmt.setBigDecimal(4, totalAllocatedHours);
-            pstmt.setObject(5, teamId);
+            pstmt.setBigDecimal(1, team.getHourlyRate());
+            pstmt.setBigDecimal(2, team.getDayRate());
+            pstmt.setBigDecimal(3, team.getTotalAllocatedCost());
+            pstmt.setBigDecimal(4, team.getTotalAllocatedHours());
+            pstmt.setObject(5, team.getTeamId());
             pstmt.executeUpdate();
         }
     }
@@ -1006,6 +1005,37 @@ public class TeamDAO implements ITeamDAO {
             throw new SQLException("Could not update Team Profile in Database.\n" + e.getMessage());
         }
         return teamProfile;
+    }
+
+    @Override
+    public void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException {
+        String query = """
+                        SELECT SUM(cost_allocation) AS total_cost_allocation, SUM(hour_allocation) AS total_hour_allocation
+                        FROM dbo.Teams_profiles
+                        WHERE profileId = ?;
+                        """;
+        String command = """
+                        UPDATE dbo.Profiles SET total_cost_allocation = ?, total_hour_allocation = ?
+                        WHERE profile_id = ?;
+                """;
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmtCost = conn.prepareStatement(query);
+             PreparedStatement stmtUpdate = conn.prepareStatement(command)) {
+            for (TeamProfile teamProfile : teamProfiles) {
+                stmtCost.setObject(1, teamProfile.getProfileId());
+
+                try (ResultSet rs = stmtCost.executeQuery()) {
+                    if (rs.next()) {
+                        stmtUpdate.setBigDecimal(1, rs.getBigDecimal("total_cost_allocation"));
+                        stmtUpdate.setBigDecimal(2, rs.getBigDecimal("total_hour_allocation"));
+                        stmtUpdate.setObject(3, teamProfile.getProfileId());
+                        stmtUpdate.addBatch();
+                    }
+                }
+            }
+            stmtUpdate.executeBatch();
+        }
     }
 
     @Override

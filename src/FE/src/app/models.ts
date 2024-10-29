@@ -11,6 +11,8 @@ export class Profile {
   hoursPerDay?: number;
   effectivenessPercentage?: number;
   effectiveWorkHours?: number;
+  totalCostAllocation?: number;
+  totalHourAllocation?: number;
   archived?: boolean;
   updatedAt?: Date;
 }

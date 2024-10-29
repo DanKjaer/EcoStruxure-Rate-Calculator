@@ -81,8 +81,8 @@ public class TeamService {
         List<TeamProfile> updatedTeamProfile = updateAllocatedCostAndHours(teamProfiles);
         teamDAO.assignProfilesToTeam(createdTeam.getTeamId(), updatedTeamProfile);
         createdTeam = calculateTotalAllocatedCostAndHoursFromProfiles(createdTeam, updatedTeamProfile);
-        teamDAO.updateTeamRateCostHours(createdTeam.getTeamId(), createdTeam.getHourlyRate(), createdTeam.getDayRate(),
-                createdTeam.getTotalAllocatedCost(), createdTeam.getTotalAllocatedHours());
+        teamDAO.updateTeamRateCostHours(createdTeam);
+        teamDAO.updateTotalAllocationOfProfiles(updatedTeamProfile);
         return createdTeam;
     }
 
@@ -167,6 +167,8 @@ public class TeamService {
         teamProfiles = calculateIndividualDayRates(teamProfiles);
         teamProfiles = updateAllocatedCostAndHours(teamProfiles);
         teamDAO.assignProfilesToTeam(teamId, teamProfiles);
+        teamDAO.updateTotalAllocationOfProfiles(teamProfiles);
+
         return teamProfiles;
     }
 
@@ -343,8 +345,15 @@ public class TeamService {
     public TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) {
         try {
             if (teamId == null) throw new IllegalArgumentException("Team ID must not be empty");
+
+            // Update allocated cost and hours for the team profile
             var updatedProfileList = updateAllocatedCostAndHours(Collections.singletonList(teamProfile));
-            return teamDAO.updateTeamProfile(teamId, updatedProfileList.get(0));
+            TeamProfile updateTeamProfile  = teamDAO.updateTeamProfile(teamId, updatedProfileList.get(0));
+
+            // Update total allocated cost and hours for the teams on profiles
+            teamDAO.updateTotalAllocationOfProfiles(updatedProfileList);
+
+            return updateTeamProfile;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
