@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {TranslateModule} from '@ngx-translate/core';
@@ -10,6 +10,8 @@ import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Profile} from '../models';
@@ -31,11 +33,18 @@ import {Profile} from '../models';
     MatMenuTrigger,
     MatMenuModule,
     MatMenuItem,
+    MatDialogModule
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit {
+  readonly dialog = inject(MatDialog);
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileDialogComponent);
+  }
+
   private apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {
@@ -66,7 +75,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     'allocated hours',
     'cost allocation',
     'options'
-  ]
+  ];
 
   datasource = new MatTableDataSource([{}]);
   loading = true;

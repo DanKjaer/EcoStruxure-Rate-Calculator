@@ -21,12 +21,19 @@
       </mat-icon>
       {{ 'TEAMS' | translate }}
     </button>
+    <button class="navButton" mat-flat-button routerLink="/projects">
+    <mat-icon>
+      assignment
+    </mat-icon>
+    {{ 'PROJECTS' | translate }}
+  </button>
     <button class="navButton" mat-flat-button routerLink="/currency">
       <mat-icon>
         currency_exchange
       </mat-icon>
       {{ 'CURRENCY' | translate }}
     </button>
+
   </div>
   <div class="bottomContainer">
     <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'LANGUAGE' | translate }}">

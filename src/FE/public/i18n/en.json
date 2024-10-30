@@ -23,7 +23,6 @@
   "HOUR_ALLOCATION": "Hour allocation",
   "ALLOCATED_HOURS": "Allocated hours",
   "HISTORY": "History",
-  "ANNUAL_COST": "Annual cost",
   "ANNUAL_TOTAL_HOURS": "Annual total hours",
   "COST_ON_TEAM": "Cost on team",
   "PAGE_DASHBOARD_HEADER": "Dashboard",
@@ -51,7 +50,7 @@
   "DATE": "Date",
   "HOURS_PER_DAY": "Hours per day",
   "TOTAL_HOURLY_RATE": "Total hourly rate",
-  "TOTAL_TEAMS": "Total teams",
+  "TOTAL_TEAMS": "Total teams: ",
   "TOTAL_DAY_RATE": "Total day rate",
   "ASSIGNED_PROFILES": "Assigned profiles",
   "GEOGRAPHY_LOCATIONS": "Locations",
@@ -175,8 +174,11 @@
   "REASON_UPDATED_PROFILE": "Profile updated",
   "LAST_EDIT": "Last edit:",
   "REASON_UTILIZATION_CHANGE": "Utilization change",
-  "UPDATED_AT": "Updated at: ",
+  "UPDATED_AT": "Updated at",
   "LOGOUT": "Logout",
   "LANGUAGE": "Change language",
-  "OPTIONS": "Options"
+  "OPTIONS": "Options",
+  "PROJECTS": "Projects",
+  "ADD": "Add",
+  "CANCEL": "Cancel"
 }
