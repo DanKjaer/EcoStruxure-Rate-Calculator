@@ -36,7 +36,7 @@ public class RateService {
     }
 
     // Metode til at udregne rates for et team, baseret på rate typen.
-    public Rates calculateRates(Team team, RateType rateType, List<ProfileTeamItemModel> teamProfileList) throws Exception {
+    public Rates calculateRates(Team team, RateType rateType, List<TeamProfile> teamProfileList) throws Exception {
         var rawRate = BigDecimal.ZERO;
         var markup = team.getMarkup();
         var grossMargin = team.getGrossMargin();
@@ -104,13 +104,13 @@ public class RateService {
 
 
     // Metode til at udregne den udnyttede årlige omkostning for et team
-    public BigDecimal utilizedAnnualCost(Team team, List<ProfileTeamItemModel> teamProfileList) throws Exception {
+    public BigDecimal utilizedAnnualCost(Team team, List<TeamProfile> teamProfileList) throws Exception {
         var total = BigDecimal.ZERO;
 
         // Henter profilerne for et team og udregner den sammenlagte årlige omkostning.
         var profiles = teamService.getTeamProfiles(team);
         for (int profileIndex = 0; profileIndex < profiles.size(); profileIndex++) {
-            var costAllocation = teamProfileList.get(profileIndex).costAllocationProperty().get();
+            var costAllocation = teamProfileList.get(profileIndex).getCostAllocation();
             total = total.add(RateUtils.annualCost(profiles.get(profileIndex), costAllocation));
         }
 

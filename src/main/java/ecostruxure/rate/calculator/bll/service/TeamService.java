@@ -205,6 +205,12 @@ public class TeamService {
         return teamDAO.getTeamProfiles(teamId);
     }
 
+    public List<TeamProfile> getTeamProfilesV2(UUID teamId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+
+        return teamDAO._getTeamProfiles(teamId);
+    }
+
     public Profile getTeamProfile(UUID teamId, UUID profileId) throws Exception {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
         if (profileId == null) throw new IllegalArgumentException("Profile ID must be greater than 0");
