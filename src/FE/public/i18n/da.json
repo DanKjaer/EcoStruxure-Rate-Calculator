@@ -1,5 +1,5 @@
 {
-  "CURRENT": "Nuværende",
+  "CURRENT_PROFILE": "Nuværende profil",
   "CSV_DROP_INSTRUCTIONS": "Tryk og slip CSV-fil her",
   "HOUR_SYMBOL_LOWERCASE": "t",
   "HOUR_SYMBOL_UPPERCASE": "T",
@@ -56,8 +56,6 @@
   "GEOGRAPHY_LOCATIONS": "Placeringer",
   "UNIQUE_TEAMS": "Unikke teams",
   "UNIQUE_LOCATIONS": "Unikke placeringer",
-  "CONTRIBUTED_HOURLY_RATE": "Kont. timerate",
-  "CONTRIBUTED_DAY_RATE": "Kont. dagsrate",
   "ANNUAL_COST": "Årlige omkostninger",
   "ANNUAL_HOURS": "Årlige timer",
   "SEARCH_PROMPT": "Søg",
@@ -99,6 +97,7 @@
   "NO_TEAMS_ON_PROFILE": "Ingen teams på profilen",
   "TOTAL_HOURS_ANNUALLY": "Total årlige timer",
   "TOTAL_ANNUAL_COST": "Total årlige omkostninger",
+  "TOTAL_ANNUAL_HOURS": "Total årlige timer",
   "SHOW": "Vis",
   "EDIT": "Rediger",
   "DELETE": "Slet",

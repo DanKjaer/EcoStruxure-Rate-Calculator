@@ -9,7 +9,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 
 @Component({
-  selector: 'app-add-teams-dialog',
+  selector: 'app-add-team-dialog',
   standalone: true,
   imports: [
     MatDialogModule,
@@ -24,10 +24,10 @@ import {MatListModule} from '@angular/material/list';
     MatListModule,
     MatPrefix
   ],
-  templateUrl: './add-teams-dialog.component.html',
-  styleUrl: './add-teams-dialog.component.css'
+  templateUrl: './add-team-dialog.component.html',
+  styleUrl: './add-team-dialog.component.css'
 })
-export class AddTeamsDialogComponent implements OnInit {
+export class AddTeamDialogComponent implements OnInit {
   teamForm!: FormGroup;
 
   constructor(private fb: FormBuilder) {

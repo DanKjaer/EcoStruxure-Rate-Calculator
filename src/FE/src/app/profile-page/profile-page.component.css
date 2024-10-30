@@ -1,0 +1,85 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  padding-top: 1rem;
+  overflow: auto;
+}
+
+.statsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-height: 20vh;
+}
+
+.hourlyRateBox, .dayRateBox, .annualCostBox, .annualHoursBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-radius: 1rem;
+  max-width: 15vw;
+  max-height: 18vh;
+  color: white;
+  padding-left: 0.5rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+.hourlyRateBox {
+  background-color: cornflowerblue;
+}
+
+.dayRateBox {
+  background-color: green;
+}
+
+.annualCostBox {
+  background-color: orange;
+}
+
+.annualHoursBox {
+  background-color: indianred;
+}
+
+.boxValue {
+  font-size: 7vh;
+  flex-shrink: 1;
+}
+
+.boxText {
+  font-size: 3vh;
+  flex-shrink: 1;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.teamsContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 50vw;
+  background-color: whitesmoke;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+}
+
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 30vw;
+  background-color: whitesmoke;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 2rem;
+}
+
+.groupContainer {
+  display: flex;
+  flex-direction: row;
+  align-content: space-evenly;
+}

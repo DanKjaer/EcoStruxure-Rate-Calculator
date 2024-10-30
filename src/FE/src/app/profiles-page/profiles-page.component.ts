@@ -15,6 +15,7 @@ import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialo
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Profile} from '../models';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-profiles-page',
@@ -33,22 +34,49 @@ import {Profile} from '../models';
     MatMenuTrigger,
     MatMenuModule,
     MatMenuItem,
-    MatDialogModule
+    MatDialogModule,
+    RouterLink
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit {
-  readonly dialog = inject(MatDialog);
+  constructor(private http: HttpClient, private router: Router) {
+  }
 
+  //#region vars
+  displayedColumns: string[] = [
+    'name',
+    'annual hours',
+    'effective work hours',
+    'effectiveness',
+    'contributed annual cost',
+    'allocated hours',
+    'cost allocation',
+    'options'
+  ];
+
+  selectedRow: any;
+
+  datasource = new MatTableDataSource([{}]);
+  loading = true;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  //#endregion
+
+  //#region Dialog
+
+  readonly dialog = inject(MatDialog);
   openDialog() {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
   }
 
-  private apiUrl = 'http://localhost:8080/api';
+  //#endregion
 
-  constructor(private http: HttpClient) {
-  }
+  //#region API
+
+  private apiUrl = 'http://localhost:8080/api';
 
   getProfiles(): Observable<Profile[]> {
     return this.http.get<Profile[]>(`${this.apiUrl}/profile`);
@@ -61,27 +89,19 @@ export class ProfilesPageComponent implements AfterViewInit {
   putProfile(): Observable<boolean> {
     return this.http.put<boolean>(`${this.apiUrl}/profile/{id}`, {});
   }
-
   deleteProfile(): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/profile/{id}`);
   }
 
-  displayedColumns: string[] = [
-    'name',
-    'annual hours',
-    'effective work hours',
-    'effectiveness',
-    'contributed annual cost',
-    'allocated hours',
-    'cost allocation',
-    'options'
-  ];
+  //#endregion
 
-  datasource = new MatTableDataSource([{}]);
-  loading = true;
+  goToProfile(profileId: string): void {
+    this.router.navigate(['/profile', profileId]);
+  }
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  selectRow(row: any): void {
+    this.selectedRow = row;
+  }
 
   ngAfterViewInit() {
     this.getProfiles().subscribe(profiles => {

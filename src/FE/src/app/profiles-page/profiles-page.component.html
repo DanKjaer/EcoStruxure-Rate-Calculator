@@ -97,7 +97,7 @@
           {{ 'OPTIONS' | translate }}
         </th>
         <td mat-cell *matCellDef="let row">
-          <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="!loading">
+          <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="!loading" (click)="selectRow(row)">
             <mat-icon>more_vert</mat-icon>
           </button>
         </td>
@@ -114,7 +114,7 @@
 </div>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item>
+  <button mat-menu-item (click)="goToProfile(selectedRow?.profileId)">
     <mat-icon>edit</mat-icon>
     {{ 'EDIT' | translate }}
   </button>
