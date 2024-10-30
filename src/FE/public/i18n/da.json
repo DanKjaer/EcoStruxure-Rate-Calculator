@@ -177,5 +177,7 @@
   "LOGOUT": "Log ud",
   "LANGUAGE": "Skift sprog",
   "OPTIONS": "Indstillinger",
-  "PROJECTS": "Projekter"
+  "PROJECTS": "Projekter",
+  "ADD": "Tilføj",
+  "CANCEL": "Annuller"
 }

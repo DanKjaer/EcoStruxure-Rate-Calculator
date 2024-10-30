@@ -12,7 +12,6 @@
 
   <div class="groupContainer">
     <div>
-      <h3>{{ 'LOCATION' | translate }}</h3>
       <!-- location select -->
       <mat-form-field>
         <mat-label>{{ 'LOCATION' | translate }}</mat-label>
@@ -25,9 +24,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-
     <div>
-      <h3>{{ 'CURRENCY' | translate }}</h3>
       <!-- currency select -->
       <mat-form-field>
         <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
@@ -55,6 +52,7 @@
     </mat-radio-group>
   </div>
 
+  <!-- annually inputs -->
   <h3>{{ 'ANNUALLY' | translate }}</h3>
   <div class="groupContainer">
     <div>
@@ -71,6 +69,7 @@
     </div>
   </div>
 
+  <!-- modifiers input -->
   <h3>{{ 'MODIFIERS' | translate }}</h3>
   <div class="groupContainer">
     <div>
@@ -86,22 +85,22 @@
       </mat-form-field>
     </div>
   </div>
-
 </mat-dialog-content>
 
+<!-- buttons -->
 <mat-dialog-actions>
   <div class="buttonContainer">
     <button mat-stroked-button mat-dialog-close>
       <mat-icon>
         cancel
       </mat-icon>
-      Cancel
+      {{ 'CANCEL' | translate }}
     </button>
     <button mat-stroked-button [mat-dialog-close]="true">
       <mat-icon>
         check_circle
       </mat-icon>
-      Add
+      {{ 'ADD' | translate }}
     </button>
   </div>
 </mat-dialog-actions>

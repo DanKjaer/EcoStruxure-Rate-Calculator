@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -8,7 +8,8 @@ import {MatButton, MatIconButton} from '@angular/material/button';
 import {NgIf} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {dateTimestampProvider} from 'rxjs/internal/scheduler/dateTimestampProvider';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {AddTeamsDialogComponent} from '../add-teams-dialog/add-teams-dialog.component';
 
 @Component({
   selector: 'app-teams-page',
@@ -25,12 +26,19 @@ import {dateTimestampProvider} from 'rxjs/internal/scheduler/dateTimestampProvid
     MatMenuItem,
     MatMenuTrigger,
     MatProgressSpinner,
-    MatButton
+    MatButton,
+    MatDialogModule
   ],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.css'
 })
 export class TeamsPageComponent implements AfterViewInit {
+  readonly dialog = inject(MatDialog);
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddTeamsDialogComponent);
+  }
+
   displayedColumns: string[] = [
     'name',
     'markup',
@@ -88,4 +96,6 @@ export class TeamsPageComponent implements AfterViewInit {
       this.loading = false;
     }, 2000)
   }
+
+
 }

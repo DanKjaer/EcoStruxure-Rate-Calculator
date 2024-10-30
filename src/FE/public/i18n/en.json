@@ -178,5 +178,7 @@
   "LOGOUT": "Logout",
   "LANGUAGE": "Change language",
   "OPTIONS": "Options",
-  "PROJECTS": "Projects"
+  "PROJECTS": "Projects",
+  "ADD": "Add",
+  "CANCEL": "Cancel"
 }
