@@ -22,9 +22,9 @@ public class TeamsController {
         this.teamService = new TeamService();
     }
 
-    @GetMapping("/{id}")
-    public Team get(@PathVariable UUID id) throws Exception {
-        return teamService.get(id);
+    @GetMapping()
+    public List<Team> get() throws Exception {
+        return teamService.all();
     }
 
     @PostMapping

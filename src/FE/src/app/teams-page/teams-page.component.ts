@@ -10,6 +10,9 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddTeamsDialogComponent} from '../add-teams-dialog/add-teams-dialog.component';
+import {HttpClient} from '@angular/common/http';
+import {Team} from '../models';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-teams-page',
@@ -39,6 +42,27 @@ export class TeamsPageComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(AddTeamsDialogComponent);
   }
 
+  private apiUrl = 'http://localhost:8080/api/teams';
+
+  constructor(private http: HttpClient) {
+  }
+
+  getTeams(): Observable<Team[]> {
+    return this.http.get<Team[]>(`${this.apiUrl}`);
+  }
+
+  postTeam(): Observable<Team> {
+    return this.http.post<Team>(`${this.apiUrl}`, {});
+  }
+
+  putTeam(): Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/{id}`, {});
+  }
+
+  deleteTeam(): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.apiUrl}/{id}`);
+  }
+
   displayedColumns: string[] = [
     'name',
     'markup',
@@ -58,44 +82,11 @@ export class TeamsPageComponent implements AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
+    this.getTeams().subscribe(teams => {
+      this.datasource.data = teams;
+      this.loading = false
+    })
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
-    setTimeout(() => {
-      this.datasource.data = [
-        {
-          name: 'team 1',
-          markup: 20,
-          gm: 35,
-          updated: Date.UTC(2024, 10, 29),
-          'hourly rate': 67.31,
-          'day rate': 538.48,
-          'total annual cost': 420000,
-          'total annual hours': 6240
-        },
-        {
-          name: 'team 2',
-          markup: 20,
-          gm: 35,
-          updated: Date.UTC(2024, 10, 29),
-          'hourly rate': 67.31,
-          'day rate': 538.48,
-          'total annual cost': 420000,
-          'total annual hours': 6240
-        },
-        {
-          name: 'team 3',
-          markup: 20,
-          gm: 35,
-          updated: Date.UTC(2024, 10, 29),
-          'hourly rate': 67.31,
-          'day rate': 538.48,
-          'total annual cost': 420000,
-          'total annual hours': 6240
-        },
-      ];
-      this.loading = false;
-    }, 2000)
   }
-
-
 }
