@@ -23,7 +23,6 @@
   "HOUR_ALLOCATION": "Timer allokeret",
   "ALLOCATED_HOURS": "Allokerede timer",
   "HISTORY": "Historik",
-  "ANNUAL_COST": "Årlige omkostninger",
   "COST_ON_TEAM": "Omkostninger på team",
   "TOTAL_HOURS": "Årlige arbejdstimer",
   "PAGE_DASHBOARD_HEADER": "Instrumentbræt",
@@ -51,7 +50,7 @@
   "DATE": "Dato",
   "HOURS_PER_DAY": "Timer per dag",
   "TOTAL_HOURLY_RATE": "Total timerate",
-  "TOTAL_TEAMS": "Total antal teams",
+  "TOTAL_TEAMS": "Total antal teams: ",
   "TOTAL_DAY_RATE": "Total dagsrate",
   "ASSIGNED_PROFILES": "Tildelte profiler",
   "GEOGRAPHY_LOCATIONS": "Placeringer",
@@ -174,8 +173,11 @@
   "REASON_UPDATED_PROFILE": "Profil opdateret",
   "LAST_EDIT": "Sidst redigeret: ",
   "REASON_UTILIZATION_CHANGE": "Utilization ændring",
-  "UPDATED_AT": "Opdateret: ",
+  "UPDATED_AT": "Opdateret",
   "LOGOUT": "Log ud",
   "LANGUAGE": "Skift sprog",
-  "OPTIONS": "Indstillinger"
+  "OPTIONS": "Indstillinger",
+  "PROJECTS": "Projekter",
+  "ADD": "Tilføj",
+  "CANCEL": "Annuller"
 }
