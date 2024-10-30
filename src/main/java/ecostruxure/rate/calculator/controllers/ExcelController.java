@@ -9,13 +9,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/excel")
 public class ExcelController {
-    ExcelService excelService = new ExcelService();
+    ExcelService excelService;
 
     public ExcelController() throws Exception {
         excelService = new ExcelService();
@@ -26,7 +27,7 @@ public class ExcelController {
         ByteArrayOutputStream out = excelService.exportTeam(teamId);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.setContentDispositionFormData("attachment", "data.xlsx");
 
         return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);
@@ -37,7 +38,7 @@ public class ExcelController {
         ByteArrayOutputStream out = excelService.exportTeams(teamList);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.setContentDispositionFormData("attachment", "data.xlsx");
 
         return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);

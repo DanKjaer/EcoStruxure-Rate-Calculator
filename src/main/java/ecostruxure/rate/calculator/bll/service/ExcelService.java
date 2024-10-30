@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
@@ -113,37 +114,7 @@ public class ExcelService {
         }
     }
 
-//    private List<ProfileTeamItemModel> convertToTeamProfileModels(UUID teamId) throws Exception {
-//        List<TeamProfile> teamProfiles = teamProfileManagementService.getTeamProfiles(teamId);;
-//        List<ProfileTeamItemModel> teamProfileModels = new ArrayList<>();
-//
-//        for (TeamProfile teamProfile : teamProfiles) {
-//            ProfileTeamItemModel teamProfileModel = new ProfileTeamItemModel();
-//
-//            teamProfileModel.setName(teamProfile.getName());
-//
-//            teamProfileModel.profileIdProperty().set(teamProfile.getProfileId());
-//            teamProfileModel.teamIdProperty().set(teamProfile.getTeamId());
-//            BigDecimal dayRate = teamProfile.getDayRateOnTeam();
-//            teamProfileModel.setDayRate(dayRate);
-//            teamProfileModel.costAllocationProperty().set(teamProfile.getCostAllocation());
-//            teamProfileModel.hourAllocationProperty().set(teamProfile.getHourAllocation());
-//            BigDecimal allocatedCost = teamProfile.getAllocatedCostOnTeam();
-//            BigDecimal allocatedHours = teamProfile.getAllocatedHoursOnTeam();
-//            teamProfileModel.allocatedCostOnTeamProperty().set(allocatedCost);
-//            teamProfileModel.allocatedHoursOnTeamProperty().set(allocatedHours);
-//
-//            teamProfileModels.add(teamProfileModel);
-//        }
-//
-//        return teamProfileModels;
-//    }
-
     public ByteArrayOutputStream exportTeam(UUID teamId) throws Exception {
-        //Team getTeam = teamService.get(teamId);
-        //List<Profile> profiles = teamService.getTeamProfiles(teamId);
-        //List<ProfileTeamItemModel> profileTeamItemModelList = convertToTeamProfileModels(teamId);
-
         Map<String, Object> teamData = teamService.getTeamAndProfiles(teamId);
         Team getTeam = (Team) teamData.get("team");
         List<TeamProfile> teamProfiles = (List<TeamProfile>) teamData.get("profiles");
@@ -177,7 +148,6 @@ public class ExcelService {
         createHeaderAndDataRows(sheetTeam, 9, header4, data4, workbook);
 
         Sheet sheetProfiles = workbook.createSheet("Profiles");
-
         if (teamProfiles.size() >= 1) {
             String[] profileHeader = {"Name", "Utilization hours", "Hours", "Utilization rate", "Hourly rate", "Day rate"};
             Row headerRow = sheetProfiles.createRow(0);
@@ -190,7 +160,10 @@ public class ExcelService {
                         teamProfile.getHourAllocation().toString(),
                         teamProfile.getAllocatedHoursOnTeam().toString(),
                         teamProfile.getCostAllocation().toString(),
-                        teamProfile.getAnnualCost().divide(teamProfile.getAnnualHours(), GENERAL_SCALE, ROUNDING_MODE).toString(),
+                        teamProfile.getAnnualHours().compareTo(BigDecimal.ZERO) == 0 ? "0" :
+                                teamProfile.getAnnualCost().divide(teamProfile.getAnnualHours(),
+                                        GENERAL_SCALE,
+                                        ROUNDING_MODE).toString(),
                         teamProfile.getDayRateOnTeam().toString()};
                 createDataRows(sheetProfiles, rowIndex++, profileData, workbook);
             }
@@ -300,6 +273,10 @@ public class ExcelService {
             }
         }
     }
+
+    /**
+     * Ikke slettet endnu da vi måske vil lave funktionen, måske skal det bare slettes
+     */
 
 //    public void exportTable(TableView<?> tableView) {
 //        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
