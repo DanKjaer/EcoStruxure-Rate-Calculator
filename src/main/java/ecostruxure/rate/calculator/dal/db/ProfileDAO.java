@@ -32,6 +32,8 @@ public class ProfileDAO implements IProfileDAO {
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
         BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
         BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
+        BigDecimal totalCostAllocation = rs.getBigDecimal("total_cost_allocation");
+        BigDecimal totalHoursAllocation = rs.getBigDecimal("total_hour_allocation");
         //boolean archived = rs.getBoolean("is_archived");
         Timestamp updatedAt = rs.getTimestamp("updated_at");
 
@@ -46,6 +48,8 @@ public class ProfileDAO implements IProfileDAO {
                 .setHoursPerDay(hoursPerDay)
                 .setEffectivenessPercentage(effectivenessPercentage)
                 .setEffectiveWorkHours(effectiveWorkHours)
+                .setTotalCostAllocation(totalCostAllocation)
+                .setTotalHoursAllocation(totalHoursAllocation)
                 //.setArchived(archived)
                 .setUpdatedAt(updatedAt)
                 .build();

@@ -1,6 +1,5 @@
 package ecostruxure.rate.calculator.be;
 import ecostruxure.rate.calculator.bll.service.GeographyService;
-import javafx.beans.property.BooleanProperty;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -18,6 +17,8 @@ public class Profile {
     private BigDecimal hoursPerDay;
     private BigDecimal effectivenessPercentage;
     private BigDecimal effectiveWorkHours;
+    private BigDecimal totalCostAllocation;
+    private BigDecimal totalHourAllocation;
     private boolean archived;
     private Timestamp updatedAt;
 
@@ -33,6 +34,8 @@ public class Profile {
         this.hoursPerDay = builder.hoursPerDay;
         this.effectivenessPercentage = builder.effectivenessPercentage;
         this.effectiveWorkHours = builder.effectiveWorkHours;
+        this.totalCostAllocation = builder.totalCostAllocation;
+        this.totalHourAllocation = builder.totalHoursAllocation;
         this.archived = builder.archived;
         this.updatedAt = builder.updatedAt;
     }
@@ -48,6 +51,8 @@ public class Profile {
         private BigDecimal hoursPerDay;
         private BigDecimal effectivenessPercentage;
         private BigDecimal effectiveWorkHours;
+        private BigDecimal totalCostAllocation;
+        private BigDecimal totalHoursAllocation;
         private boolean archived;
         private Timestamp updatedAt;
 
@@ -101,6 +106,16 @@ public class Profile {
             return this;
         }
 
+        public Builder setTotalCostAllocation(BigDecimal totalCostAllocation){
+            this.totalCostAllocation = totalCostAllocation;
+            return this;
+        }
+
+        public Builder setTotalHoursAllocation(BigDecimal totalHoursAllocation){
+            this.totalHoursAllocation = totalHoursAllocation;
+            return this;
+        }
+
         public Builder setArchived(boolean archived){
             this.archived = archived;
             return this;
@@ -117,6 +132,22 @@ public class Profile {
 
     }
     public Profile() {
+    }
+
+    public BigDecimal getTotalCostAllocation() {
+        return totalCostAllocation;
+    }
+
+    public void setTotalCostAllocation(BigDecimal totalCostAllocation) {
+        this.totalCostAllocation = totalCostAllocation;
+    }
+
+    public BigDecimal getTotalHourAllocation() {
+        return totalHourAllocation;
+    }
+
+    public void setTotalHourAllocation(BigDecimal totalHourAllocation) {
+        this.totalHourAllocation = totalHourAllocation;
     }
 
     public UUID getProfileId() {

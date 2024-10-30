@@ -18,11 +18,11 @@ public interface ITeamDAO {
 
     Team create(TransactionContext context, Team team) throws Exception;
 
-    boolean update(Team team) throws Exception;
+    boolean update(UUID teamId, Team team) throws Exception;
 
     void updateMultipliers(Team team) throws Exception;
 
-    boolean assignProfiles(Team team, List<Profile> profiles) throws Exception;
+    boolean assignProfiles(Team team, List<TeamProfile> teamProfiles) throws Exception;
 
     boolean assignProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception;
 
@@ -68,11 +68,6 @@ public interface ITeamDAO {
 
     void updateAllocatedCostAndHour(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
-    void updateAllocatedCost(UUID teamId, UUID profileId, BigDecimal allocatedCost) throws SQLException;
-
-    void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException;
-
-
     void updateDayRateOnTeam(UUID teamid, UUID profileId, BigDecimal dayRate) throws SQLException;
 
     void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException;
@@ -81,7 +76,7 @@ public interface ITeamDAO {
 
     List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
-    void updateTeamRateCostHours(UUID teamId, BigDecimal hourlyRate, BigDecimal totalAllocatedCost, BigDecimal totalAllocatedHours) throws SQLException;
+    void updateTeamRateCostHours(Team team) throws SQLException;
 
     void assignProfilesToTeam(UUID teamId, List<TeamProfile> profiles) throws SQLException;
 
@@ -90,4 +85,6 @@ public interface ITeamDAO {
     boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException;
 
     TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException;
+
+    void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException;
 }
