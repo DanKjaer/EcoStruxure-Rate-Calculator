@@ -42,26 +42,11 @@ export class TeamsPageComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(AddTeamsDialogComponent);
   }
 
-  private apiUrl = 'http://localhost:8080/api/teams';
 
   constructor(private http: HttpClient) {
   }
 
-  getTeams(): Observable<Team[]> {
-    return this.http.get<Team[]>(`${this.apiUrl}`);
-  }
 
-  postTeam(): Observable<Team> {
-    return this.http.post<Team>(`${this.apiUrl}`, {});
-  }
-
-  putTeam(): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/{id}`, {});
-  }
-
-  deleteTeam(): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/{id}`);
-  }
 
   displayedColumns: string[] = [
     'name',
