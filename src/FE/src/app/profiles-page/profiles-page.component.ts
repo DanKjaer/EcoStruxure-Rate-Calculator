@@ -12,12 +12,10 @@ import {NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Profile} from '../models';
 import {FormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
+import {ProfileService} from '../services/profile.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -52,25 +50,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
   }
 
-  private apiUrl = 'http://localhost:8080/api';
-
-  constructor(private http: HttpClient) {
-  }
-
-  getProfiles(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.apiUrl}/profile`);
-  }
-
-  postProfile(): Observable<Profile> {
-    return this.http.post<Profile>(`${this.apiUrl}/profile`, {});
-  }
-
-  putProfile(): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/profile/{id}`, {});
-  }
-
-  deleteProfile(): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/profile/{id}`);
+  constructor(private profileService: ProfileService) {
   }
 
   displayedColumns: string[] = [
@@ -92,12 +72,10 @@ export class ProfilesPageComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  ngAfterViewInit() {
-    this.getProfiles().subscribe(profiles => {
-      console.log(profiles);
-      this.datasource.data = profiles;
-      this.loading = false;
-    })
+  async ngAfterViewInit() {
+    let profiles = await this.profileService.getProfiles();
+    this.datasource.data = profiles;
+    this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
