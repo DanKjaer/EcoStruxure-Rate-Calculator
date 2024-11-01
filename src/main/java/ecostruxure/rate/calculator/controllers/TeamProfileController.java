@@ -28,7 +28,7 @@ public class TeamProfileController {
 
         TeamDTO teamDTO = new TeamDTO();
         teamDTO.setTeam((Team) teamProfileMap.get("team"));
-        teamDTO.setProfiles((List<TeamProfile>) teamProfileMap.get("profiles"));
+        teamDTO.setTeamProfiles((List<TeamProfile>) teamProfileMap.get("profiles"));
         return teamDTO;
     }
 

@@ -86,7 +86,6 @@ public class TeamService {
         return createdTeam;
     }
 
-
     /**
      * Set the markup for the given team.
      *
@@ -259,7 +258,12 @@ public class TeamService {
 
             BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            BigDecimal hourlyRateOnTeam = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP);
+            BigDecimal hourlyRateOnTeam;
+            if (annualHours.compareTo(BigDecimal.ZERO) == 0) {
+                hourlyRateOnTeam = BigDecimal.ZERO;
+            } else {
+                hourlyRateOnTeam = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP);
+            }
             BigDecimal dailyRateOnTeam = hourlyRateOnTeam.multiply(BigDecimal.valueOf(8));
 
             totalAllocatedCost = totalAllocatedCost.add(allocatedCost);

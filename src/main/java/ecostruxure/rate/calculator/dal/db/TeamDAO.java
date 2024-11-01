@@ -27,7 +27,10 @@ public class TeamDAO implements ITeamDAO {
         List<Team> teams = new ArrayList<>();
 
         String query = """
-                SELECT * FROM Teams ORDER BY id DESC
+                SELECT * 
+                FROM Teams 
+                WHERE is_archived = FALSE
+                ORDER BY id DESC
                 """;
 
         try (Connection conn = dbConnector.connection();
@@ -96,20 +99,20 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public Team create(Team team) throws Exception {
         String query = """
-                INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, ?, ?, FALSE, ?)
+                INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, 0, 0, FALSE, TIMESTAMP 'now')
                 """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, team.getName());
-            stmt.setBigDecimal(2, team.getMarkup());
-            stmt.setBigDecimal(3, team.getGrossMargin());
-            stmt.setTimestamp(4, team.getUpdatedAt());
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
-                    team.setTeamId((UUID) rs.getObject(1));
+                    team.setTeamId((UUID) rs.getObject("id"));
+                    team.setUpdatedAt(rs.getTimestamp("is_archived"));
+                    team.setMarkup(rs.getBigDecimal("markup"));
+                    team.setGrossMargin(rs.getBigDecimal("gross_margin"));
                 }
             }
         } catch (Exception e) {
