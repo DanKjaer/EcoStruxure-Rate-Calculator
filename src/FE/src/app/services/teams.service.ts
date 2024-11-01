@@ -20,11 +20,11 @@ export class TeamsService {
     return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {}));
   }
 
-  putTeam(): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/{id}`, {});
+  putTeam(): Promise<boolean> {
+    return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/{id}`, {}));
   }
 
-  deleteTeam(): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/{id}`);
+  deleteTeam(): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/{id}`));
   }
 }

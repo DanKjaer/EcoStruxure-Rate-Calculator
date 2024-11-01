@@ -10,9 +10,8 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddTeamsDialogComponent} from '../add-teams-dialog/add-teams-dialog.component';
-import {HttpClient} from '@angular/common/http';
 import {Team} from '../models';
-import {Observable} from 'rxjs';
+import {TeamsService} from '../services/teams.service';
 
 @Component({
   selector: 'app-teams-page',
@@ -43,7 +42,7 @@ export class TeamsPageComponent implements AfterViewInit {
   }
 
 
-  constructor(private http: HttpClient) {
+  constructor(private teamService: TeamsService) {
   }
 
 
@@ -66,11 +65,10 @@ export class TeamsPageComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  ngAfterViewInit() {
-    this.getTeams().subscribe(teams => {
-      this.datasource.data = teams;
-      this.loading = false
-    })
+  async ngAfterViewInit() {
+    const teams = await this.teamService.getTeams();
+    this.datasource.data = teams;
+    this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
