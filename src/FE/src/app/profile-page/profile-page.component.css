@@ -27,19 +27,75 @@
 }
 
 .hourlyRateBox {
+  position: relative;
+  overflow: hidden;
   background-color: cornflowerblue;
 }
 
+.hourlyRateBox:after {
+  font-family: "Material Icons";
+  content: "\e8b5";
+  position: absolute;
+  color: rgba(0 0 0 / 0.1);
+  font-size: 8rem;
+  font-weight: 500;
+  pointer-events: none;
+  left: 60%;
+  top: 25%;
+}
+
 .dayRateBox {
+  position: relative;
+  overflow: hidden;
   background-color: green;
 }
 
+.dayRateBox:after {
+  font-family: "Material Icons";
+  content: "\e8b5";
+  position: absolute;
+  color: rgba(0 0 0 / 0.1);
+  font-size: 8rem;
+  font-weight: 500;
+  pointer-events: none;
+  left: 60%;
+  top: 25%;
+}
+
 .annualCostBox {
+  position: relative;
+  overflow: hidden;
   background-color: orange;
 }
 
+.annualCostBox:after {
+  font-family: "Material Icons";
+  content: "\e8b5";
+  position: absolute;
+  color: rgba(0 0 0 / 0.1);
+  font-size: 8rem;
+  font-weight: 500;
+  pointer-events: none;
+  left: 60%;
+  top: 25%;
+}
+
 .annualHoursBox {
+  position: relative;
+  overflow: hidden;
   background-color: indianred;
+}
+
+.annualHoursBox:after {
+  font-family: "Material Icons";
+  content: "\e8b5";
+  position: absolute;
+  color: rgba(0 0 0 / 0.1);
+  font-size: 8rem;
+  font-weight: 500;
+  pointer-events: none;
+  left: 60%;
+  top: 25%;
 }
 
 .boxValue {

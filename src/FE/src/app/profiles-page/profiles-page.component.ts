@@ -45,14 +45,12 @@ import {Router} from '@angular/router';
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit {
-  readonly dialog = inject(MatDialog);
-
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProfileDialogComponent);
-  }
 
   constructor(private profileService: ProfileService, private  router: Router) {
   }
+
+  //#region vars
+  readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = [
     'name',
@@ -73,6 +71,8 @@ export class ProfilesPageComponent implements AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  //#endregion
 
   async ngAfterViewInit() {
     let profiles = await this.profileService.getProfiles();
@@ -120,6 +120,10 @@ export class ProfilesPageComponent implements AfterViewInit {
 
   selectRow(row: any): void {
     this.selectedRow = row;
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileDialogComponent);
   }
 
   //#endregion
