@@ -15,6 +15,7 @@ export class Profile {
   totalHourAllocation?: number;
   archived?: boolean;
   updatedAt?: Date;
+  isEditing: boolean = false;
 }
 
 export class Team {
