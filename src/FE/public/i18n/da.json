@@ -178,5 +178,7 @@
   "OPTIONS": "Indstillinger",
   "PROJECTS": "Projekter",
   "ADD": "Tilføj",
-  "CANCEL": "Annuller"
+  "CANCEL": "Annuller",
+  "MORE": "Mere",
+  "EDIT_INFO": "Dobbelt klik en værdi for at redigere.\nTryk enter for at gemme din redigering.\nTryk escape for at anullere din redigering."
 }

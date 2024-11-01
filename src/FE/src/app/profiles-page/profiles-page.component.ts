@@ -12,10 +12,10 @@ import {NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Profile} from '../models';
-import {Router, RouterLink} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {MatFormField, MatInput} from '@angular/material/input';
+import {MatLabel} from '@angular/material/form-field';
+import {ProfileService} from '../services/profile.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -35,16 +35,24 @@ import {Router, RouterLink} from '@angular/router';
     MatMenuModule,
     MatMenuItem,
     MatDialogModule,
-    RouterLink
+    FormsModule,
+    MatInput,
+    MatFormField,
+    MatLabel
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit {
-  constructor(private http: HttpClient, private router: Router) {
+  readonly dialog = inject(MatDialog);
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileDialogComponent);
   }
 
-  //#region vars
+  constructor(private profileService: ProfileService) {
+  }
+
   displayedColumns: string[] = [
     'name',
     'annual hours',
@@ -56,60 +64,53 @@ export class ProfilesPageComponent implements AfterViewInit {
     'options'
   ];
 
-  selectedRow: any;
-
   datasource = new MatTableDataSource([{}]);
   loading = true;
+  originalRowData: { [key: number]: any } = {};
+  isEditingRow: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  //#endregion
 
-  //#region Dialog
-
-  readonly dialog = inject(MatDialog);
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProfileDialogComponent);
-  }
-
-  //#endregion
-
-  //#region API
-
-  private apiUrl = 'http://localhost:8080/api';
-
-  getProfiles(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.apiUrl}/profile`);
-  }
-
-  postProfile(): Observable<Profile> {
-    return this.http.post<Profile>(`${this.apiUrl}/profile`, {});
-  }
-
-  putProfile(): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/profile/{id}`, {});
-  }
-  deleteProfile(): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/profile/{id}`);
-  }
-
-  //#endregion
-
-  goToProfile(profileId: string): void {
-    this.router.navigate(['/profile', profileId]);
-  }
-
-  selectRow(row: any): void {
-    this.selectedRow = row;
-  }
-
-  ngAfterViewInit() {
-    this.getProfiles().subscribe(profiles => {
-      console.log(profiles);
-      this.datasource.data = profiles;
-      this.loading = false;
-    })
+  async ngAfterViewInit() {
+    let profiles = await this.profileService.getProfiles();
+    this.datasource.data = profiles;
+    this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
+
+  //#region functions
+  editRow(element: any): void {
+    if (this.isEditingRow) return;
+    this.isEditingRow = true;
+    element['isEditing'] = true;
+    if (!this.originalRowData[element.id]) {
+      this.originalRowData[element.id] = {...element}
+    }
+  }
+
+  saveEdit(element: any): void {
+    element['isEditing'] = false;
+    this.isEditingRow = false;
+    delete this.originalRowData[element.id];
+    //todo: update call on api
+  }
+
+  cancelEdit(element: any):void {
+    let original = this.originalRowData[element.id];
+    if (original) {
+      element.name = original.name;
+      element.annualHours = original.annualHours;
+      element.effectiveWorkHours = original.effectiveWorkHours;
+      element.effectivenessPercentage = original.effectivenessPercentage;
+      element.annualCost = original.annualCost;
+      element.totalHourAllocation = original.totalHourAllocation;
+      element.totalCostAllocation = original.totalCostAllocation;
+    }
+    element['isEditing'] = false;
+    this.isEditingRow = false;
+  }
+
+  //#endregion
 }

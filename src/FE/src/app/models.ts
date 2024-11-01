@@ -15,6 +15,7 @@ export class Profile {
   totalHourAllocation?: number;
   archived?: boolean;
   updatedAt?: Date;
+  isEditing: boolean = false;
 }
 
 export class Team {
@@ -22,7 +23,9 @@ export class Team {
   name!: string;
   markup!: BigNumber;
   grossMargin!: BigNumber;
-  is_archived?: boolean;
+  isArchived?: boolean;
+  updatedAt?: Date;
+  hourlyRate?: BigNumber;
   dayRate?: BigNumber;
   totalAllocatedCost?: BigNumber;
   totalAllocatedHours?: BigNumber;
