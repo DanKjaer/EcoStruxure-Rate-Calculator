@@ -17,6 +17,11 @@
   align-items: center;
   max-height: 5vh;
   font-size: 3rem;
+  white-space: pre-wrap;
+}
+
+.mat-tooltip {
+  white-space: pre-line !important;
 }
 
 .buttonContainer {

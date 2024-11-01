@@ -180,5 +180,7 @@
   "OPTIONS": "Options",
   "PROJECTS": "Projects",
   "ADD": "Add",
-  "CANCEL": "Cancel"
+  "CANCEL": "Cancel",
+  "MORE": "More",
+  "EDIT_INFO": "Double click a value to start editing.\nPress enter to save your edits.\nPress escape to cancel your edits."
 }
