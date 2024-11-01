@@ -16,6 +16,7 @@ import {FormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
 import {ProfileService} from '../services/profile.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profiles-page',
@@ -50,7 +51,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
   }
 
-  constructor(private profileService: ProfileService) {
+  constructor(private profileService: ProfileService, private  router: Router) {
   }
 
   displayedColumns: string[] = [
@@ -68,6 +69,7 @@ export class ProfilesPageComponent implements AfterViewInit {
   loading = true;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
+  selectedRow: any;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -110,6 +112,14 @@ export class ProfilesPageComponent implements AfterViewInit {
     }
     element['isEditing'] = false;
     this.isEditingRow = false;
+  }
+
+  goToProfile(profileId: string): void {
+    this.router.navigate(['/profile', profileId]);
+  }
+
+  selectRow(row: any): void {
+    this.selectedRow = row;
   }
 
   //#endregion
