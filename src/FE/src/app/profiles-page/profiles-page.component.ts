@@ -65,7 +65,7 @@ export class ProfilesPageComponent implements AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   async ngAfterViewInit() {
-    const profiles = await this.profileService.getProfiles();
+    let profiles = await this.profileService.getProfiles();
     this.datasource.data = profiles;
     this.loading = false;
     this.datasource.sort = this.sort;

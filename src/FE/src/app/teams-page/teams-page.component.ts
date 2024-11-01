@@ -66,7 +66,7 @@ export class TeamsPageComponent implements AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   async ngAfterViewInit() {
-    const teams = await this.teamService.getTeams();
+    let teams = await this.teamService.getTeams();
     this.datasource.data = teams;
     this.loading = false;
     this.datasource.sort = this.sort;
