@@ -17,9 +17,9 @@
     </mat-form-field>
   </div>
   <div class="profilesContainer">
-    <mat-selection-list #profiles (selectionChange)="onSelectionChange($event)">
+    <mat-selection-list #profiles formControlName="profiles" (selectionChange)="onSelectionChange($event)">
       @for (profile of profileList; track profile) {
-        <mat-list-option [value]="profile" formControlName="profiles">{{ profile.name }}</mat-list-option>
+        <mat-list-option [value]="profile" >{{ profile.name }}</mat-list-option>
       }
     </mat-selection-list>
   </div>

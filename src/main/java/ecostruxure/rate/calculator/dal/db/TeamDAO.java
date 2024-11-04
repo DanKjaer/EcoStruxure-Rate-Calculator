@@ -9,9 +9,7 @@ import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class TeamDAO implements ITeamDAO {
@@ -99,7 +97,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public Team create(Team team) throws Exception {
         String query = """
-                INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, 0, 0, FALSE, TIMESTAMP 'now')
+                INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, 0, 0, FALSE, NOW())
                 """;
 
         try (Connection conn = dbConnector.connection();
@@ -110,7 +108,7 @@ public class TeamDAO implements ITeamDAO {
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     team.setTeamId((UUID) rs.getObject("id"));
-                    team.setUpdatedAt(rs.getTimestamp("is_archived"));
+                    team.setUpdatedAt(rs.getTimestamp("updated_at"));
                     team.setMarkup(rs.getBigDecimal("markup"));
                     team.setGrossMargin(rs.getBigDecimal("gross_margin"));
                 }
@@ -590,8 +588,10 @@ public class TeamDAO implements ITeamDAO {
             conn.setAutoCommit(false);
             try {
                 archiveTeam(conn, teamId, archive);
+                List<Profile> profiles = getTeamProfiles(teamId);
                 archiveTeamMembers(conn, teamId, archive);
                 conn.commit();
+                updateTotalAllocationOfProfilesOnDelete(profiles);
                 return true;
             } catch (Exception e) {
                 conn.rollback();
@@ -972,7 +972,8 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException {
         String query = """
-                DELETE FROM dbo.Teams_profiles WHERE teamId = ? AND profileId = ?
+               DELETE FROM dbo.Teams_profiles 
+               WHERE teamId = ? AND profileId = ?
                 """;
         try (Connection conn = dbConnector.connection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             for (UUID profileId : profileIds) {
@@ -991,7 +992,12 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException {
         String query = """
-                UPDATE dbo.Teams_profiles SET cost_allocation = ?, hour_allocation = ?, allocated_cost_on_team = ?, allocated_hours_on_team = ?, day_rate_on_team = ?
+                UPDATE dbo.Teams_profiles 
+                SET cost_allocation = ?, 
+                    hour_allocation = ?, 
+                    allocated_cost_on_team = ?, 
+                    allocated_hours_on_team = ?, 
+                    day_rate_on_team = ?
                 WHERE teamId = ? AND profileId = ?
                 """;
         try (Connection conn = dbConnector.connection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -1033,6 +1039,37 @@ public class TeamDAO implements ITeamDAO {
                         stmtUpdate.setBigDecimal(1, rs.getBigDecimal("total_cost_allocation"));
                         stmtUpdate.setBigDecimal(2, rs.getBigDecimal("total_hour_allocation"));
                         stmtUpdate.setObject(3, teamProfile.getProfileId());
+                        stmtUpdate.addBatch();
+                    }
+                }
+            }
+            stmtUpdate.executeBatch();
+        }
+    }
+
+    @Override
+    public void updateTotalAllocationOfProfilesOnDelete(List<Profile> profiles) throws SQLException {
+        String query = """
+                        SELECT SUM(cost_allocation) AS total_cost_allocation, SUM(hour_allocation) AS total_hour_allocation
+                        FROM dbo.Teams_profiles
+                        WHERE profileId = ?;
+                        """;
+        String command = """
+                        UPDATE dbo.Profiles SET total_cost_allocation = ?, total_hour_allocation = ?
+                        WHERE profile_id = ?;
+                """;
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmtCost = conn.prepareStatement(query);
+             PreparedStatement stmtUpdate = conn.prepareStatement(command)) {
+            for (Profile profile : profiles) {
+                stmtCost.setObject(1, profile.getProfileId());
+
+                try (ResultSet rs = stmtCost.executeQuery()) {
+                    if (rs.next()) {
+                        stmtUpdate.setBigDecimal(1, rs.getBigDecimal("total_cost_allocation"));
+                        stmtUpdate.setBigDecimal(2, rs.getBigDecimal("total_hour_allocation"));
+                        stmtUpdate.setObject(3, profile.getProfileId());
                         stmtUpdate.addBatch();
                     }
                 }

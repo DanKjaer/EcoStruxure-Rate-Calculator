@@ -211,10 +211,18 @@ public class TeamService {
         return teamDAO.getTeamProfile(teamId, profileId);
     }
 
+    /**
+     * Used by Controller to "delete" a team by archiving it.
+     * @param teamId
+     * @param archive
+     * @return true if the team was archived, false otherwise.
+     * @throws Exception
+     */
     public boolean archive(UUID teamId, boolean archive) throws Exception {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        var response = teamDAO.archive(teamId, archive);
 
-        return teamDAO.archive(teamId, archive);
+        return response;
     }
 
     public boolean archive(Team team, boolean archive) throws Exception {
@@ -227,12 +235,6 @@ public class TeamService {
         Objects.requireNonNull(teams, "Teams cannot be null");
 
         return teamDAO.archive(teams);
-    }
-
-    public List<Profile> canUnarchive(Team team) throws Exception {
-        Objects.requireNonNull(team, "Team cannot be null");
-
-        return teamDAO.canUnarchive(team.getTeamId());
     }
 
     public LocalDateTime getLastUpdated(UUID teamId) throws Exception {
