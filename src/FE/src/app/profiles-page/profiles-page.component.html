@@ -120,6 +120,7 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [ngClass]="allocationColor(row)"
           (dblclick)="editRow(row)"
           (keyup.enter)="saveEdit(row)"
           (keyup.escape)="cancelEdit(row)"></tr>

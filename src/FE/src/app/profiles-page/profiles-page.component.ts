@@ -8,7 +8,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
@@ -39,7 +39,8 @@ import {Profile} from '../models';
     FormsModule,
     MatInput,
     MatFormField,
-    MatLabel
+    MatLabel,
+    NgClass
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
@@ -71,6 +72,7 @@ export class ProfilesPageComponent implements AfterViewInit {
   ];
 
   selectedRow: Profile | null = null;
+  rowColor: Profile | null = null;
 
   datasource: MatTableDataSource<Profile> = new MatTableDataSource<Profile>();
   loading = true;
@@ -129,9 +131,21 @@ export class ProfilesPageComponent implements AfterViewInit {
     }
   }
 
-
   selectRow(row: Profile) {
     this.selectedRow = row;
   }
+
+  allocationColor(row: Profile): string {
+    const totalHourAllocation = row.totalHourAllocation ?? 0;
+    const totalCostAllocation = row.totalCostAllocation ?? 0;
+
+    this.rowColor = row;
+    if (totalHourAllocation > 100 || totalCostAllocation > 100) {
+      return 'red';
+    } else if (totalHourAllocation <= 99 || totalCostAllocation <= 99) {
+      return 'orange';
+    }
+    return '';
+}
   //#endregion
 }
