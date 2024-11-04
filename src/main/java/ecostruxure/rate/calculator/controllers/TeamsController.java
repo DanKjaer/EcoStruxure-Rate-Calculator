@@ -1,7 +1,5 @@
 package ecostruxure.rate.calculator.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
@@ -9,9 +7,7 @@ import ecostruxure.rate.calculator.bll.service.TeamService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/teams")
@@ -30,7 +26,7 @@ public class TeamsController {
     @PostMapping
     public Team create(@RequestBody TeamDTO teamDTO) throws Exception {
         Team team = teamDTO.getTeam();
-        List<TeamProfile> teamProfiles = teamDTO.getProfiles();
+        List<TeamProfile> teamProfiles = teamDTO.getTeamProfiles();
 
         return teamService.create(team, teamProfiles);
     }

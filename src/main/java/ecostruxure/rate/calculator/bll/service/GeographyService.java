@@ -22,6 +22,10 @@ public class GeographyService {
         return geographyDAO.all();
     }
 
+    public List<Geography> getGeographies() throws Exception {
+        return geographyDAO.getGeographies();
+    }
+
     public List<Geography> allExceptCountries() throws Exception {
         return geographyDAO.allExceptCountries();
     }

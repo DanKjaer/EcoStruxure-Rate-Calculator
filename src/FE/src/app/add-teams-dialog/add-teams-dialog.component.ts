@@ -1,12 +1,23 @@
-import {Component, OnInit} from '@angular/core';
+import {booleanAttribute, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {TranslateModule} from '@ngx-translate/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {MatListModule} from '@angular/material/list';
+import {MatListModule, MatSelectionListChange} from '@angular/material/list';
+import {TeamsService} from '../services/teams.service';
+import {ProfileService} from '../services/profile.service';
+import {Profile, Team, TeamProfiles} from '../models';
 
 @Component({
   selector: 'app-add-teams-dialog',
@@ -29,16 +40,44 @@ import {MatListModule} from '@angular/material/list';
 })
 export class AddTeamsDialogComponent implements OnInit {
   teamForm!: FormGroup;
+  profileList: Profile[] = [];
+  selectedProfiles: Profile[] = [];
+  @Output() teamAdded = new EventEmitter<Team>();
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private teamService: TeamsService, private profileService: ProfileService) {
   }
 
-  profileList: string[] = ['Lars Jensen', 'Jens Jensen', 'Lars Larsen', 'Jens Larsen', 'Hans Hansen', 'Peter Petersen', 'Hans Larsen', 'Peter Jensen'];
-
-  ngOnInit() {
+  async ngOnInit() {
     this.teamForm = this.fb.group({
       name: ['', Validators.required],
       profiles: [[], Validators.required]
     })
+
+    this.profileList = await this.profileService.getProfiles();
+  }
+
+  async onSave() {
+    let team: Team = {
+      name : this.teamForm.value.name,
+    };
+    let profiles = this.selectedProfiles;
+    let teamProfiles :TeamProfiles[] = [];
+    profiles.forEach(profile => {
+      let teamProfile: TeamProfiles = {
+        profileId : profile.profileId!,
+        name : profile.name,
+        annualCost : profile.annualCost!,
+        annualHours : profile.annualHours!,
+        costAllocation : 100,
+        hourAllocation : 100,
+      };
+      teamProfiles.push(teamProfile);
+    });
+    const newTeam = await this.teamService.postTeam(team, teamProfiles);
+    this.teamAdded.emit(newTeam);
+  }
+
+  onSelectionChange($event: MatSelectionListChange) {
+    this.selectedProfiles = $event.source.selectedOptions.selected.map(profile => profile.value);
   }
 }

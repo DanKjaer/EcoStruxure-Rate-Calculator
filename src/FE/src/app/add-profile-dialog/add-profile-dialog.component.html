@@ -15,10 +15,10 @@
       <!-- location select -->
       <mat-form-field>
         <mat-label>{{ 'LOCATION' | translate }}</mat-label>
-        <mat-select formControlName="location">
+        <mat-select formControlName="countryId">
           @for (location of locations; track location) {
-            <mat-option [value]="location.valueOf()">
-              {{ location.valueOf() }}
+            <mat-option [value]="location.id">
+              {{ location.name }}
             </mat-option>
           }
         </mat-select>
@@ -29,7 +29,7 @@
       <mat-form-field>
         <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
         <mat-select formControlName="currency">
-          @for (currency of currencies; track locations) {
+          @for (currency of currencies; track currency) {
             <mat-option [value]="currency.valueOf()">
               {{ currency.valueOf() }}
             </mat-option>
@@ -43,10 +43,10 @@
   <h3>{{ 'RESOURCE_TYPE' | translate }}</h3>
   <div class="groupContainer">
     <mat-radio-group formControlName="resource_type">
-      <mat-radio-button value="1">
+      <mat-radio-button value=true>
         {{ 'OVERHEAD' | translate }}
       </mat-radio-button>
-      <mat-radio-button value="0">
+      <mat-radio-button value=false>
         {{ 'PRODUCTION' | translate }}
       </mat-radio-button>
     </mat-radio-group>
@@ -96,7 +96,7 @@
       </mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true">
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
       <mat-icon>
         check_circle
       </mat-icon>

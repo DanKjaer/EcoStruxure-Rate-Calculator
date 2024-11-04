@@ -16,6 +16,7 @@ import {FormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
 import {ProfileService} from '../services/profile.service';
+import {Profile} from '../models';
 
 @Component({
   selector: 'app-profiles-page',
@@ -48,6 +49,11 @@ export class ProfilesPageComponent implements AfterViewInit {
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
+
+    dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
+      this.datasource.data.push(profile)
+      this.datasource._updateChangeSubscription();
+    });
   }
 
   constructor(private profileService: ProfileService) {
@@ -64,7 +70,9 @@ export class ProfilesPageComponent implements AfterViewInit {
     'options'
   ];
 
-  datasource = new MatTableDataSource([{}]);
+  selectedRow: Profile | null = null;
+
+  datasource: MatTableDataSource<Profile> = new MatTableDataSource<Profile>();
   loading = true;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
@@ -79,6 +87,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
+
 
   //#region functions
   editRow(element: any): void {
@@ -112,5 +121,17 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.isEditingRow = false;
   }
 
+    async onDelete() {
+    const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
+    if (result) {
+      this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
+      this.datasource._updateChangeSubscription();
+    }
+  }
+
+
+  selectRow(row: Profile) {
+    this.selectedRow = row;
+  }
   //#endregion
 }
