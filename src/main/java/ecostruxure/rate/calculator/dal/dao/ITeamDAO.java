@@ -87,4 +87,6 @@ public interface ITeamDAO {
     TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException;
 
     void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException;
+
+    void updateTotalAllocationOfProfilesOnDelete(List<Profile> profiles) throws SQLException;
 }
