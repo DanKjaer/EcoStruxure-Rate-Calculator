@@ -13,7 +13,7 @@ export interface Profile {
   totalHourAllocation?: number;
   archived?: boolean;
   updatedAt?: Date;
-  isEditing: boolean = false;
+  isEditing?: boolean;
 }
 
 export interface Team {
