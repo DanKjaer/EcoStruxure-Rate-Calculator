@@ -40,7 +40,6 @@ import {Profile, Team, TeamProfiles} from '../models';
 })
 export class AddTeamsDialogComponent implements OnInit {
   teamForm!: FormGroup;
-  //profileList: string[] = ['Lars Jensen', 'Jens Jensen', 'Lars Larsen', 'Jens Larsen', 'Hans Hansen', 'Peter Petersen', 'Hans Larsen', 'Peter Jensen'];
   profileList: Profile[] = [];
   selectedProfiles: Profile[] = [];
   @Output() teamAdded = new EventEmitter<Team>();
