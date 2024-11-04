@@ -3,6 +3,8 @@ package ecostruxure.rate.calculator.bll.service;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.ProfileHistory;
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.bll.RateService;
+import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.dao.*;
 import ecostruxure.rate.calculator.dal.db.ProfileDAO;
 
@@ -33,7 +35,7 @@ public class ProfileService {
         validateProfile(profile);
         if (profile.getProfileId() != null) throw new IllegalArgumentException("Profile ID must be set upon creation.");
         if (profile.isArchived()) throw new IllegalArgumentException("Profile cannot be archived upon creation");
-
+        profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
         return profileDAO.create(profile);
     }
 
@@ -196,7 +198,7 @@ public class ProfileService {
 
     private void validateProfileNotNull(Profile profile) {
         Objects.requireNonNull(profile, "Profile cannot be null");
-        Objects.requireNonNull(profile.getAnnualCost(), "Annual salary cannot be null");
+        Objects.requireNonNull(profile.getAnnualCost(), "Annual cost cannot be null");
         Objects.requireNonNull(profile.getEffectivenessPercentage(), "Effectiveness cannot be null");
         //Objects.requireNonNull(profile.getEffectiveWorkHours(), "Effective work hours cannot be null");
         Objects.requireNonNull(profile.getName(), "Profile name cannot be null");
@@ -218,8 +220,8 @@ public class ProfileService {
         if (profile.getAnnualCost().compareTo(new BigDecimal("999999999999999.9999")) > 0)
             throw new IllegalArgumentException("Annual salary must be less than or equal to 999999999999999.9999");
 
-//        if (profile.getEffectiveWorkHours().compareTo(new BigDecimal("8760")) > 0)
-//            throw new IllegalArgumentException("Effective work hours must be less than or equal to 8760");
+       // if (profile.getEffectiveWorkHours().compareTo(new BigDecimal("8760")) > 0)
+       //     throw new IllegalArgumentException("Effective work hours must be less than or equal to 8760");
     }
 
     private void validateProfileValueScale(Profile profile) {
@@ -230,8 +232,8 @@ public class ProfileService {
         // Tjek scale af numeriske felter
         if (profile.getEffectivenessPercentage().scale() > GENERAL_SCALE)
             throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
-//        if (profile.getEffectiveWorkHours().scale() > GENERAL_SCALE)
-//            throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
+        //if (profile.getEffectiveWorkHours().scale() > GENERAL_SCALE)
+        //    throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
         if (profile.getHoursPerDay().scale() > GENERAL_SCALE)
             throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
     }
@@ -289,5 +291,7 @@ public class ProfileService {
     public void updateAllocation(UUID profileId, BigDecimal costAllocation, BigDecimal hourAllocation) throws SQLException {
         profileDAO.updateAllocation(profileId, costAllocation, hourAllocation);
     }
+
+
 }
 

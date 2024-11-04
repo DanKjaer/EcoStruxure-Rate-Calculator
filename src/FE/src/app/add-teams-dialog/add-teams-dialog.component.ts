@@ -65,7 +65,7 @@ export class AddTeamsDialogComponent implements OnInit {
     let teamProfiles :TeamProfiles[] = [];
     profiles.forEach(profile => {
       let teamProfile: TeamProfiles = {
-        profileId : profile.profileId,
+        profileId : profile.profileId!,
         name : profile.name,
         annualCost : profile.annualCost!,
         annualHours : profile.annualHours!,

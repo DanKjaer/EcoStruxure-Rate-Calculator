@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,10 @@ public class ProfileController {
     }
 
     @PostMapping
-    public Profile createProfile(@RequestBody Profile profile) throws Exception {
-        return profileService.create(profile);
+    public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
+
+        System.out.println("Create profile: " + profileDTO.getProfile().getAnnualCost());
+        return profileService.create(profileDTO.getProfile());
     }
 
     @PutMapping("/{id}")

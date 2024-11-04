@@ -42,6 +42,28 @@ public class GeographyDAO implements IGeographyDAO {
     }
 
     @Override
+    public List<Geography> getGeographies() throws Exception {
+        ArrayList<Geography> geographies = new ArrayList<>();
+
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Geography ORDER BY name");
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                boolean predefined = rs.getBoolean("predefined");
+
+                geographies.add(new Geography(id, name, predefined));
+            }
+
+            return geographies;
+        } catch (Exception e) {
+            throw new Exception("Could not get all Geographies from Database.\n" + e.getMessage());
+        }
+    }
+
+    @Override
     public List<Geography> allExceptCountries() throws Exception {
         List<Geography> geographies = new ArrayList<>();
 

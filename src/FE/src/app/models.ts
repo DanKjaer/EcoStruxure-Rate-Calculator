@@ -1,7 +1,5 @@
-import BigNumber from 'bignumber.js';
-
 export interface Profile {
-  profileId: string;
+  profileId?: string;
   name: string;
   currency: number;
   countryId: number;
@@ -42,3 +40,10 @@ export interface TeamProfiles {
   allocatedHoursOnTeam?: number;
   dayRateOnTeam?: number;
 }
+
+export interface Geography {
+  id: number;
+  name: string;
+  predefined?: boolean;
+}
+

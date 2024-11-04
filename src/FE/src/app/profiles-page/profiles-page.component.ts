@@ -13,6 +13,7 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
 import {ProfileService} from '../services/profile.service';
+import {Profile} from '../models';
 
 @Component({
   selector: 'app-profiles-page',
@@ -41,6 +42,11 @@ export class ProfilesPageComponent implements AfterViewInit {
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
+
+    dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
+      this.datasource.data.push(profile)
+      this.datasource._updateChangeSubscription();
+    });
   }
 
 
@@ -58,7 +64,9 @@ export class ProfilesPageComponent implements AfterViewInit {
     'options'
   ];
 
-  datasource = new MatTableDataSource([{}]);
+  selectedRow: Profile | null = null;
+
+  datasource: MatTableDataSource<Profile> = new MatTableDataSource<Profile>();
   loading = true;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -70,5 +78,18 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
+  }
+
+  async onDelete() {
+    const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
+    if (result) {
+      this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
+      this.datasource._updateChangeSubscription();
+    }
+  }
+
+
+  selectRow(row: Profile) {
+    this.selectedRow = row;
   }
 }
