@@ -200,7 +200,6 @@ public class ProfileService {
         Objects.requireNonNull(profile, "Profile cannot be null");
         Objects.requireNonNull(profile.getAnnualCost(), "Annual cost cannot be null");
         Objects.requireNonNull(profile.getEffectivenessPercentage(), "Effectiveness cannot be null");
-        //Objects.requireNonNull(profile.getEffectiveWorkHours(), "Effective work hours cannot be null");
         Objects.requireNonNull(profile.getName(), "Profile name cannot be null");
         Objects.requireNonNull(profile.getCurrency(), "Profile currency cannot be null");
     }
@@ -208,20 +207,11 @@ public class ProfileService {
     private void validateProfileValues(Profile profile) {
         if (profile.getAnnualCost().compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Annual salary cannot be negative");
-
-//        if (profile.effectiveness().compareTo(BigDecimal.ZERO) < 0 || profile.effectiveness().compareTo(new BigDecimal("1")) > 0)
-//            throw new IllegalArgumentException("Effectiveness must be between 0 and 1");
-
-        //if (profile.totalHours().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException("Effective work hours must be greater than zero");
-
         if (profile.getHoursPerDay().compareTo(BigDecimal.ZERO) < 0 || profile.getHoursPerDay().compareTo(new BigDecimal("24")) > 0)
             throw new IllegalArgumentException("Hours per day must be between 0 and 24");
 
         if (profile.getAnnualCost().compareTo(new BigDecimal("999999999999999.9999")) > 0)
             throw new IllegalArgumentException("Annual salary must be less than or equal to 999999999999999.9999");
-
-       // if (profile.getEffectiveWorkHours().compareTo(new BigDecimal("8760")) > 0)
-       //     throw new IllegalArgumentException("Effective work hours must be less than or equal to 8760");
     }
 
     private void validateProfileValueScale(Profile profile) {
@@ -232,8 +222,6 @@ public class ProfileService {
         // Tjek scale af numeriske felter
         if (profile.getEffectivenessPercentage().scale() > GENERAL_SCALE)
             throw new IllegalArgumentException("Effectiveness scale must be less than or equal to " + GENERAL_SCALE);
-        //if (profile.getEffectiveWorkHours().scale() > GENERAL_SCALE)
-        //    throw new IllegalArgumentException("Effective work hours scale must be less than or equal to " + GENERAL_SCALE);
         if (profile.getHoursPerDay().scale() > GENERAL_SCALE)
             throw new IllegalArgumentException("Hours per day scale must be less than or equal to " + GENERAL_SCALE);
     }
