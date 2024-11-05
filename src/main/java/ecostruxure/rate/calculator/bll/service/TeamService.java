@@ -49,10 +49,11 @@ public class TeamService {
         }
     }
 
-    public boolean update(UUID teamId,Team team) throws Exception {
+    public Team update(UUID teamId,Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
+        var updatedTeam = calculateTotalMarkupAndTotalGrossMargin(team);
 
-        return teamDAO.update(teamId, team);
+        return teamDAO.update(teamId, updatedTeam);
     }
 
     /**
@@ -364,5 +365,19 @@ public class TeamService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) throws SQLException {
+        BigDecimal markup = team.getMarkup().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal grossMargin = team.getGrossMargin().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
+
+        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
+        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
+
+        team.setTotalMarkup(totalMarkup);
+        team.setTotalGrossMargin(totalGrossMargin);
+
+        return team;
     }
 }

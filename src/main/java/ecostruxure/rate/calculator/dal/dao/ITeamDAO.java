@@ -18,7 +18,7 @@ public interface ITeamDAO {
 
     Team create(TransactionContext context, Team team) throws Exception;
 
-    boolean update(UUID teamId, Team team) throws Exception;
+    Team update(UUID teamId, Team team) throws Exception;
 
     void updateMultipliers(Team team) throws Exception;
 
@@ -89,4 +89,5 @@ public interface ITeamDAO {
     void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException;
 
     void updateTotalAllocationOfProfilesOnDelete(List<Profile> profiles) throws SQLException;
+
 }

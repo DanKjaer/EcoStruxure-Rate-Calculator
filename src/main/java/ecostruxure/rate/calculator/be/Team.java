@@ -9,7 +9,9 @@ public class Team {
     private UUID teamId;
     private String name;
     private BigDecimal markup;
+    private BigDecimal totalMarkup;
     private BigDecimal grossMargin;
+    private BigDecimal totalGrossMargin;
     private BigDecimal hourlyRate;
     private BigDecimal dayRate;
     private BigDecimal totalAllocatedHours;
@@ -23,7 +25,9 @@ public class Team {
         this.teamId = builder.teamId;
         this.name = builder.name;
         this.markup = builder.markup;
+        this.totalMarkup = builder.totalMarkup;
         this.grossMargin = builder.grossMargin;
+        this.totalGrossMargin = builder.totalGrossMargin;
         this.hourlyRate = builder.hourlyRate;
         this.dayRate = builder.dayRate;
         this.totalAllocatedHours = builder.totalAllocatedHours;
@@ -36,7 +40,9 @@ public class Team {
         private UUID teamId;
         private String name;
         private BigDecimal markup;
+        private BigDecimal totalMarkup;
         private BigDecimal grossMargin;
+        private BigDecimal totalGrossMargin;
         private BigDecimal hourlyRate;
         private BigDecimal dayRate;
         private BigDecimal totalAllocatedHours;
@@ -60,8 +66,18 @@ public class Team {
             return this;
         }
 
+        public Builder totalMarkup(BigDecimal totalMarkup) {
+            this.totalMarkup = totalMarkup;
+            return this;
+        }
+
         public Builder grossMargin(BigDecimal grossMargin) {
             this.grossMargin = grossMargin;
+            return this;
+        }
+
+        public Builder totalGrossMargin(BigDecimal totalGrossMargin) {
+            this.totalGrossMargin = totalGrossMargin;
             return this;
         }
 
@@ -179,5 +195,21 @@ public class Team {
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public BigDecimal getTotalMarkup() {
+        return totalMarkup;
+    }
+
+    public void setTotalMarkup(BigDecimal totalMarkup) {
+        this.totalMarkup = totalMarkup;
+    }
+
+    public BigDecimal getTotalGrossMargin() {
+        return totalGrossMargin;
+    }
+
+    public void setTotalGrossMargin(BigDecimal totalGrossMargin) {
+        this.totalGrossMargin = totalGrossMargin;
     }
 }

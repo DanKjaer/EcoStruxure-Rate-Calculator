@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {firstValueFrom, Observable} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Team, TeamProfiles} from "../models";
 
@@ -20,8 +20,10 @@ export class TeamsService {
     return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {team, teamProfiles}));
   }
 
-  putTeam(): Promise<boolean> {
-    return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/{id}`, {}));
+  putTeam(team: Team): Promise<Team> {
+    console.log("team: " + team.teamId);
+    console.log("team: " + team.name);
+    return firstValueFrom(this.http.put<Team>(`${this.apiUrl}?teamId=${team.teamId}`, team));
   }
 
   deleteTeam(teamID: string): Promise<boolean> {

@@ -31,9 +31,10 @@ public class TeamsController {
         return teamService.create(team, teamProfiles);
     }
 
-    @PutMapping("/{id}")
-    public boolean update(@PathVariable UUID id, @RequestBody Team team) throws Exception {
-        return teamService.update(id, team);
+    @PutMapping()
+    public Team update(@RequestParam UUID teamId, @RequestBody Team team) throws Exception {
+        teamService.calculateTotalMarkupAndTotalGrossMargin(team);
+        return teamService.update(teamId, team);
     }
 
     @DeleteMapping("/{id}")
