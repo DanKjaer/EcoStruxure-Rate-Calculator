@@ -16,6 +16,7 @@ import {FormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
 import {ProfileService} from '../services/profile.service';
+import {Router} from '@angular/router';
 import {Profile} from '../models';
 
 @Component({
@@ -46,19 +47,12 @@ import {Profile} from '../models';
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit {
+
+  constructor(private profileService: ProfileService, private  router: Router) {
+  }
+
+  //#region vars
   readonly dialog = inject(MatDialog);
-
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProfileDialogComponent);
-
-    dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
-      this.datasource.data.push(profile)
-      this.datasource._updateChangeSubscription();
-    });
-  }
-
-  constructor(private profileService: ProfileService) {
-  }
 
   displayedColumns: string[] = [
     'name',
@@ -81,6 +75,8 @@ export class ProfilesPageComponent implements AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  //#endregion
 
   async ngAfterViewInit() {
     let profiles = await this.profileService.getProfiles();
@@ -121,6 +117,19 @@ export class ProfilesPageComponent implements AfterViewInit {
     }
     element['isEditing'] = false;
     this.isEditingRow = false;
+  }
+
+  goToProfile(profileId: string): void {
+    this.router.navigate(['/profile', profileId]);
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileDialogComponent);
+
+    dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
+      this.datasource.data.push(profile)
+      this.datasource._updateChangeSubscription();
+    });
   }
 
     async onDelete() {

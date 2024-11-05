@@ -20,7 +20,7 @@ import {ProfileService} from '../services/profile.service';
 import {Profile, Team, TeamProfiles} from '../models';
 
 @Component({
-  selector: 'app-add-teams-dialog',
+  selector: 'app-add-team-dialog',
   standalone: true,
   imports: [
     MatDialogModule,
@@ -35,10 +35,10 @@ import {Profile, Team, TeamProfiles} from '../models';
     MatListModule,
     MatPrefix
   ],
-  templateUrl: './add-teams-dialog.component.html',
-  styleUrl: './add-teams-dialog.component.css'
+  templateUrl: './add-team-dialog.component.html',
+  styleUrl: './add-team-dialog.component.css'
 })
-export class AddTeamsDialogComponent implements OnInit {
+export class AddTeamDialogComponent implements OnInit {
   teamForm!: FormGroup;
   profileList: Profile[] = [];
   selectedProfiles: Profile[] = [];
