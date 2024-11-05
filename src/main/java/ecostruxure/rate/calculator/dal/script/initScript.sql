@@ -144,8 +144,8 @@ CREATE TABLE dbo.Project (
 
 -- Creating a junction table for projectMembers since it's a many-to-many relationship
 CREATE TABLE dbo.Project_Members (
-                                 project_id UUID REFERENCES dbo.Project(project_id) ON DELETE CASCADE,
-                                 profile_id UUID REFERENCES dbo.Profiles(profile_id) ON DELETE CASCADE,
+                                 project_id UUID REFERENCES dbo.Project(project_id),
+                                 profile_id UUID REFERENCES dbo.Profiles(profile_id),
                                  PRIMARY KEY (project_id, profile_id)
 );
 
