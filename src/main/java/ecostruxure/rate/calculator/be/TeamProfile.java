@@ -17,9 +17,8 @@ public class TeamProfile {
     private BigDecimal allocatedCostOnTeam;
     private BigDecimal allocatedHoursOnTeam;
 
-    public TeamProfile() {
+    public TeamProfile() { }
 
-    }
     public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRateOnTeam,
                        BigDecimal costAllocation, BigDecimal hourAllocation,
                        BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam) {

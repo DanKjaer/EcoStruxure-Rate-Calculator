@@ -4,6 +4,10 @@ DROP TABLE IF EXISTS dbo.Teams_profiles;
 
 DROP TABLE IF EXISTS dbo.Profiles_history;
 
+DROP TABLE IF EXISTS dbo.Project_Members;
+
+DROP TABLE IF EXISTS dbo.Project;
+
 DROP TABLE IF EXISTS dbo.Profiles;
 
 DROP TABLE IF EXISTS dbo.Teams;
@@ -34,7 +38,9 @@ CREATE TABLE dbo.Teams (
                            day_rate                    DECIMAL(10, 2),
                            hourly_rate                 DECIMAL(10, 2),
                            total_allocated_cost        DECIMAL(19, 2),
-                           total_allocated_hours       DECIMAL(10, 2)
+                           total_allocated_hours       DECIMAL(10, 2),
+                           total_markup                DECIMAL(19, 2),
+                           total_gross_margin          DECIMAL(19, 2)
 );
 
 CREATE TABLE dbo.Countries (
@@ -124,6 +130,23 @@ CREATE TABLE dbo.Teams_profiles_history (
                                             FOREIGN KEY (team_id)            REFERENCES dbo.Teams(id),
                                             FOREIGN KEY (profile_id)         REFERENCES dbo.Profiles(profile_id),
                                             FOREIGN KEY (profile_history_id) REFERENCES dbo.Profiles_history(history_id)
+);
+
+CREATE TABLE dbo.Project (
+                         project_id UUID PRIMARY KEY,
+                         project_name VARCHAR(255) NOT NULL,
+                         project_description TEXT,
+                         project_cost NUMERIC(18, 2),
+                         project_margin NUMERIC(18, 2),
+                         project_price NUMERIC(18, 2),
+                         end_date TIMESTAMP
+);
+
+-- Creating a junction table for projectMembers since it's a many-to-many relationship
+CREATE TABLE dbo.Project_Members (
+                                 project_id UUID REFERENCES dbo.Project(project_id) ON DELETE CASCADE,
+                                 profile_id UUID REFERENCES dbo.Profiles(profile_id) ON DELETE CASCADE,
+                                 PRIMARY KEY (project_id, profile_id)
 );
 
 
@@ -975,11 +998,11 @@ VALUES
     (290, 'US'), (290, 'CA'), (290, 'MX'), (290, 'GT'), (290, 'BZ'), (290, 'CU'), (290, 'DO'), (290, 'HT'),
     (290, 'HN'), (290, 'SV'), (290, 'NI'), (290, 'CR'), (290, 'PA');
 
-INSERT INTO dbo.Teams (id, name, markup, gross_margin, day_rate, hourly_rate, total_allocated_cost, total_allocated_hours)
+INSERT INTO dbo.Teams (id, name, markup, gross_margin, day_rate, hourly_rate, total_allocated_cost, total_allocated_hours, total_markup, total_gross_margin)
 VALUES
-    ('937b379c-c326-4db2-9575-8313f59ddf2c', 'Low cost team', 10.00, 20.00, 208.00, 26.00, 160000, 6240),
-    ('67e1e024-e589-4637-af32-e9ebc0303c9c', 'Medium cost team', 25.00, 40.00, 384.00, 48.00, 300000, 6240),
-    ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', 'High cost team', 20.00, 35.00, 536.00, 67.00, 420000, 6240);
+    ('937b379c-c326-4db2-9575-8313f59ddf2c', 'Low cost team', 10.00, 20.00, 208.00, 26.00, 160000, 6240, 176000, 211200),
+    ('67e1e024-e589-4637-af32-e9ebc0303c9c', 'Medium cost team', 25.00, 40.00, 384.00, 48.00, 300000, 6240, 375000, 525000),
+    ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', 'High cost team', 20.00, 35.00, 536.00, 67.00, 420000, 6240, 504000, 680400);
 
 INSERT INTO dbo.Profiles (
     profile_id,
@@ -1066,3 +1089,23 @@ VALUES
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '92ac4d45-af92-475c-acb1-af2c626d86b0', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-19 22:54:50.373'),
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-20 22:54:50.373'),
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '50b601e3-dd42-422b-ac43-1aae17dff125', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-20 22:54:50.373');
+
+INSERT INTO dbo.project (project_id,
+                         project_name,
+                         project_description,
+                         project_cost,
+                         project_margin,
+                         project_price,
+                         end_date)
+VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
+        'Cheap Project',
+        'Some poor people wanted help',
+        160000,
+        16000,
+        176000,
+        '2025-05-15 22:54:50.373');
+
+INSERT INTO dbo.project_members (project_id, profile_id)
+VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '24c2b2f8-47f0-4c8b-b55d-cb49996feb44'),
+        ('769f922a-6e19-40d5-b46d-8ebd43960736', '44656c14-5882-4247-a0eb-7dc9253ec923'),
+        ('769f922a-6e19-40d5-b46d-8ebd43960736', '869877f5-b85c-4abb-890a-8de561c82641');
