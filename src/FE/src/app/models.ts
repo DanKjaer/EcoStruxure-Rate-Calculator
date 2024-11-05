@@ -48,3 +48,13 @@ export interface Geography {
   predefined?: boolean;
 }
 
+export interface Project {
+  projectId?: string;
+  projectName: string;
+  projectDescription: string;
+  projectMembers: Profile[];
+  projectCost: number;
+  projectMargin: number;
+  projectPrice: number;
+  endDate: Date;
+}

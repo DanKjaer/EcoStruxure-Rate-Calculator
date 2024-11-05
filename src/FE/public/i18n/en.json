@@ -184,5 +184,12 @@
   "EDIT_INFO": "Double click a value to start editing.\nPress enter to save your edits.\nPress escape to cancel your edits.",
   "UPDATE": "Update",
   "PROFILE_TEAMS": "Teams this profile is a member of",
-  "ADD_TO_TEAM": "Add to team"
+  "ADD_TO_TEAM": "Add to team",
+  "ADD_NEW_PROJECT": "Add new project",
+  "TOTAL_PROJECTS": "Total projects",
+  "MEMBERS_OF_PROJECT": "Members of project",
+  "PROJECT_COST": "Project cost",
+  "PROJECT_COST_WITH_MARKUP": "Project cost with margin",
+  "PROJECT_TOTAL_PRICE": "Project total price",
+  "PROJECT_END_DATE": "Project end date"
 }
