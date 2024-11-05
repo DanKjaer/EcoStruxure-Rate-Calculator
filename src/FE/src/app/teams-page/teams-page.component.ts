@@ -106,12 +106,11 @@ export class TeamsPageComponent implements AfterViewInit {
   async saveEdit(selectedTeam: any): Promise<void> {
     selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
-    const originalValues = {...this.originalRowData[selectedTeam.teamId]};
 
-    const result = await this.teamService.putTeam(selectedTeam);
-    console.log('Save result:', result);
-    if (!result) {
-      selectedTeam = {...originalValues};
+    let result : Team | null = null;
+    try{
+      result = await this.teamService.putTeam(selectedTeam);
+    } catch (e) {
       this.cancelEdit(selectedTeam);
       return;
     }
@@ -124,15 +123,15 @@ export class TeamsPageComponent implements AfterViewInit {
     }
   }
 
-  cancelEdit(element: any): void {
-    let original = this.originalRowData[element.id];
+  cancelEdit(selectedTeam: any): void {
+    let original = this.originalRowData[selectedTeam.id];
     if (original) {
-      element.name = original.name;
-      element.markup = original.markup;
-      element.grossMargin = original.grossMargin;
-      element.updatedAt = original.updatedAt;
+      selectedTeam.name = original.name;
+      selectedTeam.markup = original.markup;
+      selectedTeam.grossMargin = original.grossMargin;
+      selectedTeam.updatedAt = original.updatedAt;
     }
-    element['isEditing'] = false;
+    selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
   }
 
