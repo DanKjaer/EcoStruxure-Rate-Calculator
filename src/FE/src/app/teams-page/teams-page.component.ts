@@ -103,7 +103,7 @@ export class TeamsPageComponent implements AfterViewInit {
 
   }
 
- /* async saveEdit(selectedTeam: any): Promise<void> {
+  async saveEdit(selectedTeam: any): Promise<void> {
     selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
     const originalValues = {...this.originalRowData[selectedTeam.teamId]};
@@ -111,7 +111,7 @@ export class TeamsPageComponent implements AfterViewInit {
     const result = await this.teamService.putTeam(selectedTeam);
     console.log('Save result:', result);
     if (!result) {
-      Object.assign(selectedTeam, originalValues)
+      selectedTeam = {...originalValues};
       this.cancelEdit(selectedTeam);
       return;
     }
@@ -121,31 +121,6 @@ export class TeamsPageComponent implements AfterViewInit {
       this.datasource.data[index] = result;
       this.datasource._updateChangeSubscription();
       delete this.originalRowData[selectedTeam!.teamId!];
-    }
-  }
-  */
-  async saveEdit(selectedTeam: any): Promise<void> {
-    selectedTeam['isEditing'] = false;
-    this.isEditingRow = false;
-    const originalValues = {...this.originalRowData[selectedTeam.teamId]};
-
-    try {
-      const result = await this.teamService.putTeam(selectedTeam);
-      console.log('Save result:', result);
-      if (!result) {
-        throw new Error('Failed to save');
-      }
-
-      const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);
-      if (index !== -1) {
-        this.datasource.data[index] = result;
-        this.datasource._updateChangeSubscription();
-        delete this.originalRowData[selectedTeam.teamId];
-      }
-    } catch (error) {
-      console.error('Save failed:', error);
-      Object.assign(selectedTeam, originalValues);
-      this.cancelEdit(selectedTeam);
     }
   }
 
