@@ -48,6 +48,8 @@ export class TeamsPageComponent implements AfterViewInit {
     'day rate',
     'total annual cost',
     'total annual hours',
+    'total markup',
+    'total gm',
     'options'
   ]
   selectedRow: Team | null = null;

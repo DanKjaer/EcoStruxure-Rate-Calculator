@@ -107,6 +107,26 @@
         </td>
       </ng-container>
 
+      <!-- total markup -->
+      <ng-container matColumnDef="total markup">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'TOTAL_MARKUP' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['totalMarkup'] }}
+        </td>
+      </ng-container>
+
+      <!-- total gross margin -->
+      <ng-container matColumnDef="total gm">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'TOTAL_GROSS_MARGIN' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['totalGrossMargin'] }}
+        </td>
+      </ng-container>
+
       <!-- options button -->
       <ng-container matColumnDef="options">
         <th mat-header-cell *matHeaderCellDef>
