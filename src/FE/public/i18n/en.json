@@ -1,5 +1,5 @@
 {
-  "CURRENT": "Current",
+  "CURRENT_PROFILE": "Current profile",
   "CSV_DROP_INSTRUCTIONS": "Drag and drop CSV file here",
   "HOUR_SYMBOL_LOWERCASE": "h",
   "HOUR_SYMBOL_UPPERCASE": "H",
@@ -56,8 +56,6 @@
   "GEOGRAPHY_LOCATIONS": "Locations",
   "UNIQUE_TEAMS": "Unique teams",
   "UNIQUE_LOCATIONS": "Unique locations",
-  "CONTRIBUTED_HOURLY_RATE": "Cont. hourly rate",
-  "CONTRIBUTED_DAY_RATE": "Cont. day rate",
   "ANNUAL_COST": "Annual cost",
   "ANNUAL_HOURS": "Annual hours",
   "SEARCH_PROMPT": "Search",
@@ -102,6 +100,7 @@
   "NO_TEAMS_ON_PROFILE": "No teams on profile",
   "TOTAL_HOURS_ANNUALLY": "Total annual hours",
   "TOTAL_ANNUAL_COST": "Total annual cost",
+  "TOTAL_ANNUAL_HOURS": "Total annual hours",
   "SHOW": "Show",
   "EDIT": "Edit",
   "DELETE": "Delete",
@@ -184,5 +183,8 @@
   "ADD": "Add",
   "CANCEL": "Cancel",
   "MORE": "More",
-  "EDIT_INFO": "Double click a value to start editing.\nPress enter to save your edits.\nPress escape to cancel your edits."
+  "EDIT_INFO": "Double click a value to start editing.\nPress enter to save your edits.\nPress escape to cancel your edits.",
+  "UPDATE": "Update",
+  "PROFILE_TEAMS": "Teams this profile is a member of",
+  "ADD_TO_TEAM": "Add to team"
 }

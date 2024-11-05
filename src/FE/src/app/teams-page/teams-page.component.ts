@@ -9,9 +9,9 @@ import {NgIf} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {AddTeamsDialogComponent} from '../add-teams-dialog/add-teams-dialog.component';
-import {Team} from '../models';
 import {TeamsService} from '../services/teams.service';
+import {AddTeamDialogComponent} from '../add-team-dialog/add-team-dialog.component';
+import {Team} from '../models';
 
 @Component({
   selector: 'app-teams-page',
@@ -60,7 +60,7 @@ export class TeamsPageComponent implements AfterViewInit {
   constructor(private teamService: TeamsService) { }
 
   openDialog() {
-    const dialogRef = this.dialog.open(AddTeamsDialogComponent);
+    const dialogRef = this.dialog.open(AddTeamDialogComponent);
 
     dialogRef.componentInstance.teamAdded.subscribe((team: Team) => {
       this.datasource.data.push(team);
