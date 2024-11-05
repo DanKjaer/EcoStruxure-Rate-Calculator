@@ -120,6 +120,7 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [ngClass]="allocationColor(row)"
           (dblclick)="editRow(row)"
           (keyup.enter)="saveEdit(row)"
           (keyup.escape)="cancelEdit(row)"></tr>
@@ -136,7 +137,7 @@
     <mat-icon>description</mat-icon>
     {{ 'MORE' | translate }}
   </button>
-  <button mat-menu-item>
+  <button mat-menu-item (click)="onDelete()">
     <mat-icon>delete</mat-icon>
     {{ 'DELETE' | translate }}
   </button>

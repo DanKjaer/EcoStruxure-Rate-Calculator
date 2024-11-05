@@ -8,7 +8,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
@@ -17,6 +17,7 @@ import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
 import {ProfileService} from '../services/profile.service';
 import {Router} from '@angular/router';
+import {Profile} from '../models';
 
 @Component({
   selector: 'app-profiles-page',
@@ -39,7 +40,8 @@ import {Router} from '@angular/router';
     FormsModule,
     MatInput,
     MatFormField,
-    MatLabel
+    MatLabel,
+    NgClass
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
@@ -63,11 +65,13 @@ export class ProfilesPageComponent implements AfterViewInit {
     'options'
   ];
 
-  datasource = new MatTableDataSource([{}]);
+  selectedRow: Profile | null = null;
+  rowColor: Profile | null = null;
+
+  datasource: MatTableDataSource<Profile> = new MatTableDataSource<Profile>();
   loading = true;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
-  selectedRow: any;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -81,6 +85,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
+
 
   //#region functions
   editRow(element: any): void {
@@ -118,13 +123,38 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.router.navigate(['/profile', profileId]);
   }
 
-  selectRow(row: any): void {
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileDialogComponent);
+
+    dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
+      this.datasource.data.push(profile)
+      this.datasource._updateChangeSubscription();
+    });
+  }
+
+    async onDelete() {
+    const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
+    if (result) {
+      this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
+      this.datasource._updateChangeSubscription();
+    }
+  }
+
+  selectRow(row: Profile) {
     this.selectedRow = row;
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProfileDialogComponent);
-  }
+  allocationColor(row: Profile): string {
+    const totalHourAllocation = row.totalHourAllocation ?? 0;
+    const totalCostAllocation = row.totalCostAllocation ?? 0;
 
+    this.rowColor = row;
+    if (totalHourAllocation > 100 || totalCostAllocation > 100) {
+      return 'red';
+    } else if (totalHourAllocation <= 99 || totalCostAllocation <= 99) {
+      return 'orange';
+    }
+    return '';
+}
   //#endregion
 }

@@ -15,16 +15,22 @@ export class ProfileService {
     return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/profile`));
   }
 
-  postProfile(): Promise<Profile> {
-    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}/profile`, {}));
+  postProfile(profile: Profile): Promise<Profile> {
+    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}/profile`, {profile}))
+        .catch(error => {
+            console.error('Error saving profile: ', error);
+            throw error;
+        });
   }
 
   putProfile(): Promise<boolean> {
     return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/profile/{id}`, {}));
   }
 
-  deleteProfile(): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/profile/{id}`));
+  deleteProfile(profileId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/profile/${profileId}`));
   }
+
+
 
 }

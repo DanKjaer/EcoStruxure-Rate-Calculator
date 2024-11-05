@@ -86,7 +86,6 @@ public class TeamService {
         return createdTeam;
     }
 
-
     /**
      * Set the markup for the given team.
      *
@@ -212,10 +211,18 @@ public class TeamService {
         return teamDAO.getTeamProfile(teamId, profileId);
     }
 
+    /**
+     * Used by Controller to "delete" a team by archiving it.
+     * @param teamId
+     * @param archive
+     * @return true if the team was archived, false otherwise.
+     * @throws Exception
+     */
     public boolean archive(UUID teamId, boolean archive) throws Exception {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        var response = teamDAO.archive(teamId, archive);
 
-        return teamDAO.archive(teamId, archive);
+        return response;
     }
 
     public boolean archive(Team team, boolean archive) throws Exception {
@@ -228,12 +235,6 @@ public class TeamService {
         Objects.requireNonNull(teams, "Teams cannot be null");
 
         return teamDAO.archive(teams);
-    }
-
-    public List<Profile> canUnarchive(Team team) throws Exception {
-        Objects.requireNonNull(team, "Team cannot be null");
-
-        return teamDAO.canUnarchive(team.getTeamId());
     }
 
     public LocalDateTime getLastUpdated(UUID teamId) throws Exception {
@@ -259,7 +260,12 @@ public class TeamService {
 
             BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            BigDecimal hourlyRateOnTeam = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP);
+            BigDecimal hourlyRateOnTeam;
+            if (annualHours.compareTo(BigDecimal.ZERO) == 0) {
+                hourlyRateOnTeam = BigDecimal.ZERO;
+            } else {
+                hourlyRateOnTeam = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP);
+            }
             BigDecimal dailyRateOnTeam = hourlyRateOnTeam.multiply(BigDecimal.valueOf(8));
 
             totalAllocatedCost = totalAllocatedCost.add(allocatedCost);

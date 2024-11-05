@@ -1,11 +1,9 @@
-import BigNumber from 'bignumber.js';
-
-export class Profile {
-  profileId!: string;
-  name!: string;
-  currency!: number;
-  countryId!: number;
-  resourceType!: boolean;
+export interface Profile {
+  profileId?: string;
+  name: string;
+  currency: number;
+  countryId: number;
+  resourceType: boolean;
   annualCost?: number;
   annualHours?: number;
   hoursPerDay?: number;
@@ -15,28 +13,38 @@ export class Profile {
   totalHourAllocation?: number;
   archived?: boolean;
   updatedAt?: Date;
-  isEditing: boolean = false;
+  isEditing?: boolean;
 }
 
-export class Team {
-  id!: string;
-  name!: string;
-  markup!: BigNumber;
-  grossMargin!: BigNumber;
+export interface Team {
+  teamId?: string;
+  name: string;
+  markup?: number;
+  grossMargin?: number;
   isArchived?: boolean;
   updatedAt?: Date;
-  hourlyRate?: BigNumber;
-  dayRate?: BigNumber;
-  totalAllocatedCost?: BigNumber;
-  totalAllocatedHours?: BigNumber;
+  hourlyRate?: number;
+  dayRate?: number;
+  totalAllocatedCost?: number;
+  totalAllocatedHours?: number;
 }
 
-export class TeamProfiles {
+export interface TeamProfiles {
   teamId?: string;
-  profileId!: string;
-  costAllocation!: BigNumber;
-  allocatedCostOnTeam?: BigNumber;
-  hourAllocation!: BigNumber;
-  allocatedHoursOnTeam?: BigNumber;
-  dayRateOnTeam?: BigNumber;
+  profileId: string;
+  name: string;
+  annualCost: number;
+  annualHours: number;
+  costAllocation: number;
+  allocatedCostOnTeam?: number;
+  hourAllocation: number;
+  allocatedHoursOnTeam?: number;
+  dayRateOnTeam?: number;
 }
+
+export interface Geography {
+  id: number;
+  name: string;
+  predefined?: boolean;
+}
+

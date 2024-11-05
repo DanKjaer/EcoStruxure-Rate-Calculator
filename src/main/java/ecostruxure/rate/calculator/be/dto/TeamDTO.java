@@ -7,9 +7,9 @@ import java.util.List;
 
 public class TeamDTO {
     private Team team;
-    private List<TeamProfile> profiles;
+    private List<TeamProfile> teamProfiles;
 
-    public TeamDTO(Team team, List<TeamProfile> profiles) {
+    public TeamDTO(Team team, List<TeamProfile> teamProfiles) {
     }
 
     public TeamDTO() {
@@ -24,11 +24,11 @@ public class TeamDTO {
         this.team = team;
     }
 
-    public List<TeamProfile> getProfiles() {
-        return profiles;
+    public List<TeamProfile> getTeamProfiles() {
+        return teamProfiles;
     }
 
-    public void setProfiles(List<TeamProfile> profiles) {
-        this.profiles = profiles;
+    public void setTeamProfiles(List<TeamProfile> teamProfiles) {
+        this.teamProfiles = teamProfiles;
     }
 }
