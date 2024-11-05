@@ -181,5 +181,8 @@
   "ADD": "Add",
   "CANCEL": "Cancel",
   "MORE": "More",
-  "EDIT_INFO": "Double click a value to start editing.\nPress enter to save your edits.\nPress escape to cancel your edits."
+  "EDIT_INFO": "Double click a value to start editing.\nPress enter to save your edits.\nPress escape to cancel your edits.",
+  "UPDATE": "Update",
+  "PROFILE_TEAMS": "Teams this profile is a member of",
+  "ADD_TO_TEAM": "Add to team"
 }

@@ -180,5 +180,8 @@
   "ADD": "Tilføj",
   "CANCEL": "Annuller",
   "MORE": "Mere",
-  "EDIT_INFO": "Dobbelt klik en værdi for at redigere.\nTryk enter for at gemme din redigering.\nTryk escape for at anullere din redigering."
+  "EDIT_INFO": "Dobbelt klik en værdi for at redigere.\nTryk enter for at gemme din redigering.\nTryk escape for at anullere din redigering.",
+  "UPDATE": "Opdater",
+  "PROFILE_TEAMS": "Teams denne profil er medlem af",
+  "ADD_TO_TEAM": "Tilføj til team"
 }

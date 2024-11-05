@@ -37,7 +37,126 @@
   </div>
   <div class="infoContainer">
     <div class="teamsContainer">
+      <div class="teamsTitleContainer">
+        <p>{{ 'PROFILE_TEAMS' | translate }}</p>
+        <mat-form-field class="searchInput" appearance="outline">
+          <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
+          <input matInput inputmode="search" type="search">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <button mat-stroked-button>
+          <mat-icon>
+            add
+          </mat-icon>
+          {{ 'ADD_TO_TEAM' | translate }}
+        </button>
+      </div>
+      <div class="tableContainer">
+        <table class="profileTeamsTable" mat-table [dataSource]="datasource">
+          <!-- name -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'NAME' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['name'] }}
+              </span>
+            </td>
+          </ng-container>
 
+          <!-- hour allocation -->
+          <ng-container matColumnDef="hour allocation">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'HOUR_ALLOCATION' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['hour_allocation'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- annual hours -->
+          <ng-container matColumnDef="annual hours">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'ANNUAL_HOURS' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['annual_hours'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- cost allocation -->
+          <ng-container matColumnDef="cost allocation">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'COST_ALLOCATION' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['cost_allocation'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- hourly rate -->
+          <ng-container matColumnDef="hourly rate">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'HOURLY_RATE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['hourly_rate'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- day rate -->
+          <ng-container matColumnDef="day rate">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'DAY_RATE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['day_rate'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- annual cost -->
+          <ng-container matColumnDef="annual cost">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'ANNUAL_COST' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['annual_cost'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- options button -->
+          <ng-container matColumnDef="options">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'OPTIONS' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <div class="spinnerContainer" *ngIf="loading">
+          <!-- Display spinner when loading -->
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      </div>
     </div>
     <div class="profileContainer" [formGroup]="profileForm">
       {{ 'CURRENT_PROFILE' | translate }}
@@ -122,6 +241,25 @@
           </mat-form-field>
         </div>
       </div>
+
+      <!-- buttons -->
+      <div class="buttonContainer">
+        <button mat-stroked-button (click)="update()">
+          <mat-icon>check</mat-icon>
+          {{ 'UPDATE' | translate }}
+        </button>
+        <button mat-stroked-button (click)="undo()">
+          <mat-icon>undo</mat-icon>
+          {{ 'UNDO' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 </div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>delete</mat-icon>
+    {{ 'DELETE' | translate }}
+  </button>
+</mat-menu>

@@ -7,6 +7,11 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatSelect} from '@angular/material/select';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {NgIf} from '@angular/common';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-profile-page',
@@ -19,7 +24,12 @@ import {MatButtonModule} from '@angular/material/button';
     MatOption,
     MatRadioModule,
     MatSelect,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule,
+    MatTableModule,
+    NgIf,
+    MatMenuModule,
+    MatProgressSpinner
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
@@ -42,6 +52,19 @@ export class ProfilePageComponent implements OnInit {
     'USD'
   ]
   //#endregion
+  datasource: MatTableDataSource<any> = new MatTableDataSource();
+  displayedColumns: string[] = [
+    'name',
+    'hour allocation',
+    'annual hours',
+    'cost allocation',
+    'hourly rate',
+    'day rate',
+    'annual cost',
+    'options'
+  ];
+
+  loading: boolean = true;
 
   ngOnInit() {
     this.profileForm = this.fb.group({
@@ -64,4 +87,11 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
+  update() {
+    //todo: update the profile in db
+  }
+
+  undo() {
+    //todo: reset the values
+  }
 }
