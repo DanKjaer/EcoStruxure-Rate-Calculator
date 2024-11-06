@@ -67,6 +67,14 @@ export class TeamsPageComponent implements AfterViewInit {
   constructor(private teamService: TeamsService) {
   }
 
+  async ngAfterViewInit() {
+    let teams = await this.teamService.getTeams();
+    this.datasource.data = teams;
+    this.loading = false;
+    this.datasource.sort = this.sort;
+    this.datasource.paginator = this.paginator;
+  }
+
   openDialog() {
     const dialogRef = this.dialog.open(AddTeamDialogComponent);
 
@@ -74,14 +82,6 @@ export class TeamsPageComponent implements AfterViewInit {
       this.datasource.data.push(team);
       this.datasource._updateChangeSubscription();
     });
-  }
-
-  async ngAfterViewInit() {
-    let teams = await this.teamService.getTeams();
-    this.datasource.data = teams;
-    this.loading = false;
-    this.datasource.sort = this.sort;
-    this.datasource.paginator = this.paginator;
   }
 
   async onDelete() {
