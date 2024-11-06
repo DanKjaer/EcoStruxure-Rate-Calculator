@@ -23,6 +23,7 @@ export interface Team {
   grossMargin?: number;
   isArchived?: boolean;
   updatedAt?: Date;
+  updatedAtString?: string;
   hourlyRate?: number;
   dayRate?: number;
   totalAllocatedCost?: number;
@@ -58,5 +59,8 @@ export interface Project {
   projectCost: number;
   projectMargin: number;
   projectPrice: number;
+  startDate: Date;
+  startDateString?: string;
   endDate: Date;
+  endDateString?: string;
 }
