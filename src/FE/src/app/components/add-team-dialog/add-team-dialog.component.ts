@@ -15,9 +15,9 @@ import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatListModule, MatSelectionListChange} from '@angular/material/list';
-import {TeamsService} from '../services/teams.service';
-import {ProfileService} from '../services/profile.service';
-import {Profile, Team, TeamProfiles} from '../models';
+import {TeamsService} from '../../services/teams.service';
+import {ProfileService} from '../../services/profile.service';
+import {Profile, Team, TeamProfiles} from '../../models';
 
 @Component({
   selector: 'app-add-team-dialog',

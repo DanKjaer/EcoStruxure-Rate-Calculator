@@ -17,8 +17,8 @@ public class ProfileController {
         this.profileService = new ProfileService();
     }
 
-    @GetMapping("/{id}")
-    public Profile getProfile(@PathVariable UUID id) throws Exception {
+    @GetMapping(produces = "application/json")
+    public Profile getProfile(@RequestParam UUID id) throws Exception {
         return profileService.get(id);
     }
 

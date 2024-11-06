@@ -15,6 +15,10 @@ export class ProfileService {
     return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/profile`));
   }
 
+  getProfile(id: string): Promise<Profile> {
+    return firstValueFrom(this.http.get<Profile>(`${this.apiUrl}/profile?id=${id}`));
+  }
+
   postProfile(profile: Profile): Promise<Profile> {
     return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}/profile`, {profile}))
         .catch(error => {
@@ -30,7 +34,5 @@ export class ProfileService {
   deleteProfile(profileId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/profile/${profileId}`));
   }
-
-
 
 }

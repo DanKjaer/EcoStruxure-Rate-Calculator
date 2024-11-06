@@ -158,12 +158,10 @@
         </div>
       </div>
     </div>
-    <div class="profileContainer" [formGroup]="profileForm">
+    <div *ngIf="profileForm" class="profileContainer" [formGroup]="profileForm">
       {{ 'CURRENT_PROFILE' | translate }}
       <mat-form-field>
-        <mat-label>
-          {{ 'NAME' | translate }}
-        </mat-label>
+        <mat-label>{{ 'NAME' | translate }}</mat-label>
         <input matInput placeholder="John Doe" formControlName="name">
       </mat-form-field>
       <div class="groupContainer">
@@ -199,10 +197,10 @@
       {{ 'RESOURCE_TYPE' | translate }}
       <div class="groupContainer">
         <mat-radio-group formControlName="resource_type">
-          <mat-radio-button value="1">
+          <mat-radio-button [value]="true">
             {{ 'OVERHEAD' | translate }}
           </mat-radio-button>
-          <mat-radio-button value="0">
+          <mat-radio-button [value]="false">
             {{ 'PRODUCTION' | translate }}
           </mat-radio-button>
         </mat-radio-group>
@@ -259,7 +257,7 @@
 
 <mat-menu #menu="matMenu">
   <button mat-menu-item>
-    <mat-icon>delete</mat-icon>
-    {{ 'DELETE' | translate }}
+    <mat-icon>remove</mat-icon>
+    {{ 'REMOVE' | translate }}
   </button>
 </mat-menu>

@@ -11,13 +11,13 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {NgClass, NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {AddProfileDialogComponent} from '../add-profile-dialog/add-profile-dialog.component';
+import {AddProfileDialogComponent} from '../../components/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
-import {ProfileService} from '../services/profile.service';
+import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
-import {Profile} from '../models';
+import {Profile} from '../../models';
 
 @Component({
   selector: 'app-profiles-page',
@@ -48,7 +48,7 @@ import {Profile} from '../models';
 })
 export class ProfilesPageComponent implements AfterViewInit {
 
-  constructor(private profileService: ProfileService, private  router: Router) {
+  constructor(private profileService: ProfileService, private router: Router) {
   }
 
   //#region vars
@@ -104,7 +104,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     //todo: update call on api
   }
 
-  cancelEdit(element: any):void {
+  cancelEdit(element: any): void {
     let original = this.originalRowData[element.id];
     if (original) {
       element.name = original.name;
@@ -132,7 +132,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     });
   }
 
-    async onDelete() {
+  async onDelete() {
     const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
     if (result) {
       this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
@@ -155,6 +155,7 @@ export class ProfilesPageComponent implements AfterViewInit {
       return 'orange';
     }
     return '';
-}
+  }
+
   //#endregion
 }

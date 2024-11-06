@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {SidemenuComponent} from "./sidemenu/sidemenu.component";
+import {SidemenuComponent} from "./components/sidemenu/sidemenu.component";
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {HttpClient} from '@angular/common/http';
