@@ -21,8 +21,6 @@ export class TeamsService {
   }
 
   putTeam(team: Team): Promise<Team> {
-    console.log("team: " + team.teamId);
-    console.log("team: " + team.name);
     return firstValueFrom(this.http.put<Team>(`${this.apiUrl}?teamId=${team.teamId}`, team));
   }
 
