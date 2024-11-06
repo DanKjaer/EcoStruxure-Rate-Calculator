@@ -17,7 +17,7 @@ export interface Profile {
 }
 
 export interface Team {
-  teamId?: string;
+  teamId?: string; // UUID
   name: string;
   markup?: number;
   grossMargin?: number;
@@ -27,6 +27,8 @@ export interface Team {
   dayRate?: number;
   totalAllocatedCost?: number;
   totalAllocatedHours?: number;
+  totalMarkup?: number;
+  totalGrossMargin?: number;
 }
 
 export interface TeamProfiles {
