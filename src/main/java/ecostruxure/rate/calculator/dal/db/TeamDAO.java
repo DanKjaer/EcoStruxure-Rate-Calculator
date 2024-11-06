@@ -47,6 +47,8 @@ public class TeamDAO implements ITeamDAO {
                         .hourlyRate(rs.getBigDecimal("hourly_rate"))
                         .totalAllocatedCost(rs.getBigDecimal("total_allocated_cost"))
                         .totalAllocatedHours(rs.getBigDecimal("total_allocated_hours"))
+                        .totalMarkup(rs.getBigDecimal("total_markup"))
+                        .totalGrossMargin(rs.getBigDecimal("total_gross_margin"))
                         .build();
                 teams.add(team);
             }
@@ -81,6 +83,8 @@ public class TeamDAO implements ITeamDAO {
                             .hourlyRate(rs.getBigDecimal("hourly_rate"))
                             .totalAllocatedCost(rs.getBigDecimal("total_allocated_cost"))
                             .totalAllocatedHours(rs.getBigDecimal("total_allocated_hours"))
+                            .totalMarkup(rs.getBigDecimal("total_markup"))
+                            .totalGrossMargin(rs.getBigDecimal("total_gross_margin"))
                             .build();
                 }
             }
@@ -149,17 +153,27 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
-    public boolean update(UUID teamId, Team team) throws Exception {
+    public Team update(UUID teamId, Team team) throws Exception {
         String query = """
-                UPDATE Teams SET name = ? WHERE id = ?
+                    UPDATE Teams SET name = ?,
+                                     markup = ?,
+                                     gross_margin = ?,
+                                     total_markup = ?,
+                                     total_gross_margin = ?,
+                                     updated_at = CURRENT_TIMESTAMP 
+                    WHERE id = ?
                 """;
 
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, team.getName());
-            stmt.setObject(2, teamId);
+            stmt.setBigDecimal(2, team.getMarkup());
+            stmt.setBigDecimal(3, team.getGrossMargin());
+            stmt.setBigDecimal(4, team.getTotalMarkup());
+            stmt.setBigDecimal(5, team.getTotalGrossMargin());
+            stmt.setObject(6, teamId);
             stmt.executeUpdate();
-            return true;
+            return team;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Could not update name for Team in Database.\n" + e.getMessage());

@@ -12,6 +12,8 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {TeamsService} from '../services/teams.service';
 import {AddTeamDialogComponent} from '../add-team-dialog/add-team-dialog.component';
 import {Team} from '../models';
+import {MatInput} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-teams-page',
@@ -29,7 +31,10 @@ import {Team} from '../models';
     MatMenuTrigger,
     MatProgressSpinner,
     MatButton,
-    MatDialogModule
+    MatDialogModule,
+    MatInput,
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.css'
@@ -48,14 +53,19 @@ export class TeamsPageComponent implements AfterViewInit {
     'day rate',
     'total annual cost',
     'total annual hours',
+    'total markup',
+    'total gm',
     'options'
   ]
   selectedRow: Team | null = null;
+  originalRowData: { [key: number]: any } = {};
+  isEditingRow: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private teamService: TeamsService) { }
+  constructor(private teamService: TeamsService) {
+  }
 
   openDialog() {
     const dialogRef = this.dialog.open(AddTeamDialogComponent);
@@ -65,6 +75,7 @@ export class TeamsPageComponent implements AfterViewInit {
       this.datasource._updateChangeSubscription();
     });
   }
+
   async ngAfterViewInit() {
     let teams = await this.teamService.getTeams();
     this.datasource.data = teams;
@@ -80,6 +91,48 @@ export class TeamsPageComponent implements AfterViewInit {
       this.datasource.data = this.datasource.data.filter((team: Team) => team.teamId !== this.selectedRow?.teamId);
       this.datasource._updateChangeSubscription();
     }
+  }
+
+  editRow(element: any): void {
+    if (this.isEditingRow) return;
+    this.isEditingRow = true;
+    element['isEditing'] = true;
+    if (!this.originalRowData[element.id]) {
+      this.originalRowData[element.id] = {...element}
+    }
+
+  }
+
+  async saveEdit(selectedTeam: any): Promise<void> {
+    selectedTeam['isEditing'] = false;
+    this.isEditingRow = false;
+
+    let result : Team | null = null;
+    try{
+      result = await this.teamService.putTeam(selectedTeam);
+    } catch (e) {
+      this.cancelEdit(selectedTeam);
+      return;
+    }
+
+    const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);
+    if (index !== -1) {
+      this.datasource.data[index] = result;
+      this.datasource._updateChangeSubscription();
+      delete this.originalRowData[selectedTeam!.teamId!];
+    }
+  }
+
+  cancelEdit(selectedTeam: any): void {
+    let original = this.originalRowData[selectedTeam.id];
+    if (original) {
+      selectedTeam.name = original.name;
+      selectedTeam.markup = original.markup;
+      selectedTeam.grossMargin = original.grossMargin;
+      selectedTeam.updatedAt = original.updatedAt;
+    }
+    selectedTeam['isEditing'] = false;
+    this.isEditingRow = false;
   }
 
   selectRow(row: Team) {
