@@ -13,6 +13,7 @@ public class Project {
     private BigDecimal projectCost;
     private BigDecimal projectMargin;
     private BigDecimal projectPrice;
+    private Timestamp startDate;
     private Timestamp endDate;
 
     public Project() {}
@@ -71,6 +72,14 @@ public class Project {
 
     public void setProjectPrice(BigDecimal projectPrice) {
         this.projectPrice = projectPrice;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
     }
 
     public Timestamp getEndDate() {

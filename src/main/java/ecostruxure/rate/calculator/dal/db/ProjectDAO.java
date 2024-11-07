@@ -38,6 +38,7 @@ public class ProjectDAO implements IProjectDAO {
                     project.setProjectCost(rsProject.getBigDecimal("project_cost"));
                     project.setProjectMargin(rsProject.getBigDecimal("project_margin"));
                     project.setProjectPrice(rsProject.getBigDecimal("project_price"));
+                    project.setStartDate(rsProject.getTimestamp("start_date"));
                     project.setEndDate(rsProject.getTimestamp("end_date"));
                 }
             }
@@ -112,6 +113,7 @@ public class ProjectDAO implements IProjectDAO {
                     project.setProjectCost(rsProjects.getBigDecimal("project_cost"));
                     project.setProjectMargin(rsProjects.getBigDecimal("project_margin"));
                     project.setProjectPrice(rsProjects.getBigDecimal("project_price"));
+                    project.setStartDate(rsProjects.getTimestamp("start_date"));
                     project.setEndDate(rsProjects.getTimestamp("end_date"));
                     project.setProjectMembers(getProfilesBasedOnProject(connection, project.getProjectId()));
                     projects.add(project);

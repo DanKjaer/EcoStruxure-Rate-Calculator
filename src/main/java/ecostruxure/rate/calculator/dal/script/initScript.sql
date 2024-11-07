@@ -139,6 +139,7 @@ CREATE TABLE dbo.Project (
                          project_cost NUMERIC(18, 2),
                          project_margin NUMERIC(18, 2),
                          project_price NUMERIC(18, 2),
+                         start_date TIMESTAMP,
                          end_date TIMESTAMP
 );
 
@@ -1096,14 +1097,16 @@ INSERT INTO dbo.project (project_id,
                          project_cost,
                          project_margin,
                          project_price,
+                         start_date,
                          end_date)
 VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         'Cheap Project',
         'Some poor people wanted help',
         160000,
-        16000,
         176000,
-        '2025-05-15 22:54:50.373');
+        211200,
+        '2024-05-15 12:00:00.373',
+        '2025-05-15 12:00:00.373');
 
 INSERT INTO dbo.project_members (project_id, profile_id)
 VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '24c2b2f8-47f0-4c8b-b55d-cb49996feb44'),
