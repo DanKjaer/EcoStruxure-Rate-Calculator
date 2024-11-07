@@ -190,11 +190,16 @@
   "PROJECT_NAME": "Projektnavn",
   "TOTAL_PROJECTS": "Total projekter",
   "MEMBERS_OF_PROJECT": "Antal medlemmer i projektet",
+  "PROJECT_DESCRIPTION": "Projekt beskrivelse",
+  "PROJECT_MARKUP": "Projektets markup",
+  "PROJECT_GM": "Projektets GM",
   "PROJECT_COST": "Projektomkostninger",
   "PROJECT_COST_WITH_MARKUP": "Projektomkostninger med margin",
   "PROJECT_TOTAL_PRICE": "Projektets samlede pris",
   "PROJECT_START_DATE": "Projektets startdato",
   "PROJECT_END_DATE": "Projektets slutdato",
   "TEAM_PROFILES": "Profiler for dette team",
-  "ADD_PROFILE": "Tilføj profil"
+  "ADD_PROFILE": "Tilføj profil",
+  "DATES": "Datoer",
+  "PROFILE_LIST": "Profil liste"
 }

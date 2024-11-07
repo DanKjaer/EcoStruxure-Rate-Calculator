@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,10 +12,12 @@ public class Project {
     private String projectDescription;
     private List<Profile> projectMembers;
     private BigDecimal projectCost;
+    private BigDecimal projectMarkup;
+    private BigDecimal ProjectGrossMargin;
     private BigDecimal projectMargin;
     private BigDecimal projectPrice;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     public Project() {}
 
@@ -58,6 +61,22 @@ public class Project {
         this.projectCost = projectCost;
     }
 
+    public BigDecimal getProjectGrossMargin() {
+        return ProjectGrossMargin;
+    }
+
+    public void setProjectGrossMargin(BigDecimal projectGrossMargin) {
+        ProjectGrossMargin = projectGrossMargin;
+    }
+
+    public BigDecimal getProjectMarkup() {
+        return projectMarkup;
+    }
+
+    public void setProjectMarkup(BigDecimal projectMarkup) {
+        this.projectMarkup = projectMarkup;
+    }
+
     public BigDecimal getProjectMargin() {
         return projectMargin;
     }
@@ -74,19 +93,19 @@ public class Project {
         this.projectPrice = projectPrice;
     }
 
-    public Timestamp getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 }
