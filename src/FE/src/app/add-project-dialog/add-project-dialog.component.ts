@@ -11,11 +11,11 @@ import {
 import {MatFormField, MatFormFieldModule, MatLabel} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {TranslateModule} from '@ngx-translate/core';
-import {MatNativeDateModule, provideNativeDateAdapter} from '@angular/material/core';
+import {MatNativeDateModule} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {Profile, Team} from '../models';
+import {Profile, Project} from '../models';
 import {MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {ProfileService} from '../services/profile.service';
 import {
@@ -25,6 +25,7 @@ import {
   MatDateRangeInput,
   MatDateRangePicker
 } from '@angular/material/datepicker';
+import {ProjectService} from '../services/project.service';
 
 @Component({
   selector: 'app-add-project-dialog',
@@ -58,30 +59,31 @@ import {
   templateUrl: './add-project-dialog.component.html',
   styleUrl: './add-project-dialog.component.css'
 })
-export class AddProjectDialogComponent implements OnInit{
+export class AddProjectDialogComponent implements OnInit {
   projectForm!: FormGroup;
   profileForm!: FormGroup;
   profileList: Profile[] = [];
   selectedProfiles: Profile[] = [];
-  @Output() projectAdded = new EventEmitter<Team>();
+  @Output() projectAdded = new EventEmitter<Project>();
 
 
   constructor(private formBuilder: FormBuilder,
               public dialogRef: MatDialogRef<AddProjectDialogComponent>,
-              private profileService: ProfileService) {}
+              private profileService: ProfileService,
+              private projectService: ProjectService) {
+  }
 
   async ngOnInit() {
     this.projectForm = this.formBuilder.group({
-      project_name: [''],
-      project_markup: [''],
-      project_gm: [''],
-      start_date: new FormControl<Date | null>(null),
-      end_date: new FormControl<Date | null>(null),
-      project_description: [''],
+      projectName: [''],
+      projectMarkup: [''],
+      projectGrossMargin: [''],
+      startDate: new FormControl<Date | null>(null),
+      endDate: new FormControl<Date | null>(null),
+      projectDescription: [''],
     })
 
     this.profileForm = this.formBuilder.group({
-      name: ['', Validators.required],
       profiles: [[], Validators.required]
     });
 
@@ -92,7 +94,19 @@ export class AddProjectDialogComponent implements OnInit{
     this.selectedProfiles = $event.source.selectedOptions.selected.map(profile => profile.value);
   }
 
-  onAddProject(){
-    this.projectAdded.emit(this.projectForm.value);
+  async onAddProject() {
+    if (this.projectForm.valid) {
+      let project = {
+        projectName: this.projectForm.value.projectName,
+        projectDescription: this.projectForm.value.projectDescription,
+        projectMembers: this.profileForm.value.profiles,
+        startDate: this.projectForm.value.startDate,
+        endDate: this.projectForm.value.endDate,
+        projectMarkup: this.projectForm.value.projectMarkup,
+        projectGrossMargin: this.projectForm.value.projectGrossMargin,
+      }
+      const newProject = await this.projectService.postProject(project)
+      this.projectAdded.emit(newProject);
+    }
   }
 }

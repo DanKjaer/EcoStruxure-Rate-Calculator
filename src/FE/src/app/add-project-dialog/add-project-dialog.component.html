@@ -6,7 +6,7 @@
       <!-- name input -->
       <mat-form-field>
         <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
-        <input matInput placeholder="Project Name" formControlName="project_name">
+        <input matInput placeholder="Project Name" formControlName="projectName">
       </mat-form-field>
 
       <!-- price inputs -->
@@ -15,26 +15,26 @@
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_MARKUP' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="project_markup">
+            <input matInput placeholder="0" formControlName="projectMarkup">
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_GM' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="project_gm">
+            <input matInput placeholder="0" formControlName="projectGrossMargin">
           </mat-form-field>
         </div>
       </div>
 
-      <!-- modifiers input -->
+      <!-- DATES -->
       <h3>{{ 'DATES' | translate }}</h3>
       <div class="groupContainer">
         <div>
           <mat-form-field>
             <mat-label>{{ 'DATES' | translate }}</mat-label>
             <mat-date-range-input [formGroup]="projectForm" [rangePicker]="picker">
-              <input matStartDate formControlName="start_date" placeholder="Start date">
-              <input matEndDate formControlName="end_date" placeholder=" End date">
+              <input matStartDate formControlName="startDate" placeholder="Start date">
+              <input matEndDate formControlName="endDate" placeholder=" End date">
             </mat-date-range-input>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-date-range-picker #picker></mat-date-range-picker>
@@ -46,20 +46,15 @@
       <h4>{{ 'PROJECT_DESCRIPTION' | translate }}</h4>
       <mat-form-field>
         <mat-label>{{ 'PROJECT_DESCRIPTION' | translate }}</mat-label>
-        <textarea matInput placeholder="Description" formControlName="project_description"></textarea>
+        <textarea matInput placeholder="Description" formControlName="projectDescription"></textarea>
       </mat-form-field>
     </mat-dialog-content>
   </div>
 
   <!-- Right side dialog -->
   <div class="dialog-section">
-    <h2 mat-dialog-title>{{ 'ADD_NEW_TEAM' | translate }}</h2>
+    <h2 mat-dialog-title>{{ 'PROFILE_LIST' | translate }}</h2>
     <mat-dialog-content class="container" [formGroup]="profileForm">
-      <!-- name input -->
-      <mat-form-field>
-        <mat-label>{{ 'NAME' | translate }}</mat-label>
-        <input matInput placeholder="Team Easy On" formControlName="name">
-      </mat-form-field>
       <div class="searchContainer">
         <mat-form-field>
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
@@ -82,7 +77,7 @@
       <mat-icon>cancel</mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true">
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onAddProject()">
       <mat-icon>check_circle</mat-icon>
       {{ 'ADD' | translate }}
     </button>

@@ -57,8 +57,8 @@ export interface Project {
   projectDescription: string;
   projectMembers: Profile[];
   projectCost?: number;
-  projectMargin: number;
-  projectPrice: number;
+  projectMargin?: number;
+  projectPrice?: number;
   startDate: Date;
   startDateString?: string;
   endDate: Date;
