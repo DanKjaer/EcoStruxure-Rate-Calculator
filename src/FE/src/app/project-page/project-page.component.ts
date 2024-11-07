@@ -20,7 +20,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {Project, Team} from '../models';
 import {ProjectService} from '../services/project.service';
 import {FormatterService} from '../services/formatter.service';
-import {AddTeamDialogComponent} from '../add-team-dialog/add-team-dialog.component';
 import {AddProjectDialogComponent} from '../add-project-dialog/add-project-dialog.component';
 
 @Component({
@@ -59,8 +58,6 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
   loading = true;
   displayedColumns: string[] = ['name', 'members', 'cost', 'margin', 'price', 'startDate', 'endDate', 'options'];
-  selectedRow: Project | null = null;
-
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -87,7 +84,6 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
-
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectDialogComponent, {

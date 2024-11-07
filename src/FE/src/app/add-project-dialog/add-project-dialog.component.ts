@@ -8,7 +8,7 @@ import {
   MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
-import {MatFormField, MatFormFieldModule, MatLabel} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatNativeDateModule} from '@angular/material/core';
@@ -19,9 +19,7 @@ import {Profile, Project} from '../models';
 import {MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {ProfileService} from '../services/profile.service';
 import {
-  MatDatepickerInput,
   MatDatepickerModule,
-  MatDatepickerToggle,
   MatDateRangeInput,
   MatDateRangePicker
 } from '@angular/material/datepicker';
@@ -33,7 +31,6 @@ import {ProjectService} from '../services/project.service';
   imports: [
     CommonModule,
     MatDialogContent,
-    MatFormField,
     MatSelect,
     TranslateModule,
     ReactiveFormsModule,
@@ -42,13 +39,10 @@ import {ProjectService} from '../services/project.service';
     MatDialogClose,
     MatIcon,
     MatInput,
-    MatLabel,
     MatOption,
     MatDialogModule,
     MatListOption,
     MatSelectionList,
-    MatDatepickerInput,
-    MatDatepickerToggle,
     MatDateRangeInput,
     MatDateRangePicker,
     MatDatepickerModule,
