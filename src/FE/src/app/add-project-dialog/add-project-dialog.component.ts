@@ -2,11 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogModule,
-  MatDialogRef
+  MatDialogModule, MatDialogRef
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
@@ -28,13 +24,10 @@ import {ProjectService} from '../services/project.service';
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogContent,
     MatSelect,
     TranslateModule,
     ReactiveFormsModule,
     MatButton,
-    MatDialogActions,
-    MatDialogClose,
     MatIcon,
     MatInput,
     MatOption,
