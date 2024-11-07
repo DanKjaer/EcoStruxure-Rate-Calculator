@@ -128,19 +128,23 @@ public class ProjectDAO implements IProjectDAO {
                          project_name,
                          project_description,
                          project_cost,
+                         project_markup,
+                         project_gross_margin,
                          project_margin,
                          project_price,
                          start_date,
                          end_date)
-                VALUES (?, ?, ?, 1000000, 1000000, 1000000, ?, ?);
+                VALUES (?, ?, ?, 1000000, ?, ?, 1000000, 1000000, ?, ?);
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);) {
             stmt.setObject(1, UUID.randomUUID());
             stmt.setString(2, project.getProjectName());
             stmt.setString(3, project.getProjectDescription());
-            stmt.setDate(4, Date.valueOf(project.getStartDate()));
-            stmt.setDate(5, Date.valueOf(project.getEndDate()));
+            stmt.setBigDecimal(4, project.getProjectMarkup());
+            stmt.setBigDecimal(5, project.getProjectGrossMargin());
+            stmt.setDate(6, Date.valueOf(project.getStartDate()));
+            stmt.setDate(7, Date.valueOf(project.getEndDate()));
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
