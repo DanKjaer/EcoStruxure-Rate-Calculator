@@ -163,9 +163,9 @@
 </div>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <mat-icon>edit</mat-icon>
-    {{ 'EDIT' | translate }}
+  <button mat-menu-item (click)="goToTeam(selectedRow?.teamId!)">
+    <mat-icon>description</mat-icon>
+    {{ 'MORE' | translate }}
   </button>
   <button mat-menu-item (click)="onDelete()">
     <mat-icon>delete</mat-icon>

@@ -115,8 +115,8 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     this.statBoxes = {
       totalDayRate: (this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0)).toFixed(2),
       totalHourlyRate: (this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile.hoursPerDay!).toFixed(2),
-      totalAnnualCost: (this.teams.reduce((sum, item) => sum + item.annualCost!, 0)).toFixed(2),
-      totalAnnualHours: (this.teams.reduce((sum, item) => sum + item.annualCost!, 0)).toFixed(2)
+      totalAnnualCost: (this.teams.reduce((sum, item) => sum + item.annualCost!, 0)).toFixed(0),
+      totalAnnualHours: (this.teams.reduce((sum, item) => sum + item.annualHours!, 0)).toFixed(0)
     }
 
     this.loading = false;
