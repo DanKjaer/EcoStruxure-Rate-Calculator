@@ -150,7 +150,6 @@ public class ProjectDAO implements IProjectDAO {
             if (rs.next()) {
                 project.setProjectId(UUID.fromString(rs.getString("project_id")));
             }
-
             return project;
         }
     }
