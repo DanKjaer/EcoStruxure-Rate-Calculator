@@ -31,14 +31,13 @@
       <div class="groupContainer">
         <div>
           <mat-form-field>
-            <mat-label>{{ 'PROJECT_START_DATE' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="start_date">
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field>
-            <mat-label>{{ 'PROJECT_END_DATE' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="end_date">
+            <mat-label>{{ 'DATES' | translate }}</mat-label>
+            <mat-date-range-input [formGroup]="projectForm" [rangePicker]="picker">
+              <input matStartDate formControlName="start_date" placeholder="Start date">
+              <input matEndDate formControlName="end_date" placeholder=" End date">
+            </mat-date-range-input>
+
+            <mat-date-range-picker #picker></mat-date-range-picker>
           </mat-form-field>
         </div>
       </div>
