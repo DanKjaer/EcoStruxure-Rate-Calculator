@@ -17,6 +17,15 @@
   </div>
 
   <div class="paginatorContainer">
+    <div class="searchContainer">
+      <mat-form-field>
+        <mat-label>
+          {{ 'SEARCH_PROMPT' | translate }}
+        </mat-label>
+        <input matInput>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
     <mat-paginator class="paginator" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons>
     </mat-paginator>
   </div>

@@ -46,6 +46,11 @@
   flex-shrink: 0;
 }
 
+.searchContainer {
+  margin-top: auto;
+  max-height: 8vh;
+}
+
 .spinnerContainer {
   position: absolute;
   display: flex;
