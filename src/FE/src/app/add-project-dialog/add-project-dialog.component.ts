@@ -19,9 +19,7 @@ import {Profile, Project} from '../models';
 import {MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {ProfileService} from '../services/profile.service';
 import {
-  MatDatepickerModule,
-  MatDateRangeInput,
-  MatDateRangePicker
+  MatDatepickerModule
 } from '@angular/material/datepicker';
 import {ProjectService} from '../services/project.service';
 
@@ -43,8 +41,6 @@ import {ProjectService} from '../services/project.service';
     MatDialogModule,
     MatListOption,
     MatSelectionList,
-    MatDateRangeInput,
-    MatDateRangePicker,
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
