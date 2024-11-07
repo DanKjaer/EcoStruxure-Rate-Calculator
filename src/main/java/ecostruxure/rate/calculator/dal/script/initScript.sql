@@ -139,8 +139,8 @@ CREATE TABLE dbo.Project (
                          project_cost NUMERIC(18, 2),
                          project_margin NUMERIC(18, 2),
                          project_price NUMERIC(18, 2),
-                         start_date TIMESTAMP,
-                         end_date TIMESTAMP
+                         start_date DATE,
+                         end_date DATE
 );
 
 -- Creating a junction table for projectMembers since it's a many-to-many relationship
@@ -1105,8 +1105,8 @@ VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         160000,
         176000,
         211200,
-        '2024-05-15 12:00:00.373',
-        '2025-05-15 12:00:00.373');
+        '2024-05-15',
+        '2025-05-15');
 
 INSERT INTO dbo.project_members (project_id, profile_id)
 VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '24c2b2f8-47f0-4c8b-b55d-cb49996feb44'),

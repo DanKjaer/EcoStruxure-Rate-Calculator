@@ -6,10 +6,8 @@ import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.dal.dao.IProjectDAO;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,14 +30,7 @@ public class ProjectDAO implements IProjectDAO {
             stmtProject.setObject(1, projectId);
             try (ResultSet rsProject = stmtProject.executeQuery()) {
                 if (rsProject.next()) {
-                    project.setProjectId(UUID.fromString(rsProject.getString("project_id")));
-                    project.setProjectName(rsProject.getString("project_name"));
-                    project.setProjectDescription(rsProject.getString("project_description"));
-                    project.setProjectCost(rsProject.getBigDecimal("project_cost"));
-                    project.setProjectMargin(rsProject.getBigDecimal("project_margin"));
-                    project.setProjectPrice(rsProject.getBigDecimal("project_price"));
-                    project.setStartDate(rsProject.getTimestamp("start_date"));
-                    project.setEndDate(rsProject.getTimestamp("end_date"));
+                    project = createProjectFromResultset(project, rsProject);
                 }
             }
             project.setProjectMembers(getProfilesBasedOnProject(connection, projectId));
@@ -47,6 +38,19 @@ public class ProjectDAO implements IProjectDAO {
             return project;
             }
         }
+
+    private Project createProjectFromResultset(Project project, ResultSet rsProject) throws SQLException {
+        project.setProjectId(UUID.fromString(rsProject.getString("project_id")));
+        project.setProjectName(rsProject.getString("project_name"));
+        project.setProjectDescription(rsProject.getString("project_description"));
+        project.setProjectCost(rsProject.getBigDecimal("project_cost"));
+        project.setProjectMargin(rsProject.getBigDecimal("project_margin"));
+        project.setProjectPrice(rsProject.getBigDecimal("project_price"));
+        project.setStartDate(rsProject.getDate("start_date").toLocalDate());
+        project.setEndDate(rsProject.getDate("end_date").toLocalDate());
+
+        return project;
+    }
 
     private List<Profile> getProfilesBasedOnProject(Connection conn,UUID projectId) throws SQLException {
         String queryProjectMembers = """
@@ -107,14 +111,7 @@ public class ProjectDAO implements IProjectDAO {
             try (ResultSet rsProjects = stmtProjects.executeQuery()) {
                 while (rsProjects.next()) {
                     Project project = new Project();
-                    project.setProjectId(UUID.fromString(rsProjects.getString("project_id")));
-                    project.setProjectName(rsProjects.getString("project_name"));
-                    project.setProjectDescription(rsProjects.getString("project_description"));
-                    project.setProjectCost(rsProjects.getBigDecimal("project_cost"));
-                    project.setProjectMargin(rsProjects.getBigDecimal("project_margin"));
-                    project.setProjectPrice(rsProjects.getBigDecimal("project_price"));
-                    project.setStartDate(rsProjects.getTimestamp("start_date"));
-                    project.setEndDate(rsProjects.getTimestamp("end_date"));
+                    project = createProjectFromResultset(project, rsProjects);
                     project.setProjectMembers(getProfilesBasedOnProject(connection, project.getProjectId()));
                     projects.add(project);
                 }
@@ -125,7 +122,51 @@ public class ProjectDAO implements IProjectDAO {
 
     @Override
     public Project createProject(Project project) throws SQLException {
-        return null;
+        String query = """
+                INSERT INTO dbo.project (
+                         project_id,
+                         project_name,
+                         project_description,
+                         project_cost,
+                         project_margin,
+                         project_price,
+                         start_date,
+                         end_date)
+                VALUES (?, ?, ?, 1000000, 1000000, 1000000, ?, ?);
+                """;
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);) {
+            stmt.setObject(1, UUID.randomUUID());
+            stmt.setString(2, project.getProjectName());
+            stmt.setString(3, project.getProjectDescription());
+            stmt.setDate(4, Date.valueOf(project.getStartDate()));
+            stmt.setDate(5, Date.valueOf(project.getEndDate()));
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                project.setProjectId(UUID.fromString(rs.getString("project_id")));
+            }
+
+            return project;
+        }
+    }
+
+    @Override
+    public List<Profile> assignProfilesToProject(UUID projectId, List<Profile> projectMembers) throws SQLException {
+        String query = """
+                INSERT INTO dbo.project_members (project_id, profile_id)
+                VALUES (?, ?);
+                """;
+        try (Connection connection = dbConnector.connection();
+                PreparedStatement stmt = connection.prepareStatement(query);) {
+                for (Profile profile : projectMembers) {
+                    stmt.setObject(1, projectId);
+                    stmt.setObject(2, profile.getProfileId());
+                    stmt.addBatch();
+                }
+                stmt.executeBatch();
+                return projectMembers;
+            }
     }
 
     @Override
