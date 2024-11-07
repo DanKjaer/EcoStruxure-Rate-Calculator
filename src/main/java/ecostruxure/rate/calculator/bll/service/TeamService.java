@@ -56,24 +56,6 @@ public class TeamService {
         return teamDAO.update(teamId, updatedTeam);
     }
 
-//    /**
-//     * Create a new team.
-//     *
-//     * @param team the team to create. Must not be null.
-//     * @return the created team that has same data as the input team, but with ID set.
-//     * @throws Exception                if an error occurred in creating the team.
-//     * @throws NullPointerException     if the input team or team name is null.
-//     * @throws IllegalArgumentException if the team name is empty.
-//     */
-//    public Team create(Team team) throws Exception {
-//        Objects.requireNonNull(team, "Team cannot be null");
-//        Objects.requireNonNull(team.getName(), "Team name cannot be null");
-//        if (team.getName().isEmpty()) throw new IllegalArgumentException("Team name cannot be empty");
-//
-//        return teamProfileManagementService.createTeam(team);
-//    }
-
-
     /**
      * This one is used by controller to create profiles
      * @param team

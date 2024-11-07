@@ -24,7 +24,7 @@ public class ProjectService {
     }
 
     public Project createProject(Project project) throws SQLException {
-        // lav udregninger her!!!!!
+        // Todo: lav udregninger her!!!!!
         var newProject = projectDAO.createProject(project);
         if (!newProject.getProjectMembers().isEmpty()) {
             projectDAO.assignProfilesToProject(newProject.getProjectId(), project.getProjectMembers());
