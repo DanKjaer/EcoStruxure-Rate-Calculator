@@ -11,7 +11,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {AddTeamDialogComponent} from '../../components/add-team-dialog/add-team-dialog.component';
+import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
 import {Team} from '../../models';
 import {TeamsService} from '../../services/teams.service';
 

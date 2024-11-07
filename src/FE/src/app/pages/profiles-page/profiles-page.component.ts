@@ -11,7 +11,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {NgClass, NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {AddProfileDialogComponent} from '../../components/add-profile-dialog/add-profile-dialog.component';
+import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {MatLabel} from '@angular/material/form-field';
