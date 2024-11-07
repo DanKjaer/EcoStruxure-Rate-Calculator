@@ -191,9 +191,14 @@
   "PROJECT_NAME": "Project name",
   "TOTAL_PROJECTS": "Total projects",
   "MEMBERS_OF_PROJECT": "Members of project",
+  "PROJECT_DESCRIPTION": "Project description",
+  "PROJECT_MARKUP": "Project markup",
+  "PROJECT_GM": "Project GM",
   "PROJECT_COST": "Project cost",
   "PROJECT_COST_WITH_MARKUP": "Project cost with margin",
   "PROJECT_TOTAL_PRICE": "Project total price",
   "PROJECT_START_DATE": "Project start date",
-  "PROJECT_END_DATE": "Project end date"
+  "PROJECT_END_DATE": "Project end date",
+  "DATES": "Dates",
+  "PROFILE_LIST": "Profile list"
 }

@@ -76,8 +76,6 @@ public interface ITeamDAO {
 
     void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException;
 
-    boolean storeTeamProfiles(TransactionContext context, List<TeamProfile> teamProfiles) throws Exception;
-
     List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
     void updateTeamRateCostHours(Team team) throws SQLException;

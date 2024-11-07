@@ -1,11 +1,9 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.dto.ProjectDTO;
 import ecostruxure.rate.calculator.bll.service.ProjectService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,5 +25,10 @@ public class ProjectController {
     @GetMapping("/all")
     public List<Project> getProjects() throws Exception {
         return projectService.getProjects();
+    }
+
+    @PostMapping()
+    public Project createProject(@RequestBody ProjectDTO projectDTO) throws Exception {
+        return projectService.createProject(projectDTO.getProject());
     }
 }
