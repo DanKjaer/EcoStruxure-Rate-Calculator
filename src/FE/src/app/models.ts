@@ -56,11 +56,13 @@ export interface Project {
   projectName: string;
   projectDescription: string;
   projectMembers: Profile[];
-  projectCost: number;
+  projectCost?: number;
   projectMargin: number;
   projectPrice: number;
   startDate: Date;
   startDateString?: string;
   endDate: Date;
   endDateString?: string;
+  projectMarkup: number;
+  projectGrossMargin: number;
 }

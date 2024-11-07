@@ -1,0 +1,91 @@
+<div class="dialog-container">
+  <!-- first dialog -->
+  <div class="dialog-section">
+    <h2 mat-dialog-title>{{ 'ADD_NEW_PROJECT' | translate }}</h2>
+    <mat-dialog-content class="container" [formGroup]="projectForm">
+      <!-- name input -->
+      <mat-form-field>
+        <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
+        <input matInput placeholder="Project Name" formControlName="project_name">
+      </mat-form-field>
+
+      <!-- price inputs -->
+      <h3>{{ 'PROJECT_COST' | translate }}</h3>
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_MARKUP' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="project_markup">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_GM' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="project_gm">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- modifiers input -->
+      <h3>{{ 'DATES' | translate }}</h3>
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_START_DATE' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="start_date">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_END_DATE' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="end_date">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Description input -->
+      <h4>{{ 'PROJECT_DESCRIPTION' | translate }}</h4>
+      <mat-form-field>
+        <mat-label>{{ 'PROJECT_DESCRIPTION' | translate }}</mat-label>
+        <textarea matInput placeholder="Description" formControlName="project_description"></textarea>
+      </mat-form-field>
+    </mat-dialog-content>
+  </div>
+
+  <!-- Second dialog -->
+  <div class="dialog-section">
+    <h2 mat-dialog-title>{{ 'ADD_NEW_TEAM' | translate }}</h2>
+    <mat-dialog-content class="container" [formGroup]="profileForm">
+      <!-- name input -->
+      <mat-form-field>
+        <mat-label>{{ 'NAME' | translate }}</mat-label>
+        <input matInput placeholder="Team Easy On" formControlName="name">
+      </mat-form-field>
+      <div class="searchContainer">
+        <mat-form-field>
+          <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
+          <input matInput>
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="profilesContainer">
+        <mat-selection-list #profiles formControlName="profiles" (selectionChange)="onSelectionChange($event)">
+          <mat-list-option *ngFor="let profile of profileList" [value]="profile">{{ profile.name }}</mat-list-option>
+        </mat-selection-list>
+      </div>
+    </mat-dialog-content>
+  </div>
+</div>
+
+<mat-dialog-actions>
+  <div class="buttonContainer">
+    <button mat-stroked-button mat-dialog-close>
+      <mat-icon>cancel</mat-icon>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-stroked-button [mat-dialog-close]="true">
+      <mat-icon>check_circle</mat-icon>
+      {{ 'ADD' | translate }}
+    </button>
+  </div>
+</mat-dialog-actions>

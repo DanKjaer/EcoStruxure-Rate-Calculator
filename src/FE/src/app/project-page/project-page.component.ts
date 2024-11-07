@@ -20,6 +20,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {Project, Team} from '../models';
 import {ProjectService} from '../services/project.service';
 import {FormatterService} from '../services/formatter.service';
+import {AddTeamDialogComponent} from '../add-team-dialog/add-team-dialog.component';
+import {AddProjectDialogComponent} from '../add-project-dialog/add-project-dialog.component';
 
 @Component({
   selector: 'app-project-page',
@@ -88,7 +90,14 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
 
 
   openDialog() {
+    const dialogRef = this.dialog.open(AddProjectDialogComponent, {
+      width: '10000px',
+    });
 
+    dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
+      this.datasource.data.push(project);
+      this.datasource._updateChangeSubscription();
+    });
   }
 
   onDelete() {
