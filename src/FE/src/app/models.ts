@@ -32,6 +32,11 @@ export interface Team {
   totalGrossMargin?: number;
 }
 
+export interface TeamDTO {
+  team: Team;
+  teamProfiles: TeamProfiles[];
+}
+
 export interface TeamProfiles {
   teamId?: string;
   profileId: string;

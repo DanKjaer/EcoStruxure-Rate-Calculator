@@ -198,6 +198,8 @@
   "PROJECT_TOTAL_PRICE": "Projektets samlede pris",
   "PROJECT_START_DATE": "Projektets startdato",
   "PROJECT_END_DATE": "Projektets slutdato",
+  "TEAM_PROFILES": "Profiler for dette team",
+  "ADD_PROFILE": "Tilføj profil",
   "DATES": "Datoer",
   "PROFILE_LIST": "Profil liste"
 }

@@ -15,6 +15,7 @@ import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FormatterService} from '../../services/formatter.service';
 import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-teams-page',
@@ -65,7 +66,7 @@ export class TeamsPageComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private teamService: TeamsService, private formatter: FormatterService) {
+  constructor(private teamService: TeamsService, private formatter: FormatterService, private router: Router) {
   }
 
   async ngAfterViewInit() {
@@ -141,5 +142,9 @@ export class TeamsPageComponent implements AfterViewInit {
 
   selectRow(row: Team) {
     this.selectedRow = row;
+  }
+
+  goToTeam(teamId: string) {
+    this.router.navigate(['/team', teamId]);
   }
 }
