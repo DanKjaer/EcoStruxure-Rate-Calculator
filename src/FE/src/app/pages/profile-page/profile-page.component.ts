@@ -14,7 +14,9 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
 import {ActivatedRoute} from '@angular/router';
-import {Profile} from '../../models';
+import {Geography, Profile, TeamProfiles} from '../../models';
+import {GeographyService} from "../../services/geography.service";
+import {TeamsService} from "../../services/teams.service";
 
 @Component({
   selector: 'app-profile-page',
@@ -37,26 +39,18 @@ import {Profile} from '../../models';
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
-export class ProfilePageComponent implements OnInit {
+export class ProfilePageComponent implements OnInit, AfterViewInit {
   profileForm: FormGroup = new FormGroup({});
   currentProfile: Profile | undefined;
-
-  constructor(private fb: FormBuilder, private profileService: ProfileService, private route: ActivatedRoute) {
-  }
-
-  //#region mock data
-  locations: String[] = [
-    'Denmark',
-    'England',
-    'Germany'
-  ]
-
-  currencies: String[] = [
-    'EUR',
-    'USD'
-  ]
-  //#endregion
-
+  locations: Geography[] = [];
+  teams: TeamProfiles[] = [];
+  statBoxes = {
+    totalDayRate: '',
+    totalHourlyRate: '',
+    totalAnnualCost: '',
+    totalAnnualHours: ''
+  };
+  loading: boolean = true;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   displayedColumns: string[] = [
     'name',
@@ -69,7 +63,20 @@ export class ProfilePageComponent implements OnInit {
     'options'
   ];
 
-  loading: boolean = true;
+  constructor(private fb: FormBuilder,
+              private profileService: ProfileService,
+              private geographyService: GeographyService,
+              private teamsService: TeamsService,
+              private route: ActivatedRoute) {
+  }
+
+  //#region mock data
+  currencies: String[] = [
+    'EUR',
+    'USD'
+  ]
+
+  //#endregion
 
   async ngOnInit() {
     this.profileForm = this.fb.group({
@@ -83,28 +90,48 @@ export class ProfilePageComponent implements OnInit {
       effectiveness: [''],
     });
 
+    this.locations = await this.geographyService.getCountries();
     this.currentProfile = await this.profileService.getProfile(this.route.snapshot.paramMap.get('id')!);
+    this.teams = await this.teamsService.getTeamProfiles(this.route.snapshot.paramMap.get('id')!);
+    this.datasource.data = this.teams;
 
-    if (this.currentProfile) {
-      this.profileForm.patchValue({
-        name: [this.currentProfile.name],
-        location: [''],
-        currency: [this.currentProfile.currency],
-        resource_type: [this.currentProfile.resourceType],
-        annual_cost: [this.currentProfile.annualCost],
-        annual_hours: [this.currentProfile.annualHours],
-        hours_per_day: [this.currentProfile.hoursPerDay],
-        effectiveness: [this.currentProfile.effectivenessPercentage],
-      })
+    this.profileForm = this.fb.group({
+      name: [this.currentProfile!.name, Validators.required],
+      location: [this.currentProfile?.countryId, Validators.required],
+      currency: [this.currentProfile!.currency, Validators.required],
+      resource_type: [this.currentProfile!.resourceType, Validators.required],
+      annual_cost: [this.currentProfile!.annualCost],
+      annual_hours: [{value: this.currentProfile!.annualHours, disabled: true}],
+      effectiveness: [this.currentProfile!.effectivenessPercentage],
+      hours_per_day: [this.currentProfile!.hoursPerDay]
+    })
+
+    if (!this.profileForm.get('resource_type')?.value) {
+      this.profileForm.get('annual_hours')?.enable();
+    } else {
+      this.profileForm.get('annual_hours')?.disable();
     }
 
-    this.profileForm.get('resource_type')?.valueChanges.subscribe(value => {
-      if (value === true) {
-        this.profileForm.get('annual_hours')?.disable();
+    this.statBoxes = {
+      totalDayRate: (this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0)).toFixed(2),
+      totalHourlyRate: (this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile.hoursPerDay!).toFixed(2),
+      totalAnnualCost: (this.teams.reduce((sum, item) => sum + item.annualCost!, 0)).toFixed(2),
+      totalAnnualHours: (this.teams.reduce((sum, item) => sum + item.annualCost!, 0)).toFixed(2)
+    }
+
+    this.loading = false;
+
+    this.profileForm.get('resource_type')?.valueChanges.subscribe((value: boolean) => {
+      if (value) {
+        this.profileForm.get('annual_hours')?.reset({value: 0, disabled: true});
       } else {
         this.profileForm.get('annual_hours')?.enable();
       }
     });
+  }
+
+  ngAfterViewInit() {
+
   }
 
   update() {
@@ -113,14 +140,28 @@ export class ProfilePageComponent implements OnInit {
 
   undo() {
     this.profileForm = this.fb.group({
-      name: [this.currentProfile!.name, Validators.required],
-      location: ['', Validators.required],
-      currency: [this.currentProfile!.currency, Validators.required],
-      resource_type: [this.currentProfile!.resourceType, Validators.required],
+      name: [this.currentProfile!.name],
+      location: [this.currentProfile?.countryId],
+      currency: [this.currentProfile!.currency],
+      resource_type: [this.currentProfile!.resourceType],
       annual_cost: [this.currentProfile!.annualCost],
-      annual_hours: [{value: this.currentProfile!.annualHours, disabled: true}],
+      annual_hours: [this.currentProfile!.annualHours],
       effectiveness: [this.currentProfile!.effectivenessPercentage],
       hours_per_day: [this.currentProfile!.hoursPerDay]
     })
+
+    if (!this.profileForm.get('resource_type')?.value) {
+      this.profileForm.get('annual_hours')?.enable();
+    } else {
+      this.profileForm.get('annual_hours')?.disable();
+    }
+
+    this.profileForm.get('resource_type')?.valueChanges.subscribe((value: boolean) => {
+      if (value) {
+        this.profileForm.get('annual_hours')?.reset({value: 0, disabled: true});
+      } else {
+        this.profileForm.get('annual_hours')?.enable();
+      }
+    });
   }
 }

@@ -22,7 +22,7 @@ public class ProfileController {
         return profileService.get(id);
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public List<Profile> getProfiles() throws Exception {
         return profileService.all();
     }

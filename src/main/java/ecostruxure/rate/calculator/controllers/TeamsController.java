@@ -23,6 +23,11 @@ public class TeamsController {
         return teamService.all();
     }
 
+    @GetMapping("/profiles")
+    public List<TeamProfile> getByProfileId(@RequestParam UUID profileId) throws Exception {
+        return teamService.getByProfileId(profileId);
+    }
+
     @PostMapping
     public Team create(@RequestBody TeamDTO teamDTO) throws Exception {
         Team team = teamDTO.getTeam();
