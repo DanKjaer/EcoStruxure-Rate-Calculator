@@ -36,7 +36,7 @@
               <input matStartDate formControlName="start_date" placeholder="Start date">
               <input matEndDate formControlName="end_date" placeholder=" End date">
             </mat-date-range-input>
-
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-date-range-picker #picker></mat-date-range-picker>
           </mat-form-field>
         </div>

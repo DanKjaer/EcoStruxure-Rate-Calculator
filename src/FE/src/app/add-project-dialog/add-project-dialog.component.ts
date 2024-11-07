@@ -1,7 +1,6 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {ProjectService} from '../services/project.service';
 import {
   MatDialogActions,
   MatDialogClose,
@@ -9,11 +8,10 @@ import {
   MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
-import {MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatFormField, MatFormFieldModule, MatLabel} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {TranslateModule} from '@ngx-translate/core';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatNativeDateModule, provideNativeDateAdapter} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
@@ -22,8 +20,8 @@ import {MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/
 import {ProfileService} from '../services/profile.service';
 import {
   MatDatepickerInput,
-  MatDatepickerToggle,
   MatDatepickerModule,
+  MatDatepickerToggle,
   MatDateRangeInput,
   MatDateRangePicker
 } from '@angular/material/datepicker';
@@ -54,8 +52,9 @@ import {
     MatDateRangePicker,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatFormFieldModule
+    MatFormFieldModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './add-project-dialog.component.html',
   styleUrl: './add-project-dialog.component.css'
 })
@@ -76,8 +75,8 @@ export class AddProjectDialogComponent implements OnInit{
       project_name: [''],
       project_markup: [''],
       project_gm: [''],
-      start_date: [''],
-      end_date: [''],
+      start_date: new FormControl<Date | null>(null),
+      end_date: new FormControl<Date | null>(null),
       project_description: [''],
     })
 
