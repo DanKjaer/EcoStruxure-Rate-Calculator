@@ -91,7 +91,10 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectDialogComponent, {
-      width: '10000px',
+      minHeight: '80vh',
+      maxHeight: '800px',
+      minWidth: '60vw',
+      maxWidth: '1200px',
     });
 
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
