@@ -9,12 +9,12 @@ import {NgIf} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {TeamsService} from '../services/teams.service';
-import {AddTeamDialogComponent} from '../add-team-dialog/add-team-dialog.component';
-import {Team} from '../models';
+import {TeamsService} from '../../services/teams.service';
+import {Team} from '../../models';
 import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {FormatterService} from '../services/formatter.service';
+import {FormatterService} from '../../services/formatter.service';
+import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
 
 @Component({
   selector: 'app-teams-page',

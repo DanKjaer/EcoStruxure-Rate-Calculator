@@ -16,6 +16,10 @@ export class TeamsService {
     return firstValueFrom(this.http.get<Team[]>(`${this.apiUrl}`));
   }
 
+  getTeamProfiles(id: string): Promise<TeamProfiles[]> {
+    return firstValueFrom(this.http.get<TeamProfiles[]>(`${this.apiUrl}/profiles?profileId=${id}`));
+  }
+
   postTeam(team: Team, teamProfiles: TeamProfiles[]): Promise<Team> {
     return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {team, teamProfiles}));
   }

@@ -99,6 +99,43 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
+    public List<TeamProfile> getByProfileId(UUID id) throws Exception {
+        List<TeamProfile> teams = new ArrayList<>();
+
+        String query = """
+                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours
+                       FROM dbo.teams_profiles tp
+                       INNER JOIN dbo.teams t ON t.id = tp.teamid
+                       INNER JOIN dbo.profiles p on p.profile_id = tp.profileid
+                       WHERE profileid = ?
+                """;
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                UUID teamId = (UUID) rs.getObject("teamid");
+                UUID profileId = (UUID) rs.getObject("profileId");
+                String name = rs.getString("name");
+                BigDecimal dayRate = rs.getBigDecimal("day_rate_on_team");
+                BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
+                BigDecimal allocatedCostOnTeam = rs.getBigDecimal("allocated_cost_on_team");
+                BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
+                BigDecimal annualCost = rs.getBigDecimal("annual_cost");
+                BigDecimal annualHours = rs.getBigDecimal("annual_hours");
+
+                teams.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
+                        allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours));
+            }
+            return teams;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Could not get TeamProfiles from Database. Team ID: " + id + "\n" + e.getMessage());
+        }
+    }
+
+    @Override
     public Team create(Team team) throws Exception {
         String query = """
                 INSERT INTO dbo.teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, 0, 0, FALSE, NOW())

@@ -29,6 +29,10 @@ public class TeamService {
         return teamDAO.get(id);
     }
 
+    public List<TeamProfile> getByProfileId(UUID profileId) throws Exception {
+        return teamDAO.getByProfileId(profileId);
+    }
+
     public Team get(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 

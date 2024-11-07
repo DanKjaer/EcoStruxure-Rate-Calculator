@@ -8,9 +8,9 @@ import {MatInputModule} from '@angular/material/input';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ProfileService} from '../services/profile.service';
-import {GeographyService} from '../services/geography.service';
-import {Geography, Profile} from '../models';
+import {ProfileService} from '../../services/profile.service';
+import {GeographyService} from '../../services/geography.service';
+import {Geography, Profile} from '../../models';
 
 @Component({
   selector: 'app-add-profile-dialog',

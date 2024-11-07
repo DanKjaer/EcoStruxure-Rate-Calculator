@@ -17,10 +17,9 @@ import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {NgIf} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Project, Team} from '../models';
-import {ProjectService} from '../services/project.service';
-import {FormatterService} from '../services/formatter.service';
-import {AddProjectDialogComponent} from '../add-project-dialog/add-project-dialog.component';
+import {Project} from '../../models';
+import {ProjectService} from '../../services/project.service';
+import {FormatterService} from '../../services/formatter.service';
 
 @Component({
   selector: 'app-project-page',
@@ -58,6 +57,8 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
   loading = true;
   displayedColumns: string[] = ['name', 'members', 'cost', 'margin', 'price', 'startDate', 'endDate', 'options'];
+  selectedRow: Project | null = null;
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -85,18 +86,9 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     this.datasource.paginator = this.paginator;
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProjectDialogComponent, {
-      minHeight: '80vh',
-      maxHeight: '800px',
-      minWidth: '60vw',
-      maxWidth: '1200px',
-    });
 
-    dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
-      this.datasource.data.push(project);
-      this.datasource._updateChangeSubscription();
-    });
+  openDialog() {
+
   }
 
   onDelete() {
