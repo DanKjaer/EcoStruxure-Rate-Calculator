@@ -9,11 +9,12 @@ import {NgIf} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {TeamsService} from '../../services/teams.service';
+import {Team} from '../../models';
 import {MatInput} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormatterService} from '../../services/formatter.service';
 import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
-import {Team} from '../../models';
-import {TeamsService} from '../../services/teams.service';
 
 @Component({
   selector: 'app-teams-page',
@@ -64,11 +65,14 @@ export class TeamsPageComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private teamService: TeamsService) {
+  constructor(private teamService: TeamsService, private formatter: FormatterService) {
   }
 
   async ngAfterViewInit() {
     let teams = await this.teamService.getTeams();
+    teams.forEach(team => {
+      team.updatedAtString = this.formatter.formatDateTime(team.updatedAt!);
+    });
     this.datasource.data = teams;
     this.loading = false;
     this.datasource.sort = this.sort;
