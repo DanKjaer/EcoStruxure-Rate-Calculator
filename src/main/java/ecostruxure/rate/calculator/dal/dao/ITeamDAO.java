@@ -13,7 +13,11 @@ import java.util.UUID;
 
 public interface ITeamDAO {
     List<Team> all() throws Exception;
+
     Team get(UUID id) throws Exception;
+
+    List<TeamProfile> getByProfileId(UUID id) throws Exception;
+
     Team create(Team team) throws Exception;
 
     Team create(TransactionContext context, Team team) throws Exception;

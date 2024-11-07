@@ -8,15 +8,19 @@ import {Profile} from '../models';
 })
 export class ProfileService {
 
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8080/api/profile';
   constructor(private http: HttpClient) { }
 
   getProfiles(): Promise<Profile[]> {
-    return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/profile`));
+    return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/all`));
+  }
+
+  getProfile(id: string): Promise<Profile> {
+    return firstValueFrom(this.http.get<Profile>(`${this.apiUrl}?id=${id}`));
   }
 
   postProfile(profile: Profile): Promise<Profile> {
-    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}/profile`, {profile}))
+    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}`, {profile}))
         .catch(error => {
             console.error('Error saving profile: ', error);
             throw error;
@@ -24,13 +28,11 @@ export class ProfileService {
   }
 
   putProfile(): Promise<boolean> {
-    return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/profile/{id}`, {}));
+    return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/{id}`, {}));
   }
 
   deleteProfile(profileId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/profile/${profileId}`));
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${profileId}`));
   }
-
-
 
 }

@@ -17,9 +17,9 @@ import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {NgIf} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Project, Team} from '../models';
-import {ProjectService} from '../services/project.service';
-import {FormatterService} from '../services/formatter.service';
+import {Project} from '../../models';
+import {ProjectService} from '../../services/project.service';
+import {FormatterService} from '../../services/formatter.service';
 
 @Component({
   selector: 'app-project-page',
