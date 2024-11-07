@@ -12,6 +12,8 @@ public class Project {
     private String projectDescription;
     private List<Profile> projectMembers;
     private BigDecimal projectCost;
+    private BigDecimal projectMarkup;
+    private BigDecimal ProjectGrossMargin;
     private BigDecimal projectMargin;
     private BigDecimal projectPrice;
     private LocalDate startDate;
@@ -57,6 +59,22 @@ public class Project {
 
     public void setProjectCost(BigDecimal projectCost) {
         this.projectCost = projectCost;
+    }
+
+    public BigDecimal getProjectGrossMargin() {
+        return ProjectGrossMargin;
+    }
+
+    public void setProjectGrossMargin(BigDecimal projectGrossMargin) {
+        ProjectGrossMargin = projectGrossMargin;
+    }
+
+    public BigDecimal getProjectMarkup() {
+        return projectMarkup;
+    }
+
+    public void setProjectMarkup(BigDecimal projectMarkup) {
+        this.projectMarkup = projectMarkup;
     }
 
     public BigDecimal getProjectMargin() {

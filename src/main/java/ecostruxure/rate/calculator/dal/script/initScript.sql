@@ -137,6 +137,8 @@ CREATE TABLE dbo.Project (
                          project_name VARCHAR(255) NOT NULL,
                          project_description TEXT,
                          project_cost NUMERIC(18, 2),
+                         project_markup NUMERIC(5, 2),
+                         project_gross_margin NUMERIC(5, 2),
                          project_margin NUMERIC(18, 2),
                          project_price NUMERIC(18, 2),
                          start_date DATE,
