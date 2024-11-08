@@ -26,7 +26,7 @@ public class TeamDAO implements ITeamDAO {
 
         String query = """
                 SELECT * 
-                FROM Teams 
+                FROM dbo.teams 
                 WHERE is_archived = FALSE
                 ORDER BY id DESC
                 """;
@@ -138,7 +138,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public Team create(Team team) throws Exception {
         String query = """
-                INSERT INTO Teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, 0, 0, FALSE, NOW())
+                INSERT INTO dbo.teams (name, markup, gross_margin, is_archived, updated_at) VALUES (?, 0, 0, FALSE, NOW())
                 """;
 
         try (Connection conn = dbConnector.connection();
@@ -851,8 +851,6 @@ public class TeamDAO implements ITeamDAO {
         return null;
     }
 
-
-
     @Override
     public BigDecimal getCostAllocation(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT cost_allocation FROM teams_profiles WHERE teamid = ? AND profileid = ?";
@@ -1174,36 +1172,5 @@ public class TeamDAO implements ITeamDAO {
             }
         }
         return insertedProfiles;
-    }
-
-    public boolean storeTeamProfiles(TransactionContext context, List<TeamProfile> teamProfiles) throws Exception {
-        SqlTransactionContext sqlContext = (SqlTransactionContext) context;
-        try (Connection conn = dbConnector.connection()) {
-            conn.setAutoCommit(false);
-
-            String insertTeamProfileSQL = """
-            INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, allocated_cost_on_team, hour_allocation, allocated_hours_on_team)
-            VALUES (?, ?, ?, ?, ?, ?);
-        """;
-
-            try (PreparedStatement stmt = sqlContext.connection().prepareStatement(insertTeamProfileSQL)) {
-                for (TeamProfile teamProfile : teamProfiles) {
-                    stmt.setObject(1, teamProfile.getTeamId());
-                    stmt.setObject(2, teamProfile.getProfileId());
-                    stmt.setBigDecimal(3, teamProfile.getCostAllocation());
-                    stmt.setBigDecimal(4, teamProfile.getAllocatedCostOnTeam());
-                    stmt.setBigDecimal(5, teamProfile.getHourAllocation());
-                    stmt.setBigDecimal(6, teamProfile.getAllocatedHoursOnTeam());
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-            }
-
-            conn.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Could not store team profiles in Database.\n" + e.getMessage());
-        }
-        return true;
     }
 }

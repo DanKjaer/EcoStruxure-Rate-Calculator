@@ -32,6 +32,11 @@ export interface Team {
   totalGrossMargin?: number;
 }
 
+export interface TeamDTO {
+  team: Team;
+  teamProfiles: TeamProfiles[];
+}
+
 export interface TeamProfiles {
   teamId?: string;
   profileId: string;
@@ -56,11 +61,13 @@ export interface Project {
   projectName: string;
   projectDescription: string;
   projectMembers: Profile[];
-  projectCost: number;
-  projectMargin: number;
-  projectPrice: number;
+  projectCost?: number;
+  projectMargin?: number;
+  projectPrice?: number;
   startDate: Date;
   startDateString?: string;
   endDate: Date;
   endDateString?: string;
+  projectMarkup: number;
+  projectGrossMargin: number;
 }

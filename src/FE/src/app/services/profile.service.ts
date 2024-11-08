@@ -11,6 +11,9 @@ export class ProfileService {
   private apiUrl = 'http://localhost:8080/api/profile';
   constructor(private http: HttpClient) { }
 
+  /**
+   * Gets a list of profiles
+   */
   getProfiles(): Promise<Profile[]> {
     return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/all`));
   }
@@ -19,6 +22,10 @@ export class ProfileService {
     return firstValueFrom(this.http.get<Profile>(`${this.apiUrl}?id=${id}`));
   }
 
+  /**
+   * Gets a profile
+   * @param profile
+   */
   postProfile(profile: Profile): Promise<Profile> {
     return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}`, {profile}))
         .catch(error => {
@@ -27,10 +34,17 @@ export class ProfileService {
         });
   }
 
+  /**
+   * updates a profile
+   */
   putProfile(): Promise<boolean> {
     return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/{id}`, {}));
   }
 
+  /**
+   * Deletes a profile
+   * @param profileId
+   */
   deleteProfile(profileId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${profileId}`));
   }
