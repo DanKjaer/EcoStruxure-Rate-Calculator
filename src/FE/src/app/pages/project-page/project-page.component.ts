@@ -15,12 +15,13 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {NgIf} from '@angular/common';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Project} from '../../models';
 import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-project-page',
@@ -65,7 +66,7 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private projectService: ProjectService, private formatter: FormatterService) { }
+  constructor(private projectService: ProjectService, private formatter: FormatterService, private snackBar: SnackbarService, private translate: TranslateService) { }
 
   async ngOnInit(): Promise<void> {
     this.loading = true;
@@ -108,6 +109,9 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     if (result) {
       this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
       this.datasource._updateChangeSubscription();
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
     }
   }
 

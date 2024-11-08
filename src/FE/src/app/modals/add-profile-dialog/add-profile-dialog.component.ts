@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -11,6 +11,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {ProfileService} from '../../services/profile.service';
 import {GeographyService} from '../../services/geography.service';
 import {Geography, Profile} from '../../models';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-add-profile-dialog',
@@ -39,6 +40,8 @@ export class AddProfileDialogComponent implements OnInit {
               private profileService: ProfileService,
               public dialogRef: MatDialogRef<AddProfileDialogComponent>,
               public geographyService: GeographyService,
+              private snackBar: SnackbarService,
+              private translate: TranslateService,
   ) {
   }
 
@@ -73,10 +76,6 @@ export class AddProfileDialogComponent implements OnInit {
     this.getCountries();
   }
 
-  addProfile() {
-    //todo: add profile to db and update table
-  }
-
   async onSave() {
     if (this.profileForm.valid) {
       let profile = {
@@ -90,7 +89,12 @@ export class AddProfileDialogComponent implements OnInit {
         hoursPerDay: this.profileForm.value.hours_per_day
       };
       const newProfile = await this.profileService.postProfile(profile);
-      this.profileAdded.emit(newProfile);
+      if (newProfile.profileId != undefined){
+        this.profileAdded.emit(newProfile);
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_CREATED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_CREATED'), false);
+      }
     }
   }
 }

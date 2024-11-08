@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -18,6 +18,7 @@ import {MatLabel} from '@angular/material/form-field';
 import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -48,7 +49,10 @@ import {Profile} from '../../models';
 })
 export class ProfilesPageComponent implements AfterViewInit {
 
-  constructor(private profileService: ProfileService, private router: Router) {
+  constructor(private profileService: ProfileService,
+              private router: Router,
+              private snackBar: SnackbarService,
+              private translate: TranslateService) {
   }
 
   //#region vars
@@ -102,6 +106,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.isEditingRow = false;
     delete this.originalRowData[element.id];
     //todo: update call on api
+    //remember to add snackbar
   }
 
   cancelEdit(element: any): void {
@@ -137,6 +142,9 @@ export class ProfilesPageComponent implements AfterViewInit {
     if (result) {
       this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
       this.datasource._updateChangeSubscription();
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_DELETED'), true);
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
     }
   }
 

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSort, MatSortModule} from '@angular/material/sort';
@@ -16,6 +16,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FormatterService} from '../../services/formatter.service';
 import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
 import {Router} from '@angular/router';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-teams-page',
@@ -66,7 +67,7 @@ export class TeamsPageComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private teamService: TeamsService, private formatter: FormatterService, private router: Router) {
+  constructor(private teamService: TeamsService, private formatter: FormatterService, private router: Router, private snackBar: SnackbarService, private translate: TranslateService) {
   }
 
   async ngAfterViewInit() {
@@ -96,6 +97,9 @@ export class TeamsPageComponent implements AfterViewInit {
     if (result) {
       this.datasource.data = this.datasource.data.filter((team: Team) => team.teamId !== this.selectedRow?.teamId);
       this.datasource._updateChangeSubscription();
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_DELETE'), true);
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_DELETE'), true);
     }
   }
 
@@ -116,8 +120,10 @@ export class TeamsPageComponent implements AfterViewInit {
     let result : Team | null = null;
     try{
       result = await this.teamService.putTeam(selectedTeam);
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_SAVED'), true);
     } catch (e) {
       this.cancelEdit(selectedTeam);
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_SAVED'), false);
       return;
     }
 
