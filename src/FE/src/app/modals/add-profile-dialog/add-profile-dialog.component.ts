@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatButtonModule} from '@angular/material/button';
@@ -56,12 +56,12 @@ export class AddProfileDialogComponent implements OnInit {
       name: ['', Validators.required],
       countryId: ['', Validators.required],
       currency: ['', Validators.required],
-      resource_type: [false, Validators.required],
-      annual_cost: [0],
-      annual_hours: [{value: 0, disabled: true}],
-      effectiveness: [0],
-      hours_per_day: [0],
-    })
+      resource_type: [true, Validators.required],
+      annual_cost: [''],
+      annual_hours: [{value: '', disabled: true}],
+      effectiveness: [''],
+      hours_per_day: [''],
+    });
 
     this.profileForm.get('resource_type')?.valueChanges.subscribe(value => {
       if (value == 1) {
@@ -70,7 +70,6 @@ export class AddProfileDialogComponent implements OnInit {
         this.profileForm.get('annual_hours')?.enable();
       }
     });
-
     this.getCountries();
   }
 

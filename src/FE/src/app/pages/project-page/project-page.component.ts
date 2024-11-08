@@ -20,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {Project} from '../../models';
 import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
-import {AddProjectDialogComponent} from '../../add-project-dialog/add-project-dialog.component';
+import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 
 @Component({
   selector: 'app-project-page',

@@ -84,6 +84,7 @@ export class TeamsPageComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(AddTeamDialogComponent);
 
     dialogRef.componentInstance.teamAdded.subscribe((team: Team) => {
+      team.updatedAtString = this.formatter.formatDateTime(team.updatedAt!);
       this.datasource.data.push(team);
       this.datasource._updateChangeSubscription();
     });
