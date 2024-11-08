@@ -20,6 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {Project} from '../../models';
 import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
+import {AddProjectDialogComponent} from '../../add-project-dialog/add-project-dialog.component';
 
 @Component({
   selector: 'app-project-page',
@@ -54,10 +55,11 @@ import {FormatterService} from '../../services/formatter.service';
 export class ProjectPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
 
+  displayedColumns: string[] = ['name', 'members', 'cost', 'margin', 'price', 'startDate', 'endDate', 'options'];
+
+  selectedRow: Project | null = null;
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
   loading = true;
-  displayedColumns: string[] = ['name', 'members', 'cost', 'margin', 'price', 'startDate', 'endDate', 'options'];
-  selectedRow: Project | null = null;
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -88,14 +90,28 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
 
 
   openDialog() {
+    const dialogRef = this.dialog.open(AddProjectDialogComponent, {
+      minHeight: '80vh',
+      maxHeight: '800px',
+      minWidth: '60vw',
+      maxWidth: '1200px',
+    });
 
+    dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
+      this.datasource.data.push(project);
+      this.datasource._updateChangeSubscription();
+    });
   }
 
-  onDelete() {
-
+  async onDelete() {
+    const result = await this.projectService.deleteProject(this.selectedRow?.projectId!);
+    if (result) {
+      this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
+      this.datasource._updateChangeSubscription();
+    }
   }
 
   selectRow(row: Project) {
-
+    this.selectedRow = row;
   }
 }

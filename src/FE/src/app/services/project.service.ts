@@ -8,14 +8,15 @@ import {Project} from '../models';
 })
 export class ProjectService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   private apiUrl = 'http://localhost:8080/api/projects';
 
   /**
    * Gets a list of projects
    */
-  async getProjects():Promise<Project[]> {
+  async getProjects(): Promise<Project[]> {
     return firstValueFrom(this.http.get<Project[]>(`${this.apiUrl}/all`));
   }
 
@@ -32,5 +33,12 @@ export class ProjectService {
    */
   async postProject(project: Project): Promise<Project> {
     return firstValueFrom(this.http.post<Project>(`${this.apiUrl}`, {project}));
+  }
+
+  /**
+   * Deletes a project
+   */
+   deleteProject(projectId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${projectId}`));
   }
 }

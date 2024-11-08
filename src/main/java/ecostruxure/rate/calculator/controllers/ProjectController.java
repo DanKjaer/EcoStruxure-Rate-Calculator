@@ -31,4 +31,9 @@ public class ProjectController {
     public Project createProject(@RequestBody ProjectDTO projectDTO) throws Exception {
         return projectService.createProject(projectDTO.getProject());
     }
+
+    @DeleteMapping("/{id}")
+    public boolean deleteProfile(@PathVariable UUID id) throws Exception {
+        return projectService.deleteProject(id);
+    }
 }
