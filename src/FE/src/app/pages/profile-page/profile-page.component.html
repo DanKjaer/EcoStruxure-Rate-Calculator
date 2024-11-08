@@ -1,0 +1,263 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div class="container">
+  <div class="statsContainer">
+    <div class="hourlyRateBox">
+      <p class="boxValue">
+        {{ this.statBoxes.totalHourlyRate }}
+      </p>
+      <p class="boxText">
+        {{ 'TOTAL_HOURLY_RATE' | translate }}
+      </p>
+    </div>
+    <div class="dayRateBox">
+      <p class="boxValue">
+        {{ this.statBoxes.totalDayRate }}
+      </p>
+      <p class="boxText">
+        {{ 'TOTAL_DAY_RATE' | translate }}
+      </p>
+    </div>
+    <div class="annualCostBox">
+      <p class="boxValue">
+          {{ this.statBoxes.totalAnnualCost }}
+      </p>
+      <p class="boxText">
+        {{ 'TOTAL_ANNUAL_COST' | translate }}
+      </p>
+    </div>
+    <div class="annualHoursBox">
+      <p class="boxValue">
+        {{ this.statBoxes.totalAnnualHours }}
+      </p>
+      <p class="boxText">
+        {{ 'TOTAL_ANNUAL_HOURS' | translate }}
+      </p>
+    </div>
+  </div>
+  <div class="infoContainer">
+    <div class="teamsContainer">
+      <div class="teamsTitleContainer">
+        <p>{{ 'PROFILE_TEAMS' | translate }}</p>
+        <mat-form-field class="searchInput" appearance="outline">
+          <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
+          <input matInput inputmode="search" type="search">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <button mat-stroked-button>
+          <mat-icon>
+            add
+          </mat-icon>
+          {{ 'ADD_TO_TEAM' | translate }}
+        </button>
+      </div>
+      <div class="tableContainer">
+        <table class="profileTeamsTable" mat-table [dataSource]="datasource">
+          <!-- name -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'NAME' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['name'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- hour allocation -->
+          <ng-container matColumnDef="hour allocation">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'HOUR_ALLOCATION' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['allocatedHoursOnTeam'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- annual hours -->
+          <ng-container matColumnDef="annual hours">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'ANNUAL_HOURS' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['annualHours'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- cost allocation -->
+          <ng-container matColumnDef="cost allocation">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'COST_ALLOCATION' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['allocatedCostOnTeam'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- hourly rate -->
+          <ng-container matColumnDef="hourly rate">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'HOURLY_RATE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['dayRateOnTeam'] / this.currentProfile!.hoursPerDay! }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- day rate -->
+          <ng-container matColumnDef="day rate">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'DAY_RATE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['dayRateOnTeam'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- annual cost -->
+          <ng-container matColumnDef="annual cost">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'ANNUAL_COST' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['annualCost'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- options button -->
+          <ng-container matColumnDef="options">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'OPTIONS' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <div class="spinnerContainer" *ngIf="loading">
+          <!-- Display spinner when loading -->
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="profileForm" class="profileContainer" [formGroup]="profileForm">
+      {{ 'CURRENT_PROFILE' | translate }}
+      <mat-form-field>
+        <mat-label>{{ 'NAME' | translate }}</mat-label>
+        <input matInput placeholder="John Doe" formControlName="name">
+      </mat-form-field>
+      <div class="groupContainer">
+        <div>
+          <!-- location select -->
+          <mat-form-field>
+            <mat-label>{{ 'LOCATION' | translate }}</mat-label>
+            <mat-select formControlName="location">
+              @for (location of locations; track location) {
+                <mat-option [value]="location.id">
+                  {{ location.name }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div>
+          <!-- currency select -->
+          <mat-form-field>
+            <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
+            <mat-select formControlName="currency">
+              @for (currency of currencies; track currency) {
+                <mat-option [value]="currency.valueOf()">
+                  {{ currency }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- resource type select -->
+      {{ 'RESOURCE_TYPE' | translate }}
+      <div class="groupContainer">
+        <mat-radio-group formControlName="resource_type">
+          <mat-radio-button [value]="true">
+            {{ 'OVERHEAD' | translate }}
+          </mat-radio-button>
+          <mat-radio-button [value]="false">
+            {{ 'PRODUCTION' | translate }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- annually inputs -->
+      {{ 'ANNUALLY' | translate }}
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="annual_cost">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'ANNUAL_HOURS' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="annual_hours">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- modifiers input -->
+      {{ 'MODIFIERS' | translate }}
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'EFFECTIVENESS' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="effectiveness">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'HOURS_PER_DAY' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="hours_per_day">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="buttonContainer">
+        <button mat-stroked-button (click)="update()">
+          <mat-icon>check</mat-icon>
+          {{ 'UPDATE' | translate }}
+        </button>
+        <button mat-stroked-button (click)="undo()">
+          <mat-icon>undo</mat-icon>
+          {{ 'UNDO' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>remove</mat-icon>
+    {{ 'REMOVE' | translate }}
+  </button>
+</mat-menu>

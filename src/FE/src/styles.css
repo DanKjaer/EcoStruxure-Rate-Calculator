@@ -4,7 +4,7 @@ div {
   line-height: 100%;
   letter-spacing: -0.050rem;
   margin: 0;
-  font-family: "Segoe UI";
+  font-family: "Segoe UI", serif;
 }
 
 h1 {
@@ -13,7 +13,7 @@ h1 {
   line-height: 100%;
   letter-spacing: -0.125rem;
   margin: 0;
-  font-family: "Segoe UI";
+  font-family: "Segoe UI", serif;
 }
 
 p {
@@ -39,17 +39,51 @@ main {
 
 html, body {
   height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 body {
-  margin: 0;
-  font-family: "Segoe UI";
+  font-family: "Segoe UI", serif;
 }
 
 button {
   color: white;
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 100%;
-  font-family: "Segoe UI";
+  font-family: "Segoe UI", serif;
+}
+
+.mat-mdc-menu-panel {
+  height: fit-content;
+}
+
+.mat-mdc-tooltip  {
+  white-space: pre-line;
+}
+
+.error-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface{
+    color: red;
+  }
+
+  .mat-mdc-button{
+    color: red !important;
+  }
+
+  max-width: fit-content;
+}
+
+.success-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface{
+    color: limegreen;
+  }
+
+  .mat-mdc-button{
+    color: limegreen !important;
+  }
+
+  max-width: fit-content;
 }

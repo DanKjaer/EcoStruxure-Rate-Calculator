@@ -13,16 +13,20 @@ import java.util.UUID;
 
 public interface ITeamDAO {
     List<Team> all() throws Exception;
+
     Team get(UUID id) throws Exception;
+
+    List<TeamProfile> getByProfileId(UUID id) throws Exception;
+
     Team create(Team team) throws Exception;
 
     Team create(TransactionContext context, Team team) throws Exception;
 
-    boolean update(Team team) throws Exception;
+    Team update(UUID teamId, Team team) throws Exception;
 
     void updateMultipliers(Team team) throws Exception;
 
-    boolean assignProfiles(Team team, List<Profile> profiles) throws Exception;
+    boolean assignProfiles(Team team, List<TeamProfile> teamProfiles) throws Exception;
 
     boolean assignProfiles(TransactionContext context, Team team, List<Profile> profiles) throws Exception;
 
@@ -50,7 +54,7 @@ public interface ITeamDAO {
 
     List<Profile> canUnarchive(UUID teamId) throws Exception;
 
-    boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws Exception;
+    boolean removeProfileFromTeam(UUID teamId, UUID profileId) throws SQLException;
 
     boolean removeProfileFromTeam(TransactionContext context, UUID teamId, UUID profileId) throws Exception;
 
@@ -68,18 +72,24 @@ public interface ITeamDAO {
 
     void updateAllocatedCostAndHour(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
-    void updateAllocatedCost(UUID teamId, UUID profileId, BigDecimal allocatedCost) throws SQLException;
-
-    void updateAllocatedHour(UUID teamId, UUID profileId, BigDecimal allocatedHour) throws SQLException;
-
-
     void updateDayRateOnTeam(UUID teamid, UUID profileId, BigDecimal dayRate) throws SQLException;
 
     void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException;
 
-    boolean storeTeamProfiles(TransactionContext context, List<TeamProfile> teamProfiles) throws Exception;
-
     List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
-    void updateTeamRateCostHours(UUID teamId, BigDecimal hourlyRate, BigDecimal totalAllocatedCost, BigDecimal totalAllocatedHours) throws SQLException;
+    void updateTeamRateCostHours(Team team) throws SQLException;
+
+    void assignProfilesToTeam(UUID teamId, List<TeamProfile> profiles) throws SQLException;
+
+    void updateDayRateOnTeam(List<TeamProfile> teamProfiles) throws SQLException;
+
+    boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException;
+
+    TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException;
+
+    void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException;
+
+    void updateTotalAllocationOfProfilesOnDelete(List<Profile> profiles) throws SQLException;
+
 }

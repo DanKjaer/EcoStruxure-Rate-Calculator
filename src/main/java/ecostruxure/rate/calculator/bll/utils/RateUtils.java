@@ -1,7 +1,7 @@
 package ecostruxure.rate.calculator.bll.utils;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.gui.component.profile.ProfileTeamItemModel;
+import ecostruxure.rate.calculator.be.ProfileTeamItemModel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -89,7 +89,6 @@ public class RateUtils {
         if (profile.getAnnualHours().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO.setScale(GENERAL_SCALE, ROUNDING_MODE);
         }
-
         BigDecimal effectiveness = profile.getEffectivenessPercentage().divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
         // Calculate the effective work hours based on annual hours and effectiveness percentage
         BigDecimal effectiveWorkHours = profile.getAnnualHours().multiply(effectiveness).setScale(GENERAL_SCALE, ROUNDING_MODE);

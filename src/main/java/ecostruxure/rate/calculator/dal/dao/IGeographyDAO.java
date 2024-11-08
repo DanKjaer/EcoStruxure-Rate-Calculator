@@ -9,6 +9,8 @@ import java.util.List;
 public interface IGeographyDAO {
     ArrayList<Geography> all() throws Exception;
 
+    List<Geography> getGeographies() throws Exception;
+
     List<Geography> allExceptCountries() throws Exception;
 
     List<Geography> allOnlyCountries() throws Exception;

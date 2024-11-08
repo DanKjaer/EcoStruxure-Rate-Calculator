@@ -32,6 +32,8 @@ public class ProfileDAO implements IProfileDAO {
         BigDecimal hoursPerDay = rs.getBigDecimal("hours_per_day");
         BigDecimal effectivenessPercentage = rs.getBigDecimal("effectiveness");
         BigDecimal effectiveWorkHours = rs.getBigDecimal("effective_work_hours");
+        BigDecimal totalCostAllocation = rs.getBigDecimal("total_cost_allocation");
+        BigDecimal totalHoursAllocation = rs.getBigDecimal("total_hour_allocation");
         //boolean archived = rs.getBoolean("is_archived");
         Timestamp updatedAt = rs.getTimestamp("updated_at");
 
@@ -46,6 +48,8 @@ public class ProfileDAO implements IProfileDAO {
                 .setHoursPerDay(hoursPerDay)
                 .setEffectivenessPercentage(effectivenessPercentage)
                 .setEffectiveWorkHours(effectiveWorkHours)
+                .setTotalCostAllocation(totalCostAllocation)
+                .setTotalHoursAllocation(totalHoursAllocation)
                 //.setArchived(archived)
                 .setUpdatedAt(updatedAt)
                 .build();
@@ -187,7 +191,6 @@ public class ProfileDAO implements IProfileDAO {
     @Override
     public Profile get(UUID profileId) throws Exception {
         Profile profile = null;
-        //INNER JOIN dbo.Profiles_data ON dbo.Profiles.id = dbo.Profiles_data.id
         String query = """
                        SELECT * FROM dbo.Profiles
 
@@ -200,13 +203,14 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
+                    profile.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    profile.setArchived(rs.getBoolean("is_archived"));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Could not get Profile from Database. Profile ID: " + profileId + "\n" + e.getMessage());
         }
-        //System.out.println("Profile id: " + Objects.requireNonNull(profile).getProfileId());
         if (profile == null) throw new Exception("Profile with ID " + profileId + " not found.");
 
         return profile;
@@ -615,12 +619,12 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public boolean update(Profile profile) throws Exception {
+    public boolean update(UUID profileId, Profile profile) throws Exception {
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_salary = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
-                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_arhived = ?, updated_at = CURRENT_TIMESTAMP
-                                  WHERE id = ?;
+                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
+                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
+                                  WHERE profile_id = ?;
                                   """;
 
         try (Connection conn = dbConnector.connection();
@@ -637,7 +641,7 @@ public class ProfileDAO implements IProfileDAO {
             updateProfileStmt.setInt(8, profile.getCountryId());
             updateProfileStmt.setBoolean(9, profile.isResourceType());
             updateProfileStmt.setBoolean(10, profile.isArchived());
-            updateProfileStmt.setObject(11, profile.getProfileId());
+            updateProfileStmt.setObject(11, profileId);
             updateProfileStmt.executeUpdate();
 
             conn.commit();
@@ -684,10 +688,8 @@ public class ProfileDAO implements IProfileDAO {
         }
     }
 
-
-
     @Override
-    public boolean archive(Profile profile, boolean shouldArchive) throws Exception {
+    public boolean archive(UUID profileId, boolean shouldArchive) throws Exception {
         String query = """
                        UPDATE dbo.Profiles SET is_archived = ?, updated_at = CURRENT_TIMESTAMP WHERE profile_id = ?;
                        """;
@@ -695,7 +697,7 @@ public class ProfileDAO implements IProfileDAO {
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, shouldArchive);
-            stmt.setObject(2, profile.getProfileId());
+            stmt.setObject(2, profileId);
 
             stmt.executeUpdate();
             return true;
@@ -704,6 +706,7 @@ public class ProfileDAO implements IProfileDAO {
             throw new Exception("Could not archive Profile in Database.\n" + e.getMessage());
         }
     }
+
     // Updatere flere profiler på en gang, er det nødvendigt?
     @Override
     public boolean archive(List<Profile> profiles) throws Exception {

@@ -4,6 +4,10 @@ DROP TABLE IF EXISTS dbo.Teams_profiles;
 
 DROP TABLE IF EXISTS dbo.Profiles_history;
 
+DROP TABLE IF EXISTS dbo.Project_Members;
+
+DROP TABLE IF EXISTS dbo.Project;
+
 DROP TABLE IF EXISTS dbo.Profiles;
 
 DROP TABLE IF EXISTS dbo.Teams;
@@ -34,7 +38,9 @@ CREATE TABLE dbo.Teams (
                            day_rate                    DECIMAL(10, 2),
                            hourly_rate                 DECIMAL(10, 2),
                            total_allocated_cost        DECIMAL(19, 2),
-                           total_allocated_hours       DECIMAL(10, 2)
+                           total_allocated_hours       DECIMAL(10, 2),
+                           total_markup                DECIMAL(19, 2),
+                           total_gross_margin          DECIMAL(19, 2)
 );
 
 CREATE TABLE dbo.Countries (
@@ -54,8 +60,8 @@ CREATE TABLE dbo.geography (
 CREATE TABLE dbo.geography_countries (
                                          geography    int NOT NULL,
                                          code         VARCHAR(10) NOT NULL,
-                                         FOREIGN KEY (geography) REFERENCES geography(id),
-                                         FOREIGN KEY (code) REFERENCES Countries(code)
+                                         FOREIGN KEY (geography) REFERENCES dbo.geography(id),
+                                         FOREIGN KEY (code) REFERENCES dbo.Countries(code)
 );
 
 
@@ -70,9 +76,11 @@ CREATE TABLE dbo.Profiles (
                               annual_hours            DECIMAL(7, 2),
                               effective_work_hours    DECIMAL(10, 2),
                               hours_per_day           DECIMAL(4, 2), -- -99.99 - 99.99
+                              total_cost_allocation   DECIMAL(6, 2),
+                              total_hour_allocation   DECIMAL(6, 2),
                               is_archived             BOOLEAN DEFAULT FALSE,
                               updated_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                              FOREIGN KEY (country_id) REFERENCES geography(id)
+                              FOREIGN KEY (country_id) REFERENCES dbo.geography(id)
 );
 
 
@@ -85,20 +93,20 @@ CREATE TABLE dbo.Profiles_history (
                                       annual_hours             DECIMAL(7, 2) NOT NULL,
                                       hours_per_day            DECIMAL(4, 2) NOT NULL,
                                       updated_at               TIMESTAMP NOT NULL,
-                                      FOREIGN KEY (profile_id) REFERENCES Profiles(profile_id)
+                                      FOREIGN KEY (profile_id) REFERENCES dbo.Profiles(profile_id)
 );
 
 
 CREATE TABLE dbo.Teams_profiles (
                                     teamId                       UUID NOT NULL,
-                                    profileId                    UUID,
+                                    profileId                    UUID NOT NULL,
                                     cost_allocation              DECIMAL(10, 2) NOT NULL,
                                     allocated_cost_on_team       DECIMAL(10, 2),
                                     hour_allocation              DECIMAL(10, 2) NOT NULL,
                                     allocated_hours_on_team       DECIMAL(10, 2),
                                     day_rate_on_team             DECIMAL(10, 2),
-                                    FOREIGN KEY (teamId) REFERENCES Teams(id),
-                                    FOREIGN KEY (profileId) REFERENCES Profiles(profile_id)
+                                    FOREIGN KEY (teamId) REFERENCES dbo.Teams(id),
+                                    FOREIGN KEY (profileId) REFERENCES dbo.Profiles(profile_id)
 );
 
 
@@ -119,9 +127,29 @@ CREATE TABLE dbo.Teams_profiles_history (
                                             profile_annual_cost              DECIMAL(19, 2),
                                             profile_annual_hours             DECIMAL(10, 2),
                                             updated_at                       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                                            FOREIGN KEY (team_id)            REFERENCES Teams(id),
-                                            FOREIGN KEY (profile_id)         REFERENCES Profiles(profile_id),
-                                            FOREIGN KEY (profile_history_id) REFERENCES Profiles_history(history_id)
+                                            FOREIGN KEY (team_id)            REFERENCES dbo.Teams(id),
+                                            FOREIGN KEY (profile_id)         REFERENCES dbo.Profiles(profile_id),
+                                            FOREIGN KEY (profile_history_id) REFERENCES dbo.Profiles_history(history_id)
+);
+
+CREATE TABLE dbo.Project (
+                         project_id UUID PRIMARY KEY,
+                         project_name VARCHAR(255) NOT NULL,
+                         project_description TEXT,
+                         project_cost NUMERIC(18, 2),
+                         project_markup NUMERIC(5, 2),
+                         project_gross_margin NUMERIC(5, 2),
+                         project_margin NUMERIC(18, 2),
+                         project_price NUMERIC(18, 2),
+                         start_date DATE,
+                         end_date DATE
+);
+
+-- Creating a junction table for projectMembers since it's a many-to-many relationship
+CREATE TABLE dbo.Project_Members (
+                                 project_id UUID REFERENCES dbo.Project(project_id),
+                                 profile_id UUID REFERENCES dbo.Profiles(profile_id),
+                                 PRIMARY KEY (project_id, profile_id)
 );
 
 
@@ -973,11 +1001,11 @@ VALUES
     (290, 'US'), (290, 'CA'), (290, 'MX'), (290, 'GT'), (290, 'BZ'), (290, 'CU'), (290, 'DO'), (290, 'HT'),
     (290, 'HN'), (290, 'SV'), (290, 'NI'), (290, 'CR'), (290, 'PA');
 
-INSERT INTO dbo.Teams (id, name, markup, gross_margin, day_rate, hourly_rate, total_allocated_cost, total_allocated_hours)
+INSERT INTO dbo.Teams (id, name, markup, gross_margin, day_rate, hourly_rate, total_allocated_cost, total_allocated_hours, total_markup, total_gross_margin)
 VALUES
-    ('937b379c-c326-4db2-9575-8313f59ddf2c', 'Low cost team', 10.00, 20.00, 208.00, 26.00, 160000, 6240),
-    ('67e1e024-e589-4637-af32-e9ebc0303c9c', 'Medium cost team', 25.00, 40.00, 384.00, 48.00, 300000, 6240),
-    ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', 'High cost team', 20.00, 35.00, 536.00, 67.00, 420000, 6240);
+    ('937b379c-c326-4db2-9575-8313f59ddf2c', 'Low cost team', 10.00, 20.00, 208.00, 26.00, 160000, 6240, 176000, 211200),
+    ('67e1e024-e589-4637-af32-e9ebc0303c9c', 'Medium cost team', 25.00, 40.00, 384.00, 48.00, 300000, 6240, 375000, 525000),
+    ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', 'High cost team', 20.00, 35.00, 536.00, 67.00, 420000, 6240, 504000, 680400);
 
 INSERT INTO dbo.Profiles (
     profile_id,
@@ -990,20 +1018,22 @@ INSERT INTO dbo.Profiles (
     effectiveness,
     annual_hours,
     effective_work_hours,
-    hours_per_day
+    hours_per_day,
+    total_cost_allocation,
+    total_hour_allocation
 )
 VALUES
-    ('24c2b2f8-47f0-4c8b-b55d-cb49996feb44', 'Cheap profile 1', 'EUR', 39, FALSE, FALSE, 40000.0000, 80, 2080.00, 1664, 8.00), -- IT consultant in North America
-    ('44656c14-5882-4247-a0eb-7dc9253ec923', 'Cheap profile 2', 'EUR', 13, FALSE, FALSE, 40000.0000, 80, 2080.00, 1664, 8.00), -- Project manager in Europe
-    ('071495d6-cfce-46f2-a6fd-5a77ca4fbdea', 'Cheap profile 3', 'EUR', 107, FALSE, FALSE, 40000.0000, 80, 2080.00, 1664, 8.00), -- Developer in Asia
-    ('869877f5-b85c-4abb-890a-8de561c82641', 'Cheap manager', 'EUR', 261, TRUE, FALSE, 40000.0000, 80, 0.00, 0, 8.00), -- Support specialist in Latin America
-    ('a2f4d5d8-bd00-4f6d-a3d9-51cf4463d91e', 'Medium profile 1', 'EUR', 2, FALSE, FALSE, 80000.0000, 80, 2080.00, 1664, 8.00), -- Security analyst in the Middle East
-    ('5910ffa5-6ef2-44d6-9d89-a7d642810536', 'Medium profile 2', 'EUR', 39, FALSE, FALSE, 80000.0000, 80, 2080.00, 1664, 8.00), -- Part-time executive in Canada
-    ('0a2d65d5-e379-4145-a153-a4f509954b65', 'Medium profile 3', 'EUR', 13, FALSE, FALSE, 80000.0000, 80, 2080.00, 1664, 8.00), -- Full-time consultant in Germany
-    ('317f43ef-569c-4a1b-b881-edad7eb79db7', 'High profile 1', 'EUR', 107, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00), -- Part-time developer in India
-    ('92ac4d45-af92-475c-acb1-af2c626d86b0', 'High profile 2', 'EUR', 78, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00), -- Part-time project manager in the UK
-    ('2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', 'High profile 3', 'EUR', 14, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00), -- Overtime specialist in Australia
-    ('50b601e3-dd42-422b-ac43-1aae17dff125', 'High medium manager', 'EUR', 32, True, FALSE, 120000.0000, 80, 0.00, 0, 8.00); -- Standard worker in Brazil
+    ('24c2b2f8-47f0-4c8b-b55d-cb49996feb44', 'Cheap profile 1', 'EUR', 39, FALSE, FALSE, 40000.0000, 80, 2080.00, 1664, 8.00, 100.00, 100.00), -- IT consultant in North America
+    ('44656c14-5882-4247-a0eb-7dc9253ec923', 'Cheap profile 2', 'EUR', 13, FALSE, FALSE, 40000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Project manager in Europe
+    ('071495d6-cfce-46f2-a6fd-5a77ca4fbdea', 'Cheap profile 3', 'EUR', 107, FALSE, FALSE, 40000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Developer in Asia
+    ('869877f5-b85c-4abb-890a-8de561c82641', 'Cheap manager', 'EUR', 261, TRUE, FALSE, 40000.0000, 80, 0.00, 0, 8.00,100.00, 100.00), -- Support specialist in Latin America
+    ('a2f4d5d8-bd00-4f6d-a3d9-51cf4463d91e', 'Medium profile 1', 'EUR', 2, FALSE, FALSE, 80000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Security analyst in the Middle East
+    ('5910ffa5-6ef2-44d6-9d89-a7d642810536', 'Medium profile 2', 'EUR', 39, FALSE, FALSE, 80000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Part-time executive in Canada
+    ('0a2d65d5-e379-4145-a153-a4f509954b65', 'Medium profile 3', 'EUR', 13, FALSE, FALSE, 80000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Full-time consultant in Germany
+    ('317f43ef-569c-4a1b-b881-edad7eb79db7', 'High profile 1', 'EUR', 107, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Part-time developer in India
+    ('92ac4d45-af92-475c-acb1-af2c626d86b0', 'High profile 2', 'EUR', 78, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Part-time project manager in the UK
+    ('2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', 'High profile 3', 'EUR', 14, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Overtime specialist in Australia
+    ('50b601e3-dd42-422b-ac43-1aae17dff125', 'High medium manager', 'EUR', 32, True, FALSE, 120000.0000, 80, 0.00, 0, 8.00,100.00, 100.00); -- Standard worker in Brazil
 
 
 INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, hour_allocation, allocated_cost_on_team, allocated_hours_on_team, day_rate_on_team)
@@ -1062,3 +1092,25 @@ VALUES
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '92ac4d45-af92-475c-acb1-af2c626d86b0', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-19 22:54:50.373'),
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-20 22:54:50.373'),
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '50b601e3-dd42-422b-ac43-1aae17dff125', null, 'TEAM_CREATED', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2024-05-20 22:54:50.373');
+
+INSERT INTO dbo.project (project_id,
+                         project_name,
+                         project_description,
+                         project_cost,
+                         project_margin,
+                         project_price,
+                         start_date,
+                         end_date)
+VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
+        'Cheap Project',
+        'Some poor people wanted help',
+        160000,
+        176000,
+        211200,
+        '2024-05-15',
+        '2025-05-15');
+
+INSERT INTO dbo.project_members (project_id, profile_id)
+VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '24c2b2f8-47f0-4c8b-b55d-cb49996feb44'),
+        ('769f922a-6e19-40d5-b46d-8ebd43960736', '44656c14-5882-4247-a0eb-7dc9253ec923'),
+        ('769f922a-6e19-40d5-b46d-8ebd43960736', '869877f5-b85c-4abb-890a-8de561c82641');

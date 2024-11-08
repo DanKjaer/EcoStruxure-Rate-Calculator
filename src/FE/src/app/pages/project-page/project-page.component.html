@@ -1,0 +1,123 @@
+<div class="container">
+  <div class="titleContainer">
+    <span>
+      {{ 'PROJECTS' | translate }}
+    </span>
+    <div class="buttonContainer">
+      <button mat-raised-button (click)="openDialog()">
+        <mat-icon>
+          add
+        </mat-icon>
+        {{ 'ADD_NEW_PROJECT' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="underTitleContainer">
+    <span *ngIf="!loading">
+      {{ 'TOTAL_PROJECTS' | translate }} {{ datasource.data.length }}
+    </span>
+  </div>
+  <div class="paginatorContainer">
+    <mat-paginator class="paginator" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+  <div class="tableContainer">
+    <table class="projectsTable" mat-table [dataSource]="datasource" matSort>
+      <!-- Project name -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'PROJECT_NAME' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['projectName'] }}
+        </td>
+      </ng-container>
+
+      <!-- Number of members of project -->
+      <ng-container matColumnDef="members">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'MEMBERS_OF_PROJECT' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['projectMembers'].length }}
+        </td>
+      </ng-container>
+
+      <!-- Man hour costs -->
+      <ng-container matColumnDef="cost">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'PROJECT_COST' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['projectCost'] }}
+        </td>
+      </ng-container>
+
+      <!-- Cost + Margin -->
+      <ng-container matColumnDef="margin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'PROJECT_COST_WITH_MARKUP' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['projectMargin'] }}
+        </td>
+      </ng-container>
+
+      <!-- End price - what customer pays -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'PROJECT_TOTAL_PRICE' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['projectPrice'] }}
+        </td>
+      </ng-container>
+
+      <!-- Start date for project-->
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'PROJECT_START_DATE' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['startDateString'] }}
+        </td>
+      </ng-container>
+
+      <!-- End date for project-->
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'PROJECT_END_DATE' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['endDateString'] }}
+        </td>
+      </ng-container>
+
+      <!-- options button -->
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'OPTIONS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="!loading" (click)="selectRow(row)">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>edit</mat-icon>
+    {{ 'EDIT' | translate }}
+  </button>
+  <button mat-menu-item (click)="onDelete()">
+    <mat-icon>delete</mat-icon>
+    {{ 'DELETE' | translate }}
+  </button>
+</mat-menu>

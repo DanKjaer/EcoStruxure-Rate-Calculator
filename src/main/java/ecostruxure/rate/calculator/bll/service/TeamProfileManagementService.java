@@ -65,6 +65,12 @@ public class TeamProfileManagementService {
         });
     }
 
+    public List<TeamProfile> getTeamProfiles(UUID teamId) throws Exception {
+        if (teamId == null) throw new IllegalArgumentException("Team id must be greater than 0");
+
+        return teamDAO._getTeamProfiles(teamId);
+    }
+
     public boolean assignProfilesToTeam(Team team, List<Profile> profiles) throws Exception {
         return transactionManager.executeTransaction(context -> {
             LocalDateTime now = LocalDateTime.now();
@@ -78,32 +84,6 @@ public class TeamProfileManagementService {
                 ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
                 historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.ASSIGNED_PROFILE, profileMetrics, now);
             }
-            return true;
-        });
-    }
-
-    public boolean storeProfilesToTeam(Team team, List<TeamProfile> teamProfiles) throws Exception {
-        return transactionManager.executeTransaction(context -> {
-            LocalDateTime now = LocalDateTime.now();
-            boolean assigned = teamDAO.storeTeamProfiles(context, teamProfiles);
-
-            if(!assigned) return false;
-            List<Profile> storedProfiles = teamDAO.getTeamProfiles(context, team.getTeamId());
-
-            System.out.println("Stored Profiles Size: " + (storedProfiles != null ? storedProfiles.size() : "null"));
-
-            TeamMetrics metrics = calculateMetrics(team.getTeamId(), storedProfiles, context);
-
-            for (Profile profile : storedProfiles) {
-                UUID profileHistoryId = historyDAO.getLatestProfileHistoryId(context, profile.getProfileId());
-                ProfileMetrics profileMetrics = calculateMetrics(profile, team, context);
-                System.out.println("Profile ID: " + profile.getProfileId());
-                System.out.println("Profile History ID: " + profileHistoryId);
-                System.out.println("Profile Metrics: " + profileMetrics);
-
-                historyDAO.insertTeamProfileHistory(context, team.getTeamId(), profile.getProfileId(), profileHistoryId, metrics, Reason.ASSIGNED_PROFILE, profileMetrics, now);
-            }
-
             return true;
         });
     }
@@ -231,11 +211,5 @@ public class TeamProfileManagementService {
 
             return new TeamMetrics(hourlyRate, dayRate, annualCost, totalHours);
         }
-    }
-
-    public List<TeamProfile> getTeamProfiles(UUID teamId) throws Exception {
-        if (teamId == null) throw new IllegalArgumentException("Team id must be greater than 0");
-
-        return teamDAO._getTeamProfiles(teamId);
     }
 }
