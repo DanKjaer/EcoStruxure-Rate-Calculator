@@ -18,6 +18,7 @@ import {MatListModule, MatSelectionListChange} from '@angular/material/list';
 import {TeamsService} from '../../services/teams.service';
 import {ProfileService} from '../../services/profile.service';
 import {Profile, Team, TeamProfiles} from '../../models';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-add-team-dialog',
@@ -44,7 +45,7 @@ export class AddTeamDialogComponent implements OnInit {
   selectedProfiles: Profile[] = [];
   @Output() teamAdded = new EventEmitter<Team>();
 
-  constructor(private fb: FormBuilder, private teamService: TeamsService, private profileService: ProfileService) {
+  constructor(private fb: FormBuilder, private teamService: TeamsService, private profileService: ProfileService, private snackBar: SnackbarService) {
   }
 
   async ngOnInit() {
@@ -75,6 +76,7 @@ export class AddTeamDialogComponent implements OnInit {
     });
     const newTeam = await this.teamService.postTeam(team, teamProfiles);
     this.teamAdded.emit(newTeam);
+    this.snackBar.openSnackBar('Team added successfully', true);
   }
 
   onSelectionChange($event: MatSelectionListChange) {

@@ -63,3 +63,12 @@ button {
 .mat-mdc-tooltip  {
   white-space: pre-line;
 }
+
+.error-snackbar {
+  background-color: #f44336;
+  color
+}
+
+.success-snackbar {
+  background-color: #4caf50;
+}
