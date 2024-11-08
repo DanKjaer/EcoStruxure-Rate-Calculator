@@ -179,6 +179,26 @@ public class ProjectDAO implements IProjectDAO {
 
     @Override
     public boolean deleteProject(UUID projectId) throws SQLException {
-        return false;
+        String deleteProjectMembersQuery = """
+                DELETE FROM dbo.project_members WHERE project_id = ?;
+                """;
+        String query ="""
+                DELETE FROM dbo.project WHERE project_id = ?;
+                """;
+
+        try(Connection conn = dbConnector.connection();
+            PreparedStatement deleteProjectMembersStmt = conn.prepareStatement(deleteProjectMembersQuery);
+            PreparedStatement deleteProject = conn.prepareStatement(query)) {
+
+            deleteProjectMembersStmt.setObject(1, projectId);
+            deleteProjectMembersStmt.executeUpdate();
+
+            deleteProject.setObject(1, projectId);
+            deleteProject.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
