@@ -6,7 +6,7 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
@@ -19,6 +19,7 @@ import {
 } from '@angular/material/datepicker';
 import { ChangeDetectorRef } from '@angular/core';
 import {ProjectService} from '../../services/project.service';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-add-project-dialog',
@@ -54,7 +55,9 @@ export class AddProjectDialogComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private profileService: ProfileService,
               private projectService: ProjectService,
-              private ChangeDetectorRef: ChangeDetectorRef) {
+              private ChangeDetectorRef: ChangeDetectorRef,
+              private snackBar: SnackbarService,
+              private translate: TranslateService) {
   }
 
   async ngOnInit() {
@@ -91,7 +94,12 @@ export class AddProjectDialogComponent implements OnInit {
         projectGrossMargin: this.projectForm.value.projectGrossMargin,
       }
       const newProject = await this.projectService.postProject(project)
-      this.projectAdded.emit(newProject);
+      if (newProject) {
+        this.projectAdded.emit(newProject);
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_CREATED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_CREATED'), false);
+      }
     }
   }
 }
