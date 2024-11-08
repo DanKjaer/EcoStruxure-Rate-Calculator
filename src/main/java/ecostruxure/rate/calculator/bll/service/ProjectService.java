@@ -32,4 +32,8 @@ public class ProjectService {
 
         return newProject;
     }
+
+    public boolean deleteProject(UUID projectId) throws SQLException {
+        return projectDAO.deleteProject(projectId);
+    }
 }
