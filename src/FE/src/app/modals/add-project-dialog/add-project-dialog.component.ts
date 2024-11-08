@@ -17,6 +17,7 @@ import {ProfileService} from '../../services/profile.service';
 import {
   MatDatepickerModule
 } from '@angular/material/datepicker';
+import { ChangeDetectorRef } from '@angular/core';
 import {ProjectService} from '../../services/project.service';
 
 @Component({
@@ -51,9 +52,9 @@ export class AddProjectDialogComponent implements OnInit {
 
 
   constructor(private formBuilder: FormBuilder,
-              public dialogRef: MatDialogRef<AddProjectDialogComponent>,
               private profileService: ProfileService,
-              private projectService: ProjectService) {
+              private projectService: ProjectService,
+              private ChangeDetectorRef: ChangeDetectorRef) {
   }
 
   async ngOnInit() {
@@ -71,6 +72,7 @@ export class AddProjectDialogComponent implements OnInit {
     });
 
     this.profileList = await this.profileService.getProfiles();
+    this.ChangeDetectorRef.detectChanges();
   }
 
   onSelectionChange($event: MatSelectionListChange) {
