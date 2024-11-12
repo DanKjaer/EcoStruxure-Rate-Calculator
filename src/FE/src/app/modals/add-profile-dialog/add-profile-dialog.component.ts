@@ -57,7 +57,7 @@ export class AddProfileDialogComponent implements OnInit {
   ngOnInit() {
     this.profileForm = this.formBuilder.group({
       name: ['', Validators.required],
-      countryId: ['', Validators.required],
+      geography: ['', Validators.required],
       currency: ['', Validators.required],
       resource_type: [true, Validators.required],
       annual_cost: [''],
@@ -80,7 +80,7 @@ export class AddProfileDialogComponent implements OnInit {
     if (this.profileForm.valid) {
       let profile = {
         name: this.profileForm.value.name,
-        geography: this.profileForm.value.geography.id,
+        geography: this.profileForm.value.geography,
         currency: this.profileForm.value.currency,
         resourceType: this.profileForm.value.resource_type,
         annualCost: this.profileForm.value.annual_cost,

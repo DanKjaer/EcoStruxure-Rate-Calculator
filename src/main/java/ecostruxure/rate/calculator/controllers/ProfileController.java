@@ -29,8 +29,6 @@ public class ProfileController {
 
     @PostMapping
     public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
-
-        System.out.println("Create profile: " + profileDTO.getProfile().getAnnualCost());
         return profileService.create(profileDTO.getProfile());
     }
 
