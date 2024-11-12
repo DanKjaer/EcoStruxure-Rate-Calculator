@@ -90,6 +90,8 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
       projects.forEach(project => {
         project.startDateString = this.formatter.formatDate(project.projectStartDate);
         project.endDateString = this.formatter.formatDate(project.projectEndDate);
+
+        project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
       });
       this.datasource.data = projects;
     } catch (error) {

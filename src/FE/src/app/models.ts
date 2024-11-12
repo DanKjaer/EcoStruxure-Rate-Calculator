@@ -62,6 +62,7 @@ export interface Project {
   projectSalesNumber: string;
   projectDescription: string;
   projectMembers: ProjectMembers[];
+  projectMembersString?: string;
   projectDayRate?: number;
   projectGrossMargin?: number;
   projectPrice?: number;
