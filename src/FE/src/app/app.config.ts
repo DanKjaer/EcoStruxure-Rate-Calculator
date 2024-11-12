@@ -31,6 +31,6 @@ export const appConfig: ApplicationConfig = {
       }
     })]),
     provideAnimationsAsync(),
-    provideNativeDateAdapter(),
+    provideNativeDateAdapter()
   ]
 };
