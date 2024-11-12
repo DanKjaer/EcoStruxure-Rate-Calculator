@@ -5,7 +5,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton, MatIconButton} from '@angular/material/button';
-import {NgClass, NgIf} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
@@ -39,7 +39,8 @@ import {MenuService} from '../../services/menu.service';
     MatInput,
     ReactiveFormsModule,
     FormsModule,
-    NgClass
+    NgClass,
+    DecimalPipe
   ],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.css'

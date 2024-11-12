@@ -8,7 +8,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {NgClass, NgIf} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
@@ -44,7 +44,8 @@ import {MenuService} from '../../services/menu.service';
     MatInput,
     MatFormField,
     MatLabel,
-    NgClass
+    NgClass,
+    DecimalPipe
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
