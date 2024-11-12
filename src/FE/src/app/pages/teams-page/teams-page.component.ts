@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
-import {TranslateModule, TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSort, MatSortModule} from '@angular/material/sort';
