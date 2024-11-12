@@ -135,21 +135,22 @@ CREATE TABLE dbo.Teams_profiles_history (
 CREATE TABLE dbo.Project (
                          project_id UUID PRIMARY KEY,
                          project_name VARCHAR(255) NOT NULL,
+                         sales_number VARCHAR(20),
                          project_description TEXT,
-                         project_cost NUMERIC(18, 2),
-                         project_markup NUMERIC(5, 2),
+                         project_day_rate NUMERIC(18, 2),
                          project_gross_margin NUMERIC(5, 2),
-                         project_margin NUMERIC(18, 2),
                          project_price NUMERIC(18, 2),
                          start_date DATE,
-                         end_date DATE
+                         end_date DATE,
+                         total_days INT,
+                         location INT NOT NULL REFERENCES dbo.geography(id)
 );
 
--- Creating a junction table for projectMembers since it's a many-to-many relationship
 CREATE TABLE dbo.Project_Members (
                                  project_id UUID REFERENCES dbo.Project(project_id),
-                                 profile_id UUID REFERENCES dbo.Profiles(profile_id),
-                                 PRIMARY KEY (project_id, profile_id)
+                                 teams_id UUID REFERENCES dbo.teams(id),
+                                 PRIMARY KEY (project_id, teams_id),
+                                 allocation_on_project DECIMAL(5, 2)
 );
 
 
@@ -1095,22 +1096,27 @@ VALUES
 
 INSERT INTO dbo.project (project_id,
                          project_name,
+                         sales_number,
                          project_description,
-                         project_cost,
-                         project_margin,
+                         project_day_rate,
+                         project_gross_margin,
                          project_price,
                          start_date,
-                         end_date)
+                         end_date,
+                         total_days,
+                         location)
 VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         'Cheap Project',
+        '123456',
         'Some poor people wanted help',
-        160000,
-        176000,
-        211200,
-        '2024-05-15',
-        '2025-05-15');
+        228.8,
+        30,
+        2974.4,
+        '2024-12-02',
+        '2024-12-13',
+        10,
+        60
+        );
 
-INSERT INTO dbo.project_members (project_id, profile_id)
-VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '24c2b2f8-47f0-4c8b-b55d-cb49996feb44'),
-        ('769f922a-6e19-40d5-b46d-8ebd43960736', '44656c14-5882-4247-a0eb-7dc9253ec923'),
-        ('769f922a-6e19-40d5-b46d-8ebd43960736', '869877f5-b85c-4abb-890a-8de561c82641');
+INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
+VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '937b379c-c326-4db2-9575-8313f59ddf2c', 100);
