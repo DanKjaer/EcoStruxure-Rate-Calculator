@@ -86,9 +86,6 @@ export class ProfilesPageComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     let profiles = await this.profileService.getProfiles();
-    for (let profile of profiles) {
-      profile.location = profile.geography.name;
-    }
     this.datasource.data = profiles;
     this.loading = false;
     this.datasource.sort = this.sort;
