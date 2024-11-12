@@ -254,8 +254,11 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
-        String sql = "INSERT INTO dbo.Profiles (profile_id, name, currency, geography_id, resource_type, annual_cost, " +
-        "effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = """
+                     INSERT INTO dbo.Profiles (profile_id, name, currency, geography_id, resource_type, annual_cost, 
+                     effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     """;
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             UUID profileId = UUID.randomUUID();
             stmt.setObject(1, profileId);
