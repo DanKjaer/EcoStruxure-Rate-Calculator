@@ -1,13 +1,11 @@
 package ecostruxure.rate.calculator.dal.db;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.*;
+import ecostruxure.rate.calculator.be.Geography;
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.dal.dao.IProjectDAO;
 
-import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +19,10 @@ public class ProjectDAO implements IProjectDAO {
 
     public Project getProject(UUID projectId) throws SQLException {
         String queryProject = """
-                SELECT * FROM dbo.project WHERE project_id = ?
+                SELECT *
+                FROM dbo.project
+                INNER JOIN dbo.geography g on g.id = project.project_location
+                WHERE project_id = ?
                 """;
 
         try (Connection connection = dbConnector.connection();
@@ -33,78 +34,65 @@ public class ProjectDAO implements IProjectDAO {
                     project = createProjectFromResultset(project, rsProject);
                 }
             }
-            project.setProjectMembers(getProfilesBasedOnProject(connection, projectId));
+            project.setProjectMembers(getMembersBasedOnProject(connection, projectId));
 
             return project;
             }
         }
 
     private Project createProjectFromResultset(Project project, ResultSet rsProject) throws SQLException {
+        Geography geography = new Geography(rsProject.getString("name"));
+        geography.setId(rsProject.getInt("project_location"));
+
         project.setProjectId(UUID.fromString(rsProject.getString("project_id")));
         project.setProjectName(rsProject.getString("project_name"));
+        project.setProjectSalesNumber(rsProject.getString("project_sales_number"));
         project.setProjectDescription(rsProject.getString("project_description"));
-        project.setProjectCost(rsProject.getBigDecimal("project_cost"));
-        project.setProjectMargin(rsProject.getBigDecimal("project_margin"));
+        project.setProjectDayRate(rsProject.getBigDecimal("project_day_rate"));
+        project.setProjectGrossMargin(rsProject.getBigDecimal("project_gross_margin"));
         project.setProjectPrice(rsProject.getBigDecimal("project_price"));
-        project.setStartDate(rsProject.getDate("start_date").toLocalDate());
-        project.setEndDate(rsProject.getDate("end_date").toLocalDate());
+        project.setProjectStartDate(rsProject.getDate("project_start_date").toLocalDate());
+        project.setProjectEndDate(rsProject.getDate("project_end_date").toLocalDate());
+        project.setProjectTotalDays(rsProject.getInt("project_total_days"));
+        project.setProjectLocation(geography);
 
         return project;
     }
 
-    private List<Profile> getProfilesBasedOnProject(Connection conn,UUID projectId) throws SQLException {
+    private List<ProjectMember> getMembersBasedOnProject(Connection conn, UUID projectId) throws SQLException {
         String queryProjectMembers = """
-                SELECT     pr.profile_id,
-                           pr.name,
-                           pr.currency,
-                           pr.country_id,
-                           pr.resource_type,
-                           pr.annual_cost,
-                           pr.effectiveness,
-                           pr.annual_hours,
-                           pr.effective_work_hours,
-                           pr.hours_per_day,
-                           pr.total_cost_allocation,
-                           pr.total_hour_allocation,
-                           pr.is_archived,
-                           pr.updated_at
+                SELECT  *,
+                        t.id,
+                        t.name
                 FROM dbo.project_members pm
-                JOIN dbo.profiles pr ON pm.profile_id = pr.profile_id
+                JOIN dbo.teams t ON pm.teams_id = t.id
                 WHERE pm.project_id = ?;
                 """;
 
-        List<Profile> profiles = new ArrayList<>();
+        List<ProjectMember> projectMembers = new ArrayList<>();
         try (PreparedStatement stmtMembers = conn.prepareStatement(queryProjectMembers)) {
             stmtMembers.setObject(1, projectId);
             try (ResultSet rsMembers = stmtMembers.executeQuery()) {
                 while (rsMembers.next()) {
-                    Profile profile = new Profile();
-                    profile.setProfileId(UUID.fromString(rsMembers.getString("profile_id")));
-                    profile.setName(rsMembers.getString("name"));
-                    profile.setCurrency(rsMembers.getString("currency"));
-                    profile.setCountryId(rsMembers.getInt("country_id"));
-                    profile.setResourceType(rsMembers.getBoolean("resource_type"));
-                    profile.setAnnualCost(rsMembers.getBigDecimal("annual_cost"));
-                    profile.setEffectivenessPercentage(rsMembers.getBigDecimal("effectiveness"));
-                    profile.setAnnualHours(rsMembers.getBigDecimal("annual_hours"));
-                    profile.setEffectiveWorkHours(rsMembers.getBigDecimal("effective_work_hours"));
-                    profile.setHoursPerDay(rsMembers.getBigDecimal("hours_per_day"));
-                    profile.setTotalCostAllocation(rsMembers.getBigDecimal("total_cost_allocation"));
-                    profile.setTotalHourAllocation(rsMembers.getBigDecimal("total_hour_allocation"));
-                    profile.setArchived(rsMembers.getBoolean("is_archived"));
-                    profile.setUpdatedAt(rsMembers.getTimestamp("updated_at"));
-                    profiles.add(profile);
+                    ProjectMember projectMember = new ProjectMember();
+                    projectMember.setTeamId(UUID.fromString(rsMembers.getString("teams_id")));
+                    projectMember.setProjectId(UUID.fromString(rsMembers.getString("project_id")));
+                    projectMember.setName(rsMembers.getString("name"));
+                    projectMember.setProjectAllocation(rsMembers.getBigDecimal("allocation_on_project"));
+                    projectMembers.add(projectMember);
                 }
             }
-            return profiles;
+            return projectMembers;
         }
     }
 
     public List<Project> getProjects() throws SQLException {
         List<Project> projects = new ArrayList<>();
         String queryProjects = """
-                SELECT * 
+                SELECT *
                 FROM dbo.project
+                INNER JOIN dbo.geography g on g.id = project.project_location
+                WHERE project_archived = FALSE;
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmtProjects = connection.prepareStatement(queryProjects);) {
@@ -112,7 +100,7 @@ public class ProjectDAO implements IProjectDAO {
                 while (rsProjects.next()) {
                     Project project = new Project();
                     project = createProjectFromResultset(project, rsProjects);
-                    project.setProjectMembers(getProfilesBasedOnProject(connection, project.getProjectId()));
+                    project.setProjectMembers(getMembersBasedOnProject(connection, project.getProjectId()));
                     projects.add(project);
                 }
                 return projects;
@@ -126,25 +114,31 @@ public class ProjectDAO implements IProjectDAO {
                 INSERT INTO dbo.project (
                          project_id,
                          project_name,
+                         project_sales_number,
                          project_description,
-                         project_cost,
-                         project_markup,
+                         project_day_rate,
                          project_gross_margin,
-                         project_margin,
                          project_price,
-                         start_date,
-                         end_date)
-                VALUES (?, ?, ?, 1000000, ?, ?, 1000000, 1000000, ?, ?);
+                         project_start_date,
+                         project_end_date,
+                         project_total_days,
+                         project_location,
+                         project_archived)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE);
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);) {
             stmt.setObject(1, UUID.randomUUID());
             stmt.setString(2, project.getProjectName());
-            stmt.setString(3, project.getProjectDescription());
-            stmt.setBigDecimal(4, project.getProjectMarkup());
-            stmt.setBigDecimal(5, project.getProjectGrossMargin());
-            stmt.setDate(6, Date.valueOf(project.getStartDate()));
-            stmt.setDate(7, Date.valueOf(project.getEndDate()));
+            stmt.setString(3, project.getProjectSalesNumber());
+            stmt.setString(4, project.getProjectDescription());
+            stmt.setBigDecimal(5, project.getProjectDayRate());
+            stmt.setBigDecimal(6, project.getProjectGrossMargin());
+            stmt.setBigDecimal(7, project.getProjectPrice());
+            stmt.setDate(8, Date.valueOf(project.getProjectStartDate()));
+            stmt.setDate(9, Date.valueOf(project.getProjectEndDate()));
+            stmt.setInt(10, project.getProjectTotalDays());
+            stmt.setInt(11, project.getProjectLocation().getId());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -155,16 +149,17 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public List<Profile> assignProfilesToProject(UUID projectId, List<Profile> projectMembers) throws SQLException {
+    public List<ProjectMember> assignProfilesToProject(UUID projectId, List<ProjectMember> projectMembers) throws SQLException {
         String query = """
-                INSERT INTO dbo.project_members (project_id, profile_id)
-                VALUES (?, ?);
+                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
+                VALUES (?, ?, ?);
                 """;
         try (Connection connection = dbConnector.connection();
                 PreparedStatement stmt = connection.prepareStatement(query);) {
-                for (Profile profile : projectMembers) {
+                for (ProjectMember projectMember : projectMembers) {
                     stmt.setObject(1, projectId);
-                    stmt.setObject(2, profile.getProfileId());
+                    stmt.setObject(2, projectMember.getTeamId());
+                    stmt.setBigDecimal(3, projectMember.getProjectAllocation());
                     stmt.addBatch();
                 }
                 stmt.executeBatch();
@@ -200,5 +195,23 @@ public class ProjectDAO implements IProjectDAO {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean archiveProject(UUID projectId) throws SQLException{
+        String sql = """ 
+                UPDATE dbo.project SET project_archived = TRUE WHERE project_id = ?;
+                """;
+
+        try(Connection conn = dbConnector.connection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, projectId);
+            stmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

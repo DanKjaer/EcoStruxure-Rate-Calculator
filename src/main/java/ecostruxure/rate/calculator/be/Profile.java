@@ -1,5 +1,4 @@
 package ecostruxure.rate.calculator.be;
-import ecostruxure.rate.calculator.bll.service.GeographyService;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -7,10 +6,10 @@ import java.util.UUID;
 
 public class Profile {
     private TeamProfile teamProfile;
+    private Geography geography;
     private UUID profileId;
     private String name;
     private String currency;
-    private int countryId;
     private Boolean resourceType;
     private BigDecimal annualCost;
     private BigDecimal annualHours;
@@ -27,7 +26,7 @@ public class Profile {
         this.profileId = builder.profileId;
         this.name = builder.name;
         this.currency = builder.currency;
-        this.countryId = builder.countryId;
+        this.geography = builder.geography;
         this.resourceType = builder.resourceType;
         this.annualCost = builder.annualCost;
         this.annualHours = builder.annualHours;
@@ -44,7 +43,7 @@ public class Profile {
         private UUID profileId;
         private String name;
         private String currency;
-        private int countryId;
+        private Geography geography;
         private Boolean resourceType;
         private BigDecimal annualCost;
         private BigDecimal annualHours;
@@ -71,8 +70,8 @@ public class Profile {
             return this;
         }
 
-        public Builder setCountryId(int countryId){
-            this.countryId = countryId;
+        public Builder setGeography(Geography geography){
+            this.geography = geography;
             return this;
         }
 
@@ -182,12 +181,12 @@ public class Profile {
         this.currency = currency;
     }
 
-    public int getCountryId() {
-        return countryId;
+    public Geography getGeography() {
+        return geography;
     }
 
-    public void setCountryId(int countryId) {
-        this.countryId = countryId;
+    public void setGeography(Geography geography) {
+        this.geography = geography;
     }
 
     public Boolean isResourceType() {
@@ -254,10 +253,4 @@ public class Profile {
         this.teamProfile = teamProfile;
     }
 
-    public Geography fetchGeography(GeographyService geographyService) throws Exception{
-        if(this.countryId != 0) {
-            return geographyService.getByCountryId(this.countryId);
-        }
-        return null;
-    }
 }
