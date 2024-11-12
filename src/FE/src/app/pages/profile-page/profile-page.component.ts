@@ -9,7 +9,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
@@ -17,6 +17,7 @@ import {ActivatedRoute} from '@angular/router';
 import {Geography, Profile, TeamProfiles} from '../../models';
 import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -34,7 +35,8 @@ import {TeamsService} from "../../services/teams.service";
     MatTableModule,
     NgIf,
     MatMenuModule,
-    MatProgressSpinner
+    MatProgressSpinner,
+    NgClass
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
@@ -51,6 +53,7 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     totalAnnualHours: ''
   };
   loading: boolean = true;
+  isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   displayedColumns: string[] = [
     'name',
@@ -67,7 +70,8 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
               private profileService: ProfileService,
               private geographyService: GeographyService,
               private teamsService: TeamsService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private menuService: MenuService) {
   }
 
   //#region mock data
@@ -79,6 +83,10 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
   //#endregion
 
   async ngOnInit() {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
+
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
       location: ['', Validators.required],

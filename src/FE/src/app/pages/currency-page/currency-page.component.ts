@@ -1,8 +1,9 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatTableModule, MatTableDataSource} from '@angular/material/table';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-currency-page',
@@ -12,11 +13,18 @@ import {NgIf} from '@angular/common';
     MatTableModule,
     MatProgressSpinner,
     NgIf,
+    NgClass,
   ],
   templateUrl: './currency-page.component.html',
   styleUrl: './currency-page.component.css'
 })
-export class CurrencyPageComponent implements AfterViewInit {
+export class CurrencyPageComponent implements AfterViewInit, OnInit {
+
+  constructor(private menuService: MenuService) {
+  }
+
+  isMenuOpen: boolean | undefined;
+
   displayedColumns: string[] = [
     'currency',
     'eur conversion rate',
@@ -25,6 +33,12 @@ export class CurrencyPageComponent implements AfterViewInit {
 
   datasource = new MatTableDataSource([{}]);
   loading = true;
+
+  ngOnInit() {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
+  }
 
   ngAfterViewInit() {
     setTimeout(() => {
