@@ -79,7 +79,7 @@ public class ProfileDAO implements IProfileDAO {
 
         String query = """
                        SELECT p.*, dbo.geography.name FROM dbo.Profiles p
-                       INNER JOIN dbo.Geography ON p.country_id = dbo.Geography.id
+                       INNER JOIN dbo.Geography ON p.geography_id = dbo.Geography.id
                        ORDER BY p.profile_id DESC
                        """;
 

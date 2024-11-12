@@ -56,7 +56,17 @@ import {SnackbarService} from '../../services/snackbar.service';
 export class ProjectPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
 
-  displayedColumns: string[] = ['name', 'members', 'cost', 'margin', 'price', 'startDate', 'endDate', 'options'];
+  displayedColumns: string[] = ['name',
+                                'salesNumber',
+                                'members',
+                                'dayRate',
+                                'grossMargin',
+                                'price',
+                                'startDate',
+                                'endDate',
+                                'totalDays',
+                                'location',
+                                'options'];
 
   selectedRow: Project | null = null;
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
@@ -73,8 +83,8 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     try {
       const projects = await this.projectService.getProjects();
       projects.forEach(project => {
-        project.startDateString = this.formatter.formatDate(project.startDate);
-        project.endDateString = this.formatter.formatDate(project.endDate);
+        project.startDateString = this.formatter.formatDate(project.projectStartDate);
+        project.endDateString = this.formatter.formatDate(project.projectEndDate);
       });
       this.datasource.data = projects;
     } catch (error) {

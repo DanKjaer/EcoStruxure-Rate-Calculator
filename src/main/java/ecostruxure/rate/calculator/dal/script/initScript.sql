@@ -69,7 +69,7 @@ CREATE TABLE dbo.Profiles (
                               profile_id              UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
                               name                    TEXT NOT NULL,
                               currency                TEXT NOT NULL,
-                              country_id              INT NOT NULL,
+                              geography_id              INT NOT NULL,
                               resource_type           BOOLEAN NOT NULL,
                               annual_cost             DECIMAL(19, 4), -- DECIMAL(precision, scale), up to 999999999999999.9999
                               effectiveness           DECIMAL(6, 2), --  -999.99 - 999.99
@@ -80,7 +80,7 @@ CREATE TABLE dbo.Profiles (
                               total_hour_allocation   DECIMAL(6, 2),
                               is_archived             BOOLEAN DEFAULT FALSE,
                               updated_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                              FOREIGN KEY (country_id) REFERENCES dbo.geography(id)
+                              FOREIGN KEY (geography_id) REFERENCES dbo.geography(id)
 );
 
 
@@ -135,15 +135,15 @@ CREATE TABLE dbo.Teams_profiles_history (
 CREATE TABLE dbo.Project (
                          project_id UUID PRIMARY KEY,
                          project_name VARCHAR(255) NOT NULL,
-                         sales_number VARCHAR(20),
+                         project_sales_number VARCHAR(20),
                          project_description TEXT,
                          project_day_rate NUMERIC(18, 2),
                          project_gross_margin NUMERIC(5, 2),
                          project_price NUMERIC(18, 2),
-                         start_date DATE,
-                         end_date DATE,
-                         total_days INT,
-                         location INT NOT NULL REFERENCES dbo.geography(id)
+                         project_start_date DATE,
+                         project_end_date DATE,
+                         project_total_days INT,
+                         project_location INT NOT NULL REFERENCES dbo.geography(id)
 );
 
 CREATE TABLE dbo.Project_Members (
@@ -1012,7 +1012,7 @@ INSERT INTO dbo.Profiles (
     profile_id,
     name,
     currency,
-    country_id,
+    geography_id,
     resource_type,
     is_archived,
     annual_cost,
@@ -1096,15 +1096,15 @@ VALUES
 
 INSERT INTO dbo.project (project_id,
                          project_name,
-                         sales_number,
+                         project_sales_number,
                          project_description,
                          project_day_rate,
                          project_gross_margin,
                          project_price,
-                         start_date,
-                         end_date,
-                         total_days,
-                         location)
+                         project_start_date,
+                         project_end_date,
+                         project_total_days,
+                         project_location)
 VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         'Cheap Project',
         '123456',
