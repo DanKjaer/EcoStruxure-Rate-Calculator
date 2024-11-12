@@ -1,6 +1,8 @@
 package ecostruxure.rate.calculator.dal.db;
 
 import ecostruxure.rate.calculator.be.*;
+import ecostruxure.rate.calculator.be.Geography;
+import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.dal.dao.IProjectDAO;
 
 import java.sql.*;
