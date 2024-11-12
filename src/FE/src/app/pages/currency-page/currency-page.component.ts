@@ -4,6 +4,7 @@ import {MatTableModule, MatTableDataSource} from '@angular/material/table';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {NgClass, NgIf} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-currency-page',
@@ -20,7 +21,7 @@ import {MenuService} from '../../services/menu.service';
 })
 export class CurrencyPageComponent implements AfterViewInit, OnInit {
 
-  constructor(private menuService: MenuService) {
+  constructor(private menuService: MenuService, private currencyService: CurrencyService) {
   }
 
   isMenuOpen: boolean | undefined;
@@ -28,10 +29,11 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
   displayedColumns: string[] = [
     'currency',
     'eur conversion rate',
-    'usd conversion rate'
+    'usd conversion rate',
+    'symbol'
   ];
 
-  datasource = new MatTableDataSource([{}]);
+  datasource = new MatTableDataSource();
   loading = true;
 
   ngOnInit() {
@@ -40,21 +42,8 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
     });
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.datasource.data = [
-        {
-          currency: 'EUR',
-          'eur conversion rate': 1.00,
-          'usd conversion rate': 0.93
-        },
-        {
-          currency: 'USD',
-          'eur conversion rate': 1.08,
-          'usd conversion rate': 1.00
-        }
-      ];
-      this.loading = false;
-    }, 2000)
+  async ngAfterViewInit() {
+    this.datasource.data = await this.currencyService.getCurrencies();
+    this.loading = false;
   }
 }

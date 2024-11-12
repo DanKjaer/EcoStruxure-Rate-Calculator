@@ -9,7 +9,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {NgClass, NgIf} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
@@ -36,7 +36,8 @@ import {MenuService} from '../../services/menu.service';
     NgIf,
     MatMenuModule,
     MatProgressSpinner,
-    NgClass
+    NgClass,
+    DecimalPipe
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'

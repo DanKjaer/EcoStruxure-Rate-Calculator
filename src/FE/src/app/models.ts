@@ -71,3 +71,10 @@ export interface Project {
   projectMarkup: number;
   projectGrossMargin: number;
 }
+
+export interface Currency {
+  currencyCode: string;
+  eurConversionRate: number;
+  usdConversionRate: number;
+  symbol: string;
+}

@@ -44,7 +44,7 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ element['annualHours'] }}
+            {{ element['annualHours'] | number:'1.0-0' }} {{ 'HOURS' | translate }}
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['annualHours']"/>
         </td>
@@ -56,7 +56,7 @@
           {{ 'EFFECTIVE_WORK_HOURS' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['effectiveWorkHours'] }}
+          {{ element['effectiveWorkHours'] | number:'1.0-0' }} {{ 'HOURS' | translate }}
         </td>
       </ng-container>
 
@@ -67,7 +67,7 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ element['effectivenessPercentage'] }}
+            {{ element['effectivenessPercentage'] + '%' }}
           </span>
           <input *ngIf="element.isEditing" [(ngModel)]="element['effectivenessPercentage']"/>
         </td>
@@ -80,7 +80,7 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ element['annualCost'] }}
+            {{ element['annualCost'] | number:'1.0-0' }}
           </span>
           <input *ngIf="element.isEditing" [(ngModel)]="element['annualCost']"/>
         </td>
@@ -92,7 +92,7 @@
           {{ 'ALLOCATED_HOURS' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['totalHourAllocation'] }}
+          {{ element['totalHourAllocation'] + '%' }}
         </td>
       </ng-container>
 
@@ -102,7 +102,7 @@
           {{ 'COST_ALLOCATION' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['totalCostAllocation'] }}
+          {{ element['totalCostAllocation'] + '%' }}
         </td>
       </ng-container>
 
