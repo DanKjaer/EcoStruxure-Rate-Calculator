@@ -19,7 +19,6 @@ import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
-import {GeographyService} from '../../services/geography.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -67,7 +66,6 @@ export class ProfilesPageComponent implements AfterViewInit {
     'contributed annual cost',
     'allocated hours',
     'cost allocation',
-    'location',
     'options'
   ];
 
@@ -91,6 +89,7 @@ export class ProfilesPageComponent implements AfterViewInit {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
   }
+
 
   //#region functions
   editRow(element: any): void {
@@ -120,7 +119,6 @@ export class ProfilesPageComponent implements AfterViewInit {
       element.annualCost = original.annualCost;
       element.totalHourAllocation = original.totalHourAllocation;
       element.totalCostAllocation = original.totalCostAllocation;
-      element.geography.name = original.geography.name;
     }
     element['isEditing'] = false;
     this.isEditingRow = false;

@@ -2,7 +2,7 @@ export interface Profile {
   profileId?: string;
   name: string;
   currency: number;
-  geography: Geography;
+  countryId: number;
   resourceType: boolean;
   annualCost?: number;
   annualHours?: number;
@@ -59,27 +59,15 @@ export interface Geography {
 export interface Project {
   projectId?: string;
   projectName: string;
-  projectSalesNumber: string;
   projectDescription: string;
-  projectMembers: ProjectMembers[];
-  projectMembersString?: string;
-  projectDayRate?: number;
-  projectGrossMargin?: number;
+  projectMembers: Profile[];
+  projectCost?: number;
+  projectMargin?: number;
   projectPrice?: number;
-  projectStartDate: Date;
+  startDate: Date;
   startDateString?: string;
-  projectEndDate: Date;
+  endDate: Date;
   endDateString?: string;
-  projectTotalDays?: number;
-  projectLocation: Geography;
-  projectArchived?: boolean;
-}
-
-export interface ProjectMembers {
-  teamId: string;
-  projectId: string;
-  name: string;
-  projectAllocation: number;
-  markup?: number;
-  dayRateOnTeam?: number;
+  projectMarkup: number;
+  projectGrossMargin: number;
 }
