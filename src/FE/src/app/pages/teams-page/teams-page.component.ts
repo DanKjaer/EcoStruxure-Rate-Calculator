@@ -1,11 +1,11 @@
-import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {TranslateModule, TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton, MatIconButton} from '@angular/material/button';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
@@ -17,6 +17,7 @@ import {FormatterService} from '../../services/formatter.service';
 import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
 import {Router} from '@angular/router';
 import {SnackbarService} from '../../services/snackbar.service';
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-teams-page',
@@ -37,12 +38,13 @@ import {SnackbarService} from '../../services/snackbar.service';
     MatDialogModule,
     MatInput,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgClass
   ],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.css'
 })
-export class TeamsPageComponent implements AfterViewInit {
+export class TeamsPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
 
   datasource: MatTableDataSource<Team> = new MatTableDataSource<Team>();
@@ -63,11 +65,17 @@ export class TeamsPageComponent implements AfterViewInit {
   selectedRow: Team | null = null;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
+  isMenuOpen: boolean | undefined;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private teamService: TeamsService, private formatter: FormatterService, private router: Router, private snackBar: SnackbarService, private translate: TranslateService) {
+  constructor(private teamService: TeamsService,
+              private formatter: FormatterService,
+              private router: Router,
+              private snackBar: SnackbarService,
+              private translate: TranslateService,
+              private menuService: MenuService) {
   }
 
   async ngAfterViewInit() {
@@ -79,6 +87,12 @@ export class TeamsPageComponent implements AfterViewInit {
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
+  }
+
+  ngOnInit() {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
   }
 
   openDialog() {

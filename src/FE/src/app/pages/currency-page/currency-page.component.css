@@ -2,12 +2,17 @@
   display: flex;
   flex-direction: column;
   height: 90vh;
-  width: 70vw;
+  width: 80vw;
   background-color: forestgreen;
   padding: 1rem;
   border-radius: 1rem;
   margin-top: 1rem;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: width 0.3s ease;
+}
+
+.container.menuClosed {
+  width: 90vw;
 }
 
 .titleContainer {
