@@ -144,7 +144,8 @@ CREATE TABLE dbo.Project (
                          project_start_date DATE,
                          project_end_date DATE,
                          project_total_days INT,
-                         project_location INT NOT NULL REFERENCES dbo.geography(id)
+                         project_location INT NOT NULL REFERENCES dbo.geography(id),
+                         project_archived BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE dbo.Project_Members (

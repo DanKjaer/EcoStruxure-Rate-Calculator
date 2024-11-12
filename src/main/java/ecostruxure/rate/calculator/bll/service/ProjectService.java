@@ -75,4 +75,8 @@ public class ProjectService {
     public boolean deleteProject(UUID projectId) throws SQLException {
         return projectDAO.deleteProject(projectId);
     }
+
+    public boolean archiveProject(UUID projectId) throws SQLException {
+        return projectDAO.archiveProject(projectId);
+    }
 }

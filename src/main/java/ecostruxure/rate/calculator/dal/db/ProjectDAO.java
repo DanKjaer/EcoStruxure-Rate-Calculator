@@ -91,7 +91,8 @@ public class ProjectDAO implements IProjectDAO {
         String queryProjects = """
                 SELECT *
                 FROM dbo.project
-                INNER JOIN dbo.geography g on g.id = project.project_location;
+                INNER JOIN dbo.geography g on g.id = project.project_location
+                WHERE project_archived = FALSE;
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmtProjects = connection.prepareStatement(queryProjects);) {
@@ -121,8 +122,9 @@ public class ProjectDAO implements IProjectDAO {
                          project_start_date,
                          project_end_date,
                          project_total_days,
-                         project_location)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                         project_location,
+                         project_archived)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE);
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);) {
@@ -193,5 +195,23 @@ public class ProjectDAO implements IProjectDAO {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean archiveProject(UUID projectId) throws SQLException{
+        String sql = """ 
+                UPDATE dbo.project SET project_archived = TRUE WHERE project_id = ?;
+                """;
+
+        try(Connection conn = dbConnector.connection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, projectId);
+            stmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

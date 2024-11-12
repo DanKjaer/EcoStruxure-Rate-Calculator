@@ -33,8 +33,13 @@ public class ProjectController {
         return projectService.createProject(projectDTO.getProject());
     }
 
-    @DeleteMapping("/{id}")
+/*    @DeleteMapping("/{id}")
     public boolean deleteProfile(@PathVariable UUID id) throws Exception {
         return projectService.deleteProject(id);
+    }*/
+
+    @DeleteMapping("/{id}")
+    public boolean archiveProject(@PathVariable UUID id) throws Exception {
+        return projectService.archiveProject(id);
     }
 }

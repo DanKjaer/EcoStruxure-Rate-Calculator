@@ -69,7 +69,7 @@ export class AddProjectDialogComponent implements OnInit {
       projectGrossMargin: [''],
       startDate: new FormControl<Date | null>(null),
       endDate: new FormControl<Date | null>(null),
-      projectDescription: [''],
+      projectDescription: ['']
     })
 
     this.teamForm = this.formBuilder.group({

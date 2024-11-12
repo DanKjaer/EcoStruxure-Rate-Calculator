@@ -16,4 +16,5 @@ public interface IProjectDAO {
     Project updateProject(Project project) throws SQLException;
     boolean deleteProject(UUID projectId) throws SQLException;
     List<ProjectMember> assignProfilesToProject(UUID projectId, List<ProjectMember> projectMembers) throws SQLException;
+    boolean archiveProject(UUID projectId) throws SQLException;
 }

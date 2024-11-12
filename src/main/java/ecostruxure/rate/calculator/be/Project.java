@@ -18,6 +18,7 @@ public class Project {
     private LocalDate projectEndDate;
     private int projectTotalDays;
     private Geography projectLocation;
+    private Boolean projectArchived;
 
     public Project() {}
 
@@ -115,5 +116,13 @@ public class Project {
 
     public void setProjectLocation(Geography projectLocation) {
         this.projectLocation = projectLocation;
+    }
+
+    public Boolean getProjectArchived() {
+        return projectArchived;
+    }
+
+    public void setProjectArchived(Boolean projectArchived) {
+        this.projectArchived = projectArchived;
     }
 }

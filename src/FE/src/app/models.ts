@@ -72,6 +72,7 @@ export interface Project {
   endDateString?: string;
   projectTotalDays?: number;
   projectLocation: Geography;
+  projectArchived?: boolean;
 }
 
 export interface ProjectMembers {
