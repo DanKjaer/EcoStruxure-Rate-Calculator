@@ -14,7 +14,7 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Project} from '../../models';
@@ -23,6 +23,7 @@ import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 import {SnackbarService} from '../../services/snackbar.service';
 import { ChangeDetectorRef } from '@angular/core';
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-project-page',
@@ -49,7 +50,8 @@ import { ChangeDetectorRef } from '@angular/core';
     MatTable,
     NgIf,
     TranslateModule,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    NgClass
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
@@ -72,7 +74,7 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
   selectedRow: Project | null = null;
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
   loading = true;
-
+  isMenuOpen: boolean | undefined;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -81,9 +83,13 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
               private formatter: FormatterService,
               private snackBar: SnackbarService,
               private ChangeDetectorRef: ChangeDetectorRef,
-              private translate: TranslateService) { }
+              private translate: TranslateService,
+              private menuService: MenuService) {}
 
   async ngOnInit(): Promise<void> {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
     this.loading = true;
     try {
       const projects = await this.projectService.getProjects();

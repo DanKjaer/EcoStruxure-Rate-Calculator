@@ -210,5 +210,6 @@
   "TEAM_PROFILES": "Profiles for this team",
   "ADD_PROFILE": "Add profile",
   "DATES": "Dates",
-  "PROFILE_LIST": "Profile list"
+  "PROFILE_LIST": "Profile list",
+  "CURRENCY_SYMBOL": "Symbol"
 }

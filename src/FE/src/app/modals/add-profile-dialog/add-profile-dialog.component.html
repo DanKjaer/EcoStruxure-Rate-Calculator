@@ -15,9 +15,9 @@
       <!-- location select -->
       <mat-form-field>
         <mat-label>{{ 'LOCATION' | translate }}</mat-label>
-        <mat-select formControlName="countryId">
+        <mat-select formControlName="geography">
           @for (location of locations; track location) {
-            <mat-option [value]="location.id">
+            <mat-option [value]="location">
               {{ location.name }}
             </mat-option>
           }

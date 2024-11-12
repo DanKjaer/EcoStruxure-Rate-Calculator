@@ -83,3 +83,10 @@ export interface ProjectMembers {
   markup?: number;
   dayRateOnTeam?: number;
 }
+
+export interface Currency {
+  currencyCode: string;
+  eurConversionRate: number;
+  usdConversionRate: number;
+  symbol: string;
+}

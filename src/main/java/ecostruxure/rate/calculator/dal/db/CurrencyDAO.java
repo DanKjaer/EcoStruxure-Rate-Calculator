@@ -52,11 +52,11 @@ public class CurrencyDAO implements ICurrencyDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Currency currency = new Currency(
-                        rs.getString("currency_code"),
-                        rs.getBigDecimal("eur_conversion_rate"),
-                        rs.getBigDecimal("usd_conversion_rate")
-                );
+                Currency currency = new Currency();
+                currency.setCurrencyCode(rs.getString("currency_code"));
+                currency.setEurConversionRate(rs.getBigDecimal("eur_conversion_rate"));
+                currency.setUsdConversionRate(rs.getBigDecimal("usd_conversion_rate"));
+                currency.setSymbol(rs.getString("symbol"));
                 currencies.add(currency);
             }
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
@@ -8,7 +8,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {NgClass, NgIf} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
@@ -20,6 +20,7 @@ import {Router} from '@angular/router';
 import {Profile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 import {GeographyService} from '../../services/geography.service';
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -43,17 +44,19 @@ import {GeographyService} from '../../services/geography.service';
     MatInput,
     MatFormField,
     MatLabel,
-    NgClass
+    NgClass,
+    DecimalPipe
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
 })
-export class ProfilesPageComponent implements AfterViewInit {
+export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   constructor(private profileService: ProfileService,
               private router: Router,
               private snackBar: SnackbarService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private menuService: MenuService) {
   }
 
   //#region vars
@@ -78,11 +81,18 @@ export class ProfilesPageComponent implements AfterViewInit {
   loading = true;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
+  isMenuOpen: boolean | undefined;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   //#endregion
+
+  ngOnInit() {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
+  }
 
   async ngAfterViewInit() {
     let profiles = await this.profileService.getProfiles();
