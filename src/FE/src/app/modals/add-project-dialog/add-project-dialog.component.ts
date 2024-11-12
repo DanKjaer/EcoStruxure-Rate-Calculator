@@ -77,7 +77,7 @@ export class AddProjectDialogComponent implements OnInit {
     });
 
     this.teamList = await this.teamService.getTeams();
-    this.getCountries()
+    this.getCountries();
     this.ChangeDetectorRef.detectChanges();
   }
 
@@ -91,15 +91,23 @@ export class AddProjectDialogComponent implements OnInit {
 
   async onAddProject() {
     if (this.projectForm.valid) {
+      const startDate = this.projectForm.value.startDate;
+      const endDate = this.projectForm.value.endDate;
+
+      // Convert the picked dates to UTC
+      const startDateUtc = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
+      const endDateUtc = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
+
       let project = {
         projectName: this.projectForm.value.projectName,
         projectSalesNumber: '123456',
         projectDescription: this.projectForm.value.projectDescription,
         projectMembers: this.teamForm.value.teams,
-        projectStartDate: this.projectForm.value.startDate,
-        projectEndDate: this.projectForm.value.endDate,
+        projectDayRate: 0,
+        projectStartDate: startDateUtc,
+        projectEndDate: endDateUtc,
         projectPrice: this.projectForm.value.projectPrice,
-        projectLocation: this.projectForm.value.location
+        projectLocation: this.projectForm.value.geography
       }
       const newProject = await this.projectService.postProject(project);
       if (newProject) {

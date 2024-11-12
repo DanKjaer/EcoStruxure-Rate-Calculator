@@ -6,9 +6,11 @@ import java.util.UUID;
 public class ProjectMember {
     private UUID teamId;
     private UUID projectId;
-    private String teamName;
+    private String name;
     private BigDecimal projectAllocation;
-    private BigDecimal teamDayRateWithMarkup;
+    private BigDecimal markup;
+    private BigDecimal dayRate;
+
 
     public ProjectMember() {}
 
@@ -28,12 +30,12 @@ public class ProjectMember {
         this.projectId = projectId;
     }
 
-    public String getTeamName() {
-        return teamName;
+    public String getName() {
+        return name;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public BigDecimal getProjectAllocation() {
@@ -44,11 +46,19 @@ public class ProjectMember {
         this.projectAllocation = projectAllocation;
     }
 
-    public BigDecimal getTeamDayRateWithMarkup() {
-        return teamDayRateWithMarkup;
+    public BigDecimal getMarkup() {
+        return markup;
     }
 
-    public void setTeamDayRateWithMarkup(BigDecimal teamDayRateWithMarkup) {
-        this.teamDayRateWithMarkup = teamDayRateWithMarkup;
+    public void setMarkup(BigDecimal markup) {
+        this.markup = markup;
+    }
+
+    public BigDecimal getDayRate() {
+        return dayRate;
+    }
+
+    public void setDayRate(BigDecimal dayRate) {
+        this.dayRate = dayRate;
     }
 }

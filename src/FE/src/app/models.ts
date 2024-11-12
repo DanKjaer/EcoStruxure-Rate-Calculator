@@ -78,4 +78,6 @@ export interface ProjectMembers {
   projectId: string;
   name: string;
   projectAllocation: number;
+  markup?: number;
+  dayRateOnTeam?: number;
 }

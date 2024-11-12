@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatCell,
@@ -22,6 +22,7 @@ import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 import {SnackbarService} from '../../services/snackbar.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-project-page',
@@ -76,7 +77,11 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private projectService: ProjectService, private formatter: FormatterService, private snackBar: SnackbarService, private translate: TranslateService) { }
+  constructor(private projectService: ProjectService,
+              private formatter: FormatterService,
+              private snackBar: SnackbarService,
+              private ChangeDetectorRef: ChangeDetectorRef,
+              private translate: TranslateService) { }
 
   async ngOnInit(): Promise<void> {
     this.loading = true;
@@ -109,9 +114,13 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     });
 
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
+      project.startDateString = this.formatter.formatDate(project.projectStartDate);
+      project.endDateString = this.formatter.formatDate(project.projectEndDate);
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
+
+    this.ChangeDetectorRef.detectChanges();
   }
 
   async onDelete() {

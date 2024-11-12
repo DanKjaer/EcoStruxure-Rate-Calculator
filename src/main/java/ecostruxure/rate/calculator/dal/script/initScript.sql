@@ -23,9 +23,10 @@ DROP TABLE IF EXISTS dbo.Countries;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE dbo.Currency (
-                              currency_code       VARCHAR(3) PRIMARY KEY NOT NULL,
-                              eur_conversion_rate DECIMAL(10, 2),
-                              usd_conversion_rate DECIMAL(10, 2)
+                            currency_code       VARCHAR(3) PRIMARY KEY NOT NULL,
+                            eur_conversion_rate DECIMAL(10, 2),
+                            usd_conversion_rate DECIMAL(10, 2),
+                            symbol              varchar(1)
 );
 
 CREATE TABLE dbo.Teams (
@@ -1060,8 +1061,8 @@ VALUES
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '50b601e3-dd42-422b-ac43-1aae17dff125', 50.00, 50.00, 60000.00, 0, 0); -- Flex-time engineer fully in Global Cloud Infrastructure Solutions
 
 
-INSERT INTO dbo.Currency (currency_code, eur_conversion_rate, usd_conversion_rate)
-VALUES ('USD', 1.08, 1.00), ('EUR', 1.00, 0.93);
+INSERT INTO dbo.Currency (currency_code, eur_conversion_rate, usd_conversion_rate, symbol)
+VALUES ('USD', 1.08, 1.00, '$'), ('EUR', 1.00, 0.93, '€');
 
 INSERT INTO dbo.Teams_profiles_history (
     team_id,

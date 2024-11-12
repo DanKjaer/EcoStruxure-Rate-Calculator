@@ -77,7 +77,7 @@ public class ProjectDAO implements IProjectDAO {
                     ProjectMember projectMember = new ProjectMember();
                     projectMember.setTeamId(UUID.fromString(rsMembers.getString("teams_id")));
                     projectMember.setProjectId(UUID.fromString(rsMembers.getString("project_id")));
-                    projectMember.setTeamName(rsMembers.getString("name"));
+                    projectMember.setName(rsMembers.getString("name"));
                     projectMember.setProjectAllocation(rsMembers.getBigDecimal("allocation_on_project"));
                     projectMembers.add(projectMember);
                 }
