@@ -33,6 +33,13 @@ public class ProjectController {
         return projectService.createProject(projectDTO.getProject());
     }
 
+    /**
+     * Keeping this for future use - maybe
+     * @param id
+     * @return
+     * @throws Exception
+     */
+
 /*    @DeleteMapping("/{id}")
     public boolean deleteProfile(@PathVariable UUID id) throws Exception {
         return projectService.deleteProject(id);

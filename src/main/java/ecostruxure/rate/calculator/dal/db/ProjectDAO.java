@@ -34,7 +34,7 @@ public class ProjectDAO implements IProjectDAO {
                     project = createProjectFromResultset(project, rsProject);
                 }
             }
-            project.setProjectMembers(getProfilesBasedOnProject(connection, projectId));
+            project.setProjectMembers(getMembersBasedOnProject(connection, projectId));
 
             return project;
             }
@@ -59,7 +59,7 @@ public class ProjectDAO implements IProjectDAO {
         return project;
     }
 
-    private List<ProjectMember> getProfilesBasedOnProject(Connection conn,UUID projectId) throws SQLException {
+    private List<ProjectMember> getMembersBasedOnProject(Connection conn, UUID projectId) throws SQLException {
         String queryProjectMembers = """
                 SELECT  *,
                         t.id,
@@ -100,7 +100,7 @@ public class ProjectDAO implements IProjectDAO {
                 while (rsProjects.next()) {
                     Project project = new Project();
                     project = createProjectFromResultset(project, rsProjects);
-                    project.setProjectMembers(getProfilesBasedOnProject(connection, project.getProjectId()));
+                    project.setProjectMembers(getMembersBasedOnProject(connection, project.getProjectId()));
                     projects.add(project);
                 }
                 return projects;
