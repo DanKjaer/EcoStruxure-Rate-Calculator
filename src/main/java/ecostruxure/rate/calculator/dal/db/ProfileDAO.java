@@ -79,6 +79,7 @@ public class ProfileDAO implements IProfileDAO {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
+
                        SELECT p.*, dbo.geography.name AS geography_name 
                        FROM dbo.Profiles p
                        INNER JOIN dbo.Geography ON p.geography_id

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatCell,
@@ -22,6 +22,7 @@ import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 import {SnackbarService} from '../../services/snackbar.service';
+import { ChangeDetectorRef } from '@angular/core';
 import {MenuService} from '../../services/menu.service';
 
 @Component({
@@ -58,7 +59,17 @@ import {MenuService} from '../../services/menu.service';
 export class ProjectPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
 
-  displayedColumns: string[] = ['name', 'members', 'cost', 'margin', 'price', 'startDate', 'endDate', 'options'];
+  displayedColumns: string[] = ['name',
+                                'salesNumber',
+                                'members',
+                                'dayRate',
+                                'grossMargin',
+                                'price',
+                                'startDate',
+                                'endDate',
+                                'totalDays',
+                                'location',
+                                'options'];
 
   selectedRow: Project | null = null;
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
@@ -71,9 +82,9 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
   constructor(private projectService: ProjectService,
               private formatter: FormatterService,
               private snackBar: SnackbarService,
+              private ChangeDetectorRef: ChangeDetectorRef,
               private translate: TranslateService,
-              private menuService: MenuService) {
-  }
+              private menuService: MenuService) {}
 
   async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -83,8 +94,10 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     try {
       const projects = await this.projectService.getProjects();
       projects.forEach(project => {
-        project.startDateString = this.formatter.formatDate(project.startDate);
-        project.endDateString = this.formatter.formatDate(project.endDate);
+        project.startDateString = this.formatter.formatDate(project.projectStartDate);
+        project.endDateString = this.formatter.formatDate(project.projectEndDate);
+
+        project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
       });
       this.datasource.data = projects;
     } catch (error) {
@@ -109,9 +122,13 @@ export class ProjectPageComponent implements AfterViewInit, OnInit {
     });
 
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
+      project.startDateString = this.formatter.formatDate(project.projectStartDate);
+      project.endDateString = this.formatter.formatDate(project.projectEndDate);
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
+
+    this.ChangeDetectorRef.detectChanges();
   }
 
   async onDelete() {
