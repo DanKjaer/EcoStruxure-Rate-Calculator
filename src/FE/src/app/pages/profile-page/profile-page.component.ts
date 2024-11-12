@@ -97,7 +97,7 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
 
     this.profileForm = this.fb.group({
       name: [this.currentProfile!.name, Validators.required],
-      location: [this.currentProfile?.countryId, Validators.required],
+      location: [this.currentProfile?.geography.name, Validators.required],
       currency: [this.currentProfile!.currency, Validators.required],
       resource_type: [this.currentProfile!.resourceType, Validators.required],
       annual_cost: [this.currentProfile!.annualCost],
@@ -141,7 +141,7 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
   undo() {
     this.profileForm = this.fb.group({
       name: [this.currentProfile!.name],
-      location: [this.currentProfile?.countryId],
+      location: [this.currentProfile?.geography.name],
       currency: [this.currentProfile!.currency],
       resource_type: [this.currentProfile!.resourceType],
       annual_cost: [this.currentProfile!.annualCost],
