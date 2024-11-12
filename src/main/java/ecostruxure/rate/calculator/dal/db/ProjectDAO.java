@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.dal.db;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import ecostruxure.rate.calculator.be.Geography;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.dal.dao.IProjectDAO;
@@ -57,7 +58,7 @@ public class ProjectDAO implements IProjectDAO {
                 SELECT     pr.profile_id,
                            pr.name,
                            pr.currency,
-                           pr.country_id,
+                           pr.geography_id,
                            pr.resource_type,
                            pr.annual_cost,
                            pr.effectiveness,
@@ -79,10 +80,13 @@ public class ProjectDAO implements IProjectDAO {
             try (ResultSet rsMembers = stmtMembers.executeQuery()) {
                 while (rsMembers.next()) {
                     Profile profile = new Profile();
+                    Geography geography = new Geography();
                     profile.setProfileId(UUID.fromString(rsMembers.getString("profile_id")));
                     profile.setName(rsMembers.getString("name"));
                     profile.setCurrency(rsMembers.getString("currency"));
-                    profile.setCountryId(rsMembers.getInt("country_id"));
+                    geography.setId(rsMembers.getInt("geography_id"));
+                    geography.setName(rsMembers.getString("geography.name"));
+                    profile.setGeography(geography);
                     profile.setResourceType(rsMembers.getBoolean("resource_type"));
                     profile.setAnnualCost(rsMembers.getBigDecimal("annual_cost"));
                     profile.setEffectivenessPercentage(rsMembers.getBigDecimal("effectiveness"));

@@ -2,7 +2,7 @@ export interface Profile {
   profileId?: string;
   name: string;
   currency: number;
-  countryId: number;
+  geography: { id: number; name: string };
   resourceType: boolean;
   annualCost?: number;
   annualHours?: number;
@@ -14,6 +14,7 @@ export interface Profile {
   archived?: boolean;
   updatedAt?: Date;
   isEditing?: boolean;
+  location?: string;
 }
 
 export interface Team {

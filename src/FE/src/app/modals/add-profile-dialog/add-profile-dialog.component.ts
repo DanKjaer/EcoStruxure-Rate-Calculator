@@ -80,7 +80,7 @@ export class AddProfileDialogComponent implements OnInit {
     if (this.profileForm.valid) {
       let profile = {
         name: this.profileForm.value.name,
-        countryId: this.profileForm.value.countryId,
+        geography: this.profileForm.value.geography.id,
         currency: this.profileForm.value.currency,
         resourceType: this.profileForm.value.resource_type,
         annualCost: this.profileForm.value.annual_cost,
