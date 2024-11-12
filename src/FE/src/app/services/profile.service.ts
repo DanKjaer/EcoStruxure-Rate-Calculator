@@ -48,4 +48,5 @@ export class ProfileService {
   deleteProfile(profileId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${profileId}`));
   }
+
 }

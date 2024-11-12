@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -8,17 +9,15 @@ import java.util.UUID;
 public class Project {
     private UUID projectId;
     private String projectName;
-    private String projectSalesNumber;
     private String projectDescription;
-    private List<ProjectMember> projectMembers;
-    private BigDecimal projectDayRate;
+    private List<Profile> projectMembers;
+    private BigDecimal projectCost;
+    private BigDecimal projectMarkup;
     private BigDecimal ProjectGrossMargin;
+    private BigDecimal projectMargin;
     private BigDecimal projectPrice;
-    private LocalDate projectStartDate;
-    private LocalDate projectEndDate;
-    private int projectTotalDays;
-    private Geography projectLocation;
-    private Boolean projectArchived;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     public Project() {}
 
@@ -38,14 +37,6 @@ public class Project {
         this.projectName = projectName;
     }
 
-    public String getProjectSalesNumber() {
-        return projectSalesNumber;
-    }
-
-    public void setProjectSalesNumber(String projectSalesNumber) {
-        this.projectSalesNumber = projectSalesNumber;
-    }
-
     public String getProjectDescription() {
         return projectDescription;
     }
@@ -54,20 +45,20 @@ public class Project {
         this.projectDescription = projectDescription;
     }
 
-    public List<ProjectMember> getProjectMembers() {
+    public List<Profile> getProjectMembers() {
         return projectMembers;
     }
 
-    public void setProjectMembers(List<ProjectMember> projectMembers) {
+    public void setProjectMembers(List<Profile> projectMembers) {
         this.projectMembers = projectMembers;
     }
 
-    public BigDecimal getProjectDayRate() {
-        return projectDayRate;
+    public BigDecimal getProjectCost() {
+        return projectCost;
     }
 
-    public void setProjectDayRate(BigDecimal projectDayRate) {
-        this.projectDayRate = projectDayRate;
+    public void setProjectCost(BigDecimal projectCost) {
+        this.projectCost = projectCost;
     }
 
     public BigDecimal getProjectGrossMargin() {
@@ -78,6 +69,22 @@ public class Project {
         ProjectGrossMargin = projectGrossMargin;
     }
 
+    public BigDecimal getProjectMarkup() {
+        return projectMarkup;
+    }
+
+    public void setProjectMarkup(BigDecimal projectMarkup) {
+        this.projectMarkup = projectMarkup;
+    }
+
+    public BigDecimal getProjectMargin() {
+        return projectMargin;
+    }
+
+    public void setProjectMargin(BigDecimal projectMargin) {
+        this.projectMargin = projectMargin;
+    }
+
     public BigDecimal getProjectPrice() {
         return projectPrice;
     }
@@ -86,43 +93,19 @@ public class Project {
         this.projectPrice = projectPrice;
     }
 
-    public LocalDate getProjectStartDate() {
-        return projectStartDate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setProjectStartDate(LocalDate projectStartDate) {
-        this.projectStartDate = projectStartDate;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public LocalDate getProjectEndDate() {
-        return projectEndDate;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setProjectEndDate(LocalDate projectEndDate) {
-        this.projectEndDate = projectEndDate;
-    }
-
-    public int getProjectTotalDays() {
-        return projectTotalDays;
-    }
-
-    public void setProjectTotalDays(int projectTotalDays) {
-        this.projectTotalDays = projectTotalDays;
-    }
-
-    public Geography getProjectLocation() {
-        return projectLocation;
-    }
-
-    public void setProjectLocation(Geography projectLocation) {
-        this.projectLocation = projectLocation;
-    }
-
-    public Boolean getProjectArchived() {
-        return projectArchived;
-    }
-
-    public void setProjectArchived(Boolean projectArchived) {
-        this.projectArchived = projectArchived;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }
