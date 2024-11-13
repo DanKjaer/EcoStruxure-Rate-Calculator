@@ -22,10 +22,24 @@ public class ProfileDAO implements IProfileDAO {
     private Profile profileResultSet(ResultSet rs) throws SQLException {
         Geography geography = new Geography();
         UUID profileId = (UUID) (rs.getObject("profile_id"));
-        String name = rs.getString("name");
+        String profileName = rs.getString("name");
         String currency = rs.getString("currency");
         geography.setId(rs.getInt("geography_id"));
-        geography.setName(rs.getString("geography_name"));
+        // Check if the geography_name column exists in the ResultSet
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        int columnCount = rsMetaData.getColumnCount();
+        boolean hasGeographyName = false;
+        for (int i = 1; i <= columnCount; i++) {
+            if ("geography_name".equals(rsMetaData.getColumnName(i))) {
+                hasGeographyName = true;
+                break;
+            }
+        }
+        if (hasGeographyName) {
+            geography.setName(rs.getString("geography_name"));
+        } else {
+            geography.setName(null); // or set a default value
+        }
         boolean resourceType = rs.getBoolean("resource_type");
 
         BigDecimal annualCost = rs.getBigDecimal("annual_cost");
@@ -40,7 +54,7 @@ public class ProfileDAO implements IProfileDAO {
 
         return new Profile.Builder()
                 .setProfileId(profileId)
-                .setName(name)
+                .setName(profileName)
                 .setCurrency(currency)
                 .setGeography(geography)
                 .setResourceType(resourceType)
@@ -80,10 +94,9 @@ public class ProfileDAO implements IProfileDAO {
 
         String query = """
 
-                       SELECT p.*, dbo.geography.name AS geography_name 
+                       SELECT p.*, g.name AS geography_name 
                        FROM dbo.Profiles p
-                       INNER JOIN dbo.Geography ON p.geography_id
-                                = dbo.Geography.id
+                       INNER JOIN dbo.Geography g ON p.geography_id = g.id
                        ORDER BY p.profile_id DESC
                        """;
 
