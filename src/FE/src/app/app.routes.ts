@@ -3,7 +3,7 @@ import {ProfilesPageComponent} from './pages/profiles-page/profiles-page.compone
 import {TeamsPageComponent} from './pages/teams-page/teams-page.component';
 import {CurrencyPageComponent} from './pages/currency-page/currency-page.component';
 import {ProfilePageComponent} from './pages/profile-page/profile-page.component';
-import {ProjectPageComponent} from './pages/project-page/project-page.component';
+import {ProjectsPageComponent} from './pages/projects-page/projects-page.component';
 import {TeamPageComponent} from './pages/team-page/team-page.component';
 
 export const routes: Routes = [
@@ -11,6 +11,6 @@ export const routes: Routes = [
   { path: 'teams', component: TeamsPageComponent },
   { path: 'currency', component: CurrencyPageComponent },
   { path: 'profile/:id', component: ProfilePageComponent },
-  { path: 'projects', component: ProjectPageComponent },
+  { path: 'projects', component: ProjectsPageComponent },
   { path: 'team/:id', component: TeamPageComponent },
 ];
