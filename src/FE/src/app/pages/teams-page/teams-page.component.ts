@@ -125,7 +125,6 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     if (!this.originalRowData[element.id]) {
       this.originalRowData[element.id] = {...element}
     }
-
   }
 
   async saveEdit(selectedTeam: any): Promise<void> {

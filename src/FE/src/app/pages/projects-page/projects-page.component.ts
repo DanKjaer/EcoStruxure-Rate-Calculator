@@ -24,6 +24,8 @@ import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-pro
 import {SnackbarService} from '../../services/snackbar.service';
 import { ChangeDetectorRef } from '@angular/core';
 import {MenuService} from '../../services/menu.service';
+import {MatInput} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-projects-page',
@@ -51,7 +53,10 @@ import {MenuService} from '../../services/menu.service';
     NgIf,
     TranslateModule,
     MatHeaderCellDef,
-    NgClass
+    NgClass,
+    MatInput,
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
@@ -72,9 +77,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
                                 'options'];
 
   selectedRow: Project | null = null;
+  originalRowData: { [key: number]: any } = {};
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
   loading = true;
   isMenuOpen: boolean | undefined;
+  isEditingRow: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -144,5 +151,47 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
   selectRow(row: Project) {
     this.selectedRow = row;
+  }
+
+  editRow(element: any): void {
+    if (this.isEditingRow) return;
+    this.isEditingRow = true;
+    element['isEditing'] = true;
+    if (!this.originalRowData[element.id]) {
+      this.originalRowData[element.id] = {...element}
+    }
+  }
+
+  async saveEdit(selectedProject: any) {
+    selectedProject['isEditing'] = false;
+    this.isEditingRow = false;
+
+    try {
+      let response = await this.projectService.putProject(selectedProject);
+      this.datasource.data.forEach((project: Project) => {
+        if (project.projectId === response.projectId) {
+          project.projectName = response.projectName;
+          project.projectGrossMargin = response.projectGrossMargin;
+          project.projectPrice = response.projectPrice;
+          project.projectEndDate = response.projectEndDate;
+          project.projectTotalDays = response.projectTotalDays;
+        }
+      });
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+    } catch (e) {
+      this.cancelEdit(selectedProject);
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_SAVED'), false);
+    }
+  }
+
+  cancelEdit(selectedProject: any): void {
+    let original = this.originalRowData[selectedProject.projectId];
+    if (original) {
+      selectedProject.projectName = original.projectName;
+      selectedProject.projectPrice = original.projectPrice;
+      selectedProject.projectEndDate = original.projectEndDate;
+    }
+    selectedProject['isEditing'] = false;
+    this.isEditingRow = false;
   }
 }

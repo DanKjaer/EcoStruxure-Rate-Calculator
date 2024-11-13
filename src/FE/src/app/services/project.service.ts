@@ -41,4 +41,12 @@ export class ProjectService {
    deleteProject(projectId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${projectId}`));
   }
+
+  /**
+   * Updates a project
+   * @param selectedProject
+   */
+  async putProject(selectedProject: Project): Promise<Project> {
+    return firstValueFrom(this.http.put<Project>(`${this.apiUrl}/update`, selectedProject));
+  }
 }
