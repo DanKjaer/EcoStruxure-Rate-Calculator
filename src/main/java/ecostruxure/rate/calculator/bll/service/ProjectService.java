@@ -29,15 +29,42 @@ public class ProjectService {
     }
 
     public Project createProject(Project project) throws SQLException {
-        project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+        // Calculate day rate and gross margin, if project members are present
+        if (project.getProjectMembers() != null) {
+            project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+            project.setProjectGrossMargin(calculateGrossMargin(project));
+        }
         project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
-        project.setProjectGrossMargin(calculateGrossMargin(project));
+
         var newProject = projectDAO.createProject(project);
         if (!newProject.getProjectMembers().isEmpty()) {
             projectDAO.assignProfilesToProject(newProject.getProjectId(), project.getProjectMembers());
         }
 
         return newProject;
+    }
+
+    public boolean deleteProject(UUID projectId) throws SQLException {
+        return projectDAO.deleteProject(projectId);
+    }
+
+    public boolean archiveProject(UUID projectId) throws SQLException {
+        return projectDAO.archiveProject(projectId);
+    }
+
+    public Project updateProject(Project project) throws SQLException {
+        if (project.getProjectMembers() != null) {
+            project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+            project.setProjectGrossMargin(calculateGrossMargin(project));
+        }
+        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+
+        var updateSuccess = projectDAO.updateProject(project);
+
+        if (updateSuccess && !project.getProjectMembers().isEmpty()) {
+            projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers());
+        }
+        return project;
     }
 
     private BigDecimal calculateDayRate(List<ProjectMember> projectMembers) {
@@ -70,13 +97,5 @@ public class ProjectService {
         BigDecimal grossMarginNumber = project.getProjectPrice().subtract(project.getProjectDayRate().multiply(BigDecimal.valueOf(project.getProjectTotalDays())));
         BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return grossMarginPercentage;
-    }
-
-    public boolean deleteProject(UUID projectId) throws SQLException {
-        return projectDAO.deleteProject(projectId);
-    }
-
-    public boolean archiveProject(UUID projectId) throws SQLException {
-        return projectDAO.archiveProject(projectId);
     }
 }
