@@ -103,7 +103,7 @@
     height: fit-content;
 }
 
-.teamsContainer {
+.projectMembersContainer {
     display: flex;
     flex-direction: column;
     max-width: 60vw;
@@ -114,7 +114,7 @@
     font-size: 1.5rem;
 }
 
-.teamsTitleContainer {
+.projectMembersTitleContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -145,7 +145,7 @@
     z-index: 10;
 }
 
-.profileContainer {
+.projectContainer {
     display: flex;
     flex-direction: column;
     justify-content: space-between;

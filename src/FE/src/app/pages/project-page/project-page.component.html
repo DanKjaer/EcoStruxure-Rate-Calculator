@@ -34,8 +34,8 @@
     </div>
   </div>
   <div class="infoContainer">
-    <div class="teamsContainer">
-      <div class="teamsTitleContainer">
+    <div class="projectMembersContainer">
+      <div class="projectMembersTitleContainer">
         <p>{{ 'PROJECT_TEAMS' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
@@ -50,7 +50,7 @@
         </button>
       </div>
       <div class="tableContainer">
-        <table class="profileTeamsTable" mat-table [dataSource]="datasource">
+        <table class="projectMembersTable" mat-table [dataSource]="datasource">
           <!-- name -->
           <ng-container matColumnDef="teamName">
             <th mat-header-cell *matHeaderCellDef>
@@ -58,32 +58,20 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['name'] }}
+                {{ element['name']}}
               </span>
             </td>
           </ng-container>
 
-<!--          &lt;!&ndash; project description &ndash;&gt;
-          <ng-container matColumnDef="projectDescription">
-            <th mat-header-cell *matHeaderCellDef>
-              {{ '"PROJECT_DESCRIPTION"' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <span>
-                {{ element['projectDescription'] }}
-              </span>
-            </td>
-          </ng-container>-->
-
-          <!-- cost allocation -->
+          <!-- Project Allocation -->
           <ng-container matColumnDef="projectAllocation">
             <th mat-header-cell *matHeaderCellDef>
               {{ 'PROJECT_ALLOCATION' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
-              <span>
-                {{ element['projectAllocation'] + '%' }}
-              </span>
+        <span>
+          {{ element['projectAllocation'] + '%' }}
+        </span>
             </td>
           </ng-container>
 
@@ -94,7 +82,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['dayRateOnTeam'] | number:'1.0-0' }}
+                {{ element['dayRateWithMarkup'] | number:'1.0-2' }}
               </span>
             </td>
           </ng-container>
@@ -114,13 +102,11 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
-
         <div class="spinnerContainer" *ngIf="loading">
           <!-- Display spinner when loading -->
           <mat-spinner diameter="50"></mat-spinner>
         </div>
       </div>
-    </div>
     <!-- <div *ngIf="projectForm" class="profileContainer" [formGroup]="projectForm">
          {{ 'CURRENT_PROFILE' | translate }}
          <mat-form-field>
