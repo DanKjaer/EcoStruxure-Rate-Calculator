@@ -3,7 +3,6 @@ import {MatButtonModule, MatIconButton} from '@angular/material/button';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {RouterLink} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
-import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {NgClass} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
@@ -17,7 +16,6 @@ import {MenuService} from '../../services/menu.service';
     RouterLink,
     MatIconButton,
     MatIcon,
-    MatSlideToggle,
     MatTooltipModule,
     NgClass
   ],
@@ -44,5 +42,8 @@ export class SidemenuComponent {
     } else {
       this.translate.use('en');
     }
+  }
+
+  switchCurrency() {
   }
 }

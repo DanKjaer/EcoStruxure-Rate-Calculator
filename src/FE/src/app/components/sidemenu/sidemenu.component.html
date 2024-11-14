@@ -37,9 +37,14 @@
 
     </div>
     <div class="bottomContainer">
-      <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'LANGUAGE' | translate }}">
+      <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'CHANGE_LANGUAGE' | translate }}">
         <mat-icon>
           language
+        </mat-icon>
+      </button>
+      <button class="iconButton" mat-icon-button matTooltip="{{ 'CHANGE_CURRENCY' | translate }}">
+        <mat-icon>
+
         </mat-icon>
       </button>
       <button class="iconButton" mat-icon-button matTooltip="{{ 'LOGOUT' | translate }}">
