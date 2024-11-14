@@ -180,6 +180,29 @@ public class TeamService {
         return teamProfileManagementService.updateTeamProfile(teamId, teamProfile);
     }
 
+    /**
+     * Used by Profile Service to recalculate team profiles and their teams rates
+     * @param profile
+     * @return
+     * @throws Exception
+     */
+    public boolean updateProfile(Profile profile) throws Exception {
+        var teamProfilesMatchingProfile = teamDAO.getByProfileId(profile.getProfileId());
+        var teams = teamDAO.getTeams(teamProfilesMatchingProfile);
+        var teamProfilesOnTeams = teamDAO.getTeamProfiles(teams);
+        teamProfilesMatchingProfile = updateAllocatedCostAndHours(teamProfilesMatchingProfile);
+        for (Team team : teams) {
+            var id = team.getTeamId();
+            var teamProfiles = teamProfilesOnTeams.stream().filter(tp -> tp.getTeamId().equals(id)).toList();
+            team = calculateTotalAllocatedCostAndHoursFromProfiles(team, teamProfiles);
+            team = calculateTotalMarkupAndTotalGrossMargin(team);
+            teamDAO.update(team.getTeamId(), team);
+        }
+        teamDAO.updateTeamProfile(teamProfilesMatchingProfile);
+
+        return true;
+    }
+
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
         Objects.requireNonNull(profiles, "Profiles cannot be null");
@@ -240,6 +263,13 @@ public class TeamService {
 
 //  Alle metoder herfra og ned, skal måske flyttes til et andet sted end teamService.
 
+    /**
+     * Calculate the total allocated cost and hours for a team.
+     * @param team
+     * @param teamProfiles
+     * @return
+     * @throws Exception
+     */
     public Team calculateTotalAllocatedCostAndHoursFromProfiles(Team team, List<TeamProfile> teamProfiles) throws Exception {
         BigDecimal totalAllocatedCost = BigDecimal.ZERO;
         BigDecimal totalAllocatedHours = BigDecimal.ZERO;
@@ -300,6 +330,12 @@ public class TeamService {
         return teamProfiles;
     }
 
+    /**
+     * Calculates the allocated cost, hours and day rate for a team profile.
+     * @param teamProfiles
+     * @return
+     * @throws Exception
+     */
     public List<TeamProfile> updateAllocatedCostAndHours(List<TeamProfile> teamProfiles) throws Exception {
 
         for(TeamProfile teamProfile : teamProfiles) {

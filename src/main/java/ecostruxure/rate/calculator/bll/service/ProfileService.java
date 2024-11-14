@@ -23,10 +23,12 @@ public class ProfileService {
     private static final BigDecimal HUNDRED = new BigDecimal(100);
 
     private final TeamProfileManagementService teamProfileManagementService;
+    private final TeamService teamService;
     private final IProfileDAO profileDAO;
 
 
     public ProfileService() throws Exception {
+        this.teamService = new TeamService();
         this.teamProfileManagementService = new TeamProfileManagementService();
         this.profileDAO = new ProfileDAO();
     }
@@ -261,8 +263,13 @@ public class ProfileService {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-    public boolean update(UUID profileId, Profile profile) throws Exception{
-        return profileDAO.update(profileId, profile);
+    public boolean update(Profile profile) throws Exception{
+        var profileUpdated = profileDAO.update(profile);
+        var success = false;
+        if (profileUpdated) {
+            success = teamService.updateProfile(profile);
+        }
+        return success;
     }
 
     public boolean archive(UUID profileId, boolean shouldArchive) throws Exception {
