@@ -49,4 +49,9 @@ public class ProjectController {
     public boolean archiveProject(@PathVariable UUID id) throws Exception {
         return projectService.archiveProject(id);
     }
+
+    @PutMapping("/update")
+    public Project updateProject(@RequestBody Project project) throws Exception {
+        return projectService.updateProject(project);
+    }
 }

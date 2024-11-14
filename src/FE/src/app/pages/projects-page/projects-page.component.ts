@@ -1,20 +1,23 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
+  MatRow,
+  MatRowDef,
+  MatTable,
+  MatTableDataSource
 } from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
-import {NgClass, NgIf} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Project} from '../../models';
@@ -22,9 +25,12 @@ import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 import {SnackbarService} from '../../services/snackbar.service';
-import { ChangeDetectorRef } from '@angular/core';
 import {MenuService} from '../../services/menu.service';
 import {Router} from '@angular/router';
+import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+
 
 @Component({
   selector: 'app-projects-page',
@@ -43,7 +49,6 @@ import {Router} from '@angular/router';
     MatMenuItem,
     MatMenuTrigger,
     MatPaginator,
-    MatProgressSpinner,
     MatRow,
     MatRowDef,
     MatSort,
@@ -52,7 +57,17 @@ import {Router} from '@angular/router';
     NgIf,
     TranslateModule,
     MatHeaderCellDef,
-    NgClass
+    NgClass,
+    MatInput,
+    ReactiveFormsModule,
+    FormsModule,
+    MatDatepickerToggle,
+    MatFormField,
+    MatLabel,
+    MatSuffix,
+    MatDatepickerInput,
+    MatDatepicker,
+    DecimalPipe
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
@@ -73,9 +88,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
                                 'options'];
 
   selectedRow: Project | null = null;
+  originalRowData: { [key: number]: any } = {};
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
   loading = true;
   isMenuOpen: boolean | undefined;
+  isEditingRow: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -122,14 +139,14 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       minWidth: '60vw',
       maxWidth: '1200px',
     });
-
+    this.loading = true;
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
       project.startDateString = this.formatter.formatDate(project.projectStartDate);
       project.endDateString = this.formatter.formatDate(project.projectEndDate);
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
-
+    this.loading = false;
     this.ChangeDetectorRef.detectChanges();
   }
 
@@ -148,7 +165,56 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.selectedRow = row;
   }
 
+
   goToProject(projectId: string): void {
     this.router.navigate(['/projects', projectId]);
+  }
+
+  editRow(element: any): void {
+    if (this.isEditingRow) return;
+    this.isEditingRow = true;
+    element['isEditing'] = true;
+    if (!this.originalRowData[element.id]) {
+      this.originalRowData[element.id] = {...element}
+    }
+  }
+
+  async saveEdit(selectedProject: any) {
+    this.loading = true;
+    selectedProject['isEditing'] = false;
+    this.isEditingRow = false;
+
+    const endDate = selectedProject.projectEndDate;
+    selectedProject.projectEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
+    try {
+      let response = await this.projectService.putProject(selectedProject);
+      this.datasource.data.forEach((project: Project) => {
+        if (project.projectId === response.projectId) {
+          project.projectName = response.projectName;
+          project.projectGrossMargin = response.projectGrossMargin;
+          project.projectPrice = response.projectPrice;
+          project.projectEndDate = response.projectEndDate;
+          project.endDateString = this.formatter.formatDate(project.projectEndDate);
+          project.projectTotalDays = response.projectTotalDays;
+        }
+      });
+      this.loading = false;
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+    } catch (e) {
+      this.cancelEdit(selectedProject);
+      this.loading = false;
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_SAVED'), false);
+    }
+  }
+
+  cancelEdit(selectedProject: any): void {
+    let original = this.originalRowData[selectedProject.projectId];
+    if (original) {
+      selectedProject.projectName = original.projectName;
+      selectedProject.projectPrice = original.projectPrice;
+      selectedProject.projectEndDate = original.projectEndDate;
+    }
+    selectedProject['isEditing'] = false;
+    this.isEditingRow = false;
   }
 }
