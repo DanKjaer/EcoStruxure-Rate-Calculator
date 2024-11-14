@@ -211,5 +211,6 @@
   "ADD_PROFILE": "Add profile",
   "DATES": "Dates",
   "PROFILE_LIST": "Profile list",
-  "CURRENCY_SYMBOL": "Symbol"
+  "CURRENCY_SYMBOL": "Symbol",
+  "PROJECT_TEAMS": "Teams for this project"
 }

@@ -205,5 +205,6 @@
   "ADD_PROFILE": "Tilføj profil",
   "DATES": "Datoer",
   "PROFILE_LIST": "Profil liste",
-  "CURRENCY_SYMBOL": "Symbol"
+  "CURRENCY_SYMBOL": "Symbol",
+  "PROJECT_TEAMS": "Teams til dette projekt"
 }

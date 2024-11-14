@@ -1,12 +1,115 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {DecimalPipe, NgClass, NgIf} from "@angular/common";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow, MatRowDef, MatTable, MatTableDataSource
+} from "@angular/material/table";
+import {MatIcon} from "@angular/material/icon";
+import {MatFormField, MatInput} from "@angular/material/input";
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatSort, MatSortHeader} from "@angular/material/sort";
+import {MatTooltip} from "@angular/material/tooltip";
+import {TranslateModule} from "@ngx-translate/core";
+import { MatSelect} from "@angular/material/select";
+import {MatOption} from "@angular/material/core";
+import {MatLabel} from "@angular/material/form-field";
+import {TeamsService} from "../../services/teams.service";
+import {Team} from "../../models";
 
 @Component({
   selector: 'app-project-page',
   standalone: true,
-  imports: [],
+  imports: [
+    DecimalPipe,
+    FormsModule,
+    MatButton,
+    MatCell,
+    MatCellDef,
+    MatColumnDef,
+    MatHeaderCell,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatIcon,
+    MatIconButton,
+    MatInput,
+    MatLabel,
+    MatMenu,
+    MatMenuItem,
+    MatPaginator,
+    MatProgressSpinner,
+    MatRow,
+    MatRowDef,
+    MatSort,
+    MatSortHeader,
+    MatTable,
+    MatTooltip,
+    NgIf,
+    TranslateModule,
+    NgClass,
+    MatFormField,
+    MatMenuTrigger,
+    ReactiveFormsModule,
+    MatSelect,
+    MatOption
+  ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
 })
-export class ProjectPageComponent {
+export class ProjectPageComponent implements OnInit{
+    projectForm: FormGroup = new FormGroup({});
+    teams: Team[] = [];
 
+  statBoxes = {
+    totalDayRate: '',
+    totalHourlyRate: '',
+    totalAnnualCost: '',
+    totalAnnualHours: ''
+  };
+  loading: boolean = true;
+  isMenuOpen: boolean | undefined;
+  datasource: MatTableDataSource<any> = new MatTableDataSource();
+  displayedColumns: string[] = [
+    'team name',
+    'project description',
+    'cost allocation',
+    'hour allocation',
+    'day rate',
+    'options'
+  ];
+
+
+  constructor(private formBuilder: FormBuilder,
+              private teamService: TeamsService,) {
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.projectForm = this.formBuilder.group({
+        teamName: ['', Validators.required],
+        projectDescription: [''],
+        costAllocation: [''],
+        hourAllocation: [''],
+        dayRateOnProject: ['']
+    });
+
+    this.teams = await this.teamService.getTeams();
+    this.datasource.data = this.teams;
+  }
+
+
+  update() {
+
+  }
+
+  undo() {
+
+  }
 }

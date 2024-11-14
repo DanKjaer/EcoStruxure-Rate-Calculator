@@ -5,12 +5,14 @@ import {CurrencyPageComponent} from './pages/currency-page/currency-page.compone
 import {ProfilePageComponent} from './pages/profile-page/profile-page.component';
 import {ProjectsPageComponent} from './pages/projects-page/projects-page.component';
 import {TeamPageComponent} from './pages/team-page/team-page.component';
+import {ProjectPageComponent} from './pages/project-page/project-page.component';
 
 export const routes: Routes = [
   { path: 'profiles', component: ProfilesPageComponent },
-  { path: 'teams', component: TeamsPageComponent },
-  { path: 'currency', component: CurrencyPageComponent },
   { path: 'profile/:id', component: ProfilePageComponent },
-  { path: 'projects', component: ProjectsPageComponent },
+  { path: 'teams', component: TeamsPageComponent },
   { path: 'team/:id', component: TeamPageComponent },
+  { path: 'projects', component: ProjectsPageComponent },
+  { path: 'projects/:id', component: ProjectPageComponent },
+  { path: 'currency', component: CurrencyPageComponent },
 ];
