@@ -179,7 +179,13 @@ public class TeamService {
 
         return teamProfileManagementService.updateTeamProfile(teamId, teamProfile);
     }
-    
+
+    /**
+     * Updates team profiles and teams based on one profile
+     * @param profile
+     * @return
+     * @throws Exception
+     */
     public boolean updateProfile(Profile profile) throws Exception {
         var teamProfilesMatchingProfile = teamDAO.getByProfileId(profile.getProfileId());
         var teams = teamDAO.getTeams(teamProfilesMatchingProfile);
