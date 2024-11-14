@@ -116,7 +116,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.loading = true;
     element['isEditing'] = false;
     this.isEditingRow = false;
-    
+
     try {
       let response = await this.profileService.putProfile(element);
       this.datasource.data.forEach((profile: Profile) => {
