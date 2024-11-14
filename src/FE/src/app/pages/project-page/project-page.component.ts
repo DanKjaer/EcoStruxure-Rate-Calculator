@@ -6,7 +6,7 @@ import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell,
+  MatHeaderCell, MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
   MatRow, MatRowDef, MatTable, MatTableDataSource
@@ -61,7 +61,8 @@ import {ActivatedRoute} from '@angular/router';
     MatMenuTrigger,
     ReactiveFormsModule,
     MatSelect,
-    MatOption
+    MatOption,
+    MatHeaderCellDef
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
@@ -101,7 +102,11 @@ export class ProjectPageComponent implements OnInit{
     });
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
+    this.project.projectMembers.forEach(member => {
+      member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
+    });
     this.datasource.data = this.project.projectMembers;
+    this.loading = false;
   }
 
 
