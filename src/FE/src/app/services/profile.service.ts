@@ -37,8 +37,8 @@ export class ProfileService {
   /**
    * updates a profile
    */
-  putProfile(): Promise<boolean> {
-    return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/{id}`, {}));
+  putProfile(profile: Profile): Promise<Profile> {
+    return firstValueFrom(this.http.put<Profile>(`${this.apiUrl}`, profile));
   }
 
   /**

@@ -649,12 +649,12 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public boolean update(UUID profileId, Profile profile) throws Exception {
+    public boolean update(Profile profile) throws Exception {
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
-                                  name = ?, currency = ?, geography_id
-    = ?, resource_type = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
+                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?,
+                                  hours_per_day = ?, name = ?, currency = ?, geography_id = ?, resource_type = ?,
+                                  is_archived = ?, updated_at = CURRENT_TIMESTAMP
                                   WHERE profile_id = ?;
                                   """;
 
@@ -672,7 +672,7 @@ public class ProfileDAO implements IProfileDAO {
             updateProfileStmt.setInt(8, profile.getGeography().getId());
             updateProfileStmt.setBoolean(9, profile.isResourceType());
             updateProfileStmt.setBoolean(10, profile.isArchived());
-            updateProfileStmt.setObject(11, profileId);
+            updateProfileStmt.setObject(11, profile.getProfileId());
             updateProfileStmt.executeUpdate();
 
             conn.commit();
@@ -694,10 +694,10 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileSQL = """
                                   
-UPDATE dbo.Profiles
-                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
-                                  name = ?, currency = ?, geography_id
-                                      = ?, resource_type = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
+                                  UPDATE dbo.Profiles
+                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?,
+                                  hours_per_day = ?, name = ?, currency = ?, geography_id = ?, resource_type = ?,
+                                  is_archived = ?, updated_at = CURRENT_TIMESTAMP
                                   WHERE profile_id = ?;
                                   """;
         try (PreparedStatement updateProfileStmt = sqlContext.connection().prepareStatement(updateProfileSQL)) {

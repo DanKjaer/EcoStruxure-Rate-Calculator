@@ -46,7 +46,7 @@ public interface IProfileDAO {
 
     List<Team> getTeams(Profile profile) throws Exception;
 
-    boolean update(UUID profileId, Profile profile) throws Exception;
+    boolean update(Profile profile) throws Exception;
 
     boolean update(TransactionContext context, Profile profile) throws Exception;
 
