@@ -207,5 +207,10 @@
   "DATES": "Datoer",
   "PROFILE_LIST": "Profil liste",
   "CURRENCY_SYMBOL": "Symbol",
-  "PROJECT_TEAMS": "Teams til dette projekt"
+  "PROJECT_TEAMS": "Teams til dette projekt",
+  "TOTAL_PRICE": "Total pris",
+  "TOTAL_DAYS": "Antal dage",
+  "PROJECT_ALLOCATION": "Project allokering",
+  "SALES_INFORMATION": "Salgs informationer",
+  "ADD_TO_PROJECT": "Tilføj til projekt"
 }

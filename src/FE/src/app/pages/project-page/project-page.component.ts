@@ -22,10 +22,11 @@ import {TranslateModule} from "@ngx-translate/core";
 import { MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
-import {TeamsService} from "../../services/teams.service";
-import {Project, Team} from "../../models";
+import {Project} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {ActivatedRoute} from '@angular/router';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-project-page',
@@ -62,7 +63,10 @@ import {ActivatedRoute} from '@angular/router';
     ReactiveFormsModule,
     MatSelect,
     MatOption,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatDatepicker
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
@@ -72,10 +76,10 @@ export class ProjectPageComponent implements OnInit{
     project!: Project;
 
   statBoxes = {
-    totalDayRate: '',
-    totalHourlyRate: '',
-    totalAnnualCost: '',
-    totalAnnualHours: ''
+    totalDayRate: 0,
+    totalPrice: 0,
+    grossMargin: 0,
+    totalDays: 0
   };
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
@@ -90,15 +94,24 @@ export class ProjectPageComponent implements OnInit{
 
   constructor(private formBuilder: FormBuilder,
               private projectService: ProjectService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private menuService: MenuService) {
   }
 
   async ngOnInit(): Promise<void> {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
+
     this.projectForm = this.formBuilder.group({
         teamName: ['', Validators.required],
+        salesNumber: [''],
+        projectPrice: [''],
         projectDescription: [''],
         projectAllocation: [''],
-        dayRateOnProject: ['']
+        dayRateOnProject: [''],
+        startDate: [''],
+        endDate: ['']
     });
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
@@ -107,6 +120,13 @@ export class ProjectPageComponent implements OnInit{
     });
     this.datasource.data = this.project.projectMembers;
     this.loading = false;
+
+    this.statBoxes = {
+      totalDayRate: this.project.projectDayRate!,
+      totalPrice: this.project.projectPrice!,
+      grossMargin: this.project.projectGrossMargin!,
+      totalDays: this.project.projectTotalDays!
+    }
   }
 
 

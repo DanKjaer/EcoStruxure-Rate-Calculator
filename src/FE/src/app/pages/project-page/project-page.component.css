@@ -19,7 +19,7 @@
     max-height: 20vh;
 }
 
-.hourlyRateBox, .dayRateBox, .annualCostBox, .annualHoursBox {
+.totalDayRateBox, .totalPriceBox, .grossMarginBox, .totalDaysBox {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -32,7 +32,7 @@
     text-wrap: revert;
 }
 
-.hourlyRateBox:after, .dayRateBox:after, .annualCostBox:after, .annualHoursBox:after {
+.totalDayRateBox:after, .totalPriceBox:after, .grossMarginBox:after, .totalDaysBox:after {
     font-family: "Material Icons";
     position: absolute;
     color: rgba(0 0 0 / 0.1);
@@ -44,43 +44,43 @@
     resize: block;
 }
 
-.hourlyRateBox {
+.totalDayRateBox {
     position: relative;
     overflow: hidden;
     background-color: cornflowerblue;
 }
 
-.hourlyRateBox:after {
+.totalDayRateBox:after {
     content: "\e8b5";
 }
 
-.dayRateBox {
+.totalPriceBox {
     position: relative;
     overflow: hidden;
     background-color: green;
 }
 
-.dayRateBox:after {
+.totalPriceBox:after {
     content: "\e8df";
 }
 
-.annualCostBox {
+.grossMarginBox {
     position: relative;
     overflow: hidden;
     background-color: orange;
 }
 
-.annualCostBox:after {
+.grossMarginBox:after {
     content: "\ef63";
 }
 
-.annualHoursBox {
+.totalDaysBox {
     position: relative;
     overflow: hidden;
     background-color: indianred;
 }
 
-.annualHoursBox:after {
+.totalDaysBox:after {
     content: "\e923";
 }
 

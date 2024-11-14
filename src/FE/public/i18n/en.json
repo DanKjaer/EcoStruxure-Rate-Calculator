@@ -213,5 +213,10 @@
   "DATES": "Dates",
   "PROFILE_LIST": "Profile list",
   "CURRENCY_SYMBOL": "Symbol",
-  "PROJECT_TEAMS": "Teams for this project"
+  "PROJECT_TEAMS": "Teams for this project",
+  "TOTAL_PRICE": "Total price",
+  "TOTAL_DAYS": "Total days",
+  "PROJECT_ALLOCATION": "Project allocation",
+  "SALES_INFORMATION": "Sales information",
+  "ADD_TO_PROJECT": "Add to project"
 }

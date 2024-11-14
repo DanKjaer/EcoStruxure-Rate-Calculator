@@ -1,14 +1,6 @@
 <div class="container" [ngClass]="{'menuClosed': !isMenuOpen}">
   <div class="statsContainer">
-    <div class="hourlyRateBox">
-      <p class="boxValue">
-        {{ this.statBoxes.totalHourlyRate | number:'1.0-2' }}
-      </p>
-      <p class="boxText">
-        {{ 'TOTAL_HOURLY_RATE' | translate }}
-      </p>
-    </div>
-    <div class="dayRateBox">
+    <div class="totalDayRateBox">
       <p class="boxValue">
         {{ this.statBoxes.totalDayRate | number:'1.0-2' }}
       </p>
@@ -16,20 +8,28 @@
         {{ 'TOTAL_DAY_RATE' | translate }}
       </p>
     </div>
-    <div class="annualCostBox">
+    <div class="totalPriceBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalAnnualCost | number:'1.0-2' }}
+        {{ this.statBoxes.totalPrice | number:'1.0-2' }}
       </p>
       <p class="boxText">
-        {{ 'TOTAL_ANNUAL_COST' | translate }}
+        {{ 'TOTAL_PRICE' | translate }}
       </p>
     </div>
-    <div class="annualHoursBox">
+    <div class="grossMarginBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalAnnualHours | number:'1.0-0' }}
+        {{ this.statBoxes.grossMargin | number:'1.0-2' }}
       </p>
       <p class="boxText">
-        {{ 'TOTAL_ANNUAL_HOURS' | translate }}
+        {{ 'GROSS_MARGIN' | translate }}
+      </p>
+    </div>
+    <div class="totalDaysBox">
+      <p class="boxValue">
+        {{ this.statBoxes.totalDays | number:'1.0-0' }}
+      </p>
+      <p class="boxText">
+        {{ 'TOTAL_DAYS' | translate }}
       </p>
     </div>
   </div>
@@ -46,7 +46,7 @@
           <mat-icon>
             add
           </mat-icon>
-          {{ 'ADD_TO_TEAM' | translate }}
+          {{ 'ADD_TO_PROJECT' | translate }}
         </button>
       </div>
       <div class="tableContainer">
@@ -58,7 +58,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['name']}}
+                {{ element['name'] }}
               </span>
             </td>
           </ng-container>
@@ -107,96 +107,80 @@
           <mat-spinner diameter="50"></mat-spinner>
         </div>
       </div>
-    <!-- <div *ngIf="projectForm" class="profileContainer" [formGroup]="projectForm">
-         {{ 'CURRENT_PROFILE' | translate }}
-         <mat-form-field>
-             <mat-label>{{ 'NAME' | translate }}</mat-label>
-             <input matInput placeholder="John Doe" formControlName="name">
-         </mat-form-field>
-         <div class="groupContainer">
-&lt;!&ndash;                <div>
-                 &lt;!&ndash; location select &ndash;&gt;
-                 <mat-form-field>
-                     <mat-label>{{ 'LOCATION' | translate }}</mat-label>
-                     <mat-select formControlName="location">
-                         @for (location of locations; track location) {
-                             <mat-option [value]="location.id">
-                                 {{ location.name }}
-                             </mat-option>
-                         }
-                     </mat-select>
-                 </mat-form-field>
-             </div>&ndash;&gt;
-&lt;!&ndash;                <div>
-                 &lt;!&ndash; currency select &ndash;&gt;
-                 <mat-form-field>
-                     <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
-                     <mat-select formControlName="currency">
-                         @for (currency of currencies; track currency) {
-                             <mat-option [value]="currency.valueOf()">
-                                 {{ currency }}
-                             </mat-option>
-                         }
-                     </mat-select>
-                 </mat-form-field>
-             </div>&ndash;&gt;
-         </div>
+    </div>
+    <div *ngIf="projectForm" class="projectContainer" [formGroup]="projectForm">
+      {{ 'CURRENT_PROFILE' | translate }}
 
-         &lt;!&ndash; annually inputs &ndash;&gt;
-         {{ 'ANNUALLY' | translate }}
-         <div class="groupContainer">
-             <div>
-                 <mat-form-field>
-                     <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
-                     <input matInput placeholder="0" formControlName="annual_cost">
-                 </mat-form-field>
-             </div>
-             <div>
-                 <mat-form-field>
-                     <mat-label>{{ 'ANNUAL_HOURS' | translate }}</mat-label>
-                     <input matInput placeholder="0" formControlName="annual_hours">
-                 </mat-form-field>
-             </div>
-         </div>
+        <mat-form-field>
+          <mat-label>{{ 'NAME' | translate }}</mat-label>
+          <input matInput placeholder="John Doe" formControlName="teamName">
+        </mat-form-field>
 
-         &lt;!&ndash; modifiers input &ndash;&gt;
-         {{ 'MODIFIERS' | translate }}
-         <div class="groupContainer">
-             <div>
-                 <mat-form-field>
-                     <mat-label>{{ 'EFFECTIVENESS' | translate }}</mat-label>
-                     <input matInput placeholder="0" formControlName="effectiveness">
-                 </mat-form-field>
-             </div>
-             <div>
-                 <mat-form-field>
-                     <mat-label>{{ 'HOURS_PER_DAY' | translate }}</mat-label>
-                     <input matInput placeholder="0" formControlName="hours_per_day">
-                 </mat-form-field>
-             </div>
-         </div>
 
-         &lt;!&ndash; buttons &ndash;&gt;
-         <div class="buttonContainer">
-             <button mat-stroked-button (click)="update()">
-                 <mat-icon>check</mat-icon>
-                 {{ 'UPDATE' | translate }}
-             </button>
-             <button mat-stroked-button (click)="undo()">
-                 <mat-icon>undo</mat-icon>
-                 {{ 'UNDO' | translate }}
-             </button>
-         </div>
-     </div>
- </div>
-</div>
--->
+      {{ 'SALES_INFORMATION' | translate }}
+      <div class="groupContainer">
+        <div>
+          <!-- sales input  -->
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_SALES_NUMBER' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="salesNumber">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_TOTAL_PRICE' | translate }}</mat-label>
+            <input matInput placeholder="0" formControlName="projectPrice">
+          </mat-form-field>
+        </div>
+      </div>
 
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <mat-icon>remove</mat-icon>
-    {{ 'REMOVE' | translate }}
-  </button>
-</mat-menu>
+      {{ 'PROJECT_DESCRIPTION' | translate }}
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_DESCRIPTION' | translate }}</mat-label>
+            <textarea matInput placeholder="Description" formControlName="projectDescription"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Dates input -->
+      {{ 'DATES' | translate }}
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_START_DATE' | translate }}</mat-label>
+            <input matInput [matDatepicker]="datePicker" formControlName="startDate">
+            <mat-datepicker-toggle [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_END_DATE' | translate }}</mat-label>
+            <input matInput [matDatepicker]="datePicker" formControlName="endDate">
+            <mat-datepicker-toggle [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="buttonContainer">
+        <button mat-stroked-button (click)="update()">
+          <mat-icon>check</mat-icon>
+          {{ 'UPDATE' | translate }}
+        </button>
+        <button mat-stroked-button (click)="undo()">
+          <mat-icon>undo</mat-icon>
+          {{ 'UNDO' | translate }}
+        </button>
+      </div>
+    </div>
   </div>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>
+      <mat-icon>remove</mat-icon>
+      {{ 'REMOVE' | translate }}
+    </button>
+  </mat-menu>
 </div>
