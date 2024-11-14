@@ -23,7 +23,9 @@ import { MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
 import {TeamsService} from "../../services/teams.service";
-import {Team} from "../../models";
+import {Project, Team} from "../../models";
+import {ProjectService} from '../../services/project.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-project-page',
@@ -66,7 +68,7 @@ import {Team} from "../../models";
 })
 export class ProjectPageComponent implements OnInit{
     projectForm: FormGroup = new FormGroup({});
-    teams: Team[] = [];
+    project!: Project;
 
   statBoxes = {
     totalDayRate: '',
@@ -78,30 +80,28 @@ export class ProjectPageComponent implements OnInit{
   isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   displayedColumns: string[] = [
-    'team name',
-    'project description',
-    'cost allocation',
-    'hour allocation',
-    'day rate',
+    'teamName',
+    'projectAllocation',
+    'dayRate',
     'options'
   ];
 
 
   constructor(private formBuilder: FormBuilder,
-              private teamService: TeamsService,) {
+              private projectService: ProjectService,
+              private route: ActivatedRoute) {
   }
 
   async ngOnInit(): Promise<void> {
     this.projectForm = this.formBuilder.group({
         teamName: ['', Validators.required],
         projectDescription: [''],
-        costAllocation: [''],
-        hourAllocation: [''],
+        projectAllocation: [''],
         dayRateOnProject: ['']
     });
 
-    this.teams = await this.teamService.getTeams();
-    this.datasource.data = this.teams;
+    this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
+    this.datasource.data = this.project.projectMembers;
   }
 
 

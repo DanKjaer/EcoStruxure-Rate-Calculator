@@ -52,19 +52,19 @@
       <div class="tableContainer">
         <table class="profileTeamsTable" mat-table [dataSource]="datasource">
           <!-- name -->
-          <ng-container matColumnDef="team name">
+          <ng-container matColumnDef="teamName">
             <th mat-header-cell *matHeaderCellDef>
               {{ 'NAME' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['teamName'] }}
+                {{ element['name'] }}
               </span>
             </td>
           </ng-container>
 
-          <!-- project description -->
-          <ng-container matColumnDef="project description">
+<!--          &lt;!&ndash; project description &ndash;&gt;
+          <ng-container matColumnDef="projectDescription">
             <th mat-header-cell *matHeaderCellDef>
               {{ '"PROJECT_DESCRIPTION"' | translate }}
             </th>
@@ -73,34 +73,22 @@
                 {{ element['projectDescription'] }}
               </span>
             </td>
-          </ng-container>
+          </ng-container>-->
 
           <!-- cost allocation -->
-          <ng-container matColumnDef="cost allocation">
+          <ng-container matColumnDef="projectAllocation">
             <th mat-header-cell *matHeaderCellDef>
-              {{ 'COST_ALLOCATION' | translate }}
+              {{ 'PROJECT_ALLOCATION' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['costAllocation'] + '%' }}
-              </span>
-            </td>
-          </ng-container>
-
-          <!-- hour allocation -->
-          <ng-container matColumnDef="hour allocation">
-            <th mat-header-cell *matHeaderCellDef>
-              {{ 'HOUR_ALLOCATION' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <span>
-                {{ element['hourAllocation'] | number:'1.0-0' }}
+                {{ element['projectAllocation'] + '%' }}
               </span>
             </td>
           </ng-container>
 
           <!-- day rate -->
-          <ng-container matColumnDef="day rate">
+          <ng-container matColumnDef="dayRate">
             <th mat-header-cell *matHeaderCellDef>
               {{ 'DAY_RATE' | translate }}
             </th>
@@ -217,11 +205,12 @@
  </div>
 </div>
 -->
-  </div>
-</div>
+
 <mat-menu #menu="matMenu">
   <button mat-menu-item>
     <mat-icon>remove</mat-icon>
     {{ 'REMOVE' | translate }}
   </button>
 </mat-menu>
+  </div>
+</div>
