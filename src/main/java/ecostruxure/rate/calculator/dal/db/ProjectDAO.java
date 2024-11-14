@@ -63,7 +63,9 @@ public class ProjectDAO implements IProjectDAO {
         String queryProjectMembers = """
                 SELECT  *,
                         t.id,
-                        t.name
+                        t.name,
+                        t.markup,
+                        t.day_rate
                 FROM dbo.project_members pm
                 JOIN dbo.teams t ON pm.teams_id = t.id
                 WHERE pm.project_id = ?;
@@ -79,6 +81,8 @@ public class ProjectDAO implements IProjectDAO {
                     projectMember.setProjectId(UUID.fromString(rsMembers.getString("project_id")));
                     projectMember.setName(rsMembers.getString("name"));
                     projectMember.setProjectAllocation(rsMembers.getBigDecimal("allocation_on_project"));
+                    projectMember.setMarkup(rsMembers.getBigDecimal("markup"));
+                    projectMember.setDayRate(rsMembers.getBigDecimal("day_rate"));
                     projectMembers.add(projectMember);
                 }
             }
@@ -260,6 +264,7 @@ public class ProjectDAO implements IProjectDAO {
                 stmt.setObject(1, projectId);
                 stmt.setObject(2, projectMember.getTeamId());
                 stmt.setBigDecimal(3, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(4, projectMember.getProjectAllocation());
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
