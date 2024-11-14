@@ -6,6 +6,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {NgClass} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-sidemenu',
@@ -23,11 +24,12 @@ import {MenuService} from '../../services/menu.service';
   styleUrl: './sidemenu.component.css'
 })
 export class SidemenuComponent {
-  constructor(private translate: TranslateService, private menuService: MenuService) {
+  constructor(private translate: TranslateService, private menuService: MenuService, private currencyService: CurrencyService) {
     translate.setDefaultLang('en');
-    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+    menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     })
+    currencyService.setCurrency("EUR");
   }
 
   isMenuOpen = true;
@@ -45,5 +47,12 @@ export class SidemenuComponent {
   }
 
   switchCurrency() {
+    if (localStorage.getItem("selectedCurrency") == "EUR") {
+      this.currencyService.setCurrency("USD");
+    } else {
+      this.currencyService.setCurrency("EUR");
+    }
   }
+
+  protected readonly localStorage = localStorage;
 }

@@ -12,14 +12,19 @@ export class CurrencyService {
   private currencies: { [key: string]: Currency } = {};
   private apiUrl = 'http://localhost:8080/api/currency';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadCurrencies();
+  }
 
+  //#region API calls
   /**
    * Gets all currencies from backend.
    */
   getCurrencies(): Promise<Currency[]> {
     return firstValueFrom(this.http.get<Currency[]>(`${this.apiUrl}`));
   }
+
+  //#endregion
 
   /**
    * Loads currency data from backend.
@@ -47,11 +52,11 @@ export class CurrencyService {
   /**
    * Gets the symbol of the given currency.
    *
-   * If there isn't a symbol 'na' is given instead.
+   * If there isn't a symbol 'n/a' is given instead.
    * @param currency
    */
   getSymbol(currency: string) {
-    return this.currencies[currency].symbol || 'na';
+    return this.currencies[currency].symbol || 'n/a';
   }
 
   /**

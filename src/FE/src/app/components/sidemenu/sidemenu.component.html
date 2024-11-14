@@ -42,9 +42,9 @@
           language
         </mat-icon>
       </button>
-      <button class="iconButton" mat-icon-button matTooltip="{{ 'CHANGE_CURRENCY' | translate }}">
+      <button class="iconButton" mat-icon-button (click)="switchCurrency()" matTooltip="{{ 'CHANGE_CURRENCY' | translate }}">
         <mat-icon>
-
+          {{ localStorage.getItem("selectedCurrency") == "EUR" ? 'euro' : 'attach_money' }}
         </mat-icon>
       </button>
       <button class="iconButton" mat-icon-button matTooltip="{{ 'LOGOUT' | translate }}">
