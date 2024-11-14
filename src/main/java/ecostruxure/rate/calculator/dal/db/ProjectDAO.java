@@ -63,7 +63,9 @@ public class ProjectDAO implements IProjectDAO {
         String queryProjectMembers = """
                 SELECT  *,
                         t.id,
-                        t.name
+                        t.name,
+                        t.markup,
+                        t.day_rate
                 FROM dbo.project_members pm
                 JOIN dbo.teams t ON pm.teams_id = t.id
                 WHERE pm.project_id = ?;
@@ -79,6 +81,8 @@ public class ProjectDAO implements IProjectDAO {
                     projectMember.setProjectId(UUID.fromString(rsMembers.getString("project_id")));
                     projectMember.setName(rsMembers.getString("name"));
                     projectMember.setProjectAllocation(rsMembers.getBigDecimal("allocation_on_project"));
+                    projectMember.setMarkup(rsMembers.getBigDecimal("markup"));
+                    projectMember.setDayRate(rsMembers.getBigDecimal("day_rate"));
                     projectMembers.add(projectMember);
                 }
             }
@@ -168,8 +172,39 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public Project updateProject(Project project) throws SQLException {
-        return null;
+    public boolean updateProject(Project project) throws SQLException {
+        String query = """
+                UPDATE dbo.project
+                SET project_name = ?,
+                    project_sales_number = ?,
+                    project_description = ?,
+                    project_day_rate = ?,
+                    project_gross_margin = ?,
+                    project_price = ?,
+                    project_end_date = ?,
+                    project_total_days = ?,
+                    project_location = ?
+                WHERE project_id = ?;
+                """;
+
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            stmt.setString(1, project.getProjectName());
+            stmt.setString(2, project.getProjectSalesNumber());
+            stmt.setString(3, project.getProjectDescription());
+            stmt.setBigDecimal(4, project.getProjectDayRate());
+            stmt.setBigDecimal(5, project.getProjectGrossMargin());
+            stmt.setBigDecimal(6, project.getProjectPrice());
+            stmt.setDate(7, Date.valueOf(project.getProjectEndDate()));
+            stmt.setInt(8, project.getProjectTotalDays());
+            stmt.setInt(9, project.getProjectLocation().getId());
+            stmt.setObject(10, project.getProjectId());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -214,4 +249,26 @@ public class ProjectDAO implements IProjectDAO {
             return false;
         }
     }
+
+    @Override
+    public void updateAssignedProfiles(UUID projectId, List<ProjectMember> projectMembers) {
+        String query = """
+                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
+                VALUES (?, ?, ?)
+                ON CONFLICT (project_id, teams_id) DO UPDATE SET allocation_on_project = ?;
+                """;
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            for (ProjectMember projectMember : projectMembers) {
+                stmt.setObject(1, projectId);
+                stmt.setObject(2, projectMember.getTeamId());
+                stmt.setBigDecimal(3, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(4, projectMember.getProjectAllocation());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+    }
+}
 }
