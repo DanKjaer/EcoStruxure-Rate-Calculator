@@ -26,9 +26,11 @@ import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
+import {Router} from '@angular/router';
 import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+
 
 @Component({
   selector: 'app-projects-page',
@@ -100,7 +102,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
               private snackBar: SnackbarService,
               private ChangeDetectorRef: ChangeDetectorRef,
               private translate: TranslateService,
-              private menuService: MenuService) {}
+              private menuService: MenuService,
+              private router: Router) {}
 
   async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -160,6 +163,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
   selectRow(row: Project) {
     this.selectedRow = row;
+  }
+
+
+  goToProject(projectId: string): void {
+    this.router.navigate(['/projects', projectId]);
   }
 
   editRow(element: any): void {
