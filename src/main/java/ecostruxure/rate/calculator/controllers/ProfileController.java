@@ -32,9 +32,9 @@ public class ProfileController {
         return profileService.create(profileDTO.getProfile());
     }
 
-    @PutMapping("/{id}")
-    public boolean updateProfile(@PathVariable UUID id, @RequestBody Profile profile) throws Exception {
-        return profileService.update(id, profile);
+    @PutMapping()
+    public boolean updateProfile(@RequestBody Profile profile) throws Exception {
+        return profileService.update(profile);
     }
 
     @DeleteMapping("/{id}")

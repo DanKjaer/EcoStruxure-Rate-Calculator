@@ -112,12 +112,28 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     }
   }
 
-  saveEdit(element: any): void {
+  async saveEdit(element: any): Promise<void> {
+    this.loading = true;
     element['isEditing'] = false;
     this.isEditingRow = false;
-    delete this.originalRowData[element.id];
-    //todo: update call on api
-    //remember to add snackbar
+
+    try {
+      let response = await this.profileService.putProfile(element);
+      this.datasource.data.forEach((profile: Profile) => {
+        if (profile.profileId === response.profileId) {
+          profile.name = response.name;
+          profile.annualHours = response.annualHours;
+          profile.effectivenessPercentage = response.effectivenessPercentage;
+          profile.annualCost = response.annualCost;
+        }
+      });
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_UPDATED'), true);
+      this.loading = false;
+    } catch (e) {
+      this.cancelEdit(element)
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_UPDATED'), false);
+      this.loading = false;
+    }
   }
 
   cancelEdit(element: any): void {
