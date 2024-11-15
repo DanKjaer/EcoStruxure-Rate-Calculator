@@ -5,7 +5,7 @@ import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
@@ -82,6 +82,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
   isMenuOpen: boolean | undefined;
+  averageCostAllocation: number = 0;
+  averageHourAllocation: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -100,6 +102,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
+    this.getAverageHourAllocation();
+    this.getAverageCostAllocation();
   }
 
   //#region functions
@@ -194,4 +198,24 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   //#endregion
+  getAverageHourAllocation() {
+    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
+    const endIndex = startIndex + this.datasource.paginator!.pageSize;
+    const displayedData = this.datasource.data.slice(startIndex, endIndex);
+
+    this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
+  }
+
+  getAverageCostAllocation() {
+    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
+    const endIndex = startIndex + this.datasource.paginator!.pageSize;
+    const displayedData = this.datasource.data.slice(startIndex, endIndex);
+
+    this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
+  }
+
+  handlePageEvent($event: PageEvent) {
+    this.getAverageHourAllocation();
+    this.getAverageCostAllocation();
+  }
 }

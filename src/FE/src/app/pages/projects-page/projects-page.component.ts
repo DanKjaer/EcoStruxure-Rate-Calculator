@@ -3,7 +3,7 @@ import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatCell,
   MatCellDef,
-  MatColumnDef,
+  MatColumnDef, MatFooterCell, MatFooterCellDef, MatFooterRow, MatFooterRowDef,
   MatHeaderCell,
   MatHeaderCellDef,
   MatHeaderRow,
@@ -16,7 +16,7 @@ import {
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort, MatSortHeader} from '@angular/material/sort';
+import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
@@ -67,7 +67,11 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
     MatSuffix,
     MatDatepickerInput,
     MatDatepicker,
-    DecimalPipe
+    DecimalPipe,
+    MatFooterRow,
+    MatFooterCell,
+    MatFooterCellDef,
+    MatFooterRowDef
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
@@ -96,6 +100,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  totalDays: number = 0;
+  totalPrice: number = 0;
+  totalDayRate: number = 0;
 
   constructor(private projectService: ProjectService,
               private formatter: FormatterService,
@@ -117,8 +124,12 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
         project.endDateString = this.formatter.formatDate(project.projectEndDate);
 
         project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
+        this.totalDayRate += project.projectDayRate!;
+        this.totalPrice += project.projectPrice!;
+        this.totalDays += project.projectTotalDays!;
       });
       this.datasource.data = projects;
+
     } catch (error) {
       console.error('Failed to load projects:', error);
     } finally {
