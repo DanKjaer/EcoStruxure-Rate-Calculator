@@ -218,5 +218,6 @@
   "TOTAL_DAYS": "Total days",
   "PROJECT_ALLOCATION": "Project allocation",
   "SALES_INFORMATION": "Sales information",
-  "ADD_TO_PROJECT": "Add to project"
+  "ADD_TO_PROJECT": "Add to project",
+  "CURRENT_PROJECT": "Current project"
 }

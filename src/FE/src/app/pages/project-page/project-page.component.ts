@@ -18,7 +18,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatSort, MatSortHeader} from "@angular/material/sort";
 import {MatTooltip} from "@angular/material/tooltip";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import { MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
@@ -27,6 +27,7 @@ import {ProjectService} from '../../services/project.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-project-page',
@@ -85,7 +86,7 @@ export class ProjectPageComponent implements OnInit{
   isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   displayedColumns: string[] = [
-    'teamName',
+    'projectName',
     'projectAllocation',
     'dayRate',
     'options'
@@ -95,7 +96,9 @@ export class ProjectPageComponent implements OnInit{
   constructor(private formBuilder: FormBuilder,
               private projectService: ProjectService,
               private route: ActivatedRoute,
-              private menuService: MenuService) {
+              private menuService: MenuService,
+              private snackBar: SnackbarService,
+              private translate: TranslateService) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -104,12 +107,10 @@ export class ProjectPageComponent implements OnInit{
     });
 
     this.projectForm = this.formBuilder.group({
-        teamName: ['', Validators.required],
+        projectName: ['', Validators.required],
         salesNumber: [''],
         projectPrice: [''],
         projectDescription: [''],
-        projectAllocation: [''],
-        dayRateOnProject: [''],
         startDate: [''],
         endDate: ['']
     });
@@ -130,8 +131,27 @@ export class ProjectPageComponent implements OnInit{
   }
 
 
-  update() {
+  async update() {
+    if(this.projectForm.valid) {
+      let updatedProject = {
+        projectId: this.project.projectId,
+        projectName: this.projectForm.value.projectName,
+        projectSalesNumber: this.projectForm.value.salesNumber,
+        projectPrice: this.projectForm.value.projectPrice,
+        projectDescription: this.projectForm.value.projectDescription,
+        projectStartDate: this.projectForm.value.startDate,
+        projectEndDate: this.projectForm.value.endDate,
+        projectLocation: this.project.projectLocation,
+        projectMembers: this.project.projectMembers
+      };
 
+      const response = await this.projectService.putProject(updatedProject);
+      if (response != undefined) {
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_UPDATED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);
+      }
+    }
   }
 
   undo() {

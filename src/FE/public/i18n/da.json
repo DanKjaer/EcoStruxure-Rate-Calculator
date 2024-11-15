@@ -212,5 +212,6 @@
   "TOTAL_DAYS": "Antal dage",
   "PROJECT_ALLOCATION": "Project allokering",
   "SALES_INFORMATION": "Salgs informationer",
-  "ADD_TO_PROJECT": "Tilføj til projekt"
+  "ADD_TO_PROJECT": "Tilføj til projekt",
+  "CURRENT_PROJECT": "Nuværende projekt"
 }

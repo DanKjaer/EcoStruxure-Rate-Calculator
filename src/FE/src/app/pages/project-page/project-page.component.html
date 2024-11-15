@@ -52,7 +52,7 @@
       <div class="tableContainer">
         <table class="projectMembersTable" mat-table [dataSource]="datasource">
           <!-- name -->
-          <ng-container matColumnDef="teamName">
+          <ng-container matColumnDef="projectName">
             <th mat-header-cell *matHeaderCellDef>
               {{ 'NAME' | translate }}
             </th>
@@ -109,11 +109,11 @@
       </div>
     </div>
     <div *ngIf="projectForm" class="projectContainer" [formGroup]="projectForm">
-      {{ 'CURRENT_PROFILE' | translate }}
+      {{ 'CURRENT_PROJECT' | translate }}
 
         <mat-form-field>
           <mat-label>{{ 'NAME' | translate }}</mat-label>
-          <input matInput placeholder="John Doe" formControlName="teamName">
+          <input matInput placeholder="John Doe" formControlName="projectName">
         </mat-form-field>
 
 
@@ -148,17 +148,17 @@
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_START_DATE' | translate }}</mat-label>
-            <input matInput [matDatepicker]="datePicker" formControlName="startDate">
-            <mat-datepicker-toggle [for]="datePicker"></mat-datepicker-toggle>
-            <mat-datepicker #datePicker></mat-datepicker>
+            <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+            <mat-datepicker-toggle [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_END_DATE' | translate }}</mat-label>
-            <input matInput [matDatepicker]="datePicker" formControlName="endDate">
-            <mat-datepicker-toggle [for]="datePicker"></mat-datepicker-toggle>
-            <mat-datepicker #datePicker></mat-datepicker>
+            <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+            <mat-datepicker-toggle [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
