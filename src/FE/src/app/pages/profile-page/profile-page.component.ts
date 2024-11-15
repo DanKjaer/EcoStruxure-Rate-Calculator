@@ -14,10 +14,11 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
 import {ActivatedRoute} from '@angular/router';
-import {Geography, Profile, TeamProfiles} from '../../models';
+import {Currency, Geography, Profile, TeamProfiles} from '../../models';
 import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
 import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -48,10 +49,10 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
   locations: Geography[] = [];
   teams: TeamProfiles[] = [];
   statBoxes = {
-    totalDayRate: '',
-    totalHourlyRate: '',
-    totalAnnualCost: '',
-    totalAnnualHours: ''
+    totalDayRate: 0,
+    totalHourlyRate: 0,
+    totalAnnualCost: 0,
+    totalAnnualHours: 0
   };
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
@@ -66,24 +67,20 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     'annual cost',
     'options'
   ];
+  currencies: Currency[] | undefined;
 
   constructor(private fb: FormBuilder,
               private profileService: ProfileService,
               private geographyService: GeographyService,
               private teamsService: TeamsService,
               private route: ActivatedRoute,
-              private menuService: MenuService) {
+              private menuService: MenuService,
+              protected currencyService: CurrencyService) {
   }
 
-  //#region mock data
-  currencies: String[] = [
-    'EUR',
-    'USD'
-  ]
-
-  //#endregion
-
   async ngOnInit() {
+    this.currencies = await this.currencyService.getCurrencies();
+
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     });
@@ -91,7 +88,7 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
       location: ['', Validators.required],
-      currency: ['', Validators.required],
+      currency: [this.currencies[0], Validators.required],
       resource_type: [null, Validators.required],
       annual_cost: [''],
       annual_hours: [{value: '', disabled: true}],
@@ -105,14 +102,14 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     this.datasource.data = this.teams;
 
     this.profileForm = this.fb.group({
-      name: [this.currentProfile!.name, Validators.required],
-      location: [this.currentProfile?.geography.name, Validators.required],
-      currency: [this.currentProfile!.currency, Validators.required],
-      resource_type: [this.currentProfile!.resourceType, Validators.required],
-      annual_cost: [this.currentProfile!.annualCost],
-      annual_hours: [{value: this.currentProfile!.annualHours, disabled: true}],
-      effectiveness: [this.currentProfile!.effectivenessPercentage],
-      hours_per_day: [this.currentProfile!.hoursPerDay]
+      name: [this.currentProfile.name, Validators.required],
+      location: [this.currentProfile.geography.name, Validators.required],
+      currency: [this.currentProfile.currency, Validators.required],
+      resource_type: [this.currentProfile.resourceType, Validators.required],
+      annual_cost: [this.currentProfile.annualCost],
+      annual_hours: [{value: this.currentProfile.annualHours, disabled: true}],
+      effectiveness: [this.currentProfile.effectivenessPercentage],
+      hours_per_day: [this.currentProfile.hoursPerDay]
     })
 
     if (!this.profileForm.get('resource_type')?.value) {
@@ -122,10 +119,10 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     }
 
     this.statBoxes = {
-      totalDayRate: (this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0)).toFixed(2),
-      totalHourlyRate: (this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile.hoursPerDay!).toFixed(2),
-      totalAnnualCost: (this.teams.reduce((sum, item) => sum + item.annualCost!, 0)).toFixed(0),
-      totalAnnualHours: (this.teams.reduce((sum, item) => sum + item.annualHours!, 0)).toFixed(0)
+      totalDayRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0),
+      totalHourlyRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile.hoursPerDay!,
+      totalAnnualCost: this.teams.reduce((sum, item) => sum + item.annualCost!, 0),
+      totalAnnualHours: this.teams.reduce((sum, item) => sum + item.annualHours!, 0)
     }
 
     this.loading = false;
@@ -173,4 +170,6 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  protected readonly localStorage = localStorage;
 }

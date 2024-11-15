@@ -24,7 +24,12 @@ import {CurrencyService} from '../../services/currency.service';
   styleUrl: './sidemenu.component.css'
 })
 export class SidemenuComponent {
+
+  selectedCurrency: string | null;
+  protected readonly localStorage = localStorage;
+
   constructor(private translate: TranslateService, private menuService: MenuService, private currencyService: CurrencyService) {
+    this.selectedCurrency = localStorage.getItem('selectedCurrency');
     translate.setDefaultLang('en');
     menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
@@ -49,10 +54,11 @@ export class SidemenuComponent {
   switchCurrency() {
     if (localStorage.getItem("selectedCurrency") == "EUR") {
       this.currencyService.setCurrency("USD");
+      this.selectedCurrency = "USD";
     } else {
       this.currencyService.setCurrency("EUR");
+      this.selectedCurrency = "EUR";
     }
   }
 
-  protected readonly localStorage = localStorage;
 }

@@ -18,6 +18,7 @@ import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dial
 import {Router} from '@angular/router';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-teams-page',
@@ -76,7 +77,8 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
               private router: Router,
               private snackBar: SnackbarService,
               private translate: TranslateService,
-              private menuService: MenuService) {
+              private menuService: MenuService,
+              protected currencyService: CurrencyService) {
   }
 
   async ngAfterViewInit() {
@@ -168,4 +170,6 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   goToTeam(teamId: string) {
     this.router.navigate(['/team', teamId]);
   }
+
+  protected readonly localStorage = localStorage;
 }

@@ -85,3 +85,24 @@ img {
 .iconButton:hover {
   background-color: darkgreen;
 }
+
+.animatedIcon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.animatedIcon.open {
+  transform: rotate(0deg);
+}
+
+.animatedIcon.close {
+  transform: rotate(180deg);
+}
+
+.animatedIcon.euro {
+  transform: scale(1);
+}
+
+.animatedIcon.dollar {
+  transform: scale(1.1);
+}

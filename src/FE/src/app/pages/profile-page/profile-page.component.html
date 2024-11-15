@@ -2,7 +2,8 @@
   <div class="statsContainer">
     <div class="hourlyRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalHourlyRate | number:'1.0-2' }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(this.statBoxes.totalHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_HOURLY_RATE' | translate }}
@@ -10,7 +11,8 @@
     </div>
     <div class="dayRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalDayRate | number:'1.0-2' }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(this.statBoxes.totalDayRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_DAY_RATE' | translate }}
@@ -18,7 +20,8 @@
     </div>
     <div class="annualCostBox">
       <p class="boxValue">
-          {{ this.statBoxes.totalAnnualCost | number:'1.0-2' }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(this.statBoxes.totalAnnualCost, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_ANNUAL_COST' | translate }}
@@ -82,7 +85,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['annualHours'] | number:'1.0-0' }}
+                {{ element['annualHours'] | number:'1.0-0' }} {{ 'HOURS' | translate }}
               </span>
             </td>
           </ng-container>
@@ -106,7 +109,8 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ (element['dayRateOnTeam'] / this.currentProfile!.hoursPerDay!) | number:'1.0-2' }}
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['dayRateOnTeam'] / this.currentProfile!.hoursPerDay!, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
               </span>
             </td>
           </ng-container>
@@ -118,7 +122,8 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['dayRateOnTeam'] | number:'1.0-0' }}
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['dayRateOnTeam'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
               </span>
             </td>
           </ng-container>
@@ -130,7 +135,8 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['annualCost'] | number:'1.0-0' }}
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['annualCost'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
               </span>
             </td>
           </ng-container>
@@ -156,6 +162,7 @@
         </div>
       </div>
     </div>
+
     <div *ngIf="profileForm" class="profileContainer" [formGroup]="profileForm">
       {{ 'CURRENT_PROFILE' | translate }}
       <mat-form-field>
@@ -169,7 +176,7 @@
             <mat-label>{{ 'LOCATION' | translate }}</mat-label>
             <mat-select formControlName="location">
               @for (location of locations; track location) {
-                <mat-option [value]="location.id">
+                <mat-option [value]="location.name.valueOf()">
                   {{ location.name }}
                 </mat-option>
               }
@@ -183,7 +190,7 @@
             <mat-select formControlName="currency">
               @for (currency of currencies; track currency) {
                 <mat-option [value]="currency.valueOf()">
-                  {{ currency }}
+                  {{ currency.currencyCode }}
                 </mat-option>
               }
             </mat-select>
@@ -210,12 +217,18 @@
         <div>
           <mat-form-field>
             <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
+            <span matTextSuffix>
+              {{ this.profileForm.value.currency.symbol }}
+            </span>
             <input matInput placeholder="0" formControlName="annual_cost">
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <mat-label>{{ 'ANNUAL_HOURS' | translate }}</mat-label>
+            <span matTextSuffix>
+              {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
+            </span>
             <input matInput placeholder="0" formControlName="annual_hours">
           </mat-form-field>
         </div>
@@ -227,6 +240,9 @@
         <div>
           <mat-form-field>
             <mat-label>{{ 'EFFECTIVENESS' | translate }}</mat-label>
+            <span matTextSuffix>
+              %
+            </span>
             <input matInput placeholder="0" formControlName="effectiveness">
           </mat-form-field>
         </div>
@@ -234,6 +250,9 @@
           <mat-form-field>
             <mat-label>{{ 'HOURS_PER_DAY' | translate }}</mat-label>
             <input matInput placeholder="0" formControlName="hours_per_day">
+            <span matTextSuffix>
+              {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
+            </span>
           </mat-form-field>
         </div>
       </div>
