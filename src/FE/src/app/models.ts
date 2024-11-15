@@ -81,7 +81,8 @@ export interface ProjectMembers {
   name: string;
   projectAllocation: number;
   markup?: number;
-  dayRateOnTeam?: number;
+  dayRate?: number;
+  dayRateWithMarkup?: number;
 }
 
 export interface Currency {

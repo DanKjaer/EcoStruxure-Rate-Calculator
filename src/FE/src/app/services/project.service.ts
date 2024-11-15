@@ -23,8 +23,8 @@ export class ProjectService {
   /**
    * Gets a project
    */
-  async getProject(): Promise<Project> {
-    return firstValueFrom(this.http.get<Project>(`${this.apiUrl}`));
+  async getProject(id: string): Promise<Project> {
+    return firstValueFrom(this.http.get<Project>(`${this.apiUrl}?projectId=${id}`));
   }
 
   /**
