@@ -5,7 +5,7 @@ import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
@@ -82,6 +82,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
   isMenuOpen: boolean | undefined;
+  averageCostAllocation: number = 0;
+  averageHourAllocation: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -100,6 +102,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
+    this.updateTableFooterData();
   }
 
   //#region functions
@@ -128,6 +131,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
         }
       });
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_UPDATED'), true);
+      this.updateTableFooterData();
       this.loading = false;
     } catch (e) {
       this.cancelEdit(element)
@@ -157,12 +161,15 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   openDialog() {
+    this.loading = true;
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
 
     dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
       this.datasource.data.push(profile)
       this.datasource._updateChangeSubscription();
+      this.loading = false;
     });
+    this.updateTableFooterData();
   }
 
   async onDelete() {
@@ -194,4 +201,28 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   //#endregion
+  handlePageEvent($event: PageEvent) {
+    this.updateTableFooterData();
+  }
+
+  updateTableFooterData() {
+    this.getAverageHourAllocation();
+    this.getAverageCostAllocation();
+  }
+
+  getAverageHourAllocation() {
+    const displayedData = this.getDisplayedData();
+    this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
+  }
+
+  getAverageCostAllocation() {
+    const displayedData = this.getDisplayedData();
+    this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
+  }
+
+  getDisplayedData() {
+    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
+    const endIndex = startIndex + this.datasource.paginator!.pageSize;
+    return this.datasource.data.slice(startIndex, endIndex);
+  }
 }

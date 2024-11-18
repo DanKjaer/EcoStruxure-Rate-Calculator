@@ -3,7 +3,7 @@ import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatCell,
   MatCellDef,
-  MatColumnDef,
+  MatColumnDef, MatFooterCell, MatFooterCellDef, MatFooterRow, MatFooterRowDef,
   MatHeaderCell,
   MatHeaderCellDef,
   MatHeaderRow,
@@ -15,8 +15,8 @@ import {
 } from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort, MatSortHeader} from '@angular/material/sort';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
@@ -67,7 +67,11 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
     MatSuffix,
     MatDatepickerInput,
     MatDatepicker,
-    DecimalPipe
+    DecimalPipe,
+    MatFooterRow,
+    MatFooterCell,
+    MatFooterCellDef,
+    MatFooterRowDef
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
@@ -96,6 +100,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  totalDays: number = 0;
+  totalPrice: number = 0;
+  totalDayRate: number = 0;
 
   constructor(private projectService: ProjectService,
               private formatter: FormatterService,
@@ -119,6 +126,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
         project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
       });
       this.datasource.data = projects;
+
     } catch (error) {
       console.error('Failed to load projects:', error);
     } finally {
@@ -129,6 +137,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   async ngAfterViewInit(): Promise<void> {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
+    this.updateTableFooterData();
   }
 
 
@@ -146,6 +155,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
+    this.updateTableFooterData();
     this.loading = false;
     this.ChangeDetectorRef.detectChanges();
   }
@@ -155,6 +165,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     if (result) {
       this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
       this.datasource._updateChangeSubscription();
+      this.updateTableFooterData();
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
@@ -200,6 +211,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       });
       this.loading = false;
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+      this.updateTableFooterData();
     } catch (e) {
       this.cancelEdit(selectedProject);
       this.loading = false;
@@ -216,5 +228,35 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     }
     selectedProject['isEditing'] = false;
     this.isEditingRow = false;
+  }
+
+  handlePageEvent($event: PageEvent) {
+    this.updateTableFooterData();
+  }
+
+  private updateTableFooterData() {
+    this.getTotalDayRate();
+    this.getTotalPrice();
+    this.getTotalDays();
+  }
+
+  private getTotalDayRate() {
+    const displayedData = this.getDisplayedData();
+    this.totalDayRate = displayedData.reduce((acc: number, project: Project) => acc + project.projectDayRate!, 0);
+  }
+
+  private getTotalPrice() {
+    const displayedData = this.getDisplayedData();
+    this.totalPrice = displayedData.reduce((acc: number, project: Project) => acc + project.projectPrice!, 0);
+  }
+
+  private getTotalDays() {
+    const displayedData = this.getDisplayedData();
+    this.totalDays = displayedData.reduce((acc: number, project: Project) => acc + project.projectTotalDays!, 0);
+  }
+  private getDisplayedData() {
+    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
+    const endIndex = startIndex + this.datasource.paginator!.pageSize;
+    return this.datasource.data.slice(startIndex, endIndex);
   }
 }
