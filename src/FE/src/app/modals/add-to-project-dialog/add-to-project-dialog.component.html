@@ -1,1 +1,44 @@
-<p>add-to-project-dialog works!</p>
+<h2 mat-dialog-title>{{ 'ADD_NEW_TEAM' | translate }}</h2>
+<mat-dialog-content class="container" [formGroup]="teamForm">
+  <!-- name input -->
+  <mat-form-field>
+    <mat-label>
+      {{ 'NAME' | translate }}
+    </mat-label>
+    <input matInput placeholder="Team Easy On" formControlName="teamName">
+  </mat-form-field>
+  <div class="searchContainer">
+    <mat-form-field>
+      <mat-label>
+        {{ 'SEARCH_PROMPT' | translate }}
+      </mat-label>
+      <input matInput>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="profilesContainer">
+    <mat-selection-list #teams formControlName="teams" (selectionChange)="onSelectionChange($event)">
+      @for (team of teamList; track team) {
+        <mat-list-option [value]="team" >{{ team.name }}</mat-list-option>
+      }
+    </mat-selection-list>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <!-- buttons -->
+  <div class="buttonContainer">
+    <button mat-stroked-button mat-dialog-close>
+      <mat-icon>
+        cancel
+      </mat-icon>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+      <mat-icon>
+        check_circle
+      </mat-icon>
+      {{ 'ADD' | translate }}
+    </button>
+  </div>
+</mat-dialog-actions>

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {DecimalPipe, NgClass, NgIf} from "@angular/common";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatButton, MatIconButton} from "@angular/material/button";
@@ -24,10 +24,14 @@ import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
 import {Project} from "../../models";
 import {ProjectService} from '../../services/project.service';
-import {ActivatedRoute} from '@angular/router';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
 import {SnackbarService} from '../../services/snackbar.service';
+import {ActivatedRoute} from '@angular/router';
+import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {FormatterService} from '../../services/formatter.service';
+import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
 
 @Component({
   selector: 'app-project-page',
@@ -73,6 +77,7 @@ import {SnackbarService} from '../../services/snackbar.service';
   styleUrl: './project-page.component.css'
 })
 export class ProjectPageComponent implements OnInit{
+  readonly dialog = inject(MatDialog);
     projectForm: FormGroup = new FormGroup({});
     project!: Project;
 
@@ -98,7 +103,9 @@ export class ProjectPageComponent implements OnInit{
               private route: ActivatedRoute,
               private menuService: MenuService,
               private snackBar: SnackbarService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private formatter: FormatterService,
+              private changeDetectorRef: ChangeDetectorRef) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -128,6 +135,24 @@ export class ProjectPageComponent implements OnInit{
       grossMargin: this.project.projectGrossMargin!,
       totalDays: this.project.projectTotalDays!
     }
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddToProjectDialogComponent, {
+      minHeight: '80vh',
+      maxHeight: '800px',
+      minWidth: '60vw',
+      maxWidth: '1200px',
+    });
+    this.loading = true;
+    dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
+      project.startDateString = this.formatter.formatDate(project.projectStartDate);
+      project.endDateString = this.formatter.formatDate(project.projectEndDate);
+      this.datasource.data.push(project);
+      this.datasource._updateChangeSubscription();
+    });
+    this.loading = false;
+    this.changeDetectorRef.detectChanges();
   }
 
 
