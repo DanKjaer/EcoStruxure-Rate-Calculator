@@ -30,6 +30,7 @@ import {Router} from '@angular/router';
 import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {CurrencyService} from '../../services/currency.service';
 
 
 @Component({
@@ -90,7 +91,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
                                 'totalDays',
                                 'location',
                                 'options'];
-
+  
+  protected readonly localStorage = localStorage;
+  
   selectedRow: Project | null = null;
   originalRowData: { [key: number]: any } = {};
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
@@ -110,7 +113,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
               private ChangeDetectorRef: ChangeDetectorRef,
               private translate: TranslateService,
               private menuService: MenuService,
-              private router: Router) {}
+              private router: Router,
+              protected currencyService: CurrencyService) {}
 
   async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -229,6 +233,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     selectedProject['isEditing'] = false;
     this.isEditingRow = false;
   }
+
 
   handlePageEvent($event: PageEvent) {
     this.updateTableFooterData();

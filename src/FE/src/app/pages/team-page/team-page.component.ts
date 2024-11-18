@@ -16,6 +16,7 @@ import {TeamProfileService} from '../../services/team-profile.service';
 import {TeamDTO, TeamProfiles} from '../../models';
 import {ActivatedRoute} from '@angular/router';
 import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-team-page',
@@ -50,7 +51,8 @@ export class TeamPageComponent implements OnInit {
 
   constructor(private teamProfileService: TeamProfileService,
               private route: ActivatedRoute,
-              private menuService: MenuService,) {
+              private menuService: MenuService,
+              protected currencyService: CurrencyService) {
   }
 
   teamInfo: TeamDTO | undefined;
@@ -94,4 +96,5 @@ export class TeamPageComponent implements OnInit {
     this.loading = false;
   }
 
+  protected readonly localStorage = localStorage;
 }

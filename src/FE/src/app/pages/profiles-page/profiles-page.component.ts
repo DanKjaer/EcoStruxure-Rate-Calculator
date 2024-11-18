@@ -13,14 +13,13 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
-import {MatFormField, MatInput} from '@angular/material/input';
-import {MatLabel} from '@angular/material/form-field';
+import {MatInput} from '@angular/material/input';
 import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
-import {GeographyService} from '../../services/geography.service';
 import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -42,8 +41,6 @@ import {MenuService} from '../../services/menu.service';
     MatDialogModule,
     FormsModule,
     MatInput,
-    MatFormField,
-    MatLabel,
     NgClass,
     DecimalPipe
   ],
@@ -56,7 +53,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
               private router: Router,
               private snackBar: SnackbarService,
               private translate: TranslateService,
-              private menuService: MenuService) {
+              private menuService: MenuService,
+              protected currencyService: CurrencyService) {
   }
 
   //#region vars
@@ -76,7 +74,9 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   selectedRow: Profile | null = null;
   rowColor: Profile | null = null;
-
+  
+  protected readonly localStorage = localStorage;
+  
   datasource: MatTableDataSource<Profile> = new MatTableDataSource<Profile>();
   loading = true;
   originalRowData: { [key: number]: any } = {};
@@ -90,6 +90,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   //#endregion
 
+  //#region inits
   ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
@@ -104,6 +105,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.datasource.paginator = this.paginator;
     this.updateTableFooterData();
   }
+
+  //#endregion
 
   //#region functions
   editRow(element: any): void {
@@ -201,6 +204,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   //#endregion
+  
   handlePageEvent($event: PageEvent) {
     this.updateTableFooterData();
   }

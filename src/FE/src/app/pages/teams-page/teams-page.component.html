@@ -87,7 +87,8 @@
           {{ 'HOURLY_RATE' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-            {{ element['hourlyRate'] | number:'1.0-0' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+          {{ this.currencyService.convert(element['hourlyRate'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{totalHourlyRate | number:'1.0-2'}}</td>
       </ng-container>
@@ -98,7 +99,8 @@
           {{ 'DAY_RATE' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-            {{ element['dayRate'] | number:'1.0-0' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+          {{ this.currencyService.convert(element['dayRate'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{totalDayRate | number:'1.0-2'}}</td>
       </ng-container>
@@ -109,7 +111,8 @@
           {{ 'TOTAL_ANNUAL_COST' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['totalAllocatedCost'] | number:'1.0-0' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+          {{ this.currencyService.convert(element['totalAllocatedCost'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{totalCost | number:'1.0-2'}}</td>
       </ng-container>
@@ -131,7 +134,8 @@
           {{ 'TOTAL_MARKUP' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['totalMarkup'] | number:'1.0-0' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+          {{ this.currencyService.convert(element['totalMarkup'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{totalMarkup | number:'1.0-2'}}</td>
       </ng-container>
@@ -142,7 +146,8 @@
           {{ 'TOTAL_GROSS_MARGIN' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['totalGrossMargin'] | number:'1.0-0' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+          {{ this.currencyService.convert(element['totalGrossMargin'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{totalGrossMargin | number:'1.0-2' }}</td>
       </ng-container>
