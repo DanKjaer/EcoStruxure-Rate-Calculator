@@ -37,9 +37,14 @@
 
     </div>
     <div class="bottomContainer">
-      <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'LANGUAGE' | translate }}">
+      <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'CHANGE_LANGUAGE' | translate }}">
         <mat-icon>
           language
+        </mat-icon>
+      </button>
+      <button class="iconButton" mat-icon-button (click)="switchCurrency()" matTooltip="{{ 'CHANGE_CURRENCY' | translate }}">
+        <mat-icon class="animatedIcon" [ngClass]="{ 'euro': selectedCurrency == 'EUR', 'dollar': selectedCurrency == 'USD' }">
+          {{ this.selectedCurrency == "EUR" ? 'euro' : 'attach_money' }}
         </mat-icon>
       </button>
       <button class="iconButton" mat-icon-button matTooltip="{{ 'LOGOUT' | translate }}">
@@ -50,8 +55,8 @@
     </div>
   </div>
   <button mat-icon-button class="menuButton" (click)="toggleMenu()">
-    <mat-icon>
-      {{ isMenuOpen ? 'chevron_left' : 'chevron_right' }}
+    <mat-icon class="animatedIcon" [ngClass]="{ 'open': isMenuOpen, 'close': !isMenuOpen }">
+      chevron_left
     </mat-icon>
   </button>
 </div>

@@ -30,8 +30,8 @@
         <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
         <mat-select formControlName="currency">
           @for (currency of currencies; track currency) {
-            <mat-option [value]="currency.valueOf()">
-              {{ currency.valueOf() }}
+            <mat-option [value]="currency">
+              {{ currency.currencyCode }}
             </mat-option>
           }
         </mat-select>
@@ -58,12 +58,18 @@
     <div>
       <mat-form-field>
         <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
+        <span matTextSuffix>
+          {{ this.profileForm.value.currency.symbol }}
+        </span>
         <input matInput placeholder="0" formControlName="annual_cost">
       </mat-form-field>
     </div>
     <div>
       <mat-form-field>
         <mat-label>{{ 'ANNUAL_HOURS' | translate }}</mat-label>
+        <span matTextSuffix>
+          {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
+        </span>
         <input matInput placeholder="0" formControlName="annual_hours">
       </mat-form-field>
     </div>
@@ -75,12 +81,18 @@
     <div>
       <mat-form-field>
         <mat-label>{{ 'EFFECTIVENESS' | translate }}</mat-label>
+        <span matTextSuffix>
+          %
+        </span>
         <input matInput placeholder="0" formControlName="effectiveness">
       </mat-form-field>
     </div>
     <div>
       <mat-form-field>
         <mat-label>{{ 'HOURS_PER_DAY' | translate }}</mat-label>
+        <span matTextSuffix>
+          {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
+        </span>
         <input matInput placeholder="0" formControlName="hours_per_day">
       </mat-form-field>
     </div>

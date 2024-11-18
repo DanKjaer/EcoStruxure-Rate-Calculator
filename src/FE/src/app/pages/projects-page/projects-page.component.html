@@ -18,7 +18,8 @@
     </span>
   </div>
   <div class="paginatorContainer">
-    <mat-paginator class="paginator" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons>
+    <mat-paginator class="paginator" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]"
+                   (page)="handlePageEvent($event)" showFirstLastButtons>
     </mat-paginator>
   </div>
   <div class="tableContainer">
@@ -34,6 +35,7 @@
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectName']"/>
         </td>
+        <td mat-footer-cell *matFooterCellDef>{{ 'TOTALS' | translate }}</td>
       </ng-container>
 
       <!-- Sales number for project-->
@@ -47,6 +49,7 @@
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectSalesNumber']"/>
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- Number of members of project -->
@@ -57,6 +60,7 @@
         <td mat-cell *matCellDef="let element">
           {{ element[ 'projectMembersString' ]}}
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- Day rate -->
@@ -65,8 +69,10 @@
           {{ 'PROJECT_DAY_RATE' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element['projectDayRate'] | number:'1.0-0' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+          {{ this.currencyService.convert(element['projectDayRate'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
+        <td mat-footer-cell *matFooterCellDef>{{totalDayRate}}</td>
       </ng-container>
 
       <!-- Gross Margin-->
@@ -77,6 +83,7 @@
         <td mat-cell *matCellDef="let element">
           {{ element['projectGrossMargin'] + '%'}}
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- End price - what customer pays -->
@@ -86,10 +93,12 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ element['projectPrice'] }}
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+            {{ this.currencyService.convert(element['projectPrice'], 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2' }}
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectPrice']"/>
         </td>
+        <td mat-footer-cell *matFooterCellDef> {{totalPrice}}</td>
       </ng-container>
 
       <!-- Start date for project-->
@@ -100,6 +109,7 @@
         <td mat-cell *matCellDef="let element">
           {{ element['startDateString'] }}
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- End date for project-->
@@ -119,6 +129,7 @@
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- Number of days for project-->
@@ -129,6 +140,7 @@
         <td mat-cell *matCellDef="let element">
           {{ element['projectTotalDays'] + ' ' }}{{ 'DAYS' | translate }}
         </td>
+        <td mat-footer-cell *matFooterCellDef> {{totalDays+ ' ' }}{{ 'DAYS' | translate }}</td>
       </ng-container>
 
       <!-- Project location for project-->
@@ -139,6 +151,7 @@
         <td mat-cell *matCellDef="let element">
           {{ element['projectLocation'].name }}
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- options button -->
@@ -151,6 +164,7 @@
             <mat-icon>more_vert</mat-icon>
           </button>
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -158,6 +172,7 @@
           (dblclick)="editRow(row)"
           (keyup.enter)="saveEdit(row)"
           (keyup.escape)="cancelEdit(row)"></tr>
+      <tr mat-footer-row *matFooterRowDef="displayedColumns" ></tr>
     </table>
   </div>
 </div>
