@@ -102,8 +102,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
-    this.getAverageHourAllocation();
-    this.getAverageCostAllocation();
+    this.updateTableFooterData();
   }
 
   //#region functions
@@ -132,6 +131,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
         }
       });
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_UPDATED'), true);
+      this.updateTableFooterData();
       this.loading = false;
     } catch (e) {
       this.cancelEdit(element)
@@ -161,12 +161,15 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   openDialog() {
+    this.loading = true;
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
 
     dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
       this.datasource.data.push(profile)
       this.datasource._updateChangeSubscription();
+      this.loading = false;
     });
+    this.updateTableFooterData();
   }
 
   async onDelete() {
@@ -198,24 +201,28 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   //#endregion
-  getAverageHourAllocation() {
-    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
-    const endIndex = startIndex + this.datasource.paginator!.pageSize;
-    const displayedData = this.datasource.data.slice(startIndex, endIndex);
+  handlePageEvent($event: PageEvent) {
+    this.updateTableFooterData();
+  }
 
+  updateTableFooterData() {
+    this.getAverageHourAllocation();
+    this.getAverageCostAllocation();
+  }
+
+  getAverageHourAllocation() {
+    const displayedData = this.getDisplayedData();
     this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
   }
 
   getAverageCostAllocation() {
-    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
-    const endIndex = startIndex + this.datasource.paginator!.pageSize;
-    const displayedData = this.datasource.data.slice(startIndex, endIndex);
-
+    const displayedData = this.getDisplayedData();
     this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
   }
 
-  handlePageEvent($event: PageEvent) {
-    this.getAverageHourAllocation();
-    this.getAverageCostAllocation();
+  getDisplayedData() {
+    const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
+    const endIndex = startIndex + this.datasource.paginator!.pageSize;
+    return this.datasource.data.slice(startIndex, endIndex);
   }
 }
