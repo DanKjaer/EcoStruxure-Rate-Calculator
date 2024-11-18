@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,24 +17,24 @@ public class ProfileController {
         this.profileService = new ProfileService();
     }
 
-    @GetMapping("/{id}")
-    public Profile getProfile(@PathVariable UUID id) throws Exception {
+    @GetMapping(produces = "application/json")
+    public Profile getProfile(@RequestParam UUID id) throws Exception {
         return profileService.get(id);
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public List<Profile> getProfiles() throws Exception {
         return profileService.all();
     }
 
     @PostMapping
-    public Profile createProfile(@RequestBody Profile profile) throws Exception {
-        return profileService.create(profile);
+    public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
+        return profileService.create(profileDTO.getProfile());
     }
 
-    @PutMapping("/{id}")
-    public boolean updateProfile(@PathVariable UUID id, @RequestBody Profile profile) throws Exception {
-        return profileService.update(id, profile);
+    @PutMapping()
+    public boolean updateProfile(@RequestBody Profile profile) throws Exception {
+        return profileService.update(profile);
     }
 
     @DeleteMapping("/{id}")

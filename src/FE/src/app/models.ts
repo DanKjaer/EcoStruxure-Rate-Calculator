@@ -1,11 +1,9 @@
-import BigNumber from 'bignumber.js';
-
-export class Profile {
-  profileId!: string;
-  name!: string;
-  currency!: number;
-  countryId!: number;
-  resourceType!: boolean;
+export interface Profile {
+  profileId?: string;
+  name: string;
+  currency: string;
+  geography: Geography;
+  resourceType: boolean;
   annualCost?: number;
   annualHours?: number;
   hoursPerDay?: number;
@@ -15,25 +13,81 @@ export class Profile {
   totalHourAllocation?: number;
   archived?: boolean;
   updatedAt?: Date;
+  isEditing?: boolean;
 }
 
-export class Team {
-  id!: string;
-  name!: string;
-  markup!: BigNumber;
-  grossMargin!: BigNumber;
-  is_archived?: boolean;
-  dayRate?: BigNumber;
-  totalAllocatedCost?: BigNumber;
-  totalAllocatedHours?: BigNumber;
+export interface Team {
+  teamId?: string; // UUID
+  name: string;
+  markup?: number;
+  grossMargin?: number;
+  isArchived?: boolean;
+  updatedAt?: Date;
+  updatedAtString?: string;
+  hourlyRate?: number;
+  dayRate?: number;
+  totalAllocatedCost?: number;
+  totalAllocatedHours?: number;
+  totalMarkup?: number;
+  totalGrossMargin?: number;
 }
 
-export class TeamProfiles {
+export interface TeamDTO {
+  team: Team;
+  teamProfiles: TeamProfiles[];
+}
+
+export interface TeamProfiles {
   teamId?: string;
-  profileId!: string;
-  costAllocation!: BigNumber;
-  allocatedCostOnTeam?: BigNumber;
-  hourAllocation!: BigNumber;
-  allocatedHoursOnTeam?: BigNumber;
-  dayRateOnTeam?: BigNumber;
+  profileId: string;
+  name: string;
+  annualCost: number;
+  annualHours: number;
+  costAllocation: number;
+  allocatedCostOnTeam?: number;
+  hourAllocation: number;
+  allocatedHoursOnTeam?: number;
+  dayRateOnTeam?: number;
+}
+
+export interface Geography {
+  id: number;
+  name: string;
+  predefined?: boolean;
+}
+
+export interface Project {
+  projectId?: string;
+  projectName: string;
+  projectSalesNumber: string;
+  projectDescription: string;
+  projectMembers: ProjectMembers[];
+  projectMembersString?: string;
+  projectDayRate?: number;
+  projectGrossMargin?: number;
+  projectPrice?: number;
+  projectStartDate: Date;
+  startDateString?: string;
+  projectEndDate: Date;
+  endDateString?: string;
+  projectTotalDays?: number;
+  projectLocation: Geography;
+  projectArchived?: boolean;
+}
+
+export interface ProjectMembers {
+  teamId: string;
+  projectId: string;
+  name: string;
+  projectAllocation: number;
+  markup?: number;
+  dayRate?: number;
+  dayRateWithMarkup?: number;
+}
+
+export interface Currency {
+  currencyCode: string;
+  eurConversionRate: number;
+  usdConversionRate: number;
+  symbol: string;
 }

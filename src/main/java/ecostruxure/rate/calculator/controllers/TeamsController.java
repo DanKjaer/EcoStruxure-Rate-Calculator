@@ -1,7 +1,5 @@
 package ecostruxure.rate.calculator.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
@@ -9,9 +7,7 @@ import ecostruxure.rate.calculator.bll.service.TeamService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/teams")
@@ -22,22 +18,28 @@ public class TeamsController {
         this.teamService = new TeamService();
     }
 
-    @GetMapping("/{id}")
-    public Team get(@PathVariable UUID id) throws Exception {
-        return teamService.get(id);
+    @GetMapping()
+    public List<Team> get() throws Exception {
+        return teamService.all();
+    }
+
+    @GetMapping("/profiles")
+    public List<TeamProfile> getByProfileId(@RequestParam UUID profileId) throws Exception {
+        return teamService.getByProfileId(profileId);
     }
 
     @PostMapping
     public Team create(@RequestBody TeamDTO teamDTO) throws Exception {
         Team team = teamDTO.getTeam();
-        List<TeamProfile> teamProfiles = teamDTO.getProfiles();
+        List<TeamProfile> teamProfiles = teamDTO.getTeamProfiles();
 
         return teamService.create(team, teamProfiles);
     }
 
-    @PutMapping("/{id}")
-    public boolean update(@PathVariable UUID id, @RequestBody Team team) throws Exception {
-        return teamService.update(id, team);
+    @PutMapping()
+    public Team update(@RequestParam UUID teamId, @RequestBody Team team) throws Exception {
+        teamService.calculateTotalMarkupAndTotalGrossMargin(team);
+        return teamService.update(teamId, team);
     }
 
     @DeleteMapping("/{id}")

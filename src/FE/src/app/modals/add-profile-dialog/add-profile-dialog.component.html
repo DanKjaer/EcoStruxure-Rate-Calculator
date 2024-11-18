@@ -1,0 +1,118 @@
+<h2 mat-dialog-title>{{ 'ADD_NEW_PROFILE' | translate }}</h2>
+
+<mat-dialog-content class="container" [formGroup]="profileForm">
+  <!-- name input -->
+  <mat-form-field>
+    <mat-label>
+      {{ 'NAME' | translate }}
+    </mat-label>
+    <input matInput placeholder="John Doe" formControlName="name">
+  </mat-form-field>
+
+
+  <div class="groupContainer">
+    <div>
+      <!-- location select -->
+      <mat-form-field>
+        <mat-label>{{ 'LOCATION' | translate }}</mat-label>
+        <mat-select formControlName="geography">
+          @for (location of locations; track location) {
+            <mat-option [value]="location">
+              {{ location.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+      <!-- currency select -->
+      <mat-form-field>
+        <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
+        <mat-select formControlName="currency">
+          @for (currency of currencies; track currency) {
+            <mat-option [value]="currency">
+              {{ currency.currencyCode }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- resource type select -->
+  {{ 'RESOURCE_TYPE' | translate }}
+  <div class="groupContainer">
+    <mat-radio-group formControlName="resource_type">
+      <mat-radio-button [value]="true">
+        {{ 'OVERHEAD' | translate }}
+      </mat-radio-button>
+      <mat-radio-button [value]="false">
+        {{ 'PRODUCTION' | translate }}
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <!-- annually inputs -->
+  <h3>{{ 'ANNUALLY' | translate }}</h3>
+  <div class="groupContainer">
+    <div>
+      <mat-form-field>
+        <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
+        <span matTextSuffix>
+          {{ this.profileForm.value.currency.symbol }}
+        </span>
+        <input matInput placeholder="0" formControlName="annual_cost">
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-label>{{ 'ANNUAL_HOURS' | translate }}</mat-label>
+        <span matTextSuffix>
+          {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
+        </span>
+        <input matInput placeholder="0" formControlName="annual_hours">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- modifiers input -->
+  <h3>{{ 'MODIFIERS' | translate }}</h3>
+  <div class="groupContainer">
+    <div>
+      <mat-form-field>
+        <mat-label>{{ 'EFFECTIVENESS' | translate }}</mat-label>
+        <span matTextSuffix>
+          %
+        </span>
+        <input matInput placeholder="0" formControlName="effectiveness">
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-label>{{ 'HOURS_PER_DAY' | translate }}</mat-label>
+        <span matTextSuffix>
+          {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
+        </span>
+        <input matInput placeholder="0" formControlName="hours_per_day">
+      </mat-form-field>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<!-- buttons -->
+<mat-dialog-actions>
+  <div class="buttonContainer">
+    <button mat-stroked-button mat-dialog-close>
+      <mat-icon>
+        cancel
+      </mat-icon>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+      <mat-icon>
+        check_circle
+      </mat-icon>
+      {{ 'ADD' | translate }}
+    </button>
+  </div>
+</mat-dialog-actions>

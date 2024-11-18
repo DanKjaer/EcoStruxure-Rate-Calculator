@@ -29,6 +29,10 @@ public class TeamService {
         return teamDAO.get(id);
     }
 
+    public List<TeamProfile> getByProfileId(UUID profileId) throws Exception {
+        return teamDAO.getByProfileId(profileId);
+    }
+
     public Team get(Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
 
@@ -49,29 +53,20 @@ public class TeamService {
         }
     }
 
-    public boolean update(UUID teamId,Team team) throws Exception {
+    public Team update(UUID teamId,Team team) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
+        var updatedTeam = calculateTotalMarkupAndTotalGrossMargin(team);
 
-        return teamDAO.update(teamId, team);
+        return teamDAO.update(teamId, updatedTeam);
     }
 
     /**
-     * Create a new team.
-     *
-     * @param team the team to create. Must not be null.
-     * @return the created team that has same data as the input team, but with ID set.
-     * @throws Exception                if an error occurred in creating the team.
-     * @throws NullPointerException     if the input team or team name is null.
-     * @throws IllegalArgumentException if the team name is empty.
+     * This one is used by controller to create profiles
+     * @param team
+     * @param teamProfiles
+     * @return
+     * @throws Exception
      */
-    public Team create(Team team) throws Exception {
-        Objects.requireNonNull(team, "Team cannot be null");
-        Objects.requireNonNull(team.getName(), "Team name cannot be null");
-        if (team.getName().isEmpty()) throw new IllegalArgumentException("Team name cannot be empty");
-
-        return teamProfileManagementService.createTeam(team);
-    }
-
     public Team create(Team team, List<TeamProfile> teamProfiles) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
         Team createdTeam = teamDAO.create(team);
@@ -85,7 +80,6 @@ public class TeamService {
         teamDAO.updateTotalAllocationOfProfiles(updatedTeamProfile);
         return createdTeam;
     }
-
 
     /**
      * Set the markup for the given team.
@@ -186,6 +180,29 @@ public class TeamService {
         return teamProfileManagementService.updateTeamProfile(teamId, teamProfile);
     }
 
+    /**
+     * Updates team profiles and teams based on one profile
+     * @param profile
+     * @return
+     * @throws Exception
+     */
+    public boolean updateProfile(Profile profile) throws Exception {
+        var teamProfilesMatchingProfile = teamDAO.getByProfileId(profile.getProfileId());
+        var teams = teamDAO.getTeams(teamProfilesMatchingProfile);
+        var teamProfilesOnTeams = teamDAO.getTeamProfiles(teams);
+        teamProfilesMatchingProfile = updateAllocatedCostAndHours(teamProfilesMatchingProfile);
+        for (Team team : teams) {
+            var id = team.getTeamId();
+            var teamProfiles = teamProfilesOnTeams.stream().filter(tp -> tp.getTeamId().equals(id)).toList();
+            team = calculateTotalAllocatedCostAndHoursFromProfiles(team, teamProfiles);
+            team = calculateTotalMarkupAndTotalGrossMargin(team);
+            teamDAO.update(team.getTeamId(), team);
+        }
+        teamDAO.updateTeamProfile(teamProfilesMatchingProfile);
+
+        return true;
+    }
+
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {
         Objects.requireNonNull(team, "Team cannot be null");
         Objects.requireNonNull(profiles, "Profiles cannot be null");
@@ -218,10 +235,18 @@ public class TeamService {
         return teamDAO.getTeamProfile(teamId, profileId);
     }
 
+    /**
+     * Used by Controller to "delete" a team by archiving it.
+     * @param teamId
+     * @param archive
+     * @return true if the team was archived, false otherwise.
+     * @throws Exception
+     */
     public boolean archive(UUID teamId, boolean archive) throws Exception {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
+        var response = teamDAO.archive(teamId, archive);
 
-        return teamDAO.archive(teamId, archive);
+        return response;
     }
 
     public boolean archive(Team team, boolean archive) throws Exception {
@@ -236,12 +261,6 @@ public class TeamService {
         return teamDAO.archive(teams);
     }
 
-    public List<Profile> canUnarchive(Team team) throws Exception {
-        Objects.requireNonNull(team, "Team cannot be null");
-
-        return teamDAO.canUnarchive(team.getTeamId());
-    }
-
     public LocalDateTime getLastUpdated(UUID teamId) throws Exception {
         if (teamId == null) throw new IllegalArgumentException("Team ID must be greater than 0");
 
@@ -250,6 +269,13 @@ public class TeamService {
 
 //  Alle metoder herfra og ned, skal måske flyttes til et andet sted end teamService.
 
+    /**
+     * Calculate the total allocated cost and hours for a team.
+     * @param team
+     * @param teamProfiles
+     * @return
+     * @throws Exception
+     */
     public Team calculateTotalAllocatedCostAndHoursFromProfiles(Team team, List<TeamProfile> teamProfiles) throws Exception {
         BigDecimal totalAllocatedCost = BigDecimal.ZERO;
         BigDecimal totalAllocatedHours = BigDecimal.ZERO;
@@ -265,7 +291,12 @@ public class TeamService {
 
             BigDecimal allocatedCost = annualCost.multiply(costAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             BigDecimal allocatedHours = annualHours.multiply(hourAllocationPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            BigDecimal hourlyRateOnTeam = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP);
+            BigDecimal hourlyRateOnTeam;
+            if (annualHours.compareTo(BigDecimal.ZERO) == 0) {
+                hourlyRateOnTeam = BigDecimal.ZERO;
+            } else {
+                hourlyRateOnTeam = annualCost.divide(annualHours, 2, RoundingMode.HALF_UP);
+            }
             BigDecimal dailyRateOnTeam = hourlyRateOnTeam.multiply(BigDecimal.valueOf(8));
 
             totalAllocatedCost = totalAllocatedCost.add(allocatedCost);
@@ -305,6 +336,12 @@ public class TeamService {
         return teamProfiles;
     }
 
+    /**
+     * Calculates the allocated cost, hours and day rate for a team profile.
+     * @param teamProfiles
+     * @return
+     * @throws Exception
+     */
     public List<TeamProfile> updateAllocatedCostAndHours(List<TeamProfile> teamProfiles) throws Exception {
 
         for(TeamProfile teamProfile : teamProfiles) {
@@ -364,5 +401,19 @@ public class TeamService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) throws SQLException {
+        BigDecimal markup = team.getMarkup().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal grossMargin = team.getGrossMargin().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
+
+        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
+        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
+
+        team.setTotalMarkup(totalMarkup);
+        team.setTotalGrossMargin(totalGrossMargin);
+
+        return team;
     }
 }

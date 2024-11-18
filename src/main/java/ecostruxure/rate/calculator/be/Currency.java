@@ -6,6 +6,7 @@ public class Currency {
     private String currencyCode;
     private BigDecimal eurConversionRate;
     private BigDecimal usdConversionRate;
+    private String symbol;
 
     public Currency() {}
 
@@ -37,6 +38,38 @@ public class Currency {
 
     public void usdConversionRate(BigDecimal usdConversionRate) {
         this.usdConversionRate = usdConversionRate;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public BigDecimal getEurConversionRate() {
+        return eurConversionRate;
+    }
+
+    public void setEurConversionRate(BigDecimal eurConversionRate) {
+        this.eurConversionRate = eurConversionRate;
+    }
+
+    public BigDecimal getUsdConversionRate() {
+        return usdConversionRate;
+    }
+
+    public void setUsdConversionRate(BigDecimal usdConversionRate) {
+        this.usdConversionRate = usdConversionRate;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     @Override

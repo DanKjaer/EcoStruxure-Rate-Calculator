@@ -13,12 +13,18 @@ import java.util.UUID;
 
 public interface ITeamDAO {
     List<Team> all() throws Exception;
+
+    List<Team> getTeams(List<TeamProfile> teamProfiles) throws SQLException;
+
     Team get(UUID id) throws Exception;
+
+    List<TeamProfile> getByProfileId(UUID id) throws Exception;
+
     Team create(Team team) throws Exception;
 
     Team create(TransactionContext context, Team team) throws Exception;
 
-    boolean update(UUID teamId, Team team) throws Exception;
+    Team update(UUID teamId, Team team) throws Exception;
 
     void updateMultipliers(Team team) throws Exception;
 
@@ -41,6 +47,8 @@ public interface ITeamDAO {
     List<TeamProfile> _getTeamProfiles(UUID teamId) throws Exception;
 
     List<Profile> getTeamProfiles(UUID teamId) throws Exception;
+
+    List<TeamProfile> getTeamProfiles(List<Team> teams) throws Exception;
 
     Profile getTeamProfile(UUID teamId, UUID profileId) throws Exception;
 
@@ -72,8 +80,6 @@ public interface ITeamDAO {
 
     void updateTeamsDayRate(UUID teamId, BigDecimal dayRate) throws SQLException;
 
-    boolean storeTeamProfiles(TransactionContext context, List<TeamProfile> teamProfiles) throws Exception;
-
     List<TeamProfile> saveTeamProfiles(UUID teamId, List<TeamProfile> teamProfiles) throws SQLException;
 
     void updateTeamRateCostHours(Team team) throws SQLException;
@@ -83,8 +89,11 @@ public interface ITeamDAO {
     void updateDayRateOnTeam(List<TeamProfile> teamProfiles) throws SQLException;
 
     boolean removeProfilesFromTeam(UUID teamId, List<UUID> profileIds) throws SQLException;
-
     TeamProfile updateTeamProfile(UUID teamId, TeamProfile teamProfile) throws SQLException;
 
+    boolean updateTeamProfile(List<TeamProfile> teamProfiles) throws SQLException;
+
     void updateTotalAllocationOfProfiles(List<TeamProfile> teamProfiles) throws SQLException;
+
+    void updateTotalAllocationOfProfilesOnDelete(List<Profile> profiles) throws SQLException;
 }

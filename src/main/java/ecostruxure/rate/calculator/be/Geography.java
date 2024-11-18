@@ -15,6 +15,8 @@ public class Geography {
         this(0, name, false);
     }
 
+    public Geography(){ }
+
     public int id() {
         return id;
     }
@@ -33,6 +35,30 @@ public class Geography {
 
     public boolean predefined() {
         return predefined;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isPredefined() {
+        return predefined;
+    }
+
+    public void setPredefined(boolean predefined) {
+        this.predefined = predefined;
     }
 
     @Override

@@ -1,0 +1,57 @@
+<div class="container" [ngClass]="{'menuClosed': !isMenuOpen}">
+  <div class="titleContainer">
+    <span>
+      {{ 'CURRENCY' | translate }}
+    </span>
+  </div>
+  <div class="tableContainer">
+    <table class="currencyTable" mat-table [dataSource]="datasource">
+
+      <!-- currency -->
+      <ng-container matColumnDef="currency">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'CURRENCY' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['currencyCode'] }}
+        </td>
+      </ng-container>
+
+      <!-- eur conversion rate -->
+      <ng-container matColumnDef="eur conversion rate">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'EUR_CONVERSION_RATE' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['eurConversionRate'] }}
+        </td>
+      </ng-container>
+
+      <!-- usd conversion rate -->
+      <ng-container matColumnDef="usd conversion rate">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'USD_CONVERSION_RATE' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['usdConversionRate'] }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="symbol">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'CURRENCY_SYMBOL' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element['symbol'] }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <div class="spinnerContainer" *ngIf="loading">
+      <!-- Display spinner when loading -->
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  </div>
+</div>

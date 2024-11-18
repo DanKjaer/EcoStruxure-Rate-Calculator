@@ -1,0 +1,85 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  background-color: forestgreen;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: width 0.3s ease;
+}
+
+.container.menuClosed {
+  width: 90vw;
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  align-items: center;
+  max-height: 5vh;
+  font-size: 3rem;
+}
+
+.underTitleContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  color: white;
+  max-height: 5vh;
+  font-size: 1.25rem;
+  padding-top: 1rem;
+  padding-right: 0.5rem;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  max-height: 6vh;
+}
+
+.tableContainer {
+  overflow: auto;
+  background-color: whitesmoke;
+  position: relative;
+}
+
+.paginatorContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.750rem;
+  margin-top: auto;
+  max-height: 6vh;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.spinnerContainer {
+  position: absolute;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.paginator {
+  border-radius: 1rem 1rem 0 0;
+}
+
+.profilesTable {
+  width: 100%;
+}
+
+.mat-mdc-row:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+tr.mat-mdc-footer-row {
+  font-weight: bold;
+}

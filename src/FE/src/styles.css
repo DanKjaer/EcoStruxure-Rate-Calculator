@@ -59,3 +59,31 @@ button {
 .mat-mdc-menu-panel {
   height: fit-content;
 }
+
+.mat-mdc-tooltip  {
+  white-space: pre-line;
+}
+
+.error-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface{
+    color: red;
+  }
+
+  .mat-mdc-button{
+    color: red !important;
+  }
+
+  max-width: fit-content;
+}
+
+.success-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface{
+    color: limegreen;
+  }
+
+  .mat-mdc-button{
+    color: limegreen !important;
+  }
+
+  max-width: fit-content;
+}

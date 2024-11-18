@@ -1,0 +1,39 @@
+.dialog-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dialog-section {
+  flex: 1;
+  margin: 0 10px;
+  width: 50%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupContainer {
+  display: flex;
+  flex-direction: row;
+  align-content: space-evenly;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.teamsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: whitesmoke;
+  border-radius: 1rem;
+  border: 1px solid gray;
+  overflow: auto;
+  max-height: 28rem;
+}
