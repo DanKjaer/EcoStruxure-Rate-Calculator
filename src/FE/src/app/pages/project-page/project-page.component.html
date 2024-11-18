@@ -178,7 +178,7 @@
   </div>
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item>
+    <button mat-menu-item (click)="onRemove()">
       <mat-icon>remove</mat-icon>
       {{ 'REMOVE' | translate }}
     </button>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Project, ProjectMembers, Team} from "../../models";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
@@ -34,6 +34,7 @@ export class AddToProjectDialogComponent implements OnInit {
   teamList: Team[] = [];
   selectedTeams: Team[] = [];
   @Output() AddToProject = new EventEmitter<Project>();
+  @Input() project!: Project;
 
   constructor(
       private formBuilder: FormBuilder,
@@ -49,13 +50,12 @@ export class AddToProjectDialogComponent implements OnInit {
       teams: [[], Validators.required]
     })
 
-    this.teamList = await this.teamService.getTeams();
+    let teams = await this.teamService.getTeams();
+    this.teamList = teams.filter(team => !this.project.projectMembers.some(member => member.teamId === team.teamId));
   }
 
   async onSave() {
-
     let teams = this.selectedTeams;
-    let projectMembers : ProjectMembers[] = [];
     teams.forEach( team => {
       let projectMember: ProjectMembers = {
         projectId: '',
@@ -64,13 +64,12 @@ export class AddToProjectDialogComponent implements OnInit {
         dayRate: team.dayRate,
         markup: team.markup,
         projectAllocation: 0
-
       }
-      projectMembers.push(projectMember);
+      this.project.projectMembers.push(projectMember);
     });
-    const updateTeam = await this.projectService.putProject(projectMembers)
-    if (updateTeam != undefined) {
-      this.AddToProject.emit(updateTeam);
+    const updateProject = await this.projectService.putProject(this.project)
+    if (updateProject != undefined) {
+      this.AddToProject.emit(updateProject);
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_ADDED'), true);
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_ADDED'), false);

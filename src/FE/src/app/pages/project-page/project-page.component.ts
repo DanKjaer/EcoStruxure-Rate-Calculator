@@ -28,7 +28,6 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 import {MenuService} from '../../services/menu.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {ActivatedRoute} from '@angular/router';
-import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {FormatterService} from '../../services/formatter.service';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
@@ -145,6 +144,7 @@ export class ProjectPageComponent implements OnInit{
       maxWidth: '1200px',
     });
     this.loading = true;
+    dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
       project.startDateString = this.formatter.formatDate(project.projectStartDate);
       project.endDateString = this.formatter.formatDate(project.projectEndDate);
@@ -181,5 +181,9 @@ export class ProjectPageComponent implements OnInit{
 
   undo() {
 
+  }
+
+  onRemove() {
+    
   }
 }

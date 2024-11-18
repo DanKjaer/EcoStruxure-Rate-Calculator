@@ -221,5 +221,7 @@
   "PROJECT_ALLOCATION": "Project allocation",
   "SALES_INFORMATION": "Sales information",
   "ADD_TO_PROJECT": "Add to project",
-  "CURRENT_PROJECT": "Current project"
+  "CURRENT_PROJECT": "Current project",
+  "SUCCESS_TEAM_ADDED": "Team added successfully",
+  "ERROR_TEAM_ADDED": "Failed to add team"
 }
