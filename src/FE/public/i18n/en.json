@@ -214,5 +214,12 @@
   "PROFILE_LIST": "Profile list",
   "CURRENCY_SYMBOL": "Symbol",
   "TOTALS": "Totals",
-  "AVERAGE": "Average"
+  "AVERAGE": "Average",
+  "PROJECT_TEAMS": "Teams for this project",
+  "TOTAL_PRICE": "Total price",
+  "TOTAL_DAYS": "Total days",
+  "PROJECT_ALLOCATION": "Project allocation",
+  "SALES_INFORMATION": "Sales information",
+  "ADD_TO_PROJECT": "Add to project",
+  "CURRENT_PROJECT": "Current project"
 }
