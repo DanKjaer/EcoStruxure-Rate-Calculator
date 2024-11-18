@@ -176,7 +176,7 @@
             <mat-label>{{ 'LOCATION' | translate }}</mat-label>
             <mat-select formControlName="location">
               @for (location of locations; track location) {
-                <mat-option [value]="location.name.valueOf()">
+                <mat-option [value]="location.id">
                   {{ location.name }}
                 </mat-option>
               }
@@ -189,7 +189,7 @@
             <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
             <mat-select formControlName="currency">
               @for (currency of currencies; track currency) {
-                <mat-option [value]="currency.valueOf()">
+                <mat-option [value]="currency.currencyCode">
                   {{ currency.currencyCode }}
                 </mat-option>
               }

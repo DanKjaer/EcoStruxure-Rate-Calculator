@@ -209,9 +209,10 @@ public class ProfileDAO implements IProfileDAO {
     public Profile get(UUID profileId) throws Exception {
         Profile profile = null;
         String query = """
-                       SELECT * FROM dbo.Profiles
-
-                       WHERE dbo.Profiles.profile_id = ?
+                       SELECT p.*, g.name AS geography_name 
+                       FROM dbo.Profiles p
+                       INNER JOIN dbo.Geography g ON p.geography_id = g.id
+                       WHERE p.profile_id = ?
                        """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -220,6 +221,10 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
+                    Geography geography = new Geography();
+                    geography.setId(rs.getInt("geography_id"));
+                    geography.setName(rs.getString("geography_name"));
+                    profile.setGeography(geography);
                     profile.setUpdatedAt(rs.getTimestamp("updated_at"));
                     profile.setArchived(rs.getBoolean("is_archived"));
                 }

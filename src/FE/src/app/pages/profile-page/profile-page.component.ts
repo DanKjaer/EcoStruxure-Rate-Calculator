@@ -45,6 +45,7 @@ import {CurrencyService} from '../../services/currency.service';
 })
 export class ProfilePageComponent implements OnInit, AfterViewInit {
   profileForm: FormGroup = new FormGroup({});
+  protected readonly localStorage = localStorage;
   currentProfile: Profile | undefined;
   locations: Geography[] = [];
   teams: TeamProfiles[] = [];
@@ -93,17 +94,18 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
       annual_cost: [''],
       annual_hours: [{value: '', disabled: true}],
       hours_per_day: [''],
-      effectiveness: [''],
+      effectiveness: ['']
     });
 
     this.locations = await this.geographyService.getCountries();
-    this.currentProfile = await this.profileService.getProfile(this.route.snapshot.paramMap.get('id')!);
-    this.teams = await this.teamsService.getTeamProfiles(this.route.snapshot.paramMap.get('id')!);
+    let id = this.route.snapshot.paramMap.get('id')!;
+    this.currentProfile = await this.profileService.getProfile(id);
+    this.teams = await this.teamsService.getTeamProfiles(id);
     this.datasource.data = this.teams;
 
     this.profileForm = this.fb.group({
       name: [this.currentProfile.name, Validators.required],
-      location: [this.currentProfile.geography.name, Validators.required],
+      location: [this.currentProfile.geography.id, Validators.required],
       currency: [this.currentProfile.currency, Validators.required],
       resource_type: [this.currentProfile.resourceType, Validators.required],
       annual_cost: [this.currentProfile.annualCost],
@@ -147,7 +149,7 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
   undo() {
     this.profileForm = this.fb.group({
       name: [this.currentProfile!.name],
-      location: [this.currentProfile?.geography.name],
+      location: [this.currentProfile!.geography.id],
       currency: [this.currentProfile!.currency],
       resource_type: [this.currentProfile!.resourceType],
       annual_cost: [this.currentProfile!.annualCost],
@@ -171,5 +173,4 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  protected readonly localStorage = localStorage;
 }
