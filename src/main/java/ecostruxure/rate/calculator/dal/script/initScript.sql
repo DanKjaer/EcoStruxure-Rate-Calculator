@@ -77,8 +77,8 @@ CREATE TABLE dbo.Profiles (
                               annual_hours            DECIMAL(7, 2),
                               effective_work_hours    DECIMAL(10, 2),
                               hours_per_day           DECIMAL(4, 2), -- -99.99 - 99.99
-                              total_cost_allocation   DECIMAL(6, 2),
-                              total_hour_allocation   DECIMAL(6, 2),
+                              total_cost_allocation   DECIMAL(6, 2) DEFAULT 0,
+                              total_hour_allocation   DECIMAL(6, 2) DEFAULT 0,
                               is_archived             BOOLEAN DEFAULT FALSE,
                               updated_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                               FOREIGN KEY (geography_id) REFERENCES dbo.geography(id)
