@@ -39,7 +39,7 @@
         <p>{{ 'PROJECT_TEAMS' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-          <input matInput inputmode="search" type="search">
+          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)">
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
         <button mat-stroked-button>
