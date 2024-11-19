@@ -19,7 +19,7 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatSort, MatSortHeader} from "@angular/material/sort";
 import {MatTooltip} from "@angular/material/tooltip";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import { MatSelect} from "@angular/material/select";
+import {MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
 import {Project} from "../../models";
@@ -75,10 +75,10 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
 })
-export class ProjectPageComponent implements OnInit{
+export class ProjectPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
-    projectForm: FormGroup = new FormGroup({});
-    project!: Project;
+  projectForm: FormGroup = new FormGroup({});
+  project!: Project;
 
   statBoxes = {
     totalDayRate: 0,
@@ -113,12 +113,12 @@ export class ProjectPageComponent implements OnInit{
     });
 
     this.projectForm = this.formBuilder.group({
-        projectName: ['', Validators.required],
-        salesNumber: [''],
-        projectPrice: [''],
-        projectDescription: [''],
-        startDate: [''],
-        endDate: ['']
+      projectName: ['', Validators.required],
+      salesNumber: [''],
+      projectPrice: [''],
+      projectDescription: [''],
+      startDate: [''],
+      endDate: ['']
     });
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
@@ -159,7 +159,7 @@ export class ProjectPageComponent implements OnInit{
   }
 
   async update() {
-    if(this.projectForm.valid) {
+    if (this.projectForm.valid) {
       let updatedProject = {
         projectId: this.project.projectId,
         projectName: this.projectForm.value.projectName,

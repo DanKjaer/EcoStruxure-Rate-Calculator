@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Project, ProjectMembers, Team} from "../../models";
+import {Project, ProjectMembers } from "../../models";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
 import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from "@angular/material/list";
 import {MatFormField, MatInputModule} from "@angular/material/input";
@@ -84,6 +84,7 @@ export class AddToProjectDialogComponent implements OnInit {
       }
       this.project.projectMembers.push(projectMember);
     });
+    try{
     const updateProject = await this.projectService.putProject(this.project)
     if (updateProject != undefined) {
       this.AddToProject.emit(updateProject);
@@ -92,6 +93,8 @@ export class AddToProjectDialogComponent implements OnInit {
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_ADDED'), false);
     }
+    }catch (error: any) {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);}
   }
 
   onSelectionChange($event: MatSelectionListChange) {

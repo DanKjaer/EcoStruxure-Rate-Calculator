@@ -53,19 +53,32 @@ public class ProjectService {
     }
 
     public Project updateProject(Project project) throws SQLException {
-        if (project.getProjectMembers() != null) {
-            project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
-            project.setProjectGrossMargin(calculateGrossMargin(project));
-        }
-        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+        try {
+            if (project.getProjectMembers() != null) {
+                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+                project.setProjectGrossMargin(calculateGrossMargin(project));
+            }
+            project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
 
-        var updateSuccess = projectDAO.updateProject(project);
+            validateProject(project);
 
-        if (updateSuccess && !project.getProjectMembers().isEmpty()) {
-            projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
-            );
+            var updateSuccess = projectDAO.updateProject(project);
+
+            if (updateSuccess && !project.getProjectMembers().isEmpty()) {
+                projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
+                );
+            }
+            return project;
+        }catch(SQLException e){
+            throw new SQLException("Failed to update project", e);
         }
-        return project;
+    }
+
+    private void validateProject(Project project) throws SQLException{
+        BigDecimal grossMargin = project.getProjectGrossMargin();
+        if (grossMargin.compareTo(BigDecimal.ZERO) < 0 || grossMargin.compareTo(new BigDecimal("999.99")) > 0) {
+            throw new SQLException("Project gross margin cannot be more than 999.99, or less than 0");
+        }
     }
 
     private BigDecimal calculateDayRate(List<ProjectMember> projectMembers) {
