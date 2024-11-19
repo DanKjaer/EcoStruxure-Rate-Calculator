@@ -62,7 +62,8 @@ public class ProjectService {
         var updateSuccess = projectDAO.updateProject(project);
 
         if (updateSuccess && !project.getProjectMembers().isEmpty()) {
-            projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers());
+            projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
+            );
         }
         return project;
     }
