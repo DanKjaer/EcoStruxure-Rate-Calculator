@@ -20,6 +20,7 @@
     <mat-selection-list #teams formControlName="teams" (selectionChange)="onSelectionChange($event)">
       @for (team of teamList; track team) {
         <mat-list-option [value]="team" >{{ team.name }}</mat-list-option>
+        <input type="number" min="0" max="100" formControlName="projectAllocations" placeholder="Allocation (%)" />
       }
     </mat-selection-list>
   </div>
