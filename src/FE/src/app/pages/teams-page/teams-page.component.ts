@@ -220,7 +220,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     this.getTotalDayRate(displayedData);
     this.getTotalCost(displayedData);
     this.getTotalHours(displayedData);
-    this.gettotalMarkup(displayedData);
+    this.getTotalMarkup(displayedData);
     this.getTotalGrossMargin(displayedData);
   }
 
@@ -240,7 +240,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     this.totalHours = displayedData.reduce((acc: number, team: Team) => acc + team.totalAllocatedHours!, 0);
   }
 
-  private gettotalMarkup(displayedData: Team[]) {
+  private getTotalMarkup(displayedData: Team[]) {
     this.totalMarkup = displayedData.reduce((acc: number, team: Team) => acc + team.totalMarkup!, 0);
   }
 
