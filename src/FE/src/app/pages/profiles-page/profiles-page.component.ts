@@ -74,9 +74,9 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   selectedRow: Profile | null = null;
   rowColor: Profile | null = null;
-  
+
   protected readonly localStorage = localStorage;
-  
+
   datasource: MatTableDataSource<Profile> = new MatTableDataSource<Profile>();
   loading = true;
   originalRowData: { [key: number]: any } = {};
@@ -98,8 +98,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   async ngAfterViewInit() {
-    let profiles = await this.profileService.getProfiles();
-    this.datasource.data = profiles;
+    this.datasource.data = await this.profileService.getProfiles();
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
@@ -204,7 +203,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   //#endregion
-  
+
   handlePageEvent($event: PageEvent) {
     this.updateTableFooterData();
   }
