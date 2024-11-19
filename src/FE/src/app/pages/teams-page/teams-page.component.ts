@@ -118,6 +118,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     if (this.datasource.paginator) {
       this.datasource.paginator.firstPage();
     }
+    this.updateTableFooterData(true);
   }
 
   openDialog() {
@@ -208,42 +209,42 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
   }
 
-  private updateTableFooterData() {
-    this.getTotalHourlyRate();
-    this.getTotalDayRate();
-    this.getTotalCost();
-    this.getTotalHours();
-    this.gettotalMarkup();
-    this.getTotalGrossMargin();
+  private updateTableFooterData(searching: boolean = false) {
+    let displayedData: Team[];
+    if (searching) {
+      displayedData = this.datasource.filteredData;
+    } else {
+      displayedData = this.getDisplayedData();
+    }
+    this.getTotalHourlyRate(displayedData);
+    this.getTotalDayRate(displayedData);
+    this.getTotalCost(displayedData);
+    this.getTotalHours(displayedData);
+    this.gettotalMarkup(displayedData);
+    this.getTotalGrossMargin(displayedData);
   }
 
-  private getTotalHourlyRate() {
-    const displayedData = this.getDisplayedData();
+  private getTotalHourlyRate(displayedData: Team[]) {
     this.totalHourlyRate = displayedData.reduce((acc: number, team: Team) => acc + team.hourlyRate!, 0);
   }
 
-  private getTotalDayRate() {
-    const displayedData = this.getDisplayedData();
+  private getTotalDayRate(displayedData: Team[]) {
     this.totalDayRate = displayedData.reduce((acc: number, team: Team) => acc + team.dayRate!, 0);
   }
 
-  private getTotalCost() {
-    const displayedData = this.getDisplayedData();
+  private getTotalCost(displayedData: Team[]) {
     this.totalCost = displayedData.reduce((acc: number, team: Team) => acc + team.totalAllocatedCost!, 0);
   }
 
-  private getTotalHours() {
-    const displayedData = this.getDisplayedData();
+  private getTotalHours(displayedData: Team[]) {
     this.totalHours = displayedData.reduce((acc: number, team: Team) => acc + team.totalAllocatedHours!, 0);
   }
 
-  private gettotalMarkup() {
-    const displayedData = this.getDisplayedData();
+  private gettotalMarkup(displayedData: Team[]) {
     this.totalMarkup = displayedData.reduce((acc: number, team: Team) => acc + team.totalMarkup!, 0);
   }
 
-  private getTotalGrossMargin() {
-    const displayedData = this.getDisplayedData();
+  private getTotalGrossMargin(displayedData: Team[]) {
     this.totalGrossMargin = displayedData.reduce((acc: number, team: Team) => acc + team.totalGrossMargin!, 0);
   }
 

@@ -119,6 +119,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     if (this.datasource.paginator) {
       this.datasource.paginator.firstPage();
     }
+    this.updateTableFooterData(true);
   }
 
   editRow(element: any): void {
@@ -221,18 +222,22 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
   }
 
-  updateTableFooterData() {
-    this.getAverageHourAllocation();
-    this.getAverageCostAllocation();
+  updateTableFooterData(searching: boolean = false) {
+    let displayedData: Profile[];
+    if (searching) {
+      displayedData = this.datasource.filteredData;
+    } else {
+      displayedData = this.getDisplayedData();
+    }
+    this.getAverageHourAllocation(displayedData);
+    this.getAverageCostAllocation(displayedData);
   }
 
-  getAverageHourAllocation() {
-    const displayedData = this.getDisplayedData();
+  getAverageHourAllocation(displayedData: Profile[]) {
     this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
   }
 
-  getAverageCostAllocation() {
-    const displayedData = this.getDisplayedData();
+  getAverageCostAllocation(displayedData: Profile[]) {
     this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
   }
 
