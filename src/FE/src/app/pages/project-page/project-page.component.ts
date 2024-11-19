@@ -22,14 +22,13 @@ import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
-import {Project} from "../../models";
+import {Project, ProjectMembers} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {FormatterService} from '../../services/formatter.service';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
 
 @Component({
@@ -79,6 +78,9 @@ export class ProjectPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   projectForm: FormGroup = new FormGroup({});
   project!: Project;
+  originalRowData: { [key: number]: any } = {};
+  isEditingRow: boolean = false;
+  selectedRow: Project | null = null;
 
   statBoxes = {
     totalDayRate: 0,
@@ -195,5 +197,49 @@ export class ProjectPageComponent implements OnInit {
 
   onRemove() {
 
+  }
+
+  editRow(selectedProject: any) {
+    if (this.isEditingRow) return;
+    this.isEditingRow = true;
+    selectedProject['isEditing'] = true;
+    if (!this.originalRowData[selectedProject.id]) {
+      this.originalRowData[selectedProject.id] = {...selectedProject}
+    }
+  }
+
+  async saveEdit(selectedProject: any): Promise<void> {
+    selectedProject['isEditing'] = false;
+    this.isEditingRow = false;
+    this.loading = true;
+
+    try{
+      let result = await this.projectService.putProject(selectedProject);
+      this.datasource.data.forEach((projectMembers: ProjectMembers) => {
+        if (projectMembers.projectId === result.projectId) {
+          projectMembers.projectAllocation = result.projectAllocation;
+        }
+      });
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+      this.loading = false;
+    } catch (e) {
+      this.cancelEdit(selectedProject);
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_SAVED'), false);
+      this.loading = false;
+      return;
+    }
+  }
+
+  cancelEdit(selectedProject: any) {
+    let original = this.originalRowData[selectedProject.id];
+    if (original) {
+      selectedProject.projectAllocation = original.projectAllocation;
+    }
+    selectedProject['isEditing'] = false;
+    this.isEditingRow = false;
+  }
+
+  selectRow(row: Project) {
+    this.selectedRow = row;
   }
 }
