@@ -73,7 +73,7 @@
           {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
           {{ this.currencyService.convert(element['projectDayRate'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{totalDayRate}}</td>
+        <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{this.currencyService.convert(totalDayRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}</td>
       </ng-container>
 
       <!-- Gross Margin-->
@@ -99,7 +99,7 @@
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectPrice']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{totalPrice}}</td>
+        <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{this.currencyService.convert(totalPrice, 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}</td>
       </ng-container>
 
       <!-- Start date for project-->
