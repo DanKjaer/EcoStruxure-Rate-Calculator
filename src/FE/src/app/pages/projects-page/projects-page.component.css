@@ -26,12 +26,13 @@
 
 .underTitleContainer {
   display: flex;
-  flex-direction: row-reverse;
-  color: white;
-  max-height: 5vh;
-  font-size: 1.25rem;
-  padding-top: 1rem;
-  padding-right: 0.5rem;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-top: 0.750rem;
+  margin-top: auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  gap: 1rem;
 }
 
 .buttonContainer {
@@ -82,4 +83,9 @@
 
 tr.mat-mdc-footer-row {
   font-weight: bold;
+}
+
+.mat-mdc-footer-cell {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
