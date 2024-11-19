@@ -103,7 +103,6 @@ export class ProjectPageComponent implements OnInit {
               private menuService: MenuService,
               private snackBar: SnackbarService,
               private translate: TranslateService,
-              private formatter: FormatterService,
               private changeDetectorRef: ChangeDetectorRef) {
   }
 
@@ -134,6 +133,15 @@ export class ProjectPageComponent implements OnInit {
       grossMargin: this.project.projectGrossMargin!,
       totalDays: this.project.projectTotalDays!
     }
+
+    this.projectForm = this.formBuilder.group({
+      projectName: [this.project.projectName, Validators.required],
+      salesNumber: [this.project.projectSalesNumber],
+      projectPrice: [this.project.projectPrice],
+      projectDescription: [this.project.projectDescription],
+      startDate: [this.project.projectStartDate],
+      endDate: [this.project.projectEndDate]
+    })
   }
 
   openDialog() {
