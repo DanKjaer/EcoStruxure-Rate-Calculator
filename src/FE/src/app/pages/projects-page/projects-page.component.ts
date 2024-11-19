@@ -91,9 +91,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
                                 'totalDays',
                                 'location',
                                 'options'];
-  
+
   protected readonly localStorage = localStorage;
-  
+
   selectedRow: Project | null = null;
   originalRowData: { [key: number]: any } = {};
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
@@ -135,6 +135,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       console.error('Failed to load projects:', error);
     } finally {
       this.loading = false;
+      this.updateTableFooterData();
     }
   }
 

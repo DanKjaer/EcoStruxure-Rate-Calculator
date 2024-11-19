@@ -13,13 +13,14 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
-import {MatInput} from '@angular/material/input';
+import {MatFormField, MatInput, MatPrefix} from '@angular/material/input';
 import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {MatLabel} from '@angular/material/form-field';
 
 @Component({
   selector: 'app-profiles-page',
@@ -42,7 +43,10 @@ import {CurrencyService} from '../../services/currency.service';
     FormsModule,
     MatInput,
     NgClass,
-    DecimalPipe
+    DecimalPipe,
+    MatFormField,
+    MatLabel,
+    MatPrefix
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
@@ -108,6 +112,15 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   //#endregion
 
   //#region functions
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
+  }
+
   editRow(element: any): void {
     if (this.isEditingRow) return;
     this.isEditingRow = true;
@@ -169,8 +182,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
       this.datasource.data.push(profile)
       this.datasource._updateChangeSubscription();
-      this.loading = false;
     });
+    this.loading = false;
     this.updateTableFooterData();
   }
 

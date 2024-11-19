@@ -11,7 +11,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {TeamsService} from '../../services/teams.service';
 import {Team} from '../../models';
-import {MatInput} from '@angular/material/input';
+import {MatFormField, MatInput, MatLabel, MatPrefix} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FormatterService} from '../../services/formatter.service';
 import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
@@ -41,7 +41,10 @@ import {CurrencyService} from '../../services/currency.service';
     ReactiveFormsModule,
     FormsModule,
     NgClass,
-    DecimalPipe
+    DecimalPipe,
+    MatFormField,
+    MatLabel,
+    MatPrefix
   ],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.css'
@@ -106,6 +109,15 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
     this.updateTableFooterData();
+  }
+
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
   }
 
   openDialog() {

@@ -24,16 +24,6 @@
   font-size: 3rem;
 }
 
-.underTitleContainer {
-  display: flex;
-  flex-direction: row-reverse;
-  color: white;
-  max-height: 5vh;
-  font-size: 1.25rem;
-  padding-top: 1rem;
-  padding-right: 0.5rem;
-}
-
 .buttonContainer {
   display: flex;
   flex-direction: row-reverse;
@@ -46,14 +36,15 @@
   position: relative;
 }
 
-.paginatorContainer {
+.underTitleContainer {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   padding-top: 0.750rem;
   margin-top: auto;
-  max-height: 6vh;
   flex-grow: 0;
   flex-shrink: 0;
+  gap: 1rem;
 }
 
 .spinnerContainer {
