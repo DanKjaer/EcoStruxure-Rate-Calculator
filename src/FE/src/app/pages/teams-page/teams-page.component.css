@@ -71,6 +71,11 @@
   background-color: rgba(0, 0, 0, 0.03);
 }
 
+.mat-mdc-footer-cell {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
 tr.mat-mdc-footer-row {
   font-weight: bold;
 }
