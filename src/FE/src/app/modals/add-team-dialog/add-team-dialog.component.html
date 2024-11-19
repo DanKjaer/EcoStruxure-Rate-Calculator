@@ -7,15 +7,6 @@
     </mat-label>
     <input matInput placeholder="Team Easy On" formControlName="name">
   </mat-form-field>
-  <div class="searchContainer">
-    <mat-form-field>
-      <mat-label>
-        {{ 'SEARCH_PROMPT' | translate }}
-      </mat-label>
-      <input matInput>
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-  </div>
   <div class="profilesContainer">
     <mat-selection-list formControlName="profiles" (selectionChange)="onSelectionChange($event)">
       @for (profile of profileList; track profile) {

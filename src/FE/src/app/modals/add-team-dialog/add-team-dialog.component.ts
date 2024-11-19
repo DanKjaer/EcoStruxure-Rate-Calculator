@@ -57,6 +57,9 @@ export class AddTeamDialogComponent implements OnInit {
       profiles: [[], Validators.required]
     })
     this.profileList = await this.profileService.getProfiles();
+    this.profileList.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
   }
 
   async onSave() {
