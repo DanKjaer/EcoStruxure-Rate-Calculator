@@ -221,5 +221,7 @@
   "PROJECT_ALLOCATION": "Project allocation",
   "SALES_INFORMATION": "Sales information",
   "ADD_TO_PROJECT": "Add to project",
-  "CURRENT_PROJECT": "Current project"
+  "CURRENT_PROJECT": "Current project",
+  "WORLD_OVERVIEW": "World",
+  "COUNTRIES_REGIONS": "Countries and regions"
 }

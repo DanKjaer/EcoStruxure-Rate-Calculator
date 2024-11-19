@@ -1,0 +1,74 @@
+<div class="container" [ngClass]="{'menuClosed': !isMenuOpen}">
+  <div class="infoContainer">
+    <div class="teamsContainer">
+      <div class="teamsTitleContainer">
+        <p>{{ 'COUNTRIES_REGIONS' | translate }}</p>
+        <mat-form-field class="searchInput" appearance="outline">
+          <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
+          <input matInput inputmode="search" type="search">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="tableContainer">
+        <table class="profileTeamsTable" mat-table [dataSource]="datasource">
+          <!-- name -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'NAME' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['name'] }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- total day rate for geography -->
+          <ng-container matColumnDef="dayRate">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'DAY_RATE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['dayRate'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Gross Margin on geography -->
+          <ng-container matColumnDef="totalGrossMargin">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'TOTAL_GROSS_MARGIN' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ element['totalGrossMargin'] | number:'1.0-0' }}%
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- total price for geography -->
+          <ng-container matColumnDef="totalPrice">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'DAY_RATE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['totalPrice'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <div class="spinnerContainer" *ngIf="loading">
+          <!-- Display spinner when loading -->
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
