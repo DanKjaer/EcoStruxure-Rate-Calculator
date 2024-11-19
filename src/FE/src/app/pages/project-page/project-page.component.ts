@@ -146,15 +146,17 @@ export class ProjectPageComponent implements OnInit{
     this.loading = true;
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
-      project.startDateString = this.formatter.formatDate(project.projectStartDate);
-      project.endDateString = this.formatter.formatDate(project.projectEndDate);
-      this.datasource.data.push(project);
+      this.project.projectMembers = project.projectMembers;
+      this.statBoxes.totalDayRate = project.projectDayRate!;
+      this.statBoxes.grossMargin = project.projectGrossMargin!;
+      this.datasource.data.forEach(member => {
+        member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
+      });
       this.datasource._updateChangeSubscription();
     });
     this.loading = false;
     this.changeDetectorRef.detectChanges();
   }
-
 
   async update() {
     if(this.projectForm.valid) {

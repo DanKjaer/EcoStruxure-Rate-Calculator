@@ -266,9 +266,9 @@ public class ProjectDAO implements IProjectDAO {
                 stmt.setBigDecimal(3, projectMember.getProjectAllocation());
                 stmt.setBigDecimal(4, projectMember.getProjectAllocation());
                 stmt.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+        }
     }
-}
 }
