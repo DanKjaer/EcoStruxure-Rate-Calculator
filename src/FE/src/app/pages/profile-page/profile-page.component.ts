@@ -80,16 +80,14 @@ export class ProfilePageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.currencies = await this.currencyService.getCurrencies();
-
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
+
       this.isMenuOpen = isOpen;
     });
-
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
       location: ['', Validators.required],
-      currency: [this.currencies[0], Validators.required],
+      currency: ['', Validators.required],
       resource_type: [null, Validators.required],
       annual_cost: [''],
       annual_hours: [{value: '', disabled: true}],
@@ -97,12 +95,27 @@ export class ProfilePageComponent implements OnInit {
       effectiveness: ['']
     });
 
+    this.currencies = await this.currencyService.getCurrencies();
+
     this.locations = await this.geographyService.getCountries();
+
     let id = this.route.snapshot.paramMap.get('id')!;
-    this.currentProfile = await this.profileService.getProfile(id);
+    await this.prepProfileForm(id);
     this.teams = await this.teamsService.getTeamProfiles(id);
     this.datasource.data = this.teams;
 
+    this.statBoxes = {
+      totalDayRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0),
+      totalHourlyRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile!.hoursPerDay!,
+      totalAnnualCost: this.teams.reduce((sum, item) => sum + item.annualCost!, 0),
+      totalAnnualHours: this.teams.reduce((sum, item) => sum + item.annualHours!, 0)
+    }
+
+    this.loading = false;
+  }
+
+  private async prepProfileForm(id: string) {
+    this.currentProfile = await this.profileService.getProfile(id);
     this.profileForm = this.fb.group({
       name: [this.currentProfile.name, Validators.required],
       location: [this.currentProfile.geography.id, Validators.required],
@@ -119,15 +132,6 @@ export class ProfilePageComponent implements OnInit {
     } else {
       this.profileForm.get('annual_hours')?.disable();
     }
-
-    this.statBoxes = {
-      totalDayRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0),
-      totalHourlyRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile.hoursPerDay!,
-      totalAnnualCost: this.teams.reduce((sum, item) => sum + item.annualCost!, 0),
-      totalAnnualHours: this.teams.reduce((sum, item) => sum + item.annualHours!, 0)
-    }
-
-    this.loading = false;
 
     this.profileForm.get('resource_type')?.valueChanges.subscribe((value: boolean) => {
       if (value) {
