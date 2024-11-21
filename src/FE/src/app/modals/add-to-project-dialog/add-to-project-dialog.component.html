@@ -23,12 +23,15 @@
     <mat-list>
       @for (team of selectedTeams; track team) {
         <mat-list-item>
+          <div class ="allocationItem">
           <span>{{ team.name }}</span>
-          <mat-form-field>
+          <mat-form-field class="allocationInput">
             <span matSuffix>%</span>
             <input type="number" matInput placeholder="Ex. 75" [(ngModel)]="team.projectAllocation">
           </mat-form-field>
+          </div>
         </mat-list-item>
+        <mat-divider></mat-divider>
       }
     </mat-list>
   </div>

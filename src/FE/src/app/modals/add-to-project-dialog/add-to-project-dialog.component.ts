@@ -11,6 +11,7 @@ import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MatLine} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
   selector: 'app-add-to-project-dialog',
@@ -31,7 +32,8 @@ import {MatButton} from '@angular/material/button';
     MatList,
     MatListItem,
     MatLine,
-    MatButton
+    MatButton,
+    MatDivider
   ],
   templateUrl: './add-to-project-dialog.component.html',
   styleUrl: './add-to-project-dialog.component.css'
