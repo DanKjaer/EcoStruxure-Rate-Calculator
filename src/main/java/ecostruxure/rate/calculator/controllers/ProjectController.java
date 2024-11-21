@@ -50,9 +50,13 @@ public class ProjectController {
         return projectService.archiveProject(id);
     }
 
+    @DeleteMapping()
+    public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
+        return projectService.deleteProjectMember(projectId, teamId);
+    }
+
     @PutMapping("/update")
     public Project updateProject(@RequestBody Project project) throws Exception {
-        System.out.println("dayrate controller: " + project.getProjectDayRate());
         return projectService.updateProject(project);
     }
 }

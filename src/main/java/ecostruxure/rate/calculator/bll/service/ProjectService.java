@@ -48,18 +48,20 @@ public class ProjectService {
         return projectDAO.deleteProject(projectId);
     }
 
+    public boolean deleteProjectMember(UUID projectId, UUID teamId) throws SQLException {
+        return projectDAO.deleteProjectMember(projectId, teamId);
+    }
+
     public boolean archiveProject(UUID projectId) throws SQLException {
         return projectDAO.archiveProject(projectId);
     }
 
     public Project updateProject(Project project) throws SQLException {
         try {
-            System.out.println("dayrate service før if : " + project.getProjectDayRate());
             if (project.getProjectMembers() != null && project.getProjectDayRate() == null) {
                 project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
                 project.setProjectGrossMargin(calculateGrossMargin(project));
             }
-            System.out.println("dayrate service efter if : " + project.getProjectDayRate());
             project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
 
             validateProject(project);
@@ -70,7 +72,6 @@ public class ProjectService {
                 projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
                 );
             }
-            System.out.println("dayrate service efter update : " + project.getProjectDayRate());
             return project;
         }catch(SQLException e){
             throw new SQLException("Failed to update project", e);

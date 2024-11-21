@@ -22,7 +22,7 @@ import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
-import {Project} from "../../models";
+import {Project, ProjectMembers} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
@@ -80,8 +80,7 @@ export class ProjectPageComponent implements OnInit {
   project!: Project;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
-  selectedRow: Project | null = null;
-  currentProject: Project | undefined;
+  selectedRow: ProjectMembers | null = null;
 
   statBoxes = {
     totalDayRate: 0,
@@ -215,8 +214,15 @@ export class ProjectPageComponent implements OnInit {
     });
   }
 
-  onRemove() {
-
+  async onRemove() {
+    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.teamId!);
+    if (result) {
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
+      this.project.projectMembers = this.project.projectMembers.filter(member => member.teamId !== this.selectedRow?.teamId);
+      this.fillTableWithTeams();
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
+    }
   }
 
   editRow(selectedProject: any) {
@@ -272,7 +278,7 @@ export class ProjectPageComponent implements OnInit {
     this.isEditingRow = false;
   }
 
-  selectRow(row: Project) {
+  selectRow(row: ProjectMembers) {
     this.selectedRow = row;
   }
 
