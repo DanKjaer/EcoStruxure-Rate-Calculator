@@ -1,4 +1,13 @@
-import {AfterViewInit, booleanAttribute, Component, OnInit} from '@angular/core';
+import {
+  AfterViewInit,
+  booleanAttribute,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  OnInit,
+  signal,
+  Signal, WritableSignal
+} from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -46,15 +55,9 @@ import {CurrencyService} from '../../services/currency.service';
 export class ProfilePageComponent implements OnInit {
   profileForm: FormGroup = new FormGroup({});
   protected readonly localStorage = localStorage;
-  currentProfile: Profile | undefined;
   locations: Geography[] = [];
-  teams: TeamProfiles[] = [];
-  statBoxes = {
-    totalDayRate: 0,
-    totalHourlyRate: 0,
-    totalAnnualCost: 0,
-    totalAnnualHours: 0
-  };
+  currentProfile: WritableSignal<Profile | null> = signal<Profile | null>(null);
+  teams: WritableSignal<TeamProfiles[]> = signal<TeamProfiles[]>([]);
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
@@ -70,14 +73,36 @@ export class ProfilePageComponent implements OnInit {
   ];
   currencies: Currency[] | undefined;
 
+  //Create a computed property to calculate the stat boxes
+  statBoxes = computed(() => {
+    const teams = this.teams();
+    const profile = this.currentProfile();
+
+    if (!profile) {
+      return {
+        totalDayRate: 0,
+        totalHourlyRate: 0,
+        totalAnnualCost: 0,
+        totalAnnualHours: 0
+      };
+    }
+
+    const totalDayRate = teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0);
+    const totalHourlyRate = totalDayRate / profile.hoursPerDay!;
+    const totalAnnualCost = teams.reduce((sum, item) => sum + item.annualCost, 0);
+    const totalAnnualHours = teams.reduce((sum, item) => sum + item.annualHours, 0);
+
+    return { totalDayRate, totalHourlyRate, totalAnnualCost, totalAnnualHours };
+  });
+
   constructor(private fb: FormBuilder,
               private profileService: ProfileService,
               private geographyService: GeographyService,
               private teamsService: TeamsService,
               private route: ActivatedRoute,
               private menuService: MenuService,
-              protected currencyService: CurrencyService) {
-  }
+              protected currencyService: CurrencyService,
+              private changeDetection: ChangeDetectorRef) { }
 
   async ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -100,31 +125,31 @@ export class ProfilePageComponent implements OnInit {
     this.locations = await this.geographyService.getCountries();
 
     let id = this.route.snapshot.paramMap.get('id')!;
-    await this.prepProfileForm(id);
-    this.teams = await this.teamsService.getTeamProfiles(id);
-    this.datasource.data = this.teams;
 
-    this.statBoxes = {
-      totalDayRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0),
-      totalHourlyRate: this.teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0) / this.currentProfile!.hoursPerDay!,
-      totalAnnualCost: this.teams.reduce((sum, item) => sum + item.annualCost!, 0),
-      totalAnnualHours: this.teams.reduce((sum, item) => sum + item.annualHours!, 0)
-    }
+    this.currentProfile.set(await this.profileService.getProfile(id));
+    this.prepProfileForm();
+    await this.prepTeamList(id);
+    // this.setStatBoxes();
 
     this.loading = false;
   }
 
-  private async prepProfileForm(id: string) {
-    this.currentProfile = await this.profileService.getProfile(id);
+  private async prepTeamList(id: string) {
+    let response = await this.teamsService.getTeamProfiles(id);
+    this.teams.set(response);
+    this.datasource.data = response;
+  }
+
+  private prepProfileForm() {
     this.profileForm = this.fb.group({
-      name: [this.currentProfile.name, Validators.required],
-      location: [this.currentProfile.geography.id, Validators.required],
-      currency: [this.currentProfile.currency, Validators.required],
-      resource_type: [this.currentProfile.resourceType, Validators.required],
-      annual_cost: [this.currentProfile.annualCost],
-      annual_hours: [{value: this.currentProfile.annualHours, disabled: true}],
-      effectiveness: [this.currentProfile.effectivenessPercentage],
-      hours_per_day: [this.currentProfile.hoursPerDay]
+      name: [this.currentProfile!.name, Validators.required],
+      location: [this.currentProfile()!.geography.id, Validators.required],
+      currency: [this.currentProfile()!.currency, Validators.required],
+      resource_type: [this.currentProfile()!.resourceType, Validators.required],
+      annual_cost: [this.currentProfile()!.annualCost],
+      annual_hours: [{value: this.currentProfile()!.annualHours, disabled: true}],
+      effectiveness: [this.currentProfile()!.effectivenessPercentage],
+      hours_per_day: [this.currentProfile()!.hoursPerDay]
     })
 
     if (!this.profileForm.get('resource_type')?.value) {
@@ -151,20 +176,36 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
-  update() {
+  async update() {
     //todo: update the profile in db
+    this.currentProfile()!.name = this.profileForm.get('name')?.value;
+    this.currentProfile()!.geography = this.locations.find((location) => {
+      return location.id === this.profileForm.value.location
+    })!;
+    this.currentProfile()!.currency = this.profileForm.get('currency')?.value;
+    this.currentProfile()!.resourceType = this.profileForm.get('resource_type')?.value;
+    this.currentProfile()!.annualCost = this.profileForm.get('annual_cost')?.value;
+    this.currentProfile()!.annualHours = this.profileForm.get('annual_hours')?.value;
+    this.currentProfile()!.effectivenessPercentage = this.profileForm.get('effectiveness')?.value;
+    this.currentProfile()!.hoursPerDay = this.profileForm.get('hours_per_day')?.value;
+
+    let response = await this.profileService.putProfile(this.currentProfile()!);
+    this.currentProfile.set(response);
+
+    this.prepTeamList(this.currentProfile()!.profileId!);
+    this.prepProfileForm();
   }
 
   undo() {
     this.profileForm = this.fb.group({
-      name: [this.currentProfile!.name],
-      location: [this.currentProfile!.geography.id],
-      currency: [this.currentProfile!.currency],
-      resource_type: [this.currentProfile!.resourceType],
-      annual_cost: [this.currentProfile!.annualCost],
-      annual_hours: [this.currentProfile!.annualHours],
-      effectiveness: [this.currentProfile!.effectivenessPercentage],
-      hours_per_day: [this.currentProfile!.hoursPerDay]
+      name: [this.currentProfile()!.name],
+      location: [this.currentProfile()!.geography.id],
+      currency: [this.currentProfile()!.currency],
+      resource_type: [this.currentProfile()!.resourceType],
+      annual_cost: [this.currentProfile()!.annualCost],
+      annual_hours: [this.currentProfile()!.annualHours],
+      effectiveness: [this.currentProfile()!.effectivenessPercentage],
+      hours_per_day: [this.currentProfile()!.hoursPerDay]
     })
 
     if (!this.profileForm.get('resource_type')?.value) {
