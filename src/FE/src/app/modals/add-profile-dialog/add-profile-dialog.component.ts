@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatButtonModule} from '@angular/material/button';
@@ -33,7 +33,7 @@ import {CurrencyService} from '../../services/currency.service';
   styleUrl: './add-profile-dialog.component.css'
 })
 export class AddProfileDialogComponent implements OnInit {
-  profileForm!: FormGroup;
+  profileForm: FormGroup = new FormGroup({});
   locations!: Geography[];
   currencies!: Currency[];
   @Output() profileAdded = new EventEmitter<Profile>();
@@ -54,18 +54,18 @@ export class AddProfileDialogComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.currencies = await this.currencyService.getCurrencies();
-
     this.profileForm = this.formBuilder.group({
       name: ['', Validators.required],
       geography: ['', Validators.required],
-      currency: [this.currencies[0], Validators.required],
+      currency: ['', Validators.required],
       resource_type: [true, Validators.required],
       annual_cost: [''],
       annual_hours: [{value: '', disabled: true}],
       effectiveness: [''],
       hours_per_day: [''],
     });
+
+    this.currencies = await this.currencyService.getCurrencies();
 
     this.profileForm.get('resource_type')?.valueChanges.subscribe(value => {
       if (value == 1) {
@@ -78,18 +78,19 @@ export class AddProfileDialogComponent implements OnInit {
   }
 
   async onSave() {
+    console.log(this.profileForm.value.geography);
     if (this.profileForm.valid) {
-      let profile = {
-        name: this.profileForm.value.name,
-        geography: this.profileForm.value.geography,
-        currency: this.profileForm.value.currency, //todo: delete this
-        resourceType: this.profileForm.value.resource_type,
-        annualCost: this.currencyService.convert(this.profileForm.value.annual_cost, this.profileForm.value.currency, "EUR"),
-        annualHours: this.profileForm.value.annual_hours,
-        effectivenessPercentage: this.profileForm.value.effectiveness,
-        hoursPerDay: this.profileForm.value.hours_per_day
+      let profileDTO: Profile = {
+          name: this.profileForm.value.name,
+          geography: this.profileForm.value.geography,
+          currency: this.profileForm.value.currency.currencyCode,
+          resourceType: this.profileForm.value.resource_type,
+          annualCost: this.currencyService.convert(this.profileForm.value.annual_cost, this.profileForm.value.currency, "EUR"),
+          annualHours: this.profileForm.value.annual_hours || 0,
+          effectivenessPercentage: this.profileForm.value.effectiveness || 0,
+          hoursPerDay: this.profileForm.value.hours_per_day || 0
       };
-      const newProfile = await this.profileService.postProfile(profile);
+      const newProfile = await this.profileService.postProfile(profileDTO);
       if (newProfile.profileId != undefined) {
         this.profileAdded.emit(newProfile);
         this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_CREATED'), true);

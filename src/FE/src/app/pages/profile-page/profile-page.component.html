@@ -40,12 +40,12 @@
     <div class="teamsContainer">
       <div class="teamsTitleContainer">
         <p>{{ 'PROFILE_TEAMS' | translate }}</p>
-        <mat-form-field class="searchInput" appearance="outline">
+        <mat-form-field class="searchInput" appearance="outline" (keyup)="applySearch($event)">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
           <input matInput inputmode="search" type="search">
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
-        <button mat-stroked-button>
+        <button mat-raised-button>
           <mat-icon>
             add
           </mat-icon>
