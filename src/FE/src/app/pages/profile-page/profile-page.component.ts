@@ -43,7 +43,7 @@ import {CurrencyService} from '../../services/currency.service';
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
-export class ProfilePageComponent implements OnInit, AfterViewInit {
+export class ProfilePageComponent implements OnInit {
   profileForm: FormGroup = new FormGroup({});
   protected readonly localStorage = localStorage;
   currentProfile: Profile | undefined;
@@ -138,8 +138,13 @@ export class ProfilePageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
 
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
   }
 
   update() {

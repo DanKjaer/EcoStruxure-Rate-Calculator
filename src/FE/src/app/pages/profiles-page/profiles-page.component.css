@@ -41,14 +41,19 @@
   position: relative;
 }
 
-.paginatorContainer {
+.underTitleContainer {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   padding-top: 0.750rem;
   margin-top: auto;
-  max-height: 6vh;
   flex-grow: 0;
   flex-shrink: 0;
+  gap: 1rem;
+}
+
+.searchInput{
+  max-width: 15vw;
 }
 
 .spinnerContainer {
@@ -73,6 +78,11 @@
 
 .mat-mdc-row:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mat-mdc-footer-cell{
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 .red {

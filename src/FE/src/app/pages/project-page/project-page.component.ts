@@ -16,7 +16,7 @@ import {
   MatTableDataSource
 } from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
-import {MatFormField, MatInput} from "@angular/material/input";
+import {MatFormField, MatInput, MatPrefix} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
@@ -67,7 +67,8 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
     MatHeaderCellDef,
     MatDatepickerInput,
     MatDatepickerToggle,
-    MatDatepicker
+    MatDatepicker,
+    MatPrefix
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
@@ -171,6 +172,15 @@ export class ProjectPageComponent implements OnInit {
     });
     this.loading = false;
     this.changeDetectorRef.detectChanges();
+  }
+
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
   }
 
   async update() {
