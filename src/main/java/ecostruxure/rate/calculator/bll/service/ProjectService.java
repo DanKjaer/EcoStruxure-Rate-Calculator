@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,23 +49,76 @@ public class ProjectService {
         return projectDAO.deleteProject(projectId);
     }
 
+    public boolean deleteProjectMember(UUID projectId, UUID teamId) throws SQLException {
+        return projectDAO.deleteProjectMember(projectId, teamId);
+    }
+
     public boolean archiveProject(UUID projectId) throws SQLException {
         return projectDAO.archiveProject(projectId);
     }
 
     public Project updateProject(Project project) throws SQLException {
-        if (project.getProjectMembers() != null) {
-            project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
-            project.setProjectGrossMargin(calculateGrossMargin(project));
-        }
-        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+        try {
+            var projectContainsMembers = project.getProjectMembers() != null;
+            var projectContainsDayRate = project.getProjectDayRate() != null;
+            var projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
 
-        var updateSuccess = projectDAO.updateProject(project);
+            // Calculate, if rest cost have been calc. before
+            if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() != null) {
+                project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
+                project.setProjectRestCostDate(LocalDate.now());
+                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+                project.setProjectGrossMargin(calculateGrossMargin(project));
+            }
+            // Calculate, if project members are present and project is started
+            else if (projectContainsMembers && projectContainsDayRate && projectIsStarted) {
+                project.setProjectTotalCostAtChange(calculateTotalCostAtChange(project));
+                project.setProjectRestCostDate(LocalDate.now());
+                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+                project.setProjectGrossMargin(calculateGrossMargin(project));
+            }
 
-        if (updateSuccess && !project.getProjectMembers().isEmpty()) {
-            projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers());
+            // Calculate, if project members are present and project is not started
+            else if (projectContainsMembers && projectContainsDayRate) {
+                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+                project.setProjectGrossMargin(calculateGrossMargin(project));
+            }
+
+            project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+
+            validateProject(project);
+
+            var updateSuccess = projectDAO.updateProject(project);
+
+            if (updateSuccess && !project.getProjectMembers().isEmpty()) {
+                projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
+                );
+            }
+            return project;
+        }catch(SQLException e){
+            throw new SQLException("Failed to update project", e);
         }
-        return project;
+    }
+
+    private BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
+        BigDecimal totalCostAtChange;
+        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
+        totalCostAtChange = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed));
+        return totalCostAtChange;
+    }
+
+    private BigDecimal calculateTotalCostAtChange(Project project) {
+        BigDecimal totalCostAtChange = project.getProjectTotalCostAtChange();
+        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectRestCostDate().toEpochDay();
+        totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
+        return totalCostAtChange;
+    }
+
+    private void validateProject(Project project) throws SQLException {
+        BigDecimal grossMargin = project.getProjectGrossMargin();
+        if (grossMargin.compareTo(BigDecimal.ZERO) < 0 || grossMargin.compareTo(new BigDecimal("999.99")) > 0) {
+            throw new SQLException("Project gross margin cannot be more than 999.99, or less than 0");
+        }
     }
 
     private BigDecimal calculateDayRate(List<ProjectMember> projectMembers) {
@@ -72,8 +126,11 @@ public class ProjectService {
         for (ProjectMember projectMember : projectMembers) {
             BigDecimal markup = projectMember.getMarkup();
             var dayRateWithMarkup = projectMember.getDayRate()
-                    .multiply(markup.divide(BigDecimal.valueOf(100)).add(BigDecimal.ONE));
-            totalDayRate = totalDayRate.add(dayRateWithMarkup);
+                    .multiply(markup.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE));
+            var allocatedDayRate = dayRateWithMarkup.multiply(projectMember.getProjectAllocation()
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+            projectMember.setDayRateWithMarkup(allocatedDayRate);
+            totalDayRate = totalDayRate.add(allocatedDayRate);
         }
         return totalDayRate;
     }
@@ -81,10 +138,8 @@ public class ProjectService {
     private int calculateWorkingDays(LocalDate startDate, LocalDate endDate) {
         int count = 0;
         LocalDate currentDate = startDate;
-
         while (!currentDate.isAfter(endDate)) {
             DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-            System.out.println();
             if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
                 count++;
             }

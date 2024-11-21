@@ -215,5 +215,10 @@
   "PROJECT_ALLOCATION": "Project allokering",
   "SALES_INFORMATION": "Salgs informationer",
   "ADD_TO_PROJECT": "Tilføj til projekt",
-  "CURRENT_PROJECT": "Nuværende projekt"
+  "CURRENT_PROJECT": "Nuværende projekt",
+  "SUCCESS_TEAM_ADDED": "Team tilføjet succesfuldt",
+  "ERROR_TEAM_ADDED": "Kunne ikke tilføje team",
+  "ERROR_PROJECT_UPDATED": "Kunne ikke opdatere projekt",
+  "SUCCESS_PROJECT_UPDATED": "Projekt opdateret succesfuldt",
+  "ADD_NEW_PROJECT_MEMBER": "Tilføj nyt projektmedlem"
 }

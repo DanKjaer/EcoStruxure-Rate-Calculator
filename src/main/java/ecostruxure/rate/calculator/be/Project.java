@@ -19,6 +19,8 @@ public class Project {
     private int projectTotalDays;
     private Geography projectLocation;
     private Boolean projectArchived;
+    private BigDecimal projectTotalCostAtChange;
+    private LocalDate projectRestCostDate;
 
     public Project() {}
 
@@ -124,5 +126,21 @@ public class Project {
 
     public void setProjectArchived(Boolean projectArchived) {
         this.projectArchived = projectArchived;
+    }
+
+    public BigDecimal getProjectTotalCostAtChange() {
+        return projectTotalCostAtChange;
+    }
+
+    public void setProjectTotalCostAtChange(BigDecimal projectTotalCostAtChange) {
+        this.projectTotalCostAtChange = projectTotalCostAtChange;
+    }
+
+    public LocalDate getProjectRestCostDate() {
+        return projectRestCostDate;
+    }
+
+    public void setProjectRestCostDate(LocalDate projectRestCostDate) {
+        this.projectRestCostDate = projectRestCostDate;
     }
 }
