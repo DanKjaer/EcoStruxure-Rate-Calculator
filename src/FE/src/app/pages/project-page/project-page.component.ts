@@ -22,7 +22,7 @@ import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatSelect} from "@angular/material/select";
 import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
-import {Project, ProjectMembers} from "../../models";
+import {Project} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
@@ -81,6 +81,7 @@ export class ProjectPageComponent implements OnInit {
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
   selectedRow: Project | null = null;
+  currentProject: Project | undefined;
 
   statBoxes = {
     totalDayRate: 0,
@@ -123,27 +124,38 @@ export class ProjectPageComponent implements OnInit {
     });
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
+    this.fillTableWithTeams();
+    this.loading = false;
+    this.fillStatBox();
+    this.fillProjectForm();
+  }
+
+  private fillTableWithTeams() {
     this.project.projectMembers.forEach(member => {
       member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
     });
     this.datasource.data = this.project.projectMembers;
-    this.loading = false;
+  }
 
+  private fillStatBox() {
     this.statBoxes = {
       totalDayRate: this.project.projectDayRate!,
       totalPrice: this.project.projectPrice!,
       grossMargin: this.project.projectGrossMargin!,
       totalDays: this.project.projectTotalDays!
     }
+  }
 
+  private fillProjectForm() {
     this.projectForm = this.formBuilder.group({
       projectName: [this.project.projectName, Validators.required],
       salesNumber: [this.project.projectSalesNumber],
       projectPrice: [this.project.projectPrice],
       projectDescription: [this.project.projectDescription],
       startDate: [this.project.projectStartDate],
-      endDate: [this.project.projectEndDate]
-    })
+      endDate: [this.project.projectEndDate],
+      dayRate: [this.project.projectDayRate]
+    });
   }
 
   openDialog() {
@@ -179,7 +191,8 @@ export class ProjectPageComponent implements OnInit {
         projectStartDate: this.projectForm.value.startDate,
         projectEndDate: this.projectForm.value.endDate,
         projectLocation: this.project.projectLocation,
-        projectMembers: this.project.projectMembers
+        projectMembers: this.project.projectMembers,
+        projectDayRate: this.project.projectDayRate
       };
 
       const response = await this.projectService.putProject(updatedProject);
@@ -192,7 +205,14 @@ export class ProjectPageComponent implements OnInit {
   }
 
   undo() {
-
+    this.projectForm = this.formBuilder.group({
+      projectName: [this.project.projectName],
+      salesNumber: [this.project.projectSalesNumber],
+      projectPrice: [this.project.projectPrice],
+      projectDescription: [this.project.projectDescription],
+      startDate: [this.project.projectStartDate],
+      endDate: [this.project.projectEndDate]
+    });
   }
 
   onRemove() {
@@ -213,13 +233,26 @@ export class ProjectPageComponent implements OnInit {
     this.isEditingRow = false;
     this.loading = true;
 
+    this.project.projectMembers.forEach(member => {
+      if(member.teamId === selectedProject.teamId) {
+        member.projectAllocation = selectedProject.projectAllocation;
+        member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1)
+          * (member.projectAllocation / 100);
+      }
+    });
+
+    this.calculateProjectDayRate();
+
     try{
-      let result = await this.projectService.putProject(selectedProject);
-      this.datasource.data.forEach((projectMembers: ProjectMembers) => {
-        if (projectMembers.projectId === result.projectId) {
-          projectMembers.projectAllocation = result.projectAllocation;
-        }
-      });
+      const updatedProject = {
+        ...this.project,
+        projectDayRate: this.project.projectDayRate
+      }
+      this.project = await this.projectService.putProject(updatedProject);
+      this.fillTableWithTeams();
+      this.fillProjectForm();
+      this.calculateProjectDayRate();
+
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
       this.loading = false;
     } catch (e) {
@@ -241,5 +274,14 @@ export class ProjectPageComponent implements OnInit {
 
   selectRow(row: Project) {
     this.selectedRow = row;
+  }
+
+   private calculateProjectDayRate(){
+    let totalDayRate = 0;
+    this.project.projectMembers.forEach(member => {
+      totalDayRate += member.dayRateWithMarkup! * (member.projectAllocation / 100);
+    });
+    this.project.projectDayRate = totalDayRate;
+    this.fillStatBox();
   }
 }

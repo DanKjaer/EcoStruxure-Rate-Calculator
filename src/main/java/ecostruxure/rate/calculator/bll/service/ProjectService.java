@@ -54,10 +54,12 @@ public class ProjectService {
 
     public Project updateProject(Project project) throws SQLException {
         try {
-            if (project.getProjectMembers() != null) {
+            System.out.println("dayrate service før if : " + project.getProjectDayRate());
+            if (project.getProjectMembers() != null && project.getProjectDayRate() == null) {
                 project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
                 project.setProjectGrossMargin(calculateGrossMargin(project));
             }
+            System.out.println("dayrate service efter if : " + project.getProjectDayRate());
             project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
 
             validateProject(project);
@@ -68,6 +70,7 @@ public class ProjectService {
                 projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
                 );
             }
+            System.out.println("dayrate service efter update : " + project.getProjectDayRate());
             return project;
         }catch(SQLException e){
             throw new SQLException("Failed to update project", e);
@@ -95,10 +98,8 @@ public class ProjectService {
     private int calculateWorkingDays(LocalDate startDate, LocalDate endDate) {
         int count = 0;
         LocalDate currentDate = startDate;
-
         while (!currentDate.isAfter(endDate)) {
             DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-            System.out.println();
             if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
                 count++;
             }

@@ -52,6 +52,7 @@ public class ProjectController {
 
     @PutMapping("/update")
     public Project updateProject(@RequestBody Project project) throws Exception {
+        System.out.println("dayrate controller: " + project.getProjectDayRate());
         return projectService.updateProject(project);
     }
 }
