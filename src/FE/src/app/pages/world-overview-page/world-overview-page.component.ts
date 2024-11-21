@@ -1,27 +1,45 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
-} from '@angular/material/table';
-import {MatFormField, MatLabel, MatPrefix, MatSuffix} from '@angular/material/form-field';
+import {MatIconButton} from '@angular/material/button';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {MatOption} from '@angular/material/core';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
-import {MatSelect} from '@angular/material/select';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TranslateModule} from '@ngx-translate/core';
-import {MatList} from '@angular/material/list';
 import {CurrencyService} from '../../services/currency.service';
+import {MenuService} from '../../services/menu.service';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatTooltip} from '@angular/material/tooltip';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatDivider} from '@angular/material/divider';
+import {
+  MatList,
+  MatListItem,
+  MatListItemIcon, MatListItemLine,
+  MatListItemTitle,
+  MatListSubheaderCssMatStyler
+} from '@angular/material/list';
+
+// mock model
+export interface countryData {
+  name: string;
+  dayRate: number;
+  totalGrossMargin: number;
+  totalPrice: number;
+}
+
+interface treeNode {
+  name: string;
+  children?: treeNode[];
+}
+
+interface listItem {
+  name: string;
+  cost: number;
+  grossMargin: number;
+}
 
 @Component({
   selector: 'app-world-overview-page',
@@ -29,30 +47,31 @@ import {CurrencyService} from '../../services/currency.service';
   imports: [
     NgClass,
     DecimalPipe,
-    MatButton,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
+    MatTableModule,
     MatFormField,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
     MatIcon,
     MatInput,
     MatLabel,
     MatPrefix,
     MatProgressSpinner,
-    MatRow,
-    MatRowDef,
-    MatTable,
     NgIf,
     ReactiveFormsModule,
     TranslateModule,
-    MatHeaderCellDef,
+    MatIconButton,
+    MatExpansionModule,
+    MatTooltip,
+    MatTreeModule,
+    MatDivider,
+    MatList,
+    MatListSubheaderCssMatStyler,
+    MatListItem,
+    MatListItemTitle,
+    MatListItemLine
   ],
   templateUrl: './world-overview-page.component.html',
   styleUrl: './world-overview-page.component.css'
 })
+
 export class WorldOverviewPageComponent implements OnInit, AfterViewInit {
   isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
@@ -65,20 +84,50 @@ export class WorldOverviewPageComponent implements OnInit, AfterViewInit {
 
   protected readonly localStorage = localStorage;
   loading: boolean = true;
+  countrySelected: boolean = false;
+  selectedCountry: countryData | null = null;
 
-  constructor(protected currencyService: CurrencyService) { }
+  childrenAccessor = (node: treeNode) => node.children ?? []
+  hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
+
+  constructor(protected currencyService: CurrencyService,
+              private menuService: MenuService) {
+  }
 
   ngOnInit(): void {
-        this.datasource.data = this.data;
-        this.loading = false;
-    }
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
+    this.datasource.data = this.data;
+    this.loading = false;
+  }
 
   ngAfterViewInit(): void {
 
+  }
+
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
     }
+  }
+
+  selectCountry(row: countryData) {
+    this.selectedCountry = row;
+    this.countrySelected = true;
+  }
+
+  clearSelection() {
+    this.countrySelected = false;
+    this.selectedCountry = null;
+  }
 
   // MOCK DATA
-  data = [
+
+  data: countryData[] = [
     {
       name: 'Denmark',
       dayRate: 1000,
@@ -96,6 +145,29 @@ export class WorldOverviewPageComponent implements OnInit, AfterViewInit {
       dayRate: 3000,
       totalGrossMargin: 66.66,
       totalPrice: 4500
+    }
+  ];
+
+  treeData: treeNode[] = [
+    {
+      name: 'Projects',
+      children: [{name: 'Project 1'}, {name: 'Project 2'}]
+    }, {
+      name: 'Teams',
+      children: [{name: 'Team 1'}, {name: 'Team 2'}, {name: 'Team 3'}]
+    }
+  ];
+
+  infoItems: listItem[] = [
+    {
+      name: 'Project 1',
+      cost: 1000,
+      grossMargin: 1500
+    },
+    {
+      name: 'Project 2',
+      cost: 3000,
+      grossMargin: 6000
     }
   ];
 }
