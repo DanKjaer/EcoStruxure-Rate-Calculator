@@ -6,10 +6,14 @@ import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
+  MatRow,
+  MatRowDef,
+  MatTable,
+  MatTableDataSource
 } from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatInput} from "@angular/material/input";
@@ -124,6 +128,7 @@ export class ProjectPageComponent implements OnInit {
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
     this.fillTableWithTeams();
+    this.calculateProjectDayRate();
     this.loading = false;
     this.fillStatBox();
     this.fillProjectForm();
@@ -131,9 +136,11 @@ export class ProjectPageComponent implements OnInit {
 
   private fillTableWithTeams() {
     this.project.projectMembers.forEach(member => {
-      member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
+      let dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
+      member.dayRateWithMarkup = dayRateWithMarkup * (member.projectAllocation / 100);
     });
     this.datasource.data = this.project.projectMembers;
+    this.datasource._updateChangeSubscription();
   }
 
   private fillStatBox() {
@@ -168,12 +175,9 @@ export class ProjectPageComponent implements OnInit {
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
       this.project.projectMembers = project.projectMembers;
-      this.statBoxes.totalDayRate = project.projectDayRate!;
-      this.statBoxes.grossMargin = project.projectGrossMargin!;
-      this.datasource.data.forEach(member => {
-        member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
-      });
-      this.datasource._updateChangeSubscription();
+      this.fillTableWithTeams();
+      this.calculateProjectDayRate();
+      this.fillStatBox();
     });
     this.loading = false;
     this.changeDetectorRef.detectChanges();
@@ -220,6 +224,7 @@ export class ProjectPageComponent implements OnInit {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
       this.project.projectMembers = this.project.projectMembers.filter(member => member.teamId !== this.selectedRow?.teamId);
       this.fillTableWithTeams();
+      this.calculateProjectDayRate();
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
     }
@@ -242,12 +247,8 @@ export class ProjectPageComponent implements OnInit {
     this.project.projectMembers.forEach(member => {
       if(member.teamId === selectedProject.teamId) {
         member.projectAllocation = selectedProject.projectAllocation;
-        member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1)
-          * (member.projectAllocation / 100);
       }
     });
-
-    this.calculateProjectDayRate();
 
     try{
       const updatedProject = {
@@ -255,6 +256,11 @@ export class ProjectPageComponent implements OnInit {
         projectDayRate: this.project.projectDayRate
       }
       this.project = await this.projectService.putProject(updatedProject);
+      this.project.projectMembers.forEach(member => {
+        if(member.teamId === selectedProject.teamId) {
+          member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1) * (member.projectAllocation / 100);
+        }
+      });
       this.fillTableWithTeams();
       this.fillProjectForm();
       this.calculateProjectDayRate();
@@ -284,9 +290,7 @@ export class ProjectPageComponent implements OnInit {
 
    private calculateProjectDayRate(){
     let totalDayRate = 0;
-    this.project.projectMembers.forEach(member => {
-      totalDayRate += member.dayRateWithMarkup! * (member.projectAllocation / 100);
-    });
+    this.project.projectMembers.forEach(member => totalDayRate += member.dayRateWithMarkup!);
     this.project.projectDayRate = totalDayRate;
     this.fillStatBox();
   }
