@@ -14,13 +14,8 @@ import {
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatInput} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {MatPaginator} from "@angular/material/paginator";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
-import {MatSort, MatSortHeader} from "@angular/material/sort";
-import {MatTooltip} from "@angular/material/tooltip";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import { MatSelect} from "@angular/material/select";
-import {MatOption} from "@angular/material/core";
 import {MatLabel} from "@angular/material/form-field";
 import {Project} from "../../models";
 import {ProjectService} from '../../services/project.service';
@@ -48,22 +43,16 @@ import {SnackbarService} from '../../services/snackbar.service';
     MatLabel,
     MatMenu,
     MatMenuItem,
-    MatPaginator,
     MatProgressSpinner,
     MatRow,
     MatRowDef,
-    MatSort,
-    MatSortHeader,
     MatTable,
-    MatTooltip,
     NgIf,
     TranslateModule,
     NgClass,
     MatFormField,
     MatMenuTrigger,
     ReactiveFormsModule,
-    MatSelect,
-    MatOption,
     MatHeaderCellDef,
     MatDatepickerInput,
     MatDatepickerToggle,
