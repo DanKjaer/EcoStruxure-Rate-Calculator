@@ -69,7 +69,7 @@
               {{ 'PROJECT_ALLOCATION' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
-        <span>
+        <span *ngIf="!element.isEditing">
           {{ element['projectAllocation'] + '%' }}
         </span>
               <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectAllocation']">
@@ -115,10 +115,10 @@
     <div *ngIf="projectForm" class="projectContainer" [formGroup]="projectForm">
       {{ 'CURRENT_PROJECT' | translate }}
 
-        <mat-form-field>
-          <mat-label>{{ 'NAME' | translate }}</mat-label>
-          <input matInput placeholder="John Doe" formControlName="projectName">
-        </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'NAME' | translate }}</mat-label>
+        <input matInput placeholder="John Doe" formControlName="projectName">
+      </mat-form-field>
 
 
       {{ 'SALES_INFORMATION' | translate }}
