@@ -83,6 +83,7 @@ public class ProjectDAO implements IProjectDAO {
                     projectMember.setProjectAllocation(rsMembers.getBigDecimal("allocation_on_project"));
                     projectMember.setMarkup(rsMembers.getBigDecimal("markup"));
                     projectMember.setDayRate(rsMembers.getBigDecimal("day_rate"));
+                    projectMember.setDayRateWithMarkup(rsMembers.getBigDecimal("day_rate_on_project"));
                     projectMembers.add(projectMember);
                 }
             }
@@ -155,8 +156,8 @@ public class ProjectDAO implements IProjectDAO {
     @Override
     public List<ProjectMember> assignProfilesToProject(UUID projectId, List<ProjectMember> projectMembers) throws SQLException {
         String query = """
-                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
-                VALUES (?, ?, ?);
+                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
+                VALUES (?, ?, ?, ?);
                 """;
         try (Connection connection = dbConnector.connection();
                 PreparedStatement stmt = connection.prepareStatement(query);) {
@@ -164,6 +165,7 @@ public class ProjectDAO implements IProjectDAO {
                     stmt.setObject(1, projectId);
                     stmt.setObject(2, projectMember.getTeamId());
                     stmt.setBigDecimal(3, projectMember.getProjectAllocation());
+                    stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
                     stmt.addBatch();
                 }
                 stmt.executeBatch();
@@ -270,9 +272,9 @@ public class ProjectDAO implements IProjectDAO {
     @Override
     public void updateAssignedProfiles(UUID projectId, List<ProjectMember> projectMembers) {
         String query = """
-                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
-                VALUES (?, ?, ?)
-                ON CONFLICT (project_id, teams_id) DO UPDATE SET allocation_on_project = ?;
+                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT (project_id, teams_id) DO UPDATE SET allocation_on_project = ?, day_rate_on_project = ?;
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -281,7 +283,9 @@ public class ProjectDAO implements IProjectDAO {
                 stmt.setObject(1, projectId);
                 stmt.setObject(2, projectMember.getTeamId());
                 stmt.setBigDecimal(3, projectMember.getProjectAllocation());
-                stmt.setBigDecimal(4, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
+                stmt.setBigDecimal(5, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(6, projectMember.getDayRateWithMarkup());
                 stmt.executeUpdate();
                 }
             } catch (SQLException e) {

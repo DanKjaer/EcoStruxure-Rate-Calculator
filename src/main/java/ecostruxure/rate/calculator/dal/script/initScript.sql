@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS dbo.Project;
 
 DROP TABLE IF EXISTS dbo.Profiles;
 
+DROP TABLE IF EXISTS dbo.Team_geography_link;
+
 DROP TABLE IF EXISTS dbo.Teams;
 
 DROP TABLE IF EXISTS dbo.Currency;
@@ -27,21 +29,6 @@ CREATE TABLE dbo.Currency (
                             eur_conversion_rate DECIMAL(10, 2),
                             usd_conversion_rate DECIMAL(10, 2),
                             symbol              varchar(1)
-);
-
-CREATE TABLE dbo.Teams (
-                           id                          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                           name                        VARCHAR(100)  NOT NULL,
-                           markup                      DECIMAL(5, 2) DEFAULT 0 NOT NULL,
-                           gross_margin                DECIMAL(5, 2) DEFAULT 0 NOT NULL,
-                           is_archived                 BOOLEAN DEFAULT FALSE,
-                           updated_at                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                           day_rate                    DECIMAL(10, 2),
-                           hourly_rate                 DECIMAL(10, 2),
-                           total_allocated_cost        DECIMAL(19, 2),
-                           total_allocated_hours       DECIMAL(10, 2),
-                           total_markup                DECIMAL(19, 2),
-                           total_gross_margin          DECIMAL(19, 2)
 );
 
 CREATE TABLE dbo.Countries (
@@ -63,6 +50,27 @@ CREATE TABLE dbo.geography_countries (
                                          code         VARCHAR(10) NOT NULL,
                                          FOREIGN KEY (geography) REFERENCES dbo.geography(id),
                                          FOREIGN KEY (code) REFERENCES dbo.Countries(code)
+);
+
+CREATE TABLE dbo.Teams (
+                           id                          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                           name                        VARCHAR(100)  NOT NULL,
+                           markup                      DECIMAL(5, 2) DEFAULT 0 NOT NULL,
+                           gross_margin                DECIMAL(5, 2) DEFAULT 0 NOT NULL,
+                           is_archived                 BOOLEAN DEFAULT FALSE,
+                           updated_at                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           day_rate                    DECIMAL(10, 2),
+                           hourly_rate                 DECIMAL(10, 2),
+                           total_allocated_cost        DECIMAL(19, 2),
+                           total_allocated_hours       DECIMAL(10, 2),
+                           total_markup                DECIMAL(19, 2),
+                           total_gross_margin          DECIMAL(19, 2)
+);
+
+CREATE TABLE dbo.Team_geography_link (
+                                         geography_id INT REFERENCES dbo.geography(id),
+                                         teams_id UUID REFERENCES dbo.teams(id),
+                                         PRIMARY KEY (geography_id, teams_id)
 );
 
 
@@ -145,14 +153,17 @@ CREATE TABLE dbo.Project (
                          project_end_date DATE,
                          project_total_days INT,
                          project_location INT NOT NULL REFERENCES dbo.geography(id),
-                         project_archived BOOLEAN DEFAULT FALSE
+                         project_archived BOOLEAN DEFAULT FALSE,
+                         project_total_cost_at_change NUMERIC(18, 2),
+                         project_rest_cost_date DATE
 );
 
 CREATE TABLE dbo.Project_Members (
                                  project_id UUID REFERENCES dbo.Project(project_id),
                                  teams_id UUID REFERENCES dbo.teams(id),
                                  PRIMARY KEY (project_id, teams_id),
-                                 allocation_on_project DECIMAL(5, 2)
+                                 allocation_on_project DECIMAL(5, 2),
+                                 day_rate_on_project DECIMAL(10, 2)
 );
 
 
@@ -1038,6 +1049,11 @@ VALUES
     ('2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', 'High profile 3', 'EUR', 14, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Overtime specialist in Australia
     ('50b601e3-dd42-422b-ac43-1aae17dff125', 'High medium manager', 'EUR', 32, True, FALSE, 120000.0000, 80, 0.00, 0, 8.00,100.00, 100.00); -- Standard worker in Brazil
 
+INSERT INTO dbo.Team_geography_link (geography_id, teams_id)
+VALUES (261, '937b379c-c326-4db2-9575-8313f59ddf2c'), -- Low cost team supporting Americas including Greenland
+       (263, '67e1e024-e589-4637-af32-e9ebc0303c9c'), -- Medium cost team supporting Caribbean
+       (278, '67e1e024-e589-4637-af32-e9ebc0303c9c'), -- Medium cost team supporting EMEA
+       (266, 'eba9685d-9621-48a2-ab7f-ed708e4dd63d'); -- High cost team supporting APAC
 
 INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, hour_allocation, allocated_cost_on_team, allocated_hours_on_team, day_rate_on_team)
 VALUES
@@ -1120,5 +1136,5 @@ VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         60
         );
 
-INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
-VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '937b379c-c326-4db2-9575-8313f59ddf2c', 100);
+INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
+VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '937b379c-c326-4db2-9575-8313f59ddf2c', 100, 228.8);

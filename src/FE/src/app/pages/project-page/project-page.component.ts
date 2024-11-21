@@ -54,22 +54,16 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
     MatLabel,
     MatMenu,
     MatMenuItem,
-    MatPaginator,
     MatProgressSpinner,
     MatRow,
     MatRowDef,
-    MatSort,
-    MatSortHeader,
     MatTable,
-    MatTooltip,
     NgIf,
     TranslateModule,
     NgClass,
     MatFormField,
     MatMenuTrigger,
     ReactiveFormsModule,
-    MatSelect,
-    MatOption,
     MatHeaderCellDef,
     MatDatepickerInput,
     MatDatepickerToggle,
@@ -128,17 +122,18 @@ export class ProjectPageComponent implements OnInit {
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
     this.fillTableWithTeams();
-    this.calculateProjectDayRate();
+    // this.calculateProjectDayRate();
     this.loading = false;
     this.fillStatBox();
     this.fillProjectForm();
   }
 
   private fillTableWithTeams() {
-    this.project.projectMembers.forEach(member => {
-      let dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
-      member.dayRateWithMarkup = dayRateWithMarkup * (member.projectAllocation / 100);
-    });
+    // this.project.projectMembers.forEach(member => {
+    //   let dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1);
+    //   member.dayRateWithMarkup = dayRateWithMarkup * (member.projectAllocation / 100);
+    // });
+    this.project.projectMembers.forEach(member => console.log(member.name, member.dayRateWithMarkup));
     this.datasource.data = this.project.projectMembers;
     this.datasource._updateChangeSubscription();
   }
@@ -171,7 +166,7 @@ export class ProjectPageComponent implements OnInit {
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
       this.project.projectMembers = project.projectMembers;
       this.fillTableWithTeams();
-      this.calculateProjectDayRate();
+      // this.calculateProjectDayRate();
       this.fillStatBox();
     });
     this.loading = false;
@@ -258,8 +253,8 @@ export class ProjectPageComponent implements OnInit {
       });
       this.fillTableWithTeams();
       this.fillProjectForm();
-      this.calculateProjectDayRate();
-
+      // this.calculateProjectDayRate();
+      this.fillStatBox();
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
       this.loading = false;
     } catch (e) {
