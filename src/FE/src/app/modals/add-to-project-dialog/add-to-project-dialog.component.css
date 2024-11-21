@@ -19,3 +19,23 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.allocationContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid gray;
+}
+
+.projectMembersContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: whitesmoke;
+  border-radius: 1rem;
+  border: 1px solid gray;
+  overflow: auto;
+  max-height: 20rem;
+}

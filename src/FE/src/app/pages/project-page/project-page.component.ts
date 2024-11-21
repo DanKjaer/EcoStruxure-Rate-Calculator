@@ -165,12 +165,7 @@ export class ProjectPageComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(AddToProjectDialogComponent, {
-      minHeight: '80vh',
-      maxHeight: '800px',
-      minWidth: '60vw',
-      maxWidth: '1200px',
-    });
+    const dialogRef = this.dialog.open(AddToProjectDialogComponent);
     this.loading = true;
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {

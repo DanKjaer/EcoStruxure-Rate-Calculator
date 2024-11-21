@@ -10,6 +10,7 @@ import {TeamsService} from '../../services/teams.service';
 import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MatLine} from '@angular/material/core';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-add-to-project-dialog',
@@ -29,7 +30,8 @@ import {MatLine} from '@angular/material/core';
     FormsModule,
     MatList,
     MatListItem,
-    MatLine
+    MatLine,
+    MatButton
   ],
   templateUrl: './add-to-project-dialog.component.html',
   styleUrl: './add-to-project-dialog.component.css'
