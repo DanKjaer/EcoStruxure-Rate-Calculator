@@ -63,9 +63,9 @@ export class AddProjectDialogComponent implements OnInit {
 
   async ngOnInit() {
     this.projectForm = this.formBuilder.group({
-      projectName: [''],
-      geography: [''],
-      projectPrice: [''],
+      projectName: ['', Validators.required],
+      geography: ['', Validators.required],
+      projectPrice: ['', Validators.required],
       projectGrossMargin: [''],
       startDate: new FormControl<Date | null>(null),
       endDate: new FormControl<Date | null>(null),

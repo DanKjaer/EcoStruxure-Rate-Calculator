@@ -165,7 +165,7 @@
 }
 
 .datePickerInputField {
-  width: 125px;
+  width: 8rem;
 }
 
 .cdk-text-field-autofill-monitored:not(:-webkit-autofill)

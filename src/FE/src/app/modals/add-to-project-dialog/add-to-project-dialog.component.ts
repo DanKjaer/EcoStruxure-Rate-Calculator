@@ -4,12 +4,11 @@ import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
-import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from "@angular/material/list";
+import {MatListModule, MatSelectionListChange} from "@angular/material/list";
 import {MatFormField, MatInputModule} from "@angular/material/input";
 import {TeamsService} from '../../services/teams.service';
 import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
-import {MatLine} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
 import {MatDivider} from '@angular/material/divider';
 
@@ -22,16 +21,12 @@ import {MatDivider} from '@angular/material/divider';
     MatFormField,
     ReactiveFormsModule,
     MatIcon,
-    MatSelectionList,
-    MatListOption,
+    MatListModule,
     MatDialogActions,
     MatDialogClose,
     MatInputModule,
     MatDialogTitle,
     FormsModule,
-    MatList,
-    MatListItem,
-    MatLine,
     MatButton,
     MatDivider
   ],

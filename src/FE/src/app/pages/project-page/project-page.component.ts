@@ -2,19 +2,7 @@ import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {DecimalPipe, NgClass, NgIf} from "@angular/common";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatButton, MatIconButton} from "@angular/material/button";
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-  MatTableDataSource
-} from "@angular/material/table";
+import { MatTableModule, MatTableDataSource } from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatInput, MatPrefix} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
@@ -37,12 +25,6 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
     DecimalPipe,
     FormsModule,
     MatButton,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
     MatIcon,
     MatIconButton,
     MatInput,
@@ -50,16 +32,13 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
     MatMenu,
     MatMenuItem,
     MatProgressSpinner,
-    MatRow,
-    MatRowDef,
-    MatTable,
+    MatTableModule,
     NgIf,
     TranslateModule,
     NgClass,
     MatFormField,
     MatMenuTrigger,
     ReactiveFormsModule,
-    MatHeaderCellDef,
     MatDatepickerInput,
     MatDatepickerToggle,
     MatDatepicker,
@@ -109,11 +88,11 @@ export class ProjectPageComponent implements OnInit {
 
     this.projectForm = this.formBuilder.group({
       projectName: ['', Validators.required],
-      salesNumber: [''],
-      projectPrice: [''],
+      salesNumber: ['', Validators.required],
+      projectPrice: ['', Validators.required],
       projectDescription: [''],
-      startDate: [''],
-      endDate: ['']
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required]
     });
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
@@ -146,7 +125,7 @@ export class ProjectPageComponent implements OnInit {
       projectDescription: [this.project.projectDescription],
       startDate: [this.project.projectStartDate],
       endDate: [this.project.projectEndDate],
-      dayRate: [this.project.projectDayRate]
+      dayRate: [this.project.projectDayRate || 0]
     });
   }
 
@@ -184,7 +163,7 @@ export class ProjectPageComponent implements OnInit {
         projectEndDate: this.projectForm.value.endDate,
         projectLocation: this.project.projectLocation,
         projectMembers: this.project.projectMembers,
-        projectDayRate: this.project.projectDayRate
+        projectDayRate: this.project.projectDayRate || 0
       };
 
       const response = await this.projectService.putProject(updatedProject);
