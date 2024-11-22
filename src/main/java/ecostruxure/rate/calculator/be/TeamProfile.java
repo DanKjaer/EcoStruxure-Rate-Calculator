@@ -16,6 +16,7 @@ public class TeamProfile {
     private BigDecimal hourAllocation;
     private BigDecimal allocatedCostOnTeam;
     private BigDecimal allocatedHoursOnTeam;
+    private Geography geography;
 
     public TeamProfile() { }
 
@@ -32,7 +33,7 @@ public class TeamProfile {
         this.allocatedHoursOnTeam = allocatedHoursOnTeam;
     }
 
-    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRate, BigDecimal costAllocation, BigDecimal hourAllocation, BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam, BigDecimal annualCost, BigDecimal annualHours) {
+    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRate, BigDecimal costAllocation, BigDecimal hourAllocation, BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam, BigDecimal annualCost, BigDecimal annualHours, Geography geography) {
         this.teamId = teamId;
         this.profileId = profileId;
         this.name = name;
@@ -43,6 +44,7 @@ public class TeamProfile {
         this.allocatedHoursOnTeam = allocatedHoursOnTeam;
         this.annualCost = annualCost;
         this.annualHours = annualHours;
+        this.geography = geography;
     }
 
     public Profile getProfile() {
@@ -139,5 +141,13 @@ public class TeamProfile {
 
     public void setTeam(Team team){
         this.team = team;
+    }
+
+    public Geography getGeography() {
+        return geography;
+    }
+
+    public void setGeography(Geography geography) {
+        this.geography = geography;
     }
 }

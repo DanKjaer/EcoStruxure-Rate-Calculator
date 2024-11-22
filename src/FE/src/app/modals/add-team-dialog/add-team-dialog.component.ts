@@ -76,6 +76,7 @@ export class AddTeamDialogComponent implements OnInit {
         annualHours : profile.annualHours!,
         costAllocation : 100,
         hourAllocation : 100,
+        geography : profile.geography!,
       };
       teamProfiles.push(teamProfile);
     });

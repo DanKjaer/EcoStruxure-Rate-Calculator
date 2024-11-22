@@ -48,6 +48,7 @@ export interface TeamProfiles {
   hourAllocation: number;
   allocatedHoursOnTeam?: number;
   dayRateOnTeam?: number;
+  geography: Geography;
 }
 
 export interface Geography {
