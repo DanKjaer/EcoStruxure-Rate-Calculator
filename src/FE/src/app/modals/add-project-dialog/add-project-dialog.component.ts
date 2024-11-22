@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {MatDialogModule} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,8 +9,8 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {Geography, Project, Team} from '../../models';
-import {MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
+import {Geography, Project, ProjectMembers, Team} from '../../models';
+import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {
   MatDatepickerModule
 } from '@angular/material/datepicker';
@@ -19,6 +19,7 @@ import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {TeamsService} from '../../services/teams.service';
 import {GeographyService} from '../../services/geography.service';
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
   selector: 'app-add-project-dialog',
@@ -38,6 +39,10 @@ import {GeographyService} from '../../services/geography.service';
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
+    MatDivider,
+    MatList,
+    MatListItem,
+    FormsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './add-project-dialog.component.html',
@@ -48,7 +53,7 @@ export class AddProjectDialogComponent implements OnInit {
   teamForm!: FormGroup;
   teamList: Team[] = [];
   locations!: Geography[];
-  selectedProfiles: Team[] = [];
+  selectedProjectMembers: ProjectMembers[] = [];
   @Output() projectAdded = new EventEmitter<Project>();
 
 
@@ -82,7 +87,7 @@ export class AddProjectDialogComponent implements OnInit {
   }
 
   onSelectionChange($event: MatSelectionListChange) {
-    this.selectedProfiles = $event.source.selectedOptions.selected.map(team => team.value);
+    this.selectedProjectMembers = $event.source.selectedOptions.selected.map(team => team.value);
   }
 
   async getCountries() {
@@ -102,7 +107,7 @@ export class AddProjectDialogComponent implements OnInit {
         projectName: this.projectForm.value.projectName,
         projectSalesNumber: '123456',
         projectDescription: this.projectForm.value.projectDescription,
-        projectMembers: this.teamForm.value.teams,
+        projectMembers: this.selectedProjectMembers,
         projectDayRate: 0,
         projectStartDate: startDateUtc,
         projectEndDate: endDateUtc,

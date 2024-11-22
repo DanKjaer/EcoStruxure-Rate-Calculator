@@ -227,5 +227,6 @@
   "ERROR_TEAM_ADDED": "Failed to add team",
   "ERROR_PROJECT_UPDATED": "Failed to update project",
   "SUCCESS_PROJECT_UPDATED": "Project updated successfully",
-  "ADD_NEW_PROJECT_MEMBER": "Add new project member"
+  "ADD_NEW_PROJECT_MEMBER": "Add new project member",
+  "EXAMPLE": "Example"
 }

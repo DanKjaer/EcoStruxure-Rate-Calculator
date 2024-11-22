@@ -75,8 +75,29 @@
         </mat-selection-list>
       </div>
     </mat-dialog-content>
+
+    <mat-dialog-content class="container">
+      <div class="allocationContainer">
+        <mat-list>
+          @for (team of selectedProjectMembers; track team) {
+            <mat-list-item>
+              <div class ="allocationItem">
+                <span>{{ team.name }}</span>
+                <mat-form-field class="allocationInput">
+                  <span matSuffix>%</span>
+                  <input type="number" matInput placeholder="{{ 'EXAMPLE'| translate}}: 10" [(ngModel)]="team.projectAllocation">
+                </mat-form-field>
+              </div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          }
+        </mat-list>
+      </div>
+    </mat-dialog-content>
+
   </div>
 </div>
+
 
 <mat-dialog-actions>
   <div class="buttonContainer">
