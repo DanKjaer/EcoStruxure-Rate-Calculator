@@ -164,6 +164,12 @@
     flex-direction: row;
 }
 
+.datePickerInputField {
+  width: 8rem;
+}
+
+.cdk-text-field-autofill-monitored:not(:-webkit-autofill)
+
 .buttonContainer {
     display: flex;
     flex-direction: row;
