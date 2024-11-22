@@ -73,6 +73,7 @@ export interface Project {
   projectDayRate?: number;
   projectSalesNumber?: number;
   projectGrossMargin?: number;
+  projectMembersString?: string;
 }
 
 export interface ProjectMembers {
