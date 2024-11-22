@@ -138,7 +138,7 @@ public class TeamDAO implements ITeamDAO {
         List<TeamProfile> teams = new ArrayList<>();
 
         String query = """
-                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours, g.*
+                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours, g.id, g.name, g.predefined
                        FROM dbo.teams_profiles tp
                        INNER JOIN dbo.teams t ON t.id = tp.teamid
                        INNER JOIN dbo.profiles p on p.profile_id = tp.profileid
@@ -160,7 +160,9 @@ public class TeamDAO implements ITeamDAO {
                 BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
                 BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                 BigDecimal annualHours = rs.getBigDecimal("annual_hours");
-                Geography geography = (Geography) rs.getObject("geography");
+                Geography geography = new Geography(rs.getInt("id"),
+                                                    rs.getString("geo_name"),
+                                                    rs.getBoolean("predefined"));
 
                 teams.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
                         allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
@@ -590,7 +592,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public List<TeamProfile> getTeamProfiles(List<Team> teams) throws Exception {
         String query = """
-                SELECT tp.*, p.name, p.annual_cost, p.annual_hours, g.*
+                SELECT tp.*, p.name, p.annual_cost, p.annual_hours, g.id, g.name, g.predefined
                 FROM dbo.Profiles p
                 INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId
                 INNER JOIN dbo.geography g on p.geography_id = g.id
@@ -612,7 +614,9 @@ public class TeamDAO implements ITeamDAO {
                         BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
                         BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                         BigDecimal annualHours = rs.getBigDecimal("annual_hours");
-                        Geography geography = (Geography) rs.getObject("geography");
+                        Geography geography = new Geography(rs.getInt("id"),
+                                                            rs.getString("geo_name"),
+                                                            rs.getBoolean("predefined"));
 
                         teamProfiles.add(new TeamProfile(team.getTeamId(), profileId, name, dayRate, costAllocation, hourAllocation,
                                 allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
