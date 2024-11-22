@@ -207,11 +207,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   }
 
   async saveEdit(selectedProject: any) {
-    this.loading = true;
     selectedProject['isEditing'] = false;
+    this.loading = true;
     this.isEditingRow = false;
 
-    const endDate = selectedProject.projectEndDate;
+    const endDate: Date = new Date(selectedProject.projectEndDate);
     selectedProject.projectEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
     try {
       let response = await this.projectService.putProject(selectedProject);
