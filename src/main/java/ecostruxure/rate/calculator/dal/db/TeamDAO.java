@@ -513,7 +513,6 @@ public class TeamDAO implements ITeamDAO {
                     Geography geography = new Geography(rs.getInt("id"),
                                                         rs.getString("geo_name"),
                                                         rs.getBoolean("predefined"));
-                    System.out.println("geography: " + geography);
 
                     teamProfiles.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
                             allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
