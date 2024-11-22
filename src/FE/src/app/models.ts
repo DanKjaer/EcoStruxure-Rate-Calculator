@@ -60,12 +60,8 @@ export interface Geography {
 export interface Project {
   projectId?: string;
   projectName: string;
-  projectSalesNumber: string;
   projectDescription: string;
   projectMembers: ProjectMembers[];
-  projectMembersString?: string;
-  projectDayRate?: number;
-  projectGrossMargin?: number;
   projectPrice?: number;
   projectStartDate: Date;
   startDateString?: string;
@@ -74,6 +70,9 @@ export interface Project {
   projectTotalDays?: number;
   projectLocation: Geography;
   projectArchived?: boolean;
+  projectDayRate?: number;
+  projectSalesNumber?: number;
+  projectGrossMargin?: number;
 }
 
 export interface ProjectMembers {

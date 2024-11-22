@@ -72,7 +72,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     'contributed annual cost',
     'allocated hours',
     'cost allocation',
-    'location',
     'options'
   ];
 
@@ -166,7 +165,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
       element.annualCost = original.annualCost;
       element.totalHourAllocation = original.totalHourAllocation;
       element.totalCostAllocation = original.totalCostAllocation;
-      element.geography.name = original.geography.name;
     }
     element['isEditing'] = false;
     this.isEditingRow = false;

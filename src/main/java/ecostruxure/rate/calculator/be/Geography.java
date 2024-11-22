@@ -15,8 +15,6 @@ public class Geography {
         this(0, name, false);
     }
 
-    public Geography(){ }
-
     public int id() {
         return id;
     }

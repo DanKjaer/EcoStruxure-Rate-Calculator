@@ -25,21 +25,7 @@ public class ProfileDAO implements IProfileDAO {
         String profileName = rs.getString("name");
         String currency = rs.getString("currency");
         geography.setId(rs.getInt("geography_id"));
-        // Check if the geography_name column exists in the ResultSet
-        ResultSetMetaData rsMetaData = rs.getMetaData();
-        int columnCount = rsMetaData.getColumnCount();
-        boolean hasGeographyName = false;
-        for (int i = 1; i <= columnCount; i++) {
-            if ("geography_name".equals(rsMetaData.getColumnName(i))) {
-                hasGeographyName = true;
-                break;
-            }
-        }
-        if (hasGeographyName) {
-            geography.setName(rs.getString("geography_name"));
-        } else {
-            geography.setName(null); // or set a default value
-        }
+        geography.setName(rs.getString("geography_name"));
         boolean resourceType = rs.getBoolean("resource_type");
 
         BigDecimal annualCost = rs.getBigDecimal("annual_cost");
@@ -93,7 +79,6 @@ public class ProfileDAO implements IProfileDAO {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
-
                        SELECT p.*, g.name AS geography_name 
                        FROM dbo.Profiles p
                        INNER JOIN dbo.Geography g ON p.geography_id = g.id
@@ -273,12 +258,8 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
-        String sql = """
-                     INSERT INTO dbo.Profiles (profile_id, name, currency, geography_id, resource_type, annual_cost, 
-                     effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                     """;
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (profile_id, name, currency, geography_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             UUID profileId = UUID.randomUUID();
             stmt.setObject(1, profileId);
             stmt.setString(2, profile.getName());
@@ -313,9 +294,6 @@ public class ProfileDAO implements IProfileDAO {
         return allByCountry(country.code());
     }
 
-    /**
-     * Profiles data har ikke været en ting i LANG tid, skal måske slettes?
-     */
     public List<Profile> allByCountry(String countryCode) throws Exception {
         ArrayList<Profile> profilesBycountry = new ArrayList<>();
         String query = """
@@ -347,9 +325,6 @@ public class ProfileDAO implements IProfileDAO {
         return allByTeam(team.getTeamId());
     }
 
-    /**
-     * Profiles data har ikke været en ting i LANG tid, skal måske slettes?
-     */
     @Override
     public List<Profile> allByTeam(UUID teamId) throws Exception {
         ArrayList<Profile> profilesByTeam = new ArrayList<>();
@@ -382,9 +357,6 @@ public class ProfileDAO implements IProfileDAO {
         return allByGeography(geography.id());
     }
 
-    /**
-     * Profiles data har ikke været en ting i LANG tid, skal måske slettes?
-     */
     @Override
     public List<Profile> allByGeography(int geographyId) throws Exception {
         ArrayList<Profile> profilesByGeography = new ArrayList<>();
@@ -698,7 +670,6 @@ public class ProfileDAO implements IProfileDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String updateProfileSQL = """
-                                  
                                   UPDATE dbo.Profiles
                                   SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?,
                                   hours_per_day = ?, name = ?, currency = ?, geography_id = ?, resource_type = ?,
