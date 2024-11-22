@@ -221,5 +221,8 @@
   "ERROR_TEAM_ADDED": "Kunne ikke tilføje team",
   "ERROR_PROJECT_UPDATED": "Kunne ikke opdatere projekt",
   "SUCCESS_PROJECT_UPDATED": "Projekt opdateret succesfuldt",
-  "ADD_NEW_PROJECT_MEMBER": "Tilføj nyt projektmedlem"
+  "ADD_NEW_PROJECT_MEMBER": "Tilføj nyt projektmedlem",
+  "EXAMPLE": "Eksempel",
+  "PROJECT_COST": "Projektomkostninger",
+  "PROJECT_SALES_NUMBER": "Projektsalgsnummer"
 }

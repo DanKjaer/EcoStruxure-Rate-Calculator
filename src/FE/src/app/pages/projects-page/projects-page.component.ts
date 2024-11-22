@@ -167,6 +167,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
       project.startDateString = this.formatter.formatDate(project.projectStartDate);
       project.endDateString = this.formatter.formatDate(project.projectEndDate);
+      project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
@@ -206,11 +207,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   }
 
   async saveEdit(selectedProject: any) {
-    this.loading = true;
     selectedProject['isEditing'] = false;
+    this.loading = true;
     this.isEditingRow = false;
 
-    const endDate = selectedProject.projectEndDate;
+    const endDate: Date = new Date(selectedProject.projectEndDate);
     selectedProject.projectEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
     try {
       let response = await this.projectService.putProject(selectedProject);
@@ -227,6 +228,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       this.loading = false;
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
       this.updateTableFooterData();
+      this.datasource._updateChangeSubscription();
     } catch (e) {
       this.cancelEdit(selectedProject);
       this.loading = false;

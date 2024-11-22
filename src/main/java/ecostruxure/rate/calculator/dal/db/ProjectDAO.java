@@ -162,7 +162,8 @@ public class ProjectDAO implements IProjectDAO {
         try (Connection connection = dbConnector.connection();
                 PreparedStatement stmt = connection.prepareStatement(query);) {
                 for (ProjectMember projectMember : projectMembers) {
-                    stmt.setObject(1, projectId);
+                    projectMember.setProjectId(projectId);
+                    stmt.setObject(1, projectMember.getProjectId());
                     stmt.setObject(2, projectMember.getTeamId());
                     stmt.setBigDecimal(3, projectMember.getProjectAllocation());
                     stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
