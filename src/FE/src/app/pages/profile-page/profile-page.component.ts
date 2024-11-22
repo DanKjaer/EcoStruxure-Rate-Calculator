@@ -8,7 +8,7 @@ import {
   signal,
   Signal, WritableSignal
 } from '@angular/core';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatOption} from '@angular/material/core';
@@ -28,6 +28,7 @@ import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -102,7 +103,8 @@ export class ProfilePageComponent implements OnInit {
               private route: ActivatedRoute,
               private menuService: MenuService,
               protected currencyService: CurrencyService,
-              private changeDetection: ChangeDetectorRef) { }
+              private snackBar: SnackbarService,
+              private translate: TranslateService) { }
 
   async ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -142,7 +144,7 @@ export class ProfilePageComponent implements OnInit {
 
   private prepProfileForm() {
     this.profileForm = this.fb.group({
-      name: [this.currentProfile!.name, Validators.required],
+      name: [this.currentProfile()!.name, Validators.required],
       location: [this.currentProfile()!.geography.id, Validators.required],
       currency: [this.currentProfile()!.currency, Validators.required],
       resource_type: [this.currentProfile()!.resourceType, Validators.required],
@@ -177,23 +179,30 @@ export class ProfilePageComponent implements OnInit {
   }
 
   async update() {
+    this.loading = true;
     //todo: update the profile in db
-    this.currentProfile()!.name = this.profileForm.get('name')?.value;
-    this.currentProfile()!.geography = this.locations.find((location) => {
-      return location.id === this.profileForm.value.location
-    })!;
-    this.currentProfile()!.currency = this.profileForm.get('currency')?.value;
-    this.currentProfile()!.resourceType = this.profileForm.get('resource_type')?.value;
-    this.currentProfile()!.annualCost = this.profileForm.get('annual_cost')?.value;
-    this.currentProfile()!.annualHours = this.profileForm.get('annual_hours')?.value;
-    this.currentProfile()!.effectivenessPercentage = this.profileForm.get('effectiveness')?.value;
-    this.currentProfile()!.hoursPerDay = this.profileForm.get('hours_per_day')?.value;
-
-    let response = await this.profileService.putProfile(this.currentProfile()!);
-    this.currentProfile.set(response);
-
-    this.prepTeamList(this.currentProfile()!.profileId!);
-    this.prepProfileForm();
+    try {
+      this.currentProfile()!.name = this.profileForm.value.name;
+      this.currentProfile()!.geography = this.locations.find((location) => {
+        return location.id === this.profileForm.value.location
+      })!;
+      this.currentProfile()!.currency = this.profileForm.value.currency;
+      this.currentProfile()!.resourceType = this.profileForm.value.resource_type;
+      this.currentProfile()!.annualCost = this.profileForm.value.annual_cost;
+      this.currentProfile()!.annualHours = this.profileForm.value.annual_hours;
+      this.currentProfile()!.effectivenessPercentage = this.profileForm.value.effectiveness;
+      this.currentProfile()!.hoursPerDay = this.profileForm.value.hours_per_day;
+      console.log("before update: ", this.currentProfile());
+      let response = await this.profileService.putProfile(this.currentProfile()!);
+      this.currentProfile.set(response);
+      console.log("after update: ", this.currentProfile());
+      this.prepTeamList(this.currentProfile()!.profileId!);
+      this.prepProfileForm();
+      this.snackBar.openSnackBar(this.translate.instant('REASON_UPDATED_PROFILE'), true);
+    } catch (e) {
+      this.snackBar.openSnackBar(this.translate.instant('FAILED_UPDATED_PROFILE'), false);
+    }
+    this.loading = false;
   }
 
   undo() {

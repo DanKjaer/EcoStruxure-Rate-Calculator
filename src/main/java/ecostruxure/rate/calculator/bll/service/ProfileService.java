@@ -11,6 +11,7 @@ import ecostruxure.rate.calculator.dal.db.ProfileDAO;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -267,9 +268,14 @@ public class ProfileService {
 
     public Profile update(Profile profile) throws Exception{
         profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
+
         var profileUpdated = profileDAO.update(profile);
+        List<Team> teams = new ArrayList<>();
         if (profileUpdated) {
             teams = teamService.updateProfile(profile);
+        }
+        for (Team team : teams) {
+            projectService.updateProjectBasedOnTeam(team);
         }
         return profile;
     }

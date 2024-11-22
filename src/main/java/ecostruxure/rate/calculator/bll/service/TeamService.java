@@ -186,21 +186,24 @@ public class TeamService {
      * @return
      * @throws Exception
      */
-    public boolean updateProfile(Profile profile) throws Exception {
+    public List<Team> updateProfile(Profile profile) throws Exception {
         var teamProfilesMatchingProfile = teamDAO.getByProfileId(profile.getProfileId());
         var teams = teamDAO.getTeams(teamProfilesMatchingProfile);
         var teamProfilesOnTeams = teamDAO.getTeamProfiles(teams);
         teamProfilesMatchingProfile = updateAllocatedCostAndHours(teamProfilesMatchingProfile);
+
+        List<Team> updatedTeams = new ArrayList<>();
         for (Team team : teams) {
             var id = team.getTeamId();
             var teamProfiles = teamProfilesOnTeams.stream().filter(tp -> tp.getTeamId().equals(id)).toList();
             team = calculateTotalAllocatedCostAndHoursFromProfiles(team, teamProfiles);
             team = calculateTotalMarkupAndTotalGrossMargin(team);
-            teamDAO.update(team.getTeamId(), team);
+            var updatedTeam = teamDAO.update(team.getTeamId(), team);
+            updatedTeams.add(updatedTeam);
         }
         teamDAO.updateTeamProfile(teamProfilesMatchingProfile);
 
-        return true;
+        return updatedTeams;
     }
 
     public boolean removeAssignedProfiles(Team team, List<Profile> profiles) throws Exception {

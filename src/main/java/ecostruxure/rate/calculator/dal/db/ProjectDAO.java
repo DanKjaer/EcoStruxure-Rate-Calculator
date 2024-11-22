@@ -292,4 +292,29 @@ public class ProjectDAO implements IProjectDAO {
                 e.printStackTrace();
         }
     }
+
+    @Override
+    public List<Project> getProjectsBasedOnTeam(UUID teamId) throws SQLException {
+        String query = """
+                SELECT *
+                FROM dbo.project
+                INNER JOIN dbo.project_members pm on project.project_id = pm.project_id
+                INNER JOIN dbo.geography g on g.id = project.project_location
+                WHERE pm.teams_id = ? AND project_archived = FALSE;
+                """;
+        List<Project> projects = new ArrayList<>();
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            stmt.setObject(1, teamId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Project project = new Project();
+                    project = createProjectFromResultset(project, rs);
+                    project.setProjectMembers(getMembersBasedOnProject(connection, project.getProjectId()));
+                    projects.add(project);
+                }
+                return projects;
+            }
+        }
+    }
 }
