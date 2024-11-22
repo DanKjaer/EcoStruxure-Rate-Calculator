@@ -138,7 +138,7 @@ public class TeamDAO implements ITeamDAO {
         List<TeamProfile> teams = new ArrayList<>();
 
         String query = """
-                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours, g.id, g.name, g.predefined
+                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours, g.id, g.name as geo_name, g.predefined
                        FROM dbo.teams_profiles tp
                        INNER JOIN dbo.teams t ON t.id = tp.teamid
                        INNER JOIN dbo.profiles p on p.profile_id = tp.profileid
@@ -592,7 +592,7 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public List<TeamProfile> getTeamProfiles(List<Team> teams) throws Exception {
         String query = """
-                SELECT tp.*, p.name, p.annual_cost, p.annual_hours, g.id, g.name, g.predefined
+                SELECT tp.*, p.name, p.annual_cost, p.annual_hours, g.id, g.name as geo_name, g.predefined
                 FROM dbo.Profiles p
                 INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId
                 INNER JOIN dbo.geography g on p.geography_id = g.id
