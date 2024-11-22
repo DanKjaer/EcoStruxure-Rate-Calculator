@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ public class Team {
     private BigDecimal totalAllocatedCost;
     private Timestamp updatedAt;
     private boolean archived;
+    private List<Geography> geographies;
 
     public Team() {}
 
@@ -211,5 +213,13 @@ public class Team {
 
     public void setTotalGrossMargin(BigDecimal totalGrossMargin) {
         this.totalGrossMargin = totalGrossMargin;
+    }
+
+    public List<Geography> getGeographies() {
+        return geographies;
+    }
+
+    public void setGeographies(List<Geography> geographies) {
+        this.geographies = geographies;
     }
 }

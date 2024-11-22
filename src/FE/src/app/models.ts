@@ -30,6 +30,7 @@ export interface Team {
   totalAllocatedHours?: number;
   totalMarkup?: number;
   totalGrossMargin?: number;
+  geographies?: Geography[];
 }
 
 export interface TeamDTO {

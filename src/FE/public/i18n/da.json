@@ -224,5 +224,8 @@
   "ADD_NEW_PROJECT_MEMBER": "Tilføj nyt projektmedlem",
   "EXAMPLE": "Eksempel",
   "PROJECT_COST": "Projektomkostninger",
-  "PROJECT_SALES_NUMBER": "Projektsalgsnummer"
+  "PROJECT_SALES_NUMBER": "Projektsalgsnummer",
+  "WORLD_OVERVIEW": "Verden",
+  "COUNTRIES_REGIONS": "Lande og regioner",
+  "CLOSE_PANEL": "Luk panel"
 }
