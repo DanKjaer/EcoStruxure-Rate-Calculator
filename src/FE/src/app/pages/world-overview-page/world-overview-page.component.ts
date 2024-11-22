@@ -28,6 +28,8 @@ export interface countryData {
   dayRate: number;
   totalGrossMargin: number;
   totalPrice: number;
+  totalCost: number;
+  projects: listItem[];
 }
 
 interface treeNode {
@@ -131,20 +133,59 @@ export class WorldOverviewPageComponent implements OnInit, AfterViewInit {
     {
       name: 'Denmark',
       dayRate: 1000,
-      totalGrossMargin: 66.66,
-      totalPrice: 1500
+      totalGrossMargin: 50,
+      totalPrice: 6000,
+      totalCost: 5000,
+      projects: [
+        {
+          name: 'Project 1',
+          cost: 2000,
+          grossMargin: 50
+        },
+        {
+          name: 'Project 2',
+          cost: 3000,
+          grossMargin: 100
+        }
+      ]
     },
     {
       name: 'Russia',
       dayRate: 2000,
-      totalGrossMargin: 66.66,
-      totalPrice: 3000
+      totalGrossMargin: 75,
+      totalPrice: 3500,
+      totalCost: 2000,
+      projects: [
+        {
+          name: 'Project 3',
+          cost: 1000,
+          grossMargin: 50
+        },
+        {
+          name: 'Project 4',
+          cost: 1000,
+          grossMargin: 100
+        }
+      ]
     },
     {
       name: 'China',
       dayRate: 3000,
-      totalGrossMargin: 66.66,
-      totalPrice: 4500
+      totalGrossMargin: 50,
+      totalPrice: 4500,
+      totalCost: 4000,
+      projects: [
+        {
+          name: 'Project 5',
+          cost: 1000,
+          grossMargin: 50
+        },
+        {
+          name: 'Project 6',
+          cost: 2000,
+          grossMargin: 100
+        }
+      ]
     }
   ];
 
@@ -155,19 +196,6 @@ export class WorldOverviewPageComponent implements OnInit, AfterViewInit {
     }, {
       name: 'Teams',
       children: [{name: 'Team 1'}, {name: 'Team 2'}, {name: 'Team 3'}]
-    }
-  ];
-
-  infoItems: listItem[] = [
-    {
-      name: 'Project 1',
-      cost: 1000,
-      grossMargin: 1500
-    },
-    {
-      name: 'Project 2',
-      cost: 3000,
-      grossMargin: 6000
     }
   ];
 }

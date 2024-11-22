@@ -102,21 +102,21 @@
         <div class="infoContainer">
           <mat-list>
             <div mat-subheader>Costs</div>
-            @for (cost of infoItems; track cost) {
+            @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
-                <div matListItemTitle>{{ cost.name }}</div>
+                <div matListItemTitle>{{ countryData.name }}</div>
                 <div
-                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ cost.cost | number: '1.0-2' }}
+                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ countryData.cost | number: '1.0-2' }}
                 </div>
               </mat-list-item>
             }
             <mat-divider></mat-divider>
             <div mat-subheader>Gross margin</div>
-            @for (grossMargin of infoItems; track grossMargin) {
+            @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
-                <div matListItemTitle>{{ grossMargin.name }}</div>
+                <div matListItemTitle>{{ countryData.name }}</div>
                 <div
-                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ grossMargin.grossMargin | number: '1.0-2' }}
+                  matListItemLine>{{ countryData.grossMargin }}%
                 </div>
               </mat-list-item>
             }
@@ -124,11 +124,11 @@
             <div mat-subheader>Country Total</div>
             <mat-list-item>
               <div matListItemTitle>Total cost</div>
-              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ 4000 | number: '1.0-2' }}</div>
+              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalCost | number: '1.0-2' }}</div>
             </mat-list-item>
             <mat-list-item>
-              <div matListItemTitle>Total gross margin</div>
-              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ 7500 | number: '1.0-2' }}</div>
+              <div matListItemTitle>Total price</div>
+              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalPrice | number: '1.0-2' }}</div>
             </mat-list-item>
           </mat-list>
         </div>
