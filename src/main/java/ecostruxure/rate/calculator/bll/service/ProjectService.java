@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.be.ProjectMember;
+import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.dal.dao.IProjectDAO;
 import ecostruxure.rate.calculator.dal.db.ProjectDAO;
 
@@ -57,7 +58,7 @@ public class ProjectService {
         return projectDAO.archiveProject(projectId);
     }
 
-    public Project updateProject(Project project) throws SQLException {
+    public Project updateProject(Project project) throws Exception {
         try {
             var projectContainsMembers = project.getProjectMembers() != null;
             var projectContainsDayRate = project.getProjectDayRate() != null;
@@ -100,6 +101,16 @@ public class ProjectService {
         }
     }
 
+    public void updateProjectBasedOnTeam(Team team) throws Exception {
+        var projectList = projectDAO.getProjectsBasedOnTeam(team.getTeamId());
+        if (projectList == null) {
+            return;
+        }
+        for (Project project : projectList) {
+            updateProject(project);
+        }
+    }
+
     private BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
         BigDecimal totalCostAtChange;
         var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
@@ -114,10 +125,10 @@ public class ProjectService {
         return totalCostAtChange;
     }
 
-    private void validateProject(Project project) throws SQLException {
+    private void validateProject(Project project) throws Exception {
         BigDecimal grossMargin = project.getProjectGrossMargin();
-        if (grossMargin.compareTo(BigDecimal.ZERO) < 0 || grossMargin.compareTo(new BigDecimal("999.99")) > 0) {
-            throw new SQLException("Project gross margin cannot be more than 999.99, or less than 0");
+        if (grossMargin.compareTo(new BigDecimal("-999.99")) < 0 || grossMargin.compareTo(new BigDecimal("999.99")) > 0) {
+            throw new Exception("Project gross margin must be between -999.99 and 999.99 inclusive");
         }
     }
 

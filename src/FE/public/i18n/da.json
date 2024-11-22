@@ -175,6 +175,7 @@
   "REASON_ASSIGNED_PROFILE": "Profil tildelt",
   "REASON_REMOVED_PROFILE": "Profil fjernet",
   "REASON_UPDATED_PROFILE": "Profil opdateret",
+  "FAILED_UPDATED_PROFILE": "Profil opdatering fejlede",
   "LAST_EDIT": "Sidst redigeret: ",
   "REASON_UTILIZATION_CHANGE": "Utilization ændring",
   "UPDATED_AT": "Opdateret",

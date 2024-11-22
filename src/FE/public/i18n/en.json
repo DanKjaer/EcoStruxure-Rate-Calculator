@@ -181,6 +181,7 @@
   "REASON_ASSIGNED_PROFILE": "Profile assigned",
   "REASON_REMOVED_PROFILE": "Profile removed",
   "REASON_UPDATED_PROFILE": "Profile updated",
+  "FAILED_UPDATED_PROFILE": "Failed to update profile",
   "LAST_EDIT": "Last edit:",
   "REASON_UTILIZATION_CHANGE": "Utilization change",
   "UPDATED_AT": "Updated at",
