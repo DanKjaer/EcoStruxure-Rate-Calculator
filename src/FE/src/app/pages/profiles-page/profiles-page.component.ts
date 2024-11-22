@@ -72,7 +72,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     'contributed annual cost',
     'allocated hours',
     'cost allocation',
-    'location',
     'options'
   ];
 
@@ -166,7 +165,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
       element.annualCost = original.annualCost;
       element.totalHourAllocation = original.totalHourAllocation;
       element.totalCostAllocation = original.totalCostAllocation;
-      element.geography.name = original.geography.name;
     }
     element['isEditing'] = false;
     this.isEditingRow = false;
@@ -181,6 +179,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
 
     dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
+      profile.totalCostAllocation = 0;
+      profile.totalHourAllocation = 0;
       this.datasource.data.push(profile)
       this.datasource._updateChangeSubscription();
     });

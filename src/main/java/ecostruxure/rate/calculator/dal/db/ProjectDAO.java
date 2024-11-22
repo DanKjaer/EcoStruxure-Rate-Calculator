@@ -37,8 +37,8 @@ public class ProjectDAO implements IProjectDAO {
             project.setProjectMembers(getMembersBasedOnProject(connection, projectId));
 
             return project;
-            }
         }
+    }
 
     private Project createProjectFromResultset(Project project, ResultSet rsProject) throws SQLException {
         Geography geography = new Geography(rsProject.getString("name"));
@@ -160,18 +160,18 @@ public class ProjectDAO implements IProjectDAO {
                 VALUES (?, ?, ?, ?);
                 """;
         try (Connection connection = dbConnector.connection();
-                PreparedStatement stmt = connection.prepareStatement(query);) {
-                for (ProjectMember projectMember : projectMembers) {
-                    projectMember.setProjectId(projectId);
-                    stmt.setObject(1, projectMember.getProjectId());
-                    stmt.setObject(2, projectMember.getTeamId());
-                    stmt.setBigDecimal(3, projectMember.getProjectAllocation());
-                    stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-                return projectMembers;
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            for (ProjectMember projectMember : projectMembers) {
+                projectMember.setProjectId(projectId);
+                stmt.setObject(1, projectMember.getProjectId());
+                stmt.setObject(2, projectMember.getTeamId());
+                stmt.setBigDecimal(3, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
+                stmt.addBatch();
             }
+            stmt.executeBatch();
+            return projectMembers;
+        }
     }
 
     @Override
@@ -288,9 +288,9 @@ public class ProjectDAO implements IProjectDAO {
                 stmt.setBigDecimal(5, projectMember.getProjectAllocation());
                 stmt.setBigDecimal(6, projectMember.getDayRateWithMarkup());
                 stmt.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
