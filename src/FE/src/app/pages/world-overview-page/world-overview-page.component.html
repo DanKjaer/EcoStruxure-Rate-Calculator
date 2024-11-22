@@ -76,7 +76,8 @@
 
     <div class="selectedCountryContainer" *ngIf="countrySelected">
       <div class="buttonContainer">
-        <button mat-icon-button matTooltip="{{ 'CLOSE_PANEL' | translate }}" [matTooltipPosition]="'right'" (click)="clearSelection()">
+        <button mat-icon-button matTooltip="{{ 'CLOSE_PANEL' | translate }}" [matTooltipPosition]="'right'"
+                (click)="clearSelection()">
           <mat-icon>close</mat-icon>
         </button>
         <h2>{{ selectedCountry?.name }}</h2>
@@ -88,7 +89,8 @@
               <button mat-icon-button disabled></button>
               {{ node.name }}
             </mat-tree-node>
-            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding matTreeNodeToggle [cdkTreeNodeTypeaheadLabel]="node.name">
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding matTreeNodeToggle
+                           [cdkTreeNodeTypeaheadLabel]="node.name">
               <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
                 <mat-icon>{{ tree.isExpanded(node) ? 'expand_more' : 'chevron_right' }}</mat-icon>
               </button>
@@ -103,7 +105,9 @@
             @for (cost of infoItems; track cost) {
               <mat-list-item>
                 <div matListItemTitle>{{ cost.name }}</div>
-                <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ cost.cost | number: '1.0-2' }}</div>
+                <div
+                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ cost.cost | number: '1.0-2' }}
+                </div>
               </mat-list-item>
             }
             <mat-divider></mat-divider>
@@ -111,9 +115,21 @@
             @for (grossMargin of infoItems; track grossMargin) {
               <mat-list-item>
                 <div matListItemTitle>{{ grossMargin.name }}</div>
-                <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ grossMargin.grossMargin | number: '1.0-2' }}</div>
+                <div
+                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ grossMargin.grossMargin | number: '1.0-2' }}
+                </div>
               </mat-list-item>
             }
+            <mat-divider></mat-divider>
+            <div mat-subheader>Country Total</div>
+            <mat-list-item>
+              <div matListItemTitle>Total cost</div>
+              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ 4000 | number: '1.0-2' }}</div>
+            </mat-list-item>
+            <mat-list-item>
+              <div matListItemTitle>Total gross margin</div>
+              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ 7500 | number: '1.0-2' }}</div>
+            </mat-list-item>
           </mat-list>
         </div>
       </div>
