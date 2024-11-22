@@ -71,6 +71,7 @@ export class AddProjectDialogComponent implements OnInit {
       projectName: ['', Validators.required],
       geography: ['', Validators.required],
       projectPrice: ['', Validators.required],
+      projectSalesNumber: [''],
       projectGrossMargin: [''],
       startDate: new FormControl<Date | null>(null),
       endDate: new FormControl<Date | null>(null),
@@ -105,7 +106,7 @@ export class AddProjectDialogComponent implements OnInit {
 
       let project = {
         projectName: this.projectForm.value.projectName,
-        projectSalesNumber: '123456',
+        projectSalesNumber: this.projectForm.value.projectSalesNumber,
         projectDescription: this.projectForm.value.projectDescription,
         projectMembers: this.selectedProjectMembers,
         projectDayRate: 0,

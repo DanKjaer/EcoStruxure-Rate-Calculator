@@ -222,5 +222,7 @@
   "ERROR_PROJECT_UPDATED": "Kunne ikke opdatere projekt",
   "SUCCESS_PROJECT_UPDATED": "Projekt opdateret succesfuldt",
   "ADD_NEW_PROJECT_MEMBER": "Tilføj nyt projektmedlem",
-  "EXAMPLE": "Eksempel"
+  "EXAMPLE": "Eksempel",
+  "PROJECT_COST": "Projektomkostninger",
+  "PROJECT_SALES_NUMBER": "Projektsalgsnummer"
 }
