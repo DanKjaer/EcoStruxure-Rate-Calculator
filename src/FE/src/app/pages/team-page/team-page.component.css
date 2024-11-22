@@ -5,6 +5,11 @@
   width: 80vw;
   padding-top: 1rem;
   overflow: auto;
+  transition: width 0.3s ease;
+}
+
+.container.menuClosed {
+  width: 90vw;
 }
 
 .statsContainer {

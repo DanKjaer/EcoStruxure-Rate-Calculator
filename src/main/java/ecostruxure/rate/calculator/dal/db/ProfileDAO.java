@@ -20,11 +20,12 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     private Profile profileResultSet(ResultSet rs) throws SQLException {
-
+        Geography geography = new Geography();
         UUID profileId = (UUID) (rs.getObject("profile_id"));
-        String name = rs.getString("name");
+        String profileName = rs.getString("name");
         String currency = rs.getString("currency");
-        int countryId = rs.getInt("country_id");
+        geography.setId(rs.getInt("geography_id"));
+        geography.setName(rs.getString("geography_name"));
         boolean resourceType = rs.getBoolean("resource_type");
 
         BigDecimal annualCost = rs.getBigDecimal("annual_cost");
@@ -39,9 +40,9 @@ public class ProfileDAO implements IProfileDAO {
 
         return new Profile.Builder()
                 .setProfileId(profileId)
-                .setName(name)
+                .setName(profileName)
                 .setCurrency(currency)
-                .setCountryId(countryId)
+                .setGeography(geography)
                 .setResourceType(resourceType)
                 .setAnnualCost(annualCost)
                 .setAnnualHours(annualHours)
@@ -78,8 +79,9 @@ public class ProfileDAO implements IProfileDAO {
         List<Profile> profiles = new ArrayList<>();
 
         String query = """
-                       SELECT p.*, dbo.geography.name FROM dbo.Profiles p
-                       INNER JOIN dbo.Geography ON p.country_id = dbo.Geography.id
+                       SELECT p.*, g.name AS geography_name 
+                       FROM dbo.Profiles p
+                       INNER JOIN dbo.Geography g ON p.geography_id = g.id
                        ORDER BY p.profile_id DESC
                        """;
 
@@ -192,9 +194,10 @@ public class ProfileDAO implements IProfileDAO {
     public Profile get(UUID profileId) throws Exception {
         Profile profile = null;
         String query = """
-                       SELECT * FROM dbo.Profiles
-
-                       WHERE dbo.Profiles.profile_id = ?
+                       SELECT p.*, g.name AS geography_name 
+                       FROM dbo.Profiles p
+                       INNER JOIN dbo.Geography g ON p.geography_id = g.id
+                       WHERE p.profile_id = ?
                        """;
         try (Connection conn = dbConnector.connection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -203,6 +206,10 @@ public class ProfileDAO implements IProfileDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     profile = profileResultSet(rs);
+                    Geography geography = new Geography();
+                    geography.setId(rs.getInt("geography_id"));
+                    geography.setName(rs.getString("geography_name"));
+                    profile.setGeography(geography);
                     profile.setUpdatedAt(rs.getTimestamp("updated_at"));
                     profile.setArchived(rs.getBoolean("is_archived"));
                 }
@@ -252,12 +259,12 @@ public class ProfileDAO implements IProfileDAO {
 
     private Profile createProfile(Connection connection, Profile profile) throws Exception {
 
-        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (profile_id, name, currency, country_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO dbo.Profiles (profile_id, name, currency, geography_id, resource_type, annual_cost, effectiveness, annual_hours, effective_work_hours, hours_per_day, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             UUID profileId = UUID.randomUUID();
             stmt.setObject(1, profileId);
             stmt.setString(2, profile.getName());
             stmt.setString(3, profile.getCurrency());
-            stmt.setInt(4, profile.getCountryId());
+            stmt.setInt(4, profile.getGeography().getId());
             stmt.setBoolean(5, profile.isResourceType());
             stmt.setBigDecimal(6, profile.getAnnualCost());
             stmt.setBigDecimal(7, profile.getEffectivenessPercentage());
@@ -619,11 +626,12 @@ public class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    public boolean update(UUID profileId, Profile profile) throws Exception {
+    public boolean update(Profile profile) throws Exception {
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
-                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
+                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?,
+                                  hours_per_day = ?, name = ?, currency = ?, geography_id = ?, resource_type = ?,
+                                  is_archived = ?, updated_at = CURRENT_TIMESTAMP
                                   WHERE profile_id = ?;
                                   """;
 
@@ -638,10 +646,10 @@ public class ProfileDAO implements IProfileDAO {
             updateProfileStmt.setBigDecimal(5, profile.getHoursPerDay());
             updateProfileStmt.setString(6, profile.getName());
             updateProfileStmt.setString(7, profile.getCurrency());
-            updateProfileStmt.setInt(8, profile.getCountryId());
+            updateProfileStmt.setInt(8, profile.getGeography().getId());
             updateProfileStmt.setBoolean(9, profile.isResourceType());
             updateProfileStmt.setBoolean(10, profile.isArchived());
-            updateProfileStmt.setObject(11, profileId);
+            updateProfileStmt.setObject(11, profile.getProfileId());
             updateProfileStmt.executeUpdate();
 
             conn.commit();
@@ -663,8 +671,9 @@ public class ProfileDAO implements IProfileDAO {
 
         String updateProfileSQL = """
                                   UPDATE dbo.Profiles
-                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?, hours_per_day = ?,
-                                  name = ?, currency = ?, country_id = ?, resource_type = ?, is_archived = ?, updated_at = CURRENT_TIMESTAMP
+                                  SET annual_cost = ?, effectiveness = ?, annual_hours = ?, effective_work_hours = ?,
+                                  hours_per_day = ?, name = ?, currency = ?, geography_id = ?, resource_type = ?,
+                                  is_archived = ?, updated_at = CURRENT_TIMESTAMP
                                   WHERE profile_id = ?;
                                   """;
         try (PreparedStatement updateProfileStmt = sqlContext.connection().prepareStatement(updateProfileSQL)) {
@@ -675,7 +684,7 @@ public class ProfileDAO implements IProfileDAO {
             updateProfileStmt.setBigDecimal(5, profile.getHoursPerDay());
             updateProfileStmt.setString(6, profile.getName());
             updateProfileStmt.setString(7, profile.getCurrency());
-            updateProfileStmt.setInt(8, profile.getCountryId());
+            updateProfileStmt.setInt(8, profile.getGeography().getId());
             updateProfileStmt.setBoolean(9, profile.isResourceType());
             updateProfileStmt.setBoolean(10, profile.isArchived());
             updateProfileStmt.setObject(11, profile.getProfileId());

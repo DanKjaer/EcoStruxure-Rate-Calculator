@@ -29,14 +29,12 @@ public class ProfileController {
 
     @PostMapping
     public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
-
-        System.out.println("Create profile: " + profileDTO.getProfile().getAnnualCost());
         return profileService.create(profileDTO.getProfile());
     }
 
-    @PutMapping("/{id}")
-    public boolean updateProfile(@PathVariable UUID id, @RequestBody Profile profile) throws Exception {
-        return profileService.update(id, profile);
+    @PutMapping()
+    public Profile updateProfile(@RequestBody Profile profile) throws Exception {
+        return profileService.update(profile);
     }
 
     @DeleteMapping("/{id}")

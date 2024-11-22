@@ -1,24 +1,17 @@
-.dialog-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.dialog-section {
-  flex: 1;
-  margin: 0 10px;
-  width: 50%;
-}
-
 .container {
   display: flex;
   flex-direction: column;
 }
 
-.groupContainer {
+.teamsContainer {
   display: flex;
-  flex-direction: row;
-  align-content: space-evenly;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: whitesmoke;
+  border-radius: 1rem;
+  border: 1px solid gray;
+  overflow: auto;
+  max-height: 20rem;
 }
 
 .buttonContainer {
@@ -27,7 +20,7 @@
   justify-content: space-between;
 }
 
-.profilesContainer {
+.projectMembersContainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -35,9 +28,8 @@
   border-radius: 1rem;
   border: 1px solid gray;
   overflow: auto;
-  max-height: 28rem;
+  max-height: 20rem;
 }
-
 
 .allocationContainer {
   display: flex;
@@ -46,7 +38,7 @@
 }
 
 .allocationInput {
-  width: 9rem;
+  width: 5rem;
 }
 
 .allocationItem {
@@ -55,8 +47,3 @@
   align-items: center;
   width: 100%;
 }
-
-.descriptionContainer{
-  height: 9rem;
-}
-

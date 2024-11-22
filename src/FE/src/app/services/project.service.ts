@@ -23,8 +23,8 @@ export class ProjectService {
   /**
    * Gets a project
    */
-  async getProject(): Promise<Project> {
-    return firstValueFrom(this.http.get<Project>(`${this.apiUrl}`));
+  async getProject(id: string): Promise<Project> {
+    return firstValueFrom(this.http.get<Project>(`${this.apiUrl}?projectId=${id}`));
   }
 
   /**
@@ -40,5 +40,20 @@ export class ProjectService {
    */
    deleteProject(projectId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${projectId}`));
+  }
+
+  /**
+   * Deletes a project member
+   */
+  deleteProjectMember(projectId: string, memberId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?projectId=${projectId}&teamId=${memberId}`));
+  }
+
+  /**
+   * Updates a project
+   * @param selectedProject
+   */
+  async putProject(selectedProject: Project): Promise<Project> {
+    return firstValueFrom(this.http.put<Project>(`${this.apiUrl}/update`, selectedProject));
   }
 }

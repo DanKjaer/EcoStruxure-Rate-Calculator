@@ -1,50 +1,68 @@
-<div class="container">
-  <div class="imageContainer">
-    <img src="images/sidebar_logo.png">
-  </div>
-  <div class="buttonContainer">
-    <button class="navButton" mat-flat-button routerLink="/dashboard">
-      <mat-icon>
-        space_dashboard
-      </mat-icon>
-      {{ 'DASHBOARD' | translate }}
-    </button>
-    <button class="navButton" mat-flat-button routerLink="/profiles">
-      <mat-icon>
-        person
-      </mat-icon>
-      {{ 'PROFILES' | translate }}
-    </button>
-    <button class="navButton" mat-flat-button routerLink="/teams">
-      <mat-icon>
-        groups
-      </mat-icon>
-      {{ 'TEAMS' | translate }}
-    </button>
-    <button class="navButton" mat-flat-button routerLink="/projects">
-    <mat-icon>
-      assignment
-    </mat-icon>
-    {{ 'PROJECTS' | translate }}
-  </button>
-    <button class="navButton" mat-flat-button routerLink="/currency">
-      <mat-icon>
-        currency_exchange
-      </mat-icon>
-      {{ 'CURRENCY' | translate }}
-    </button>
+<div class="outerContainer">
+  <div class="container" [ngClass]="{'collapsed': !isMenuOpen}">
+    <div class="imageContainer">
+      <img src="images/sidebar_logo.png">
+    </div>
+    <div class="buttonContainer">
+      <button class="navButton" mat-flat-button routerLink="/dashboard">
+        <mat-icon>
+          space_dashboard
+        </mat-icon>
+        {{ 'DASHBOARD' | translate }}
+      </button>
+      <button class="navButton" mat-flat-button routerLink="/profiles">
+        <mat-icon>
+          person
+        </mat-icon>
+        {{ 'PROFILES' | translate }}
+      </button>
+      <button class="navButton" mat-flat-button routerLink="/teams">
+        <mat-icon>
+          groups
+        </mat-icon>
+        {{ 'TEAMS' | translate }}
+      </button>
+      <button class="navButton" mat-flat-button routerLink="/projects">
+        <mat-icon>
+          assignment
+        </mat-icon>
+        {{ 'PROJECTS' | translate }}
+      </button>
+      <button class="navButton" mat-flat-button routerLink="/currency">
+        <mat-icon>
+          currency_exchange
+        </mat-icon>
+        {{ 'CURRENCY' | translate }}
+      </button>
+      <button class="navButton" mat-flat-button routerLink="/world">
+        <mat-icon>
+          travel_explorer
+        </mat-icon>
+        {{ 'WORLD_OVERVIEW' | translate }}
+      </button>
 
+    </div>
+    <div class="bottomContainer">
+      <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'CHANGE_LANGUAGE' | translate }}">
+        <mat-icon>
+          language
+        </mat-icon>
+      </button>
+      <button class="iconButton" mat-icon-button (click)="switchCurrency()" matTooltip="{{ 'CHANGE_CURRENCY' | translate }}">
+        <mat-icon class="animatedIcon" [ngClass]="{ 'euro': selectedCurrency == 'EUR', 'dollar': selectedCurrency == 'USD' }">
+          {{ this.selectedCurrency == "EUR" ? 'euro' : 'attach_money' }}
+        </mat-icon>
+      </button>
+      <button class="iconButton" mat-icon-button matTooltip="{{ 'LOGOUT' | translate }}">
+        <mat-icon>
+          logout
+        </mat-icon>
+      </button>
+    </div>
   </div>
-  <div class="bottomContainer">
-    <button class="iconButton" mat-icon-button (click)="switchLanguage()" matTooltip="{{ 'LANGUAGE' | translate }}">
-      <mat-icon>
-        language
-      </mat-icon>
-    </button>
-    <button class="iconButton" mat-icon-button matTooltip="{{ 'LOGOUT' | translate }}">
-      <mat-icon>
-        logout
-      </mat-icon>
-    </button>
-  </div>
+  <button mat-icon-button class="menuButton" (click)="toggleMenu()">
+    <mat-icon class="animatedIcon" [ngClass]="{ 'open': isMenuOpen, 'close': !isMenuOpen }">
+      chevron_left
+    </mat-icon>
+  </button>
 </div>

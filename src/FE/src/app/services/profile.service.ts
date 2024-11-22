@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {firstValueFrom, Observable} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {Profile} from '../models';
 
 @Injectable({
@@ -12,18 +12,22 @@ export class ProfileService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Gets a list of profiles
+   * Gets a list of profiles.
    */
   getProfiles(): Promise<Profile[]> {
     return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/all`));
   }
 
+  /**
+   * Gets a profile.
+   * @param id
+   */
   getProfile(id: string): Promise<Profile> {
     return firstValueFrom(this.http.get<Profile>(`${this.apiUrl}?id=${id}`));
   }
 
   /**
-   * Gets a profile
+   * Creates a profile.
    * @param profile
    */
   postProfile(profile: Profile): Promise<Profile> {
@@ -37,8 +41,8 @@ export class ProfileService {
   /**
    * updates a profile
    */
-  putProfile(): Promise<boolean> {
-    return firstValueFrom(this.http.put<boolean>(`${this.apiUrl}/{id}`, {}));
+  putProfile(profile: Profile): Promise<Profile> {
+    return firstValueFrom(this.http.put<Profile>(`${this.apiUrl}`, profile));
   }
 
   /**

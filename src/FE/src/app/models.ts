@@ -1,8 +1,8 @@
 export interface Profile {
   profileId?: string;
   name: string;
-  currency: number;
-  countryId: number;
+  currency: string;
+  geography: Geography;
   resourceType: boolean;
   annualCost?: number;
   annualHours?: number;
@@ -30,6 +30,7 @@ export interface Team {
   totalAllocatedHours?: number;
   totalMarkup?: number;
   totalGrossMargin?: number;
+  geographies?: Geography[];
 }
 
 export interface TeamDTO {
@@ -48,6 +49,7 @@ export interface TeamProfiles {
   hourAllocation: number;
   allocatedHoursOnTeam?: number;
   dayRateOnTeam?: number;
+  geography: Geography;
 }
 
 export interface Geography {
@@ -60,14 +62,34 @@ export interface Project {
   projectId?: string;
   projectName: string;
   projectDescription: string;
-  projectMembers: Profile[];
-  projectCost?: number;
-  projectMargin?: number;
+  projectMembers: ProjectMembers[];
   projectPrice?: number;
-  startDate: Date;
+  projectStartDate: Date;
   startDateString?: string;
-  endDate: Date;
+  projectEndDate: Date;
   endDateString?: string;
-  projectMarkup: number;
-  projectGrossMargin: number;
+  projectTotalDays?: number;
+  projectLocation: Geography;
+  projectArchived?: boolean;
+  projectDayRate?: number;
+  projectSalesNumber?: number;
+  projectGrossMargin?: number;
+  projectMembersString?: string;
+}
+
+export interface ProjectMembers {
+  teamId: string;
+  projectId: string;
+  name: string;
+  projectAllocation: number;
+  markup?: number;
+  dayRate?: number;
+  dayRateWithMarkup?: number;
+}
+
+export interface Currency {
+  currencyCode: string;
+  eurConversionRate: number;
+  usdConversionRate: number;
+  symbol: string;
 }
