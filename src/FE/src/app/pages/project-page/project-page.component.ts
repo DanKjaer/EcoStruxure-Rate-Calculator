@@ -255,7 +255,7 @@ export class ProjectPageComponent implements OnInit {
     this.selectedRow = row;
   }
 
-   private calculateProjectDayRate(){
+  private calculateProjectDayRate(){
     let totalDayRate = 0;
     this.project.projectMembers.forEach(member => totalDayRate += member.dayRateWithMarkup!);
     this.project.projectDayRate = totalDayRate;

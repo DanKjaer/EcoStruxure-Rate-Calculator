@@ -25,10 +25,10 @@ DROP TABLE IF EXISTS dbo.Countries;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE dbo.Currency (
-                            currency_code       VARCHAR(3) PRIMARY KEY NOT NULL,
-                            eur_conversion_rate DECIMAL(10, 2),
-                            usd_conversion_rate DECIMAL(10, 2),
-                            symbol              varchar(1)
+                              currency_code       VARCHAR(3) PRIMARY KEY NOT NULL,
+                              eur_conversion_rate DECIMAL(10, 2),
+                              usd_conversion_rate DECIMAL(10, 2),
+                              symbol              varchar(1)
 );
 
 CREATE TABLE dbo.Countries (
@@ -142,28 +142,28 @@ CREATE TABLE dbo.Teams_profiles_history (
 );
 
 CREATE TABLE dbo.Project (
-                         project_id UUID PRIMARY KEY,
-                         project_name VARCHAR(255) NOT NULL,
-                         project_sales_number VARCHAR(20),
-                         project_description TEXT,
-                         project_day_rate NUMERIC(18, 2),
-                         project_gross_margin NUMERIC(5, 2),
-                         project_price NUMERIC(18, 2),
-                         project_start_date DATE,
-                         project_end_date DATE,
-                         project_total_days INT,
-                         project_location INT NOT NULL REFERENCES dbo.geography(id),
-                         project_archived BOOLEAN DEFAULT FALSE,
-                         project_total_cost_at_change NUMERIC(18, 2),
-                         project_rest_cost_date DATE
+                             project_id UUID PRIMARY KEY,
+                             project_name VARCHAR(255) NOT NULL,
+                             project_sales_number VARCHAR(20),
+                             project_description TEXT,
+                             project_day_rate NUMERIC(18, 2),
+                             project_gross_margin NUMERIC(5, 2),
+                             project_price NUMERIC(18, 2),
+                             project_start_date DATE,
+                             project_end_date DATE,
+                             project_total_days INT,
+                             project_location INT NOT NULL REFERENCES dbo.geography(id),
+                             project_archived BOOLEAN DEFAULT FALSE,
+                             project_total_cost_at_change NUMERIC(18, 2),
+                             project_rest_cost_date DATE
 );
 
 CREATE TABLE dbo.Project_Members (
-                                 project_id UUID REFERENCES dbo.Project(project_id),
-                                 teams_id UUID REFERENCES dbo.teams(id),
-                                 PRIMARY KEY (project_id, teams_id),
-                                 allocation_on_project DECIMAL(5, 2),
-                                 day_rate_on_project DECIMAL(10, 2)
+                                     project_id UUID REFERENCES dbo.Project(project_id),
+                                     teams_id UUID REFERENCES dbo.teams(id),
+                                     PRIMARY KEY (project_id, teams_id),
+                                     allocation_on_project DECIMAL(5, 2),
+                                     day_rate_on_project DECIMAL(10, 2)
 );
 
 
@@ -1134,7 +1134,7 @@ VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         '2024-12-13',
         10,
         60
-        );
+       );
 
 INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
 VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '937b379c-c326-4db2-9575-8313f59ddf2c', 100, 228.8);

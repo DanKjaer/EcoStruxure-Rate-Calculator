@@ -161,8 +161,8 @@ public class TeamDAO implements ITeamDAO {
                 BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                 BigDecimal annualHours = rs.getBigDecimal("annual_hours");
                 Geography geography = new Geography(rs.getInt("id"),
-                                                    rs.getString("geo_name"),
-                                                    rs.getBoolean("predefined"));
+                        rs.getString("geo_name"),
+                        rs.getBoolean("predefined"));
 
                 teams.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
                         allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
@@ -513,8 +513,8 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                     BigDecimal annualHours = rs.getBigDecimal("annual_hours");
                     Geography geography = new Geography(rs.getInt("id"),
-                                                        rs.getString("geo_name"),
-                                                        rs.getBoolean("predefined"));
+                            rs.getString("geo_name"),
+                            rs.getBoolean("predefined"));
 
                     teamProfiles.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
                             allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
@@ -615,8 +615,8 @@ public class TeamDAO implements ITeamDAO {
                         BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                         BigDecimal annualHours = rs.getBigDecimal("annual_hours");
                         Geography geography = new Geography(rs.getInt("id"),
-                                                            rs.getString("geo_name"),
-                                                            rs.getBoolean("predefined"));
+                                rs.getString("geo_name"),
+                                rs.getBoolean("predefined"));
 
                         teamProfiles.add(new TeamProfile(team.getTeamId(), profileId, name, dayRate, costAllocation, hourAllocation,
                                 allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
@@ -1002,7 +1002,7 @@ public class TeamDAO implements ITeamDAO {
         }
     }
 
-     @Override
+    @Override
     public BigDecimal getAllocatedHoursOnTeam(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT allocated_Hours_on_team FROM teams_profiles WHERE teamid = ? AND profileid = ?";
         try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {

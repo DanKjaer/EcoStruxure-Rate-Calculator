@@ -230,5 +230,8 @@
   "ADD_NEW_PROJECT_MEMBER": "Add new project member",
   "EXAMPLE": "Example",
   "PROJECT_COST": "Project cost",
-  "PROJECT_SALES_NUMBER": "Project sales number"
+  "PROJECT_SALES_NUMBER": "Project sales number",
+  "WORLD_OVERVIEW": "World",
+  "COUNTRIES_REGIONS": "Countries and regions",
+  "CLOSE_PANEL": "Close panel"
 }

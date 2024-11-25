@@ -37,7 +37,6 @@ public class ProjectService {
             project.setProjectGrossMargin(calculateGrossMargin(project));
         }
         project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
-
         var newProject = projectDAO.createProject(project);
         if (!newProject.getProjectMembers().isEmpty()) {
             projectDAO.assignProfilesToProject(newProject.getProjectId(), project.getProjectMembers());
