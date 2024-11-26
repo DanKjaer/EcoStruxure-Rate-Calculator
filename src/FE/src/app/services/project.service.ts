@@ -45,8 +45,8 @@ export class ProjectService {
   /**
    * Deletes a project member
    */
-  deleteProjectMember(projectId: string, memberId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?projectId=${projectId}&teamId=${memberId}`));
+  deleteProjectMember(project: Project, memberId: string): Promise<Project> {
+    return firstValueFrom(this.http.put<Project>(`${this.apiUrl}/delete_member?&teamId=${memberId}`, project));
   }
 
   /**

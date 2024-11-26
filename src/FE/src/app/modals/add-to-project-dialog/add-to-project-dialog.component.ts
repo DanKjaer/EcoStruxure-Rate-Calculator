@@ -84,14 +84,13 @@ export class AddToProjectDialogComponent implements OnInit {
       this.project.projectMembers.push(projectMember);
     });
     try{
-    const updateProject = await this.projectService.putProject(this.project)
-    if (updateProject != undefined) {
-      this.AddToProject.emit(updateProject);
-      this.project = updateProject;
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_ADDED'), true);
-    } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_ADDED'), false);
-    }
+      const updateProject = await this.projectService.putProject(this.project)
+      if (updateProject != undefined) {
+        this.AddToProject.emit(updateProject);
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_ADDED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_ADDED'), false);
+      }
     }catch (error: any) {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);}
   }

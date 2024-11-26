@@ -33,10 +33,12 @@ public class ProjectService {
     public Project createProject(Project project) throws SQLException {
         // Calculate day rate and gross margin, if project members are present
         if (project.getProjectMembers() != null) {
+            project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+            System.out.println("Project total days: " + project.getProjectTotalDays());
             project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
+            System.out.println("Project day rate: " + project.getProjectDayRate());
             project.setProjectGrossMargin(calculateGrossMargin(project));
         }
-        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
         var newProject = projectDAO.createProject(project);
         if (!newProject.getProjectMembers().isEmpty()) {
             projectDAO.assignProfilesToProject(newProject.getProjectId(), project.getProjectMembers());
@@ -49,8 +51,10 @@ public class ProjectService {
         return projectDAO.deleteProject(projectId);
     }
 
-    public boolean deleteProjectMember(UUID projectId, UUID teamId) throws SQLException {
-        return projectDAO.deleteProjectMember(projectId, teamId);
+    public Project deleteProjectMember(Project project, UUID teamId) throws Exception {
+        // do all calcs
+        projectDAO.deleteProjectMember(project.getProjectId(), teamId);
+        return updateProject(project);
     }
 
     public boolean archiveProject(UUID projectId) throws SQLException {
@@ -62,9 +66,12 @@ public class ProjectService {
             var projectContainsMembers = project.getProjectMembers() != null;
             var projectContainsDayRate = project.getProjectDayRate() != null;
             var projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
+            var projectRestCostDate = project.getProjectRestCostDate() != null;
+
+            project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
 
             // Calculate, if rest cost have been calc. before
-            if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() != null) {
+            if (projectContainsMembers && projectContainsDayRate && projectIsStarted && projectRestCostDate) {
                 project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
                 project.setProjectRestCostDate(LocalDate.now());
                 project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
@@ -84,7 +91,6 @@ public class ProjectService {
                 project.setProjectGrossMargin(calculateGrossMargin(project));
             }
 
-            project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
 
             validateProject(project);
 
@@ -126,8 +132,8 @@ public class ProjectService {
 
     private void validateProject(Project project) throws Exception {
         BigDecimal grossMargin = project.getProjectGrossMargin();
-        if (grossMargin.compareTo(new BigDecimal("-999.99")) < 0 || grossMargin.compareTo(new BigDecimal("999.99")) > 0) {
-            throw new Exception("Project gross margin must be between -999.99 and 999.99 inclusive");
+        if (grossMargin.compareTo(new BigDecimal("-99999.99")) < 0 || grossMargin.compareTo(new BigDecimal("99999.99")) > 0) {
+            throw new Exception("Project gross margin must be between -99999.99 and 99999.99 inclusive");
         }
     }
 

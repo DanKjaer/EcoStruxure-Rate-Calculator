@@ -102,7 +102,6 @@ export class ProjectPageComponent implements OnInit {
   }
 
   private fillTableWithTeams() {
-    this.project.projectMembers.forEach(member => console.log(member.name, member.dayRateWithMarkup));
     this.datasource.data = this.project.projectMembers;
     this.datasource._updateChangeSubscription();
   }
@@ -133,7 +132,7 @@ export class ProjectPageComponent implements OnInit {
     this.loading = true;
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
-      this.project.projectMembers = project.projectMembers;
+      this.project = project;
       this.fillTableWithTeams();
       this.fillStatBox();
     });
@@ -167,6 +166,9 @@ export class ProjectPageComponent implements OnInit {
 
       const response = await this.projectService.putProject(updatedProject);
       if (response != undefined) {
+        this.project = response;
+        this.fillTableWithTeams();
+        this.fillStatBox();
         this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_UPDATED'), true);
       } else {
         this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);
@@ -187,11 +189,13 @@ export class ProjectPageComponent implements OnInit {
 
   async onRemove(row: ProjectMembers) {
     this.selectedRow = row;
-    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.teamId!);
-    if (result) {
+    this.project.projectMembers = this.project.projectMembers.filter(member => member.teamId !== row.teamId);
+    const updatedProject = await this.projectService.deleteProjectMember(this.project, this.selectedRow?.teamId!);
+    if (updatedProject) {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
-      this.project.projectMembers = this.project.projectMembers.filter(member => member.teamId !== this.selectedRow?.teamId);
+      this.project = updatedProject;
       this.fillTableWithTeams();
+      this.fillStatBox();
       this.calculateProjectDayRate();
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
@@ -249,10 +253,6 @@ export class ProjectPageComponent implements OnInit {
     }
     selectedProject['isEditing'] = false;
     this.isEditingRow = false;
-  }
-
-  selectRow(row: ProjectMembers) {
-    this.selectedRow = row;
   }
 
   private calculateProjectDayRate(){

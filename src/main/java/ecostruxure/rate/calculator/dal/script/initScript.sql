@@ -26,8 +26,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE dbo.Currency (
                               currency_code       VARCHAR(3) PRIMARY KEY NOT NULL,
-                              eur_conversion_rate DECIMAL(10, 2),
-                              usd_conversion_rate DECIMAL(10, 2),
+                              eur_conversion_rate DECIMAL(10, 4),
                               symbol              varchar(1)
 );
 
@@ -147,7 +146,7 @@ CREATE TABLE dbo.Project (
                              project_sales_number VARCHAR(20),
                              project_description TEXT,
                              project_day_rate NUMERIC(18, 2),
-                             project_gross_margin NUMERIC(5, 2),
+                             project_gross_margin NUMERIC(7, 2),
                              project_price NUMERIC(18, 2),
                              project_start_date DATE,
                              project_end_date DATE,
@@ -1078,8 +1077,8 @@ VALUES
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '50b601e3-dd42-422b-ac43-1aae17dff125', 50.00, 50.00, 60000.00, 0, 0); -- Flex-time engineer fully in Global Cloud Infrastructure Solutions
 
 
-INSERT INTO dbo.Currency (currency_code, eur_conversion_rate, usd_conversion_rate, symbol)
-VALUES ('USD', 1.08, 1.00, '$'), ('EUR', 1.00, 0.93, '€');
+INSERT INTO dbo.Currency (currency_code, eur_conversion_rate, symbol)
+VALUES ('USD', 1.08, '$'), ('EUR', 1.00, '€');
 
 INSERT INTO dbo.Teams_profiles_history (
     team_id,

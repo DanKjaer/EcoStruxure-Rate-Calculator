@@ -37,9 +37,16 @@ public class ProjectController {
         return projectService.deleteProject(id);
     }
 
-    @DeleteMapping()
-    public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
-        return projectService.deleteProjectMember(projectId, teamId);
+    /**
+     * Using a put mapping to delete a project member, as it is a partial update of the project
+     * @param project
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/delete_member")
+    public Project deleteProjectMember(@RequestBody Project project, @RequestParam UUID teamId) throws Exception {
+        return projectService.deleteProjectMember(project, teamId);
     }
 
     @PutMapping("/update")
