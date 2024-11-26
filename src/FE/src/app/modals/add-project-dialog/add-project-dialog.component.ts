@@ -2,7 +2,8 @@ import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {MatDialogModule} from '@angular/material/dialog';
-import {MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatOption, MatSelect} from '@angular/material/select';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
@@ -10,24 +11,28 @@ import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {Geography, Project, ProjectMembers, Team} from '../../models';
 import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {ProfileService} from '../../services/profile.service';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import {
+  MatDatepickerModule
+} from '@angular/material/datepicker';
 import { ChangeDetectorRef } from '@angular/core';
 import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
-import {MatDivider} from '@angular/material/divider';
+import {TeamsService} from '../../services/teams.service';
 import {GeographyService} from '../../services/geography.service';
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
   selector: 'app-add-project-dialog',
   standalone: true,
   imports: [
     CommonModule,
+    MatSelect,
     TranslateModule,
     ReactiveFormsModule,
     MatButton,
     MatIcon,
     MatInput,
+    MatOption,
     MatDialogModule,
     MatListOption,
     MatSelectionList,
@@ -53,12 +58,12 @@ export class AddProjectDialogComponent implements OnInit {
 
 
   constructor(private formBuilder: FormBuilder,
-              private profileService: ProfileService,
+              private teamService: TeamsService,
               private projectService: ProjectService,
+              public geographyService: GeographyService,
               private ChangeDetectorRef: ChangeDetectorRef,
               private snackBar: SnackbarService,
-              private translate: TranslateService,
-              private geographyService: GeographyService) {
+              private translate: TranslateService) {
   }
 
   async ngOnInit() {
@@ -70,14 +75,15 @@ export class AddProjectDialogComponent implements OnInit {
       projectGrossMargin: [''],
       startDate: new FormControl<Date | null>(null),
       endDate: new FormControl<Date | null>(null),
-      projectDescription: [''],
+      projectDescription: ['']
     })
 
     this.teamForm = this.formBuilder.group({
-      profiles: [[], Validators.required]
+      teams: [[], Validators.required]
     });
 
-    this.teamList = await this.profileService.getProfiles();
+    this.teamList = await this.teamService.getTeams();
+    this.getCountries();
     this.ChangeDetectorRef.detectChanges();
   }
 
@@ -107,10 +113,9 @@ export class AddProjectDialogComponent implements OnInit {
         projectStartDate: startDateUtc,
         projectEndDate: endDateUtc,
         projectPrice: this.projectForm.value.projectPrice,
-        projectLocation: this.projectForm.value.geography,
-        projectGrossMargin: this.projectForm.value.projectGrossMargin
+        projectLocation: this.projectForm.value.geography
       }
-      const newProject = await this.projectService.postProject(project)
+      const newProject = await this.projectService.postProject(project);
       if (newProject) {
         this.projectAdded.emit(newProject);
         this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_CREATED'), true);
