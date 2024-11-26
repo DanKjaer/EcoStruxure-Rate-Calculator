@@ -99,7 +99,8 @@ public class CurrencyDAO implements ICurrencyDAO {
     public void addCurrency(Currency currency) throws Exception {
         String query = """
                 INSERT INTO dbo.currency (currency_code, eur_conversion_rate, usd_conversion_rate, symbol)
-                VALUES (?, ?, ?, ?);
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT (currency_code) DO UPDATE SET eur_conversion_rate = ?, usd_conversion_rate = ?, symbol = ?;
                 """;
         try (Connection conn = dbConnector.connection();
         PreparedStatement stmt = conn.prepareStatement(query)) {

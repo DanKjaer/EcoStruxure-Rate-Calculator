@@ -31,7 +31,6 @@ public class CurrencyService {
     }
 
     public void importCurrencies(Currency[] currencies) throws Exception {
-        this.currencyDAO.removeAllCurrencies();
         for (Currency currency : currencies) {
             this.currencyDAO.addCurrency(currency);
         }
