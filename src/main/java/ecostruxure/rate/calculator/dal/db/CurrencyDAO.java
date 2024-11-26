@@ -31,7 +31,7 @@ public class CurrencyDAO implements ICurrencyDAO {
                 return new Currency(
                         rs.getString("currency_code"),
                         rs.getBigDecimal("eur_conversion_rate"),
-                        rs.getBigDecimal("usd_conversion_rate")
+                        rs.getString("symbol")
                 );
             } else {
                 throw new Exception("Currency with code " + code + " not found in the database.");
@@ -55,7 +55,6 @@ public class CurrencyDAO implements ICurrencyDAO {
                 Currency currency = new Currency();
                 currency.setCurrencyCode(rs.getString("currency_code"));
                 currency.setEurConversionRate(rs.getBigDecimal("eur_conversion_rate"));
-                currency.setUsdConversionRate(rs.getBigDecimal("usd_conversion_rate"));
                 currency.setSymbol(rs.getString("symbol"));
                 currencies.add(currency);
             }
@@ -67,68 +66,18 @@ public class CurrencyDAO implements ICurrencyDAO {
     }
 
     @Override
-    public void addCurrencies(List<Currency> currencies) throws Exception {
-        String query = """
-                       INSERT INTO Currency (currency_code, eur_conversion_rate, usd_conversion_rate)
-                       VALUES (?, ?, ?);
-                       """;
-
-        try (Connection conn = dbConnector.connection()) {
-            conn.setAutoCommit(false);
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                for (Currency currency : currencies) {
-                    stmt.setString(1, currency.currencyCode());
-                    stmt.setBigDecimal(2, currency.eurConversionRate());
-                    stmt.setBigDecimal(3, currency.usdConversionRate());
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw new Exception("Could not add currencies to the database.\n" + e.getMessage(), e);
-            } finally {
-                conn.setAutoCommit(true);
-            }
-        } catch (SQLException e) {
-            throw new Exception("Database connection error occurred", e);
-        }
-    }
-
-    @Override
     public void addCurrency(Currency currency) throws Exception {
         String query = """
-                INSERT INTO dbo.currency (currency_code, eur_conversion_rate, usd_conversion_rate, symbol)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT (currency_code) DO UPDATE SET eur_conversion_rate = ?, usd_conversion_rate = ?, symbol = ?;
+                INSERT INTO dbo.currency (currency_code, eur_conversion_rate, symbol)
+                VALUES (?, ?, ?)
+                ON CONFLICT (currency_code) DO UPDATE SET eur_conversion_rate = ?, symbol = ?;
                 """;
         try (Connection conn = dbConnector.connection();
         PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, currency.currencyCode());
             stmt.setBigDecimal(2, currency.eurConversionRate());
-            stmt.setBigDecimal(3, currency.usdConversionRate());
-            stmt.setString(4, currency.getSymbol());
+            stmt.setString(3, currency.getSymbol());
             stmt.executeUpdate();
-        }
-    }
-
-    @Override
-    public void removeAllCurrencies() throws Exception {
-        String query = "DELETE FROM Currency";
-
-        try (Connection conn = dbConnector.connection()) {
-            conn.setAutoCommit(false);
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.executeUpdate();
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw new Exception("Failed to clear Currency table. Operation rolled back.", e);
-            } finally {
-                conn.setAutoCommit(true);
-            }
-        } catch (SQLException e) {
-            throw new Exception("Database connection error occurred", e);
         }
     }
 }

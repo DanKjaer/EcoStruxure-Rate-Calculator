@@ -5,15 +5,14 @@ import java.math.BigDecimal;
 public class Currency {
     private String currencyCode;
     private BigDecimal eurConversionRate;
-    private BigDecimal usdConversionRate;
     private String symbol;
 
     public Currency() {}
 
-    public Currency(String currencyCode, BigDecimal eurConversionRate, BigDecimal usdConversionRate) {
+    public Currency(String currencyCode, BigDecimal eurConversionRate, String symbol) {
         this.currencyCode = currencyCode;
         this.eurConversionRate = eurConversionRate;
-        this.usdConversionRate = usdConversionRate;
+        this.symbol = symbol;
     }
 
     public String currencyCode() {
@@ -32,14 +31,6 @@ public class Currency {
         this.eurConversionRate = eurConversionRate;
     }
 
-    public BigDecimal usdConversionRate() {
-        return usdConversionRate;
-    }
-
-    public void usdConversionRate(BigDecimal usdConversionRate) {
-        this.usdConversionRate = usdConversionRate;
-    }
-
     public String getCurrencyCode() {
         return currencyCode;
     }
@@ -56,14 +47,6 @@ public class Currency {
         this.eurConversionRate = eurConversionRate;
     }
 
-    public BigDecimal getUsdConversionRate() {
-        return usdConversionRate;
-    }
-
-    public void setUsdConversionRate(BigDecimal usdConversionRate) {
-        this.usdConversionRate = usdConversionRate;
-    }
-
     public String getSymbol() {
         return symbol;
     }
@@ -77,7 +60,6 @@ public class Currency {
         return "Currency{" +
                 "currencyCode='" + currencyCode + '\'' +
                 ", eurConversionRate=" + eurConversionRate +
-                ", usdConversionRate=" + usdConversionRate +
                 '}';
     }
 }

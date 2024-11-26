@@ -90,6 +90,5 @@ export interface ProjectMembers {
 export interface Currency {
   currencyCode: string;
   eurConversionRate: number;
-  usdConversionRate: number;
   symbol: string;
 }
