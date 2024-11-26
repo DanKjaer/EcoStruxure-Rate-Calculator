@@ -37,7 +37,6 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
     TranslateModule,
     NgClass,
     MatFormField,
-    MatMenuTrigger,
     ReactiveFormsModule,
     MatDatepickerInput,
     MatDatepickerToggle,
@@ -186,7 +185,8 @@ export class ProjectPageComponent implements OnInit {
     });
   }
 
-  async onRemove() {
+  async onRemove(row: ProjectMembers) {
+    this.selectedRow = row;
     const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.teamId!);
     if (result) {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
