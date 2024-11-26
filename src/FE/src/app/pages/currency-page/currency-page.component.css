@@ -26,6 +26,8 @@
 }
 
 .tableContainer {
+  /*margin-top: 0;*/
+  max-height: 83%;
   overflow: auto;
   background-color: whitesmoke;
   position: relative;
@@ -49,4 +51,13 @@
 
 .mat-mdc-row:hover {
   background-color: rgba(0, 0, 0, 0.03);
+}
+.uploadContainer {
+  padding: 0.750rem;
+  margin-top: auto;
+  max-height: fit-content;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background-color: whitesmoke;
+  border-radius: 1rem 1rem 0 0;
 }

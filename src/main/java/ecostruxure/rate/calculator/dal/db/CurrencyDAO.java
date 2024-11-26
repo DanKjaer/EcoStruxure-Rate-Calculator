@@ -96,6 +96,23 @@ public class CurrencyDAO implements ICurrencyDAO {
     }
 
     @Override
+    public void addCurrency(Currency currency) throws Exception {
+        String query = """
+                INSERT INTO dbo.currency (currency_code, eur_conversion_rate, usd_conversion_rate, symbol)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT (currency_code) DO UPDATE SET eur_conversion_rate = ?, usd_conversion_rate = ?, symbol = ?;
+                """;
+        try (Connection conn = dbConnector.connection();
+        PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, currency.currencyCode());
+            stmt.setBigDecimal(2, currency.eurConversionRate());
+            stmt.setBigDecimal(3, currency.usdConversionRate());
+            stmt.setString(4, currency.getSymbol());
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
     public void removeAllCurrencies() throws Exception {
         String query = "DELETE FROM Currency";
 

@@ -30,6 +30,12 @@ public class CurrencyService {
         return currencyDAO.get(code);
     }
 
+    public void importCurrencies(Currency[] currencies) throws Exception {
+        for (Currency currency : currencies) {
+            this.currencyDAO.addCurrency(currency);
+        }
+    }
+
     public void importCurrenciesFromCSV(String filePath) throws Exception {
         List<Currency> currencies = parseCSV(filePath);
 
