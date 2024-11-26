@@ -4,6 +4,11 @@
       {{ 'CURRENCY' | translate }}
     </span>
   </div>
+  <div class="uploadContainer">
+    <h2>Upload CSV File</h2>
+    <input type="file" (change)="onFileSelected($event)" accept=".csv" />
+  </div>
+
   <div class="tableContainer">
     <table class="currencyTable" mat-table [dataSource]="datasource">
 
@@ -53,5 +58,9 @@
       <!-- Display spinner when loading -->
       <mat-spinner diameter="50"></mat-spinner>
     </div>
+    <div class="uploadContainer">
+
+    </div>
   </div>
+
 </div>

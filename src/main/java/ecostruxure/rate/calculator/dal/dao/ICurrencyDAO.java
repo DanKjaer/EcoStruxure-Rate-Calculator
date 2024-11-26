@@ -28,6 +28,13 @@ public interface ICurrencyDAO {
     void addCurrencies(List<Currency> currencies) throws Exception;
 
     /**
+     * Adds a currency to the database.
+     * @param currency {@link Currency}
+     * @throws Exception
+     */
+    void addCurrency(Currency currency) throws Exception;
+
+    /**
      * Removes all currencies from database.
      * @throws Exception
      */

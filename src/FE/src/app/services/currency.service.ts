@@ -74,4 +74,12 @@ export class CurrencyService {
     const amountInEUR = amount / this.currencies[from].eurConversionRate;
     return amountInEUR * this.currencies[to].eurConversionRate;
   }
+
+  /**
+   * Updates the currencies in the database.
+   * @param currencies
+   */
+  importCurrency(currencies: Currency[]) {
+    return firstValueFrom(this.http.put<Currency>(`${this.apiUrl}/import`, currencies));
+  }
 }
