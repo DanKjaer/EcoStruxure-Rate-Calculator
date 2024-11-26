@@ -82,16 +82,16 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = ['name',
-                                'salesNumber',
-                                'members',
-                                'dayRate',
-                                'grossMargin',
-                                'price',
-                                'startDate',
-                                'endDate',
-                                'totalDays',
-                                'location',
-                                'options'];
+    'salesNumber',
+    'members',
+    'dayRate',
+    'grossMargin',
+    'price',
+    'startDate',
+    'endDate',
+    'totalDays',
+    'location',
+    'options'];
 
   protected readonly localStorage = localStorage;
 
