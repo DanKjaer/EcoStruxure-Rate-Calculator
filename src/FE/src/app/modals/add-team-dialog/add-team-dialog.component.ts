@@ -1,10 +1,8 @@
-import {booleanAttribute, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {
-  FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -18,6 +16,7 @@ import {MatListModule, MatSelectionListChange} from '@angular/material/list';
 import {TeamsService} from '../../services/teams.service';
 import {ProfileService} from '../../services/profile.service';
 import {Profile, Team, TeamProfiles} from '../../models';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-add-team-dialog',
@@ -44,7 +43,12 @@ export class AddTeamDialogComponent implements OnInit {
   selectedProfiles: Profile[] = [];
   @Output() teamAdded = new EventEmitter<Team>();
 
-  constructor(private fb: FormBuilder, private teamService: TeamsService, private profileService: ProfileService) {
+  constructor(
+    private fb: FormBuilder
+    , private teamService: TeamsService
+    , private profileService: ProfileService
+    , private snackBar: SnackbarService
+    , private translate: TranslateService) {
   }
 
   async ngOnInit() {
@@ -52,8 +56,10 @@ export class AddTeamDialogComponent implements OnInit {
       name: ['', Validators.required],
       profiles: [[], Validators.required]
     })
-
     this.profileList = await this.profileService.getProfiles();
+    this.profileList.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
   }
 
   async onSave() {
@@ -70,11 +76,17 @@ export class AddTeamDialogComponent implements OnInit {
         annualHours : profile.annualHours!,
         costAllocation : 100,
         hourAllocation : 100,
+        geography : profile.geography!,
       };
       teamProfiles.push(teamProfile);
     });
     const newTeam = await this.teamService.postTeam(team, teamProfiles);
-    this.teamAdded.emit(newTeam);
+    if (newTeam.teamId != undefined) {
+      this.teamAdded.emit(newTeam);
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_CREATED'), true);
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
+    }
   }
 
   onSelectionChange($event: MatSelectionListChange) {

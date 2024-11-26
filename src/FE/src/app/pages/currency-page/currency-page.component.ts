@@ -1,10 +1,12 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatTableModule, MatTableDataSource} from '@angular/material/table';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
 import {MatCard, MatCardContent} from '@angular/material/card';
+import {NgClass, NgIf} from '@angular/common';
+import {MenuService} from '../../services/menu.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-currency-page',
@@ -17,36 +19,37 @@ import {MatCard, MatCardContent} from '@angular/material/card';
     MatIcon,
     MatCard,
     MatCardContent,
+    NgClass
   ],
   templateUrl: './currency-page.component.html',
   styleUrl: './currency-page.component.css'
 })
-export class CurrencyPageComponent implements AfterViewInit {
+export class CurrencyPageComponent implements AfterViewInit, OnInit {
+
+  constructor(private menuService: MenuService, private currencyService: CurrencyService) {
+  }
+
+  isMenuOpen: boolean | undefined;
+
   displayedColumns: string[] = [
     'currency',
     'eur conversion rate',
-    'usd conversion rate'
+    'usd conversion rate',
+    'symbol'
   ];
 
-  datasource = new MatTableDataSource([{}]);
+  datasource = new MatTableDataSource();
   loading = true;
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.datasource.data = [
-        {
-          currency: 'EUR',
-          'eur conversion rate': 1.00,
-          'usd conversion rate': 0.93
-        },
-        {
-          currency: 'USD',
-          'eur conversion rate': 1.08,
-          'usd conversion rate': 1.00
-        }
-      ];
-      this.loading = false;
-    }, 500)
+  ngOnInit() {
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
+    });
+  }
+
+  async ngAfterViewInit() {
+    this.datasource.data = await this.currencyService.getCurrencies();
+    this.loading = false;
   }
 
   onFileSelected(event: Event): void {

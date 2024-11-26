@@ -1,4 +1,5 @@
 package ecostruxure.rate.calculator.be;
+
 import ecostruxure.rate.calculator.bll.service.GeographyService;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ public class Profile {
     private UUID profileId;
     private String name;
     private String currency;
-    private int countryId;
+    private Geography geography;
     private Boolean resourceType;
     private BigDecimal annualCost;
     private BigDecimal annualHours;
@@ -23,11 +24,11 @@ public class Profile {
     private Timestamp updatedAt;
 
     // Implementer builder pattern, så jeg kan have 1 constructor.
-    private Profile(Builder builder){
+    private Profile(Builder builder) {
         this.profileId = builder.profileId;
         this.name = builder.name;
         this.currency = builder.currency;
-        this.countryId = builder.countryId;
+        this.geography = builder.geography;
         this.resourceType = builder.resourceType;
         this.annualCost = builder.annualCost;
         this.annualHours = builder.annualHours;
@@ -40,11 +41,11 @@ public class Profile {
         this.updatedAt = builder.updatedAt;
     }
 
-    public static class Builder{
+    public static class Builder {
         private UUID profileId;
         private String name;
         private String currency;
-        private int countryId;
+        private Geography geography;
         private Boolean resourceType;
         private BigDecimal annualCost;
         private BigDecimal annualHours;
@@ -56,82 +57,95 @@ public class Profile {
         private boolean archived;
         private Timestamp updatedAt;
 
-        public Builder setProfileId(UUID profileId){
+        public Builder setProfileId(UUID profileId) {
             this.profileId = profileId;
             return this;
         }
 
-        public Builder setName(String name){
+        public Builder setName(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder setCurrency(String currency){
+        public Builder setGeography(Geography geography) {
+            this.geography = geography;
+            return this;
+        }
+
+        public Builder setCurrency(String currency) {
             this.currency = currency;
             return this;
         }
 
-        public Builder setCountryId(int countryId){
-            this.countryId = countryId;
-            return this;
-        }
-
-        public Builder setResourceType(Boolean resourceType){
+        public Builder setResourceType(Boolean resourceType) {
             this.resourceType = resourceType;
             return this;
         }
 
-        public Builder setAnnualCost(BigDecimal annualCost){
+        public Builder setAnnualCost(BigDecimal annualCost) {
             this.annualCost = annualCost;
             return this;
         }
 
-        public Builder setAnnualHours(BigDecimal annualHours){
+        public Builder setAnnualHours(BigDecimal annualHours) {
             this.annualHours = annualHours;
             return this;
         }
 
-        public Builder setHoursPerDay(BigDecimal hoursPerDay){
+        public Builder setHoursPerDay(BigDecimal hoursPerDay) {
             this.hoursPerDay = hoursPerDay;
             return this;
         }
 
-        public Builder setEffectivenessPercentage(BigDecimal effectivenessPercentage){
+        public Builder setEffectivenessPercentage(BigDecimal effectivenessPercentage) {
             this.effectivenessPercentage = effectivenessPercentage;
             return this;
         }
 
-        public Builder setEffectiveWorkHours(BigDecimal effectiveWorkHours){
+        public Builder setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
             this.effectiveWorkHours = effectiveWorkHours;
             return this;
         }
 
-        public Builder setTotalCostAllocation(BigDecimal totalCostAllocation){
+        public Builder setTotalCostAllocation(BigDecimal totalCostAllocation) {
             this.totalCostAllocation = totalCostAllocation;
             return this;
         }
 
-        public Builder setTotalHoursAllocation(BigDecimal totalHoursAllocation){
+        public Builder setTotalHoursAllocation(BigDecimal totalHoursAllocation) {
             this.totalHoursAllocation = totalHoursAllocation;
             return this;
         }
 
-        public Builder setArchived(boolean archived){
+        public Builder setArchived(boolean archived) {
             this.archived = archived;
             return this;
         }
 
-        public Builder setUpdatedAt(Timestamp updatedAt){
+        public Builder setUpdatedAt(Timestamp updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
 
-        public Profile build(){
+        public Profile build() {
             return new Profile(this);
         }
 
     }
+
     public Profile() {
+    }
+
+    public Geography getGeography() {
+        return geography;
+    }
+
+    public void setGeography(Geography geography) {
+        this.geography = geography;
+    }
+
+    public Boolean getResourceType() {
+        return resourceType;
     }
 
     public BigDecimal getTotalCostAllocation() {
@@ -180,14 +194,6 @@ public class Profile {
 
     public void setCurrency(String currency) {
         this.currency = currency;
-    }
-
-    public int getCountryId() {
-        return countryId;
-    }
-
-    public void setCountryId(int countryId) {
-        this.countryId = countryId;
     }
 
     public Boolean isResourceType() {
@@ -254,10 +260,4 @@ public class Profile {
         this.teamProfile = teamProfile;
     }
 
-    public Geography fetchGeography(GeographyService geographyService) throws Exception{
-        if(this.countryId != 0) {
-            return geographyService.getByCountryId(this.countryId);
-        }
-        return null;
-    }
 }

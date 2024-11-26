@@ -35,5 +35,28 @@
   border-radius: 1rem;
   border: 1px solid gray;
   overflow: auto;
-  max-height: 20rem;
+  max-height: 28rem;
 }
+
+
+.allocationContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.allocationInput {
+  width: 9rem;
+}
+
+.allocationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.descriptionContainer{
+  height: 9rem;
+}
+

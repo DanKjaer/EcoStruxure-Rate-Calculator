@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -10,7 +10,9 @@ import {MatOption, MatSelect} from '@angular/material/select';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ProfileService} from '../../services/profile.service';
 import {GeographyService} from '../../services/geography.service';
-import {Geography, Profile} from '../../models';
+import {Currency, Geography, Profile} from '../../models';
+import {SnackbarService} from '../../services/snackbar.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-add-profile-dialog',
@@ -31,14 +33,18 @@ import {Geography, Profile} from '../../models';
   styleUrl: './add-profile-dialog.component.css'
 })
 export class AddProfileDialogComponent implements OnInit {
-  profileForm!: FormGroup;
+  profileForm: FormGroup = new FormGroup({});
   locations!: Geography[];
-  @Output( ) profileAdded = new EventEmitter<Profile>();
+  currencies!: Currency[];
+  @Output() profileAdded = new EventEmitter<Profile>();
 
   constructor(private formBuilder: FormBuilder,
               private profileService: ProfileService,
               public dialogRef: MatDialogRef<AddProfileDialogComponent>,
               public geographyService: GeographyService,
+              private snackBar: SnackbarService,
+              private translate: TranslateService,
+              protected currencyService: CurrencyService,
   ) {
   }
 
@@ -46,22 +52,20 @@ export class AddProfileDialogComponent implements OnInit {
     this.locations = await this.geographyService.getCountries();
   }
 
-  currencies: String[] = [
-    'EUR',
-    'USD'
-  ]
 
-  ngOnInit() {
+  async ngOnInit() {
     this.profileForm = this.formBuilder.group({
       name: ['', Validators.required],
-      countryId: ['', Validators.required],
+      geography: ['', Validators.required],
       currency: ['', Validators.required],
-      resource_type: [false, Validators.required],
-      annual_cost: [0],
-      annual_hours: [{value: 0, disabled: true}],
-      effectiveness: [0],
-      hours_per_day: [0],
-    })
+      resource_type: [true, Validators.required],
+      annual_cost: [''],
+      annual_hours: [{value: '', disabled: true}],
+      effectiveness: [''],
+      hours_per_day: [''],
+    });
+
+    this.currencies = await this.currencyService.getCurrencies();
 
     this.profileForm.get('resource_type')?.valueChanges.subscribe(value => {
       if (value == 1) {
@@ -70,28 +74,29 @@ export class AddProfileDialogComponent implements OnInit {
         this.profileForm.get('annual_hours')?.enable();
       }
     });
-
-    this.getCountries();
-  }
-
-  addProfile() {
-    //todo: add profile to db and update table
+    await this.getCountries();
   }
 
   async onSave() {
+    console.log(this.profileForm.value.geography);
     if (this.profileForm.valid) {
-      let profile = {
-        name: this.profileForm.value.name,
-        countryId: this.profileForm.value.countryId,
-        currency: this.profileForm.value.currency,
-        resourceType: this.profileForm.value.resource_type,
-        annualCost: this.profileForm.value.annual_cost,
-        annualHours: this.profileForm.value.annual_hours,
-        effectivenessPercentage: this.profileForm.value.effectiveness,
-        hoursPerDay: this.profileForm.value.hours_per_day
+      let profileDTO: Profile = {
+          name: this.profileForm.value.name,
+          geography: this.profileForm.value.geography,
+          currency: this.profileForm.value.currency.currencyCode,
+          resourceType: this.profileForm.value.resource_type,
+          annualCost: this.currencyService.convert(this.profileForm.value.annual_cost, this.profileForm.value.currency, "EUR"),
+          annualHours: this.profileForm.value.annual_hours || 0,
+          effectivenessPercentage: this.profileForm.value.effectiveness || 0,
+          hoursPerDay: this.profileForm.value.hours_per_day || 0
       };
-      const newProfile = await this.profileService.postProfile(profile);
-      this.profileAdded.emit(newProfile);
+      const newProfile = await this.profileService.postProfile(profileDTO);
+      if (newProfile.profileId != undefined) {
+        this.profileAdded.emit(newProfile);
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_CREATED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_CREATED'), false);
+      }
     }
   }
 }

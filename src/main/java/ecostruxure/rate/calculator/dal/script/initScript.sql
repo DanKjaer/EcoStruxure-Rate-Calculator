@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS dbo.Project;
 
 DROP TABLE IF EXISTS dbo.Profiles;
 
+DROP TABLE IF EXISTS dbo.Team_geography_link;
+
 DROP TABLE IF EXISTS dbo.Teams;
 
 DROP TABLE IF EXISTS dbo.Currency;
@@ -25,22 +27,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE dbo.Currency (
                               currency_code       VARCHAR(3) PRIMARY KEY NOT NULL,
                               eur_conversion_rate DECIMAL(10, 2),
-                              usd_conversion_rate DECIMAL(10, 2)
-);
-
-CREATE TABLE dbo.Teams (
-                           id                          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                           name                        VARCHAR(100)  NOT NULL,
-                           markup                      DECIMAL(5, 2) DEFAULT 0 NOT NULL,
-                           gross_margin                DECIMAL(5, 2) DEFAULT 0 NOT NULL,
-                           is_archived                 BOOLEAN DEFAULT FALSE,
-                           updated_at                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                           day_rate                    DECIMAL(10, 2),
-                           hourly_rate                 DECIMAL(10, 2),
-                           total_allocated_cost        DECIMAL(19, 2),
-                           total_allocated_hours       DECIMAL(10, 2),
-                           total_markup                DECIMAL(19, 2),
-                           total_gross_margin          DECIMAL(19, 2)
+                              usd_conversion_rate DECIMAL(10, 2),
+                              symbol              varchar(1)
 );
 
 CREATE TABLE dbo.Countries (
@@ -64,23 +52,44 @@ CREATE TABLE dbo.geography_countries (
                                          FOREIGN KEY (code) REFERENCES dbo.Countries(code)
 );
 
+CREATE TABLE dbo.Teams (
+                           id                          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                           name                        VARCHAR(100)  NOT NULL,
+                           markup                      DECIMAL(5, 2) DEFAULT 0 NOT NULL,
+                           gross_margin                DECIMAL(5, 2) DEFAULT 0 NOT NULL,
+                           is_archived                 BOOLEAN DEFAULT FALSE,
+                           updated_at                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           day_rate                    DECIMAL(10, 2),
+                           hourly_rate                 DECIMAL(10, 2),
+                           total_allocated_cost        DECIMAL(19, 2),
+                           total_allocated_hours       DECIMAL(10, 2),
+                           total_markup                DECIMAL(19, 2),
+                           total_gross_margin          DECIMAL(19, 2)
+);
+
+CREATE TABLE dbo.Team_geography_link (
+                                         geography_id INT REFERENCES dbo.geography(id),
+                                         teams_id UUID REFERENCES dbo.teams(id),
+                                         PRIMARY KEY (geography_id, teams_id)
+);
+
 
 CREATE TABLE dbo.Profiles (
                               profile_id              UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
                               name                    TEXT NOT NULL,
                               currency                TEXT NOT NULL,
-                              country_id              INT NOT NULL,
+                              geography_id              INT NOT NULL,
                               resource_type           BOOLEAN NOT NULL,
                               annual_cost             DECIMAL(19, 4), -- DECIMAL(precision, scale), up to 999999999999999.9999
                               effectiveness           DECIMAL(6, 2), --  -999.99 - 999.99
                               annual_hours            DECIMAL(7, 2),
                               effective_work_hours    DECIMAL(10, 2),
                               hours_per_day           DECIMAL(4, 2), -- -99.99 - 99.99
-                              total_cost_allocation   DECIMAL(6, 2),
-                              total_hour_allocation   DECIMAL(6, 2),
+                              total_cost_allocation   DECIMAL(6, 2) DEFAULT 0,
+                              total_hour_allocation   DECIMAL(6, 2) DEFAULT 0,
                               is_archived             BOOLEAN DEFAULT FALSE,
                               updated_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                              FOREIGN KEY (country_id) REFERENCES dbo.geography(id)
+                              FOREIGN KEY (geography_id) REFERENCES dbo.geography(id)
 );
 
 
@@ -133,23 +142,28 @@ CREATE TABLE dbo.Teams_profiles_history (
 );
 
 CREATE TABLE dbo.Project (
-                         project_id UUID PRIMARY KEY,
-                         project_name VARCHAR(255) NOT NULL,
-                         project_description TEXT,
-                         project_cost NUMERIC(18, 2),
-                         project_markup NUMERIC(5, 2),
-                         project_gross_margin NUMERIC(5, 2),
-                         project_margin NUMERIC(18, 2),
-                         project_price NUMERIC(18, 2),
-                         start_date DATE,
-                         end_date DATE
+                             project_id UUID PRIMARY KEY,
+                             project_name VARCHAR(255) NOT NULL,
+                             project_sales_number VARCHAR(20),
+                             project_description TEXT,
+                             project_day_rate NUMERIC(18, 2),
+                             project_gross_margin NUMERIC(5, 2),
+                             project_price NUMERIC(18, 2),
+                             project_start_date DATE,
+                             project_end_date DATE,
+                             project_total_days INT,
+                             project_location INT NOT NULL REFERENCES dbo.geography(id),
+                             project_archived BOOLEAN DEFAULT FALSE,
+                             project_total_cost_at_change NUMERIC(18, 2),
+                             project_rest_cost_date DATE
 );
 
--- Creating a junction table for projectMembers since it's a many-to-many relationship
 CREATE TABLE dbo.Project_Members (
-                                 project_id UUID REFERENCES dbo.Project(project_id),
-                                 profile_id UUID REFERENCES dbo.Profiles(profile_id),
-                                 PRIMARY KEY (project_id, profile_id)
+                                     project_id UUID REFERENCES dbo.Project(project_id),
+                                     teams_id UUID REFERENCES dbo.teams(id),
+                                     PRIMARY KEY (project_id, teams_id),
+                                     allocation_on_project DECIMAL(5, 2),
+                                     day_rate_on_project DECIMAL(10, 2)
 );
 
 
@@ -1011,7 +1025,7 @@ INSERT INTO dbo.Profiles (
     profile_id,
     name,
     currency,
-    country_id,
+    geography_id,
     resource_type,
     is_archived,
     annual_cost,
@@ -1035,6 +1049,11 @@ VALUES
     ('2b485563-7c7f-49e7-b58f-b1b9fd2bbadf', 'High profile 3', 'EUR', 14, FALSE, FALSE, 120000.0000, 80, 2080.00, 1664, 8.00,100.00, 100.00), -- Overtime specialist in Australia
     ('50b601e3-dd42-422b-ac43-1aae17dff125', 'High medium manager', 'EUR', 32, True, FALSE, 120000.0000, 80, 0.00, 0, 8.00,100.00, 100.00); -- Standard worker in Brazil
 
+INSERT INTO dbo.Team_geography_link (geography_id, teams_id)
+VALUES (261, '937b379c-c326-4db2-9575-8313f59ddf2c'), -- Low cost team supporting Americas including Greenland
+       (263, '67e1e024-e589-4637-af32-e9ebc0303c9c'), -- Medium cost team supporting Caribbean
+       (278, '67e1e024-e589-4637-af32-e9ebc0303c9c'), -- Medium cost team supporting EMEA
+       (266, 'eba9685d-9621-48a2-ab7f-ed708e4dd63d'); -- High cost team supporting APAC
 
 INSERT INTO dbo.Teams_profiles (teamId, profileId, cost_allocation, hour_allocation, allocated_cost_on_team, allocated_hours_on_team, day_rate_on_team)
 VALUES
@@ -1059,8 +1078,8 @@ VALUES
     ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', '50b601e3-dd42-422b-ac43-1aae17dff125', 50.00, 50.00, 60000.00, 0, 0); -- Flex-time engineer fully in Global Cloud Infrastructure Solutions
 
 
-INSERT INTO dbo.Currency (currency_code, eur_conversion_rate, usd_conversion_rate)
-VALUES ('USD', 1.08, 1.00), ('EUR', 1.00, 0.93);
+INSERT INTO dbo.Currency (currency_code, eur_conversion_rate, usd_conversion_rate, symbol)
+VALUES ('USD', 1.08, 1.00, '$'), ('EUR', 1.00, 0.93, '€');
 
 INSERT INTO dbo.Teams_profiles_history (
     team_id,
@@ -1095,22 +1114,27 @@ VALUES
 
 INSERT INTO dbo.project (project_id,
                          project_name,
+                         project_sales_number,
                          project_description,
-                         project_cost,
-                         project_margin,
+                         project_day_rate,
+                         project_gross_margin,
                          project_price,
-                         start_date,
-                         end_date)
+                         project_start_date,
+                         project_end_date,
+                         project_total_days,
+                         project_location)
 VALUES ('769f922a-6e19-40d5-b46d-8ebd43960736',
         'Cheap Project',
+        '123456',
         'Some poor people wanted help',
-        160000,
-        176000,
-        211200,
-        '2024-05-15',
-        '2025-05-15');
+        228.8,
+        30,
+        2974.4,
+        '2024-12-02',
+        '2024-12-13',
+        10,
+        60
+       );
 
-INSERT INTO dbo.project_members (project_id, profile_id)
-VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '24c2b2f8-47f0-4c8b-b55d-cb49996feb44'),
-        ('769f922a-6e19-40d5-b46d-8ebd43960736', '44656c14-5882-4247-a0eb-7dc9253ec923'),
-        ('769f922a-6e19-40d5-b46d-8ebd43960736', '869877f5-b85c-4abb-890a-8de561c82641');
+INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
+VALUES  ('769f922a-6e19-40d5-b46d-8ebd43960736', '937b379c-c326-4db2-9575-8313f59ddf2c', 100, 228.8);

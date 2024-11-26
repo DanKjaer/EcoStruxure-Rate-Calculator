@@ -5,6 +5,8 @@ public class Geography {
     private String name;
     private boolean predefined;
 
+    public Geography() {}
+
     public Geography(int id, String name, boolean predefined) {
         this.id = id;
         this.name = name;

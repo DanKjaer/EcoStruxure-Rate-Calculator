@@ -11,6 +11,7 @@ import ecostruxure.rate.calculator.dal.db.ProfileDAO;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -23,12 +24,16 @@ public class ProfileService {
     private static final BigDecimal HUNDRED = new BigDecimal(100);
 
     private final TeamProfileManagementService teamProfileManagementService;
+    private final TeamService teamService;
+    private final ProjectService projectService;
     private final IProfileDAO profileDAO;
 
 
     public ProfileService() throws Exception {
+        this.teamService = new TeamService();
         this.teamProfileManagementService = new TeamProfileManagementService();
         this.profileDAO = new ProfileDAO();
+        this.projectService = new ProjectService();
     }
 
     public Profile create(Profile profile) throws Exception {
@@ -261,8 +266,18 @@ public class ProfileService {
         return profileDAO.getProfileHourAllocationForTeam(id, teamId);
     }
 
-    public boolean update(UUID profileId, Profile profile) throws Exception{
-        return profileDAO.update(profileId, profile);
+    public Profile update(Profile profile) throws Exception{
+        profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
+
+        var profileUpdated = profileDAO.update(profile);
+        List<Team> teams = new ArrayList<>();
+        if (profileUpdated) {
+            teams = teamService.updateProfile(profile);
+        }
+        for (Team team : teams) {
+            projectService.updateProjectBasedOnTeam(team);
+        }
+        return profile;
     }
 
     public boolean archive(UUID profileId, boolean shouldArchive) throws Exception {

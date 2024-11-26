@@ -1,8 +1,9 @@
-<div class="container">
+<div class="container" [ngClass]="{'menuClosed': !isMenuOpen}">
   <div class="statsContainer">
     <div class="rawHourlyRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.rawHourlyRate }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(this.statBoxes.rawHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'RAW_HOURLY_RATE' | translate }}
@@ -10,7 +11,8 @@
     </div>
     <div class="markupHourlyRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.markupHourlyRate }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(this.statBoxes.markupHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'MARKUP_HOURLY_RATE' | translate }}
@@ -18,7 +20,8 @@
     </div>
     <div class="gmHourlyRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.gmHourlyRate }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(this.statBoxes.gmHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'GM_HOURLY_RATE' | translate }}
@@ -26,7 +29,7 @@
     </div>
     <div class="annualHoursBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalAnnualHours }}
+        {{ this.statBoxes.totalAnnualHours | number:'1.0-0' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_ANNUAL_HOURS' | translate }}
@@ -39,14 +42,14 @@
         <p>{{ 'TEAM_PROFILES' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-          <input matInput inputmode="search" type="search">
+          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)">
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
-        <button mat-stroked-button>
+        <button mat-raised-button>
           <mat-icon>
             add
           </mat-icon>
-          {{ 'ADD_PROFILE' | translate }}
+          {{ 'ADD_TO_TEAM' | translate }}
         </button>
       </div>
       <div class="tableContainer">
@@ -70,7 +73,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['hourAllocation'] }}
+                {{ element['hourAllocation'] + '%' }}
               </span>
             </td>
           </ng-container>
@@ -82,7 +85,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['allocatedHoursOnTeam'] }}
+                {{ element['allocatedHoursOnTeam'] }} {{ 'HOURS' | translate }}
               </span>
             </td>
           </ng-container>
@@ -94,19 +97,20 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['costAllocation'] }}
+                {{ element['costAllocation'] + '%' }}
               </span>
             </td>
           </ng-container>
 
-          <!-- hourly rate -->
+          <!-- cost on team -->
           <ng-container matColumnDef="cost on team">
             <th mat-header-cell *matHeaderCellDef>
               {{ 'COST_ON_TEAM' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['allocatedCostOnTeam'] }}
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['allocatedCostOnTeam'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
               </span>
             </td>
           </ng-container>
@@ -118,30 +122,20 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['dayRateOnTeam'] }}
+                {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(element['dayRateOnTeam'], 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2' }}
               </span>
             </td>
           </ng-container>
 
-          <!-- annual cost -->
-          <ng-container matColumnDef="annual cost">
-            <th mat-header-cell *matHeaderCellDef>
-              {{ 'ANNUAL_COST' | translate }}
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <span>
-                {{ element['annualCost'] }}
-              </span>
-            </td>
-          </ng-container>
-
+          <!-- location -->
           <ng-container matColumnDef="location">
             <th mat-header-cell *matHeaderCellDef>
               {{ 'LOCATION' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['location'] }}
+                {{ element['geography'].name }}
               </span>
             </td>
           </ng-container>

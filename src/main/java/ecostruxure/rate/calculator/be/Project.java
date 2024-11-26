@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.be;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -10,14 +9,19 @@ public class Project {
     private UUID projectId;
     private String projectName;
     private String projectDescription;
-    private List<Profile> projectMembers;
-    private BigDecimal projectCost;
-    private BigDecimal projectMarkup;
-    private BigDecimal ProjectGrossMargin;
+    private List<ProjectMember> projectMembers;
+    private BigDecimal projectDayRate;
+    private BigDecimal projectGrossMargin;
     private BigDecimal projectMargin;
     private BigDecimal projectPrice;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate projectStartDate;
+    private LocalDate projectEndDate;
+    private int projectTotalDays;
+    private Geography projectLocation;
+    private Boolean projectArchived;
+    private BigDecimal projectTotalCostAtChange;
+    private LocalDate projectRestCostDate;
+    private String projectSalesNumber;
 
     public Project() {}
 
@@ -45,36 +49,28 @@ public class Project {
         this.projectDescription = projectDescription;
     }
 
-    public List<Profile> getProjectMembers() {
+    public List<ProjectMember> getProjectMembers() {
         return projectMembers;
     }
 
-    public void setProjectMembers(List<Profile> projectMembers) {
+    public void setProjectMembers(List<ProjectMember> projectMembers) {
         this.projectMembers = projectMembers;
     }
 
-    public BigDecimal getProjectCost() {
-        return projectCost;
+    public BigDecimal getProjectDayRate() {
+        return projectDayRate;
     }
 
-    public void setProjectCost(BigDecimal projectCost) {
-        this.projectCost = projectCost;
+    public void setProjectDayRate(BigDecimal projectDayRate) {
+        this.projectDayRate = projectDayRate;
     }
 
     public BigDecimal getProjectGrossMargin() {
-        return ProjectGrossMargin;
+        return projectGrossMargin;
     }
 
     public void setProjectGrossMargin(BigDecimal projectGrossMargin) {
-        ProjectGrossMargin = projectGrossMargin;
-    }
-
-    public BigDecimal getProjectMarkup() {
-        return projectMarkup;
-    }
-
-    public void setProjectMarkup(BigDecimal projectMarkup) {
-        this.projectMarkup = projectMarkup;
+        this.projectGrossMargin = projectGrossMargin;
     }
 
     public BigDecimal getProjectMargin() {
@@ -93,19 +89,67 @@ public class Project {
         this.projectPrice = projectPrice;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public LocalDate getProjectStartDate() {
+        return projectStartDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setProjectStartDate(LocalDate projectStartDate) {
+        this.projectStartDate = projectStartDate;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate getProjectEndDate() {
+        return projectEndDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setProjectEndDate(LocalDate projectEndDate) {
+        this.projectEndDate = projectEndDate;
+    }
+
+    public int getProjectTotalDays() {
+        return projectTotalDays;
+    }
+
+    public void setProjectTotalDays(int projectTotalDays) {
+        this.projectTotalDays = projectTotalDays;
+    }
+
+    public Geography getProjectLocation() {
+        return projectLocation;
+    }
+
+    public void setProjectLocation(Geography projectLocation) {
+        this.projectLocation = projectLocation;
+    }
+
+    public Boolean getProjectArchived() {
+        return projectArchived;
+    }
+
+    public void setProjectArchived(Boolean projectArchived) {
+        this.projectArchived = projectArchived;
+    }
+
+    public BigDecimal getProjectTotalCostAtChange() {
+        return projectTotalCostAtChange;
+    }
+
+    public void setProjectTotalCostAtChange(BigDecimal projectTotalCostAtChange) {
+        this.projectTotalCostAtChange = projectTotalCostAtChange;
+    }
+
+    public LocalDate getProjectRestCostDate() {
+        return projectRestCostDate;
+    }
+
+    public void setProjectRestCostDate(LocalDate projectRestCostDate) {
+        this.projectRestCostDate = projectRestCostDate;
+    }
+
+    public String getProjectSalesNumber() {
+        return projectSalesNumber;
+    }
+
+    public void setProjectSalesNumber(String projectSalesNumber) {
+        this.projectSalesNumber = projectSalesNumber;
     }
 }

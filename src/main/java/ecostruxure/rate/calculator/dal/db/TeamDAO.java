@@ -1,5 +1,6 @@
 package ecostruxure.rate.calculator.dal.db;
 
+import ecostruxure.rate.calculator.be.Geography;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
@@ -60,6 +61,40 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
+    public List<Team> getTeams(List<TeamProfile> teamProfiles) throws SQLException {
+        String query = """
+                SELECT * FROM dbo.teams WHERE id = ?
+                """;
+        List<Team> teams = new ArrayList<>();
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement(query);) {
+            for (TeamProfile teamProfile : teamProfiles) {
+                stmt.setObject(1, teamProfile.getTeamId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        Team team = new Team.Builder()
+                                .teamId((UUID) rs.getObject("id"))
+                                .name(rs.getString("name"))
+                                .markup(rs.getBigDecimal("markup"))
+                                .grossMargin(rs.getBigDecimal("gross_margin"))
+                                .archived(rs.getBoolean("is_archived"))
+                                .updatedAt(rs.getTimestamp("updated_at"))
+                                .dayRate(rs.getBigDecimal("day_rate"))
+                                .hourlyRate(rs.getBigDecimal("hourly_rate"))
+                                .totalAllocatedCost(rs.getBigDecimal("total_allocated_cost"))
+                                .totalAllocatedHours(rs.getBigDecimal("total_allocated_hours"))
+                                .totalMarkup(rs.getBigDecimal("total_markup"))
+                                .totalGrossMargin(rs.getBigDecimal("total_gross_margin"))
+                                .build();
+                        teams.add(team);
+                    }
+                }
+            }
+        }
+        return teams;
+    }
+
+    @Override
     public Team get(UUID id) throws Exception {
         Team team = null;
 
@@ -103,10 +138,11 @@ public class TeamDAO implements ITeamDAO {
         List<TeamProfile> teams = new ArrayList<>();
 
         String query = """
-                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours
+                       SELECT tp.*, t.name, p.annual_cost, p.annual_hours, g.id, g.name as geo_name, g.predefined
                        FROM dbo.teams_profiles tp
                        INNER JOIN dbo.teams t ON t.id = tp.teamid
                        INNER JOIN dbo.profiles p on p.profile_id = tp.profileid
+                       INNER JOIN dbo.geography g on p.geography_id = g.id
                        WHERE profileid = ?
                 """;
         try (Connection conn = dbConnector.connection();
@@ -124,9 +160,12 @@ public class TeamDAO implements ITeamDAO {
                 BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
                 BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                 BigDecimal annualHours = rs.getBigDecimal("annual_hours");
+                Geography geography = new Geography(rs.getInt("id"),
+                        rs.getString("geo_name"),
+                        rs.getBoolean("predefined"));
 
                 teams.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
-                        allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours));
+                        allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
             }
             return teams;
         } catch (Exception e) {
@@ -192,9 +231,13 @@ public class TeamDAO implements ITeamDAO {
     @Override
     public Team update(UUID teamId, Team team) throws Exception {
         String query = """
-                    UPDATE Teams SET name = ?,
+                    UPDATE dbo.teams SET name = ?,
                                      markup = ?,
                                      gross_margin = ?,
+                                     day_rate = ?,
+                                     hourly_rate = ?,
+                                     total_allocated_hours = ?,
+                                     total_allocated_cost = ?,
                                      total_markup = ?,
                                      total_gross_margin = ?,
                                      updated_at = CURRENT_TIMESTAMP 
@@ -206,9 +249,13 @@ public class TeamDAO implements ITeamDAO {
             stmt.setString(1, team.getName());
             stmt.setBigDecimal(2, team.getMarkup());
             stmt.setBigDecimal(3, team.getGrossMargin());
-            stmt.setBigDecimal(4, team.getTotalMarkup());
-            stmt.setBigDecimal(5, team.getTotalGrossMargin());
-            stmt.setObject(6, teamId);
+            stmt.setBigDecimal(4, team.getDayRate());
+            stmt.setBigDecimal(5, team.getHourlyRate());
+            stmt.setBigDecimal(6, team.getTotalAllocatedHours());
+            stmt.setBigDecimal(7, team.getTotalAllocatedCost());
+            stmt.setBigDecimal(8, team.getTotalMarkup());
+            stmt.setBigDecimal(9, team.getTotalGrossMargin());
+            stmt.setObject(10, team.getTeamId());
             stmt.executeUpdate();
             return team;
         } catch (Exception e) {
@@ -445,9 +492,10 @@ public class TeamDAO implements ITeamDAO {
     public List<TeamProfile> _getTeamProfiles(UUID teamId) throws Exception {
         List<TeamProfile> teamProfiles = new ArrayList<>();
         String query = """
-                SELECT tp.*, p.name, p.annual_cost, p.annual_hours
+                SELECT tp.*, p.name, p.annual_cost, p.annual_hours, g.id, g.name as geo_name, g.predefined
                 FROM dbo.Profiles p
-                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?;
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId AND tp.teamId = ?
+                INNER JOIN dbo.geography g on p.geography_id = g.id;
                 """;
 
         try (Connection conn = dbConnector.connection();
@@ -464,9 +512,12 @@ public class TeamDAO implements ITeamDAO {
                     BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
                     BigDecimal annualCost = rs.getBigDecimal("annual_cost");
                     BigDecimal annualHours = rs.getBigDecimal("annual_hours");
+                    Geography geography = new Geography(rs.getInt("id"),
+                            rs.getString("geo_name"),
+                            rs.getBoolean("predefined"));
 
                     teamProfiles.add(new TeamProfile(teamId, profileId, name, dayRate, costAllocation, hourAllocation,
-                            allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours));
+                            allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -488,11 +539,13 @@ public class TeamDAO implements ITeamDAO {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setObject(1, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
+                Geography geography = new Geography();
                 while (rs.next()) {
                     UUID id = (UUID) rs.getObject("profile_id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
-                    int countryId = rs.getInt("country_id");
+                    geography.setId(rs.getInt("geography_id"));
+                    geography.setName(rs.getString("geography.name"));
                     boolean resourceType = rs.getBoolean("resource_type");
 
                     BigDecimal annualCost = rs.getBigDecimal("annual_cost");
@@ -509,7 +562,7 @@ public class TeamDAO implements ITeamDAO {
                             .setProfileId(id)
                             .setName(name)
                             .setCurrency(currency)
-                            .setCountryId(countryId)
+                            .setGeography(geography)
                             .setResourceType(resourceType)
                             .setAnnualCost(annualCost)
                             .setAnnualHours(annualHours)
@@ -537,6 +590,47 @@ public class TeamDAO implements ITeamDAO {
     }
 
     @Override
+    public List<TeamProfile> getTeamProfiles(List<Team> teams) throws Exception {
+        String query = """
+                SELECT tp.*, p.name, p.annual_cost, p.annual_hours, g.id, g.name as geo_name, g.predefined
+                FROM dbo.Profiles p
+                INNER JOIN dbo.Teams_profiles tp ON p.profile_id = tp.profileId
+                INNER JOIN dbo.geography g on p.geography_id = g.id
+                WHERE tp.teamId = ?;
+                """;
+        List<TeamProfile> teamProfiles = new ArrayList<>();
+        try (Connection conn = dbConnector.connection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            for (Team team : teams) {
+                stmt.setObject(1, team.getTeamId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        UUID profileId = (UUID) rs.getObject("profileId");
+                        String name = rs.getString("name");
+                        BigDecimal dayRate = rs.getBigDecimal("day_rate_on_team");
+                        BigDecimal costAllocation = rs.getBigDecimal("cost_allocation");
+                        BigDecimal hourAllocation = rs.getBigDecimal("hour_allocation");
+                        BigDecimal allocatedCostOnTeam = rs.getBigDecimal("allocated_cost_on_team");
+                        BigDecimal allocatedHoursOnTeam = rs.getBigDecimal("allocated_hours_on_team");
+                        BigDecimal annualCost = rs.getBigDecimal("annual_cost");
+                        BigDecimal annualHours = rs.getBigDecimal("annual_hours");
+                        Geography geography = new Geography(rs.getInt("id"),
+                                rs.getString("geo_name"),
+                                rs.getBoolean("predefined"));
+
+                        teamProfiles.add(new TeamProfile(team.getTeamId(), profileId, name, dayRate, costAllocation, hourAllocation,
+                                allocatedCostOnTeam, allocatedHoursOnTeam, annualCost, annualHours, geography));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new Exception("Could not get Team Profiles from Database.\n" + e.getMessage());
+                }
+            }
+        }
+        return teamProfiles;
+    }
+
+    @Override
     public Profile getTeamProfile(UUID teamId, UUID profileId) throws Exception {
         Profile profile = null;
         String query = """
@@ -550,11 +644,13 @@ public class TeamDAO implements ITeamDAO {
             stmt.setObject(2, profileId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                Geography geography = new Geography();
                 if (rs.next()) {
                     UUID id = (UUID) rs.getObject("profile_id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
-                    int countryId = rs.getInt("country_id");
+                    geography.setId(rs.getInt("geography_id"));
+                    geography.setName(rs.getString("geography.name"));
                     boolean resourceType = rs.getBoolean("resource_type");
 
                     BigDecimal annualCost = rs.getBigDecimal("annual_cost");
@@ -571,7 +667,7 @@ public class TeamDAO implements ITeamDAO {
                             .setProfileId(id)
                             .setName(name)
                             .setCurrency(currency)
-                            .setCountryId(countryId)
+                            .setGeography(geography)
                             .setResourceType(resourceType)
                             .setAnnualCost(annualCost)
                             .setAnnualHours(annualHours)
@@ -709,6 +805,7 @@ public class TeamDAO implements ITeamDAO {
             stmt.setObject(1, teamId);
             stmt.setObject(2, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
+                Geography geography = new Geography();
                 while (rs.next()) {
                     BigDecimal addedRate = rs.getBigDecimal("cost_allocation");
                     BigDecimal costAllocationTotal = rs.getBigDecimal("total_cost_allocation"); // den her ignorer det team man giver, så man skal plus sammen for at se om det er over 100
@@ -724,7 +821,8 @@ public class TeamDAO implements ITeamDAO {
                     UUID id = (UUID) rs.getObject("id");
                     String name = rs.getString("name");
                     String currency = rs.getString("currency");
-                    int countryId = rs.getInt("country_id");
+                    geography.setId(rs.getInt("geography_id"));
+                    geography.setName(rs.getString("geography.name"));
                     boolean resourceType = rs.getBoolean("resource_type");
 
                     // Profile
@@ -742,7 +840,7 @@ public class TeamDAO implements ITeamDAO {
                             .setProfileId(id)
                             .setName(name)
                             .setCurrency(currency)
-                            .setCountryId(countryId)
+                            .setGeography(geography)
                             .setResourceType(resourceType)
                             .setAnnualCost(annualCost)
                             .setAnnualHours(annualHours)
@@ -810,8 +908,10 @@ public class TeamDAO implements ITeamDAO {
         SqlTransactionContext sqlContext = (SqlTransactionContext) context;
 
         String query = """
-                SELECT * FROM dbo.Profiles
+                SELECT *, g.name
+                FROM dbo.Profiles
                 INNER JOIN dbo.Teams_profiles ON dbo.Profiles.profile_id = dbo.Teams_profiles.profileId
+                JOIN dbo.geography g ON g.id = dbo.profiles.geography_id
                 WHERE dbo.Teams_profiles.teamId = ?;
                 """;
         List<Profile> profiles = new ArrayList<>();
@@ -902,7 +1002,7 @@ public class TeamDAO implements ITeamDAO {
         }
     }
 
-     @Override
+    @Override
     public BigDecimal getAllocatedHoursOnTeam(UUID teamId, UUID profileId) throws Exception {
         String sql = "SELECT allocated_Hours_on_team FROM teams_profiles WHERE teamid = ? AND profileid = ?";
         try (Connection conn = dbConnector.connection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -1063,6 +1163,36 @@ public class TeamDAO implements ITeamDAO {
             throw new SQLException("Could not update Team Profile in Database.\n" + e.getMessage());
         }
         return teamProfile;
+    }
+
+    @Override
+    public boolean updateTeamProfile(List<TeamProfile> teamProfiles) throws SQLException {
+        String query = """
+                UPDATE dbo.Teams_profiles 
+                SET cost_allocation = ?, 
+                    hour_allocation = ?, 
+                    allocated_cost_on_team = ?, 
+                    allocated_hours_on_team = ?, 
+                    day_rate_on_team = ?
+                WHERE teamId = ? AND profileId = ?
+                """;
+        try (Connection conn = dbConnector.connection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            for (TeamProfile teamProfile : teamProfiles) {
+                stmt.setBigDecimal(1, teamProfile.getCostAllocation());
+                stmt.setBigDecimal(2, teamProfile.getHourAllocation());
+                stmt.setBigDecimal(3, teamProfile.getAllocatedCostOnTeam());
+                stmt.setBigDecimal(4, teamProfile.getAllocatedHoursOnTeam());
+                stmt.setBigDecimal(5, teamProfile.getDayRateOnTeam());
+                stmt.setObject(6, teamProfile.getTeamId());
+                stmt.setObject(7, teamProfile.getProfileId());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Could not update Team Profile in Database.\n" + e.getMessage());
+        }
+        return true;
     }
 
     @Override

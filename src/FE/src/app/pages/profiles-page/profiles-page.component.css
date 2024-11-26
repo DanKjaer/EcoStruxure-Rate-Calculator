@@ -2,12 +2,17 @@
   display: flex;
   flex-direction: column;
   height: 90vh;
-  width: 70vw;
+  width: 80vw;
   background-color: forestgreen;
   padding: 1rem;
   border-radius: 1rem;
   margin-top: 1rem;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: width 0.3s ease;
+}
+
+.container.menuClosed {
+  width: 90vw;
 }
 
 .titleContainer {
@@ -36,14 +41,19 @@
   position: relative;
 }
 
-.paginatorContainer {
+.underTitleContainer {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   padding-top: 0.750rem;
   margin-top: auto;
-  max-height: 6vh;
   flex-grow: 0;
   flex-shrink: 0;
+  gap: 1rem;
+}
+
+.searchInput{
+  max-width: 15vw;
 }
 
 .spinnerContainer {
@@ -70,6 +80,11 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.mat-mdc-footer-cell{
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
 .red {
   background-color: red;
 }
@@ -84,4 +99,8 @@
 
 .orange:hover {
   background-color: rgba(255, 165, 0, 0.4);
+}
+
+tr.mat-mdc-footer-row {
+  font-weight: bold;
 }
