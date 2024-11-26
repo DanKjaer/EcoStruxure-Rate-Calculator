@@ -10,6 +10,7 @@ public class ProjectMember {
     private BigDecimal projectAllocation;
     private BigDecimal markup;
     private BigDecimal dayRate;
+    private BigDecimal dayRateWithMarkup;
 
 
     public ProjectMember() {}
@@ -60,5 +61,13 @@ public class ProjectMember {
 
     public void setDayRate(BigDecimal dayRate) {
         this.dayRate = dayRate;
+    }
+
+    public BigDecimal getDayRateWithMarkup() {
+        return dayRateWithMarkup;
+    }
+
+    public void setDayRateWithMarkup(BigDecimal dayRateWithMarkup) {
+        this.dayRateWithMarkup = dayRateWithMarkup;
     }
 }

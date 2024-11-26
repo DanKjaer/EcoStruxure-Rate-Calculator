@@ -4,13 +4,21 @@
     <h2 mat-dialog-title>{{ 'ADD_NEW_PROJECT' | translate }}</h2>
     <mat-dialog-content class="container" [formGroup]="projectForm">
       <!-- name input -->
-      <mat-form-field>
-        <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
-        <input matInput placeholder="Project Name" formControlName="projectName">
-      </mat-form-field>
-
+      <div class="groupContainer">
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
+            <input matInput placeholder="Project Name" formControlName="projectName">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>{{ 'PROJECT_SALES_NUMBER' | translate }}</mat-label>
+            <input matInput placeholder="Project sales number" formControlName="projectSalesNumber">
+          </mat-form-field>
+        </div>
+      </div>
       <!-- price inputs -->
-      <h3>{{ 'PROJECT_COST' | translate }}</h3>
       <div class="groupContainer">
         <div>
           <!-- location select -->
@@ -53,14 +61,14 @@
       <h4>{{ 'PROJECT_DESCRIPTION' | translate }}</h4>
       <mat-form-field>
         <mat-label>{{ 'PROJECT_DESCRIPTION' | translate }}</mat-label>
-        <textarea matInput placeholder="Description" formControlName="projectDescription"></textarea>
+        <textarea class="descriptionContainer" matInput placeholder="Description" formControlName="projectDescription"></textarea>
       </mat-form-field>
     </mat-dialog-content>
   </div>
 
   <!-- Right side dialog -->
   <div class="dialog-section">
-    <h2 mat-dialog-title>{{ 'PROFILE_LIST' | translate }}</h2>
+    <h2 mat-dialog-title>{{ 'TEAM_LIST' | translate }}</h2>
     <mat-dialog-content class="container" [formGroup]="teamForm">
       <div class="searchContainer">
         <mat-form-field>
@@ -75,8 +83,30 @@
         </mat-selection-list>
       </div>
     </mat-dialog-content>
+
+    <mat-dialog-content class="container">
+      <div class="allocationContainer">
+        <mat-list>
+          @for (team of selectedProjectMembers; track team) {
+            <mat-list-item>
+              <div class="allocationItem">
+                <span>{{ team.name }}</span>
+                <mat-form-field class="allocationInput">
+                  <span matSuffix>%</span>
+                  <input type="number" matInput placeholder="{{ 'EXAMPLE'| translate}}: 10"
+                         [(ngModel)]="team.projectAllocation">
+                </mat-form-field>
+              </div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          }
+        </mat-list>
+      </div>
+    </mat-dialog-content>
+
   </div>
 </div>
+
 
 <mat-dialog-actions>
   <div class="buttonContainer">

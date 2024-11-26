@@ -12,18 +12,22 @@ export class ProfileService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Gets a list of profiles
+   * Gets a list of profiles.
    */
   getProfiles(): Promise<Profile[]> {
     return firstValueFrom(this.http.get<Profile[]>(`${this.apiUrl}/all`));
   }
 
+  /**
+   * Gets a profile.
+   * @param id
+   */
   getProfile(id: string): Promise<Profile> {
     return firstValueFrom(this.http.get<Profile>(`${this.apiUrl}?id=${id}`));
   }
 
   /**
-   * Gets a profile
+   * Creates a profile.
    * @param profile
    */
   postProfile(profile: Profile): Promise<Profile> {
@@ -48,4 +52,5 @@ export class ProfileService {
   deleteProfile(profileId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${profileId}`));
   }
+
 }

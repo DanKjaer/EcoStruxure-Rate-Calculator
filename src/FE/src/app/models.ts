@@ -30,6 +30,7 @@ export interface Team {
   totalAllocatedHours?: number;
   totalMarkup?: number;
   totalGrossMargin?: number;
+  geographies?: Geography[];
 }
 
 export interface TeamDTO {
@@ -48,6 +49,7 @@ export interface TeamProfiles {
   hourAllocation: number;
   allocatedHoursOnTeam?: number;
   dayRateOnTeam?: number;
+  geography: Geography;
 }
 
 export interface Geography {
@@ -59,12 +61,8 @@ export interface Geography {
 export interface Project {
   projectId?: string;
   projectName: string;
-  projectSalesNumber: string;
   projectDescription: string;
   projectMembers: ProjectMembers[];
-  projectMembersString?: string;
-  projectDayRate?: number;
-  projectGrossMargin?: number;
   projectPrice?: number;
   projectStartDate: Date;
   startDateString?: string;
@@ -73,6 +71,10 @@ export interface Project {
   projectTotalDays?: number;
   projectLocation: Geography;
   projectArchived?: boolean;
+  projectDayRate?: number;
+  projectSalesNumber?: number;
+  projectGrossMargin?: number;
+  projectMembersString?: string;
 }
 
 export interface ProjectMembers {

@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Project;
-//import ecostruxure.rate.calculator.be.dto.ProjectDTO;
 import ecostruxure.rate.calculator.be.dto.ProjectDTO;
 import ecostruxure.rate.calculator.bll.service.ProjectService;
 import org.springframework.web.bind.annotation.*;
@@ -33,21 +32,14 @@ public class ProjectController {
         return projectService.createProject(projectDTO.getProject());
     }
 
-    /**
-     * Keeping this for future use - maybe
-     * @param id
-     * @return
-     * @throws Exception
-     */
-
-/*    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public boolean deleteProfile(@PathVariable UUID id) throws Exception {
         return projectService.deleteProject(id);
-    }*/
+    }
 
-    @DeleteMapping("/{id}")
-    public boolean archiveProject(@PathVariable UUID id) throws Exception {
-        return projectService.archiveProject(id);
+    @DeleteMapping()
+    public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
+        return projectService.deleteProjectMember(projectId, teamId);
     }
 
     @PutMapping("/update")

@@ -8,17 +8,20 @@ import java.util.UUID;
 public class Project {
     private UUID projectId;
     private String projectName;
-    private String projectSalesNumber;
     private String projectDescription;
     private List<ProjectMember> projectMembers;
     private BigDecimal projectDayRate;
-    private BigDecimal ProjectGrossMargin;
+    private BigDecimal projectGrossMargin;
+    private BigDecimal projectMargin;
     private BigDecimal projectPrice;
     private LocalDate projectStartDate;
     private LocalDate projectEndDate;
     private int projectTotalDays;
     private Geography projectLocation;
     private Boolean projectArchived;
+    private BigDecimal projectTotalCostAtChange;
+    private LocalDate projectRestCostDate;
+    private String projectSalesNumber;
 
     public Project() {}
 
@@ -36,14 +39,6 @@ public class Project {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
-    }
-
-    public String getProjectSalesNumber() {
-        return projectSalesNumber;
-    }
-
-    public void setProjectSalesNumber(String projectSalesNumber) {
-        this.projectSalesNumber = projectSalesNumber;
     }
 
     public String getProjectDescription() {
@@ -71,11 +66,19 @@ public class Project {
     }
 
     public BigDecimal getProjectGrossMargin() {
-        return ProjectGrossMargin;
+        return projectGrossMargin;
     }
 
     public void setProjectGrossMargin(BigDecimal projectGrossMargin) {
-        ProjectGrossMargin = projectGrossMargin;
+        this.projectGrossMargin = projectGrossMargin;
+    }
+
+    public BigDecimal getProjectMargin() {
+        return projectMargin;
+    }
+
+    public void setProjectMargin(BigDecimal projectMargin) {
+        this.projectMargin = projectMargin;
     }
 
     public BigDecimal getProjectPrice() {
@@ -124,5 +127,29 @@ public class Project {
 
     public void setProjectArchived(Boolean projectArchived) {
         this.projectArchived = projectArchived;
+    }
+
+    public BigDecimal getProjectTotalCostAtChange() {
+        return projectTotalCostAtChange;
+    }
+
+    public void setProjectTotalCostAtChange(BigDecimal projectTotalCostAtChange) {
+        this.projectTotalCostAtChange = projectTotalCostAtChange;
+    }
+
+    public LocalDate getProjectRestCostDate() {
+        return projectRestCostDate;
+    }
+
+    public void setProjectRestCostDate(LocalDate projectRestCostDate) {
+        this.projectRestCostDate = projectRestCostDate;
+    }
+
+    public String getProjectSalesNumber() {
+        return projectSalesNumber;
+    }
+
+    public void setProjectSalesNumber(String projectSalesNumber) {
+        this.projectSalesNumber = projectSalesNumber;
     }
 }

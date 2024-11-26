@@ -27,7 +27,7 @@
   justify-content: space-between;
 }
 
-.teamsContainer {
+.profilesContainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -37,3 +37,26 @@
   overflow: auto;
   max-height: 28rem;
 }
+
+
+.allocationContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.allocationInput {
+  width: 9rem;
+}
+
+.allocationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.descriptionContainer{
+  height: 9rem;
+}
+

@@ -33,7 +33,7 @@ public class ProfileController {
     }
 
     @PutMapping()
-    public boolean updateProfile(@RequestBody Profile profile) throws Exception {
+    public Profile updateProfile(@RequestBody Profile profile) throws Exception {
         return profileService.update(profile);
     }
 

@@ -31,12 +31,8 @@ import {CurrencyService} from '../../services/currency.service';
     MatLabel,
     MatMenu,
     MatMenuItem,
-    MatOption,
     MatPrefix,
     MatProgressSpinner,
-    MatRadioButton,
-    MatRadioGroup,
-    MatSelect,
     NgIf,
     ReactiveFormsModule,
     TranslateModule,
@@ -65,6 +61,7 @@ export class TeamPageComponent implements OnInit {
     gmHourlyRate: 0,
     totalAnnualHours: 0
   }
+  protected readonly localStorage = localStorage;
   loading: boolean = true;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   displayedColumns: string[] = [
@@ -96,5 +93,13 @@ export class TeamPageComponent implements OnInit {
     this.loading = false;
   }
 
-  protected readonly localStorage = localStorage;
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
+  }
+
 }

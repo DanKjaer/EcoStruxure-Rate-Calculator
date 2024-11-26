@@ -56,8 +56,10 @@ export class AddTeamDialogComponent implements OnInit {
       name: ['', Validators.required],
       profiles: [[], Validators.required]
     })
-
     this.profileList = await this.profileService.getProfiles();
+    this.profileList.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
   }
 
   async onSave() {
@@ -74,6 +76,7 @@ export class AddTeamDialogComponent implements OnInit {
         annualHours : profile.annualHours!,
         costAllocation : 100,
         hourAllocation : 100,
+        geography : profile.geography!,
       };
       teamProfiles.push(teamProfile);
     });

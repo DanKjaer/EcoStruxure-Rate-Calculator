@@ -37,8 +37,8 @@ public class ProjectDAO implements IProjectDAO {
             project.setProjectMembers(getMembersBasedOnProject(connection, projectId));
 
             return project;
-            }
         }
+    }
 
     private Project createProjectFromResultset(Project project, ResultSet rsProject) throws SQLException {
         Geography geography = new Geography(rsProject.getString("name"));
@@ -83,6 +83,7 @@ public class ProjectDAO implements IProjectDAO {
                     projectMember.setProjectAllocation(rsMembers.getBigDecimal("allocation_on_project"));
                     projectMember.setMarkup(rsMembers.getBigDecimal("markup"));
                     projectMember.setDayRate(rsMembers.getBigDecimal("day_rate"));
+                    projectMember.setDayRateWithMarkup(rsMembers.getBigDecimal("day_rate_on_project"));
                     projectMembers.add(projectMember);
                 }
             }
@@ -155,20 +156,22 @@ public class ProjectDAO implements IProjectDAO {
     @Override
     public List<ProjectMember> assignProfilesToProject(UUID projectId, List<ProjectMember> projectMembers) throws SQLException {
         String query = """
-                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
-                VALUES (?, ?, ?);
+                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
+                VALUES (?, ?, ?, ?);
                 """;
         try (Connection connection = dbConnector.connection();
-                PreparedStatement stmt = connection.prepareStatement(query);) {
-                for (ProjectMember projectMember : projectMembers) {
-                    stmt.setObject(1, projectId);
-                    stmt.setObject(2, projectMember.getTeamId());
-                    stmt.setBigDecimal(3, projectMember.getProjectAllocation());
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-                return projectMembers;
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            for (ProjectMember projectMember : projectMembers) {
+                projectMember.setProjectId(projectId);
+                stmt.setObject(1, projectMember.getProjectId());
+                stmt.setObject(2, projectMember.getTeamId());
+                stmt.setBigDecimal(3, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
+                stmt.addBatch();
             }
+            stmt.executeBatch();
+            return projectMembers;
+        }
     }
 
     @Override
@@ -199,6 +202,23 @@ public class ProjectDAO implements IProjectDAO {
             stmt.setInt(8, project.getProjectTotalDays());
             stmt.setInt(9, project.getProjectLocation().getId());
             stmt.setObject(10, project.getProjectId());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteProjectMember(UUID projectId, UUID teamId) throws SQLException {
+        String query = """
+                DELETE FROM dbo.project_members WHERE project_id = ? AND teams_id = ?;
+                """;
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            stmt.setObject(1, projectId);
+            stmt.setObject(2, teamId);
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -253,9 +273,9 @@ public class ProjectDAO implements IProjectDAO {
     @Override
     public void updateAssignedProfiles(UUID projectId, List<ProjectMember> projectMembers) {
         String query = """
-                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project)
-                VALUES (?, ?, ?)
-                ON CONFLICT (project_id, teams_id) DO UPDATE SET allocation_on_project = ?;
+                INSERT INTO dbo.project_members (project_id, teams_id, allocation_on_project, day_rate_on_project)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT (project_id, teams_id) DO UPDATE SET allocation_on_project = ?, day_rate_on_project = ?;
                 """;
         try (Connection connection = dbConnector.connection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -264,11 +284,38 @@ public class ProjectDAO implements IProjectDAO {
                 stmt.setObject(1, projectId);
                 stmt.setObject(2, projectMember.getTeamId());
                 stmt.setBigDecimal(3, projectMember.getProjectAllocation());
-                stmt.setBigDecimal(4, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(4, projectMember.getDayRateWithMarkup());
+                stmt.setBigDecimal(5, projectMember.getProjectAllocation());
+                stmt.setBigDecimal(6, projectMember.getDayRateWithMarkup());
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
     }
-}
+
+    @Override
+    public List<Project> getProjectsBasedOnTeam(UUID teamId) throws SQLException {
+        String query = """
+                SELECT *
+                FROM dbo.project
+                INNER JOIN dbo.project_members pm on project.project_id = pm.project_id
+                INNER JOIN dbo.geography g on g.id = project.project_location
+                WHERE pm.teams_id = ? AND project_archived = FALSE;
+                """;
+        List<Project> projects = new ArrayList<>();
+        try (Connection connection = dbConnector.connection();
+             PreparedStatement stmt = connection.prepareStatement(query);) {
+            stmt.setObject(1, teamId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Project project = new Project();
+                    project = createProjectFromResultset(project, rs);
+                    project.setProjectMembers(getMembersBasedOnProject(connection, project.getProjectId()));
+                    projects.add(project);
+                }
+                return projects;
+            }
+        }
+    }
 }

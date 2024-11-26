@@ -13,13 +13,14 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
-import {MatInput} from '@angular/material/input';
+import {MatFormField, MatInput, MatPrefix} from '@angular/material/input';
 import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {MatLabel} from '@angular/material/form-field';
 
 @Component({
   selector: 'app-profiles-page',
@@ -42,7 +43,10 @@ import {CurrencyService} from '../../services/currency.service';
     FormsModule,
     MatInput,
     NgClass,
-    DecimalPipe
+    DecimalPipe,
+    MatFormField,
+    MatLabel,
+    MatPrefix
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
@@ -68,7 +72,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     'contributed annual cost',
     'allocated hours',
     'cost allocation',
-    'location',
     'options'
   ];
 
@@ -108,6 +111,16 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   //#endregion
 
   //#region functions
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
+    this.updateTableFooterData(true);
+  }
+
   editRow(element: any): void {
     if (this.isEditingRow) return;
     this.isEditingRow = true;
@@ -152,7 +165,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
       element.annualCost = original.annualCost;
       element.totalHourAllocation = original.totalHourAllocation;
       element.totalCostAllocation = original.totalCostAllocation;
-      element.geography.name = original.geography.name;
     }
     element['isEditing'] = false;
     this.isEditingRow = false;
@@ -167,10 +179,12 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(AddProfileDialogComponent);
 
     dialogRef.componentInstance.profileAdded.subscribe((profile: Profile) => {
+      profile.totalCostAllocation = 0;
+      profile.totalHourAllocation = 0;
       this.datasource.data.push(profile)
       this.datasource._updateChangeSubscription();
-      this.loading = false;
     });
+    this.loading = false;
     this.updateTableFooterData();
   }
 
@@ -208,18 +222,22 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
   }
 
-  updateTableFooterData() {
-    this.getAverageHourAllocation();
-    this.getAverageCostAllocation();
+  updateTableFooterData(searching: boolean = false) {
+    let displayedData: Profile[];
+    if (searching) {
+      displayedData = this.datasource.filteredData;
+    } else {
+      displayedData = this.getDisplayedData();
+    }
+    this.getAverageHourAllocation(displayedData);
+    this.getAverageCostAllocation(displayedData);
   }
 
-  getAverageHourAllocation() {
-    const displayedData = this.getDisplayedData();
+  getAverageHourAllocation(displayedData: Profile[]) {
     this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
   }
 
-  getAverageCostAllocation() {
-    const displayedData = this.getDisplayedData();
+  getAverageCostAllocation(displayedData: Profile[]) {
     this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
   }
 

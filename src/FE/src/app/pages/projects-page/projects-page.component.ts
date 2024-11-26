@@ -27,7 +27,7 @@ import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-pro
 import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
 import {Router} from '@angular/router';
-import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
+import {MatFormField, MatInput, MatLabel, MatPrefix, MatSuffix} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {CurrencyService} from '../../services/currency.service';
@@ -72,7 +72,8 @@ import {CurrencyService} from '../../services/currency.service';
     MatFooterRow,
     MatFooterCell,
     MatFooterCellDef,
-    MatFooterRowDef
+    MatFooterRowDef,
+    MatPrefix
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
@@ -81,19 +82,19 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = ['name',
-                                'salesNumber',
-                                'members',
-                                'dayRate',
-                                'grossMargin',
-                                'price',
-                                'startDate',
-                                'endDate',
-                                'totalDays',
-                                'location',
-                                'options'];
-  
+    'salesNumber',
+    'members',
+    'dayRate',
+    'grossMargin',
+    'price',
+    'startDate',
+    'endDate',
+    'totalDays',
+    'location',
+    'options'];
+
   protected readonly localStorage = localStorage;
-  
+
   selectedRow: Project | null = null;
   originalRowData: { [key: number]: any } = {};
   datasource: MatTableDataSource<Project> = new MatTableDataSource<Project>();
@@ -135,6 +136,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       console.error('Failed to load projects:', error);
     } finally {
       this.loading = false;
+      this.updateTableFooterData();
     }
   }
 
@@ -144,6 +146,15 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
   }
 
+  applySearch(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.datasource.filter = searchValue.trim().toLowerCase();
+
+    if (this.datasource.paginator) {
+      this.datasource.paginator.firstPage();
+    }
+    this.updateTableFooterData(true);
+  }
 
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectDialogComponent, {
@@ -156,6 +167,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
       project.startDateString = this.formatter.formatDate(project.projectStartDate);
       project.endDateString = this.formatter.formatDate(project.projectEndDate);
+      project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
@@ -195,11 +207,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   }
 
   async saveEdit(selectedProject: any) {
-    this.loading = true;
     selectedProject['isEditing'] = false;
+    this.loading = true;
     this.isEditingRow = false;
 
-    const endDate = selectedProject.projectEndDate;
+    const endDate: Date = new Date(selectedProject.projectEndDate);
     selectedProject.projectEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
     try {
       let response = await this.projectService.putProject(selectedProject);
@@ -216,6 +228,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       this.loading = false;
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
       this.updateTableFooterData();
+      this.datasource._updateChangeSubscription();
     } catch (e) {
       this.cancelEdit(selectedProject);
       this.loading = false;
@@ -239,24 +252,27 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
   }
 
-  private updateTableFooterData() {
-    this.getTotalDayRate();
-    this.getTotalPrice();
-    this.getTotalDays();
+  private updateTableFooterData(searching: boolean = false) {
+    let displayedData: Project[]
+    if (searching) {
+      displayedData = this.datasource.filteredData;
+    } else {
+      displayedData = this.getDisplayedData();
+    }
+    this.getTotalDayRate(displayedData);
+    this.getTotalPrice(displayedData);
+    this.getTotalDays(displayedData);
   }
 
-  private getTotalDayRate() {
-    const displayedData = this.getDisplayedData();
+  private getTotalDayRate(displayedData: Project[]) {
     this.totalDayRate = displayedData.reduce((acc: number, project: Project) => acc + project.projectDayRate!, 0);
   }
 
-  private getTotalPrice() {
-    const displayedData = this.getDisplayedData();
+  private getTotalPrice(displayedData: Project[]) {
     this.totalPrice = displayedData.reduce((acc: number, project: Project) => acc + project.projectPrice!, 0);
   }
 
-  private getTotalDays() {
-    const displayedData = this.getDisplayedData();
+  private getTotalDays(displayedData: Project[]) {
     this.totalDays = displayedData.reduce((acc: number, project: Project) => acc + project.projectTotalDays!, 0);
   }
   private getDisplayedData() {
