@@ -3,8 +3,6 @@ package ecostruxure.rate.calculator.bll.service;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
-import ecostruxure.rate.calculator.dal.dao.ITeamDAO;
-import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -2,8 +2,6 @@ package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Country;
 import ecostruxure.rate.calculator.be.Geography;
-import ecostruxure.rate.calculator.dal.db.GeographyDAO;
-import ecostruxure.rate.calculator.dal.dao.IGeographyDAO;
 
 import java.io.IOException;
 import java.util.ArrayList;

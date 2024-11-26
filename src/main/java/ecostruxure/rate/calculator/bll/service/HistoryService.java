@@ -1,9 +1,5 @@
 package ecostruxure.rate.calculator.bll.service;
 
-import ecostruxure.rate.calculator.be.*;
-import ecostruxure.rate.calculator.dal.dao.*;
-import ecostruxure.rate.calculator.dal.db.HistoryDAO;
-
 import java.util.List;
 import java.util.UUID;
 

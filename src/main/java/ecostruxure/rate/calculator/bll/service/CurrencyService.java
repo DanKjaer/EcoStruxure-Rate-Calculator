@@ -4,8 +4,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import ecostruxure.rate.calculator.be.Currency;
 import ecostruxure.rate.calculator.bll.MissingCurrenciesException;
-import ecostruxure.rate.calculator.dal.db.CurrencyDAO;
-import ecostruxure.rate.calculator.dal.dao.ICurrencyDAO;
 
 import java.io.FileReader;
 import java.io.IOException;

@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.controllers;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.bll.service.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,15 +12,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
-    private final ProfileService profileService;
+    @Autowired
+    private ProfileService profileService;
 
-    public ProfileController() throws Exception {
-        this.profileService = new ProfileService();
+    public ProfileController() {
     }
 
     @GetMapping(produces = "application/json")
     public Profile getProfile(@RequestParam UUID id) throws Exception {
-        return profileService.get(id);
+        return profileService.getById(id);
     }
 
     @GetMapping("/all")

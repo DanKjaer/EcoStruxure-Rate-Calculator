@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.dal.dao;
 
 import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.dal.db.TeamDAO;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

@@ -7,18 +7,10 @@ import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.data.ProfileMetrics;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.be.data.TeamMetrics;
-import ecostruxure.rate.calculator.dal.db.DbTransactionManager;
-import ecostruxure.rate.calculator.dal.transaction.TransactionContext;
-import ecostruxure.rate.calculator.dal.transaction.TransactionManager;
-import ecostruxure.rate.calculator.dal.db.HistoryDAO;
-import ecostruxure.rate.calculator.dal.db.ProfileDAO;
-import ecostruxure.rate.calculator.dal.db.TeamDAO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class TeamProfileManagementService {

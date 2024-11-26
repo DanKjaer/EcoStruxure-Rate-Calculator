@@ -1,12 +1,11 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileHistory;
 import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.bll.RateService;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
-import ecostruxure.rate.calculator.dal.dao.*;
-import ecostruxure.rate.calculator.dal.db.ProfileDAO;
+import ecostruxure.rate.calculator.dal.interfaces.IProfileRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Service
 public class ProfileService {
     private static final int FINANCIAL_SCALE = 4;
     private static final int GENERAL_SCALE = 2;
@@ -26,52 +26,26 @@ public class ProfileService {
     private final TeamProfileManagementService teamProfileManagementService;
     private final TeamService teamService;
     private final ProjectService projectService;
-    private final IProfileDAO profileDAO;
+    @Autowired
+    private IProfileRepository profileRepository;
 
 
     public ProfileService() throws Exception {
         this.teamService = new TeamService();
         this.teamProfileManagementService = new TeamProfileManagementService();
-        this.profileDAO = new ProfileDAO();
         this.projectService = new ProjectService();
     }
 
     public Profile create(Profile profile) throws Exception {
-        validateProfile(profile);
-        if (profile.getProfileId() != null) throw new IllegalArgumentException("Profile ID must be set upon creation.");
-        if (profile.isArchived()) throw new IllegalArgumentException("Profile cannot be archived upon creation");
-        profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
-        return profileDAO.create(profile);
+        return profileRepository.save(profile);
     }
 
-    public List<Profile> all() throws Exception {
-        return profileDAO.all();
+    public Iterable<Profile> all() throws Exception {
+        return profileRepository.findAll();
     }
 
-    public List<Profile> allWithUtilization() throws Exception {
-        return profileDAO.allWithUtilization();
-    }
-
-    public List<Profile> allWithUtilizationByTeam(Team team) throws Exception {
-        Objects.requireNonNull(team, "Team cannot be null");
-
-        return profileDAO.allWithUtilizationByTeam(team.getTeamId());
-    }
-
-    public List<Profile> allWithUtilizationByTeam(UUID teamId) throws Exception {
-        return profileDAO.allWithUtilizationByTeam(teamId);
-    }
-
-    public Profile get(UUID profileId) throws Exception {
-        return profileDAO.get(profileId);
-    }
-
-    public BigDecimal totalHoursPercentage(Profile profile, BigDecimal utilizationPercentage) {
-        Objects.requireNonNull(profile, "Profile cannot be null");
-        Objects.requireNonNull(utilizationPercentage, "Utilization percentage cannot be null");
-
-        BigDecimal percentageAsDecimal = utilizationPercentage.divide(HUNDRED, GENERAL_SCALE, ROUNDING_MODE);
-        return profile.getAnnualHours().multiply(percentageAsDecimal);
+    public Profile getById(UUID profileId) throws Exception {
+        return profileRepository.findById(profileId).orElse(null);
     }
 
     public BigDecimal hourlyRate(Profile profile) {

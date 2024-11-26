@@ -3,15 +3,12 @@ package ecostruxure.rate.calculator.bll.service;
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.be.ProjectMember;
 import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.dal.dao.IProjectDAO;
-import ecostruxure.rate.calculator.dal.db.ProjectDAO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
