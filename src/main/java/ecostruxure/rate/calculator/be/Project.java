@@ -1,30 +1,58 @@
 package ecostruxure.rate.calculator.be;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 public class Project {
+
+    @Id
+    @GeneratedValue
     private UUID projectId;
+
+    @Column(nullable = false)
     private String projectName;
+
     private String projectDescription;
-    private List<ProjectMember> projectMembers;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectTeam> projectTeams;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal projectDayRate;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal projectGrossMargin;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal projectMargin;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal projectPrice;
+
+    @Column(precision = 15, scale = 2)
+    private BigDecimal projectTotalCostAtChange;
+
+    private int projectTotalDays;
+
     private LocalDate projectStartDate;
     private LocalDate projectEndDate;
-    private int projectTotalDays;
+
+    @ManyToOne
+    @JoinColumn(name = "project_location_id")
     private Geography projectLocation;
+
     private Boolean projectArchived;
-    private BigDecimal projectTotalCostAtChange;
+
     private LocalDate projectRestCostDate;
+
+    @Column(unique = true)
     private String projectSalesNumber;
 
-    public Project() {}
-
+    // Getters and Setters
     public UUID getProjectId() {
         return projectId;
     }
@@ -49,12 +77,12 @@ public class Project {
         this.projectDescription = projectDescription;
     }
 
-    public List<ProjectMember> getProjectMembers() {
-        return projectMembers;
+    public List<ProjectTeam> getProjectTeams() {
+        return projectTeams;
     }
 
-    public void setProjectMembers(List<ProjectMember> projectMembers) {
-        this.projectMembers = projectMembers;
+    public void setProjectTeams(List<ProjectTeam> projectTeams) {
+        this.projectTeams = projectTeams;
     }
 
     public BigDecimal getProjectDayRate() {
@@ -89,6 +117,22 @@ public class Project {
         this.projectPrice = projectPrice;
     }
 
+    public BigDecimal getProjectTotalCostAtChange() {
+        return projectTotalCostAtChange;
+    }
+
+    public void setProjectTotalCostAtChange(BigDecimal projectTotalCostAtChange) {
+        this.projectTotalCostAtChange = projectTotalCostAtChange;
+    }
+
+    public int getProjectTotalDays() {
+        return projectTotalDays;
+    }
+
+    public void setProjectTotalDays(int projectTotalDays) {
+        this.projectTotalDays = projectTotalDays;
+    }
+
     public LocalDate getProjectStartDate() {
         return projectStartDate;
     }
@@ -105,14 +149,6 @@ public class Project {
         this.projectEndDate = projectEndDate;
     }
 
-    public int getProjectTotalDays() {
-        return projectTotalDays;
-    }
-
-    public void setProjectTotalDays(int projectTotalDays) {
-        this.projectTotalDays = projectTotalDays;
-    }
-
     public Geography getProjectLocation() {
         return projectLocation;
     }
@@ -127,14 +163,6 @@ public class Project {
 
     public void setProjectArchived(Boolean projectArchived) {
         this.projectArchived = projectArchived;
-    }
-
-    public BigDecimal getProjectTotalCostAtChange() {
-        return projectTotalCostAtChange;
-    }
-
-    public void setProjectTotalCostAtChange(BigDecimal projectTotalCostAtChange) {
-        this.projectTotalCostAtChange = projectTotalCostAtChange;
     }
 
     public LocalDate getProjectRestCostDate() {
