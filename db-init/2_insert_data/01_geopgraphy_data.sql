@@ -1,4 +1,4 @@
-INSERT INTO dbo.geography (name)
+INSERT INTO Geography (name)
 VALUES
     ('Andorra'),
     ('United Arab Emirates'),
@@ -254,7 +254,7 @@ VALUES
     ('Zambia'),
     ('Zimbabwe');
 
-INSERT INTO dbo.geography (name)
+INSERT INTO Geography (name)
 VALUES ('Africa'), -- 254
        ('Northern Africa'), -- 255
        ('Western Africa'), -- 256

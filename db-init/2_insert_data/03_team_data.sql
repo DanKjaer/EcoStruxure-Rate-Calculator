@@ -1,13 +1,13 @@
 INSERT INTO Teams (team_id,
-                       name,
-                       markup,
-                       total_markup,
-                       gross_margin,
-                       total_gross_margin,
-                       hourly_rate,
-                       day_rate,
-                       total_allocated_hours,
-                       total_allocated_cost)
+                   name,
+                   markup_percentage,
+                   total_cost_with_markup,
+                   gross_margin_percentage,
+                   total_cost_with_gross_margin,
+                   hourly_rate,
+                   day_rate,
+                   total_allocated_hours,
+                   total_allocated_cost)
 VALUES
     ('937b379c-c326-4db2-9575-8313f59ddf2c', 'Low cost team', 10.00,176000,
      20.00,211200, 26.00,208.00,6240,

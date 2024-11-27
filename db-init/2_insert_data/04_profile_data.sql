@@ -1,4 +1,4 @@
-INSERT INTO Profiles (
+INSERT INTO Profile (
     profile_id,
     name,
     geography_id,
@@ -9,7 +9,7 @@ INSERT INTO Profiles (
     effectiveness_percentage,
     effective_work_hours,
     total_cost_allocation,
-    total_hour_allocation,
+    total_hour_allocation
 )
 VALUES
     ('24c2b2f8-47f0-4c8b-b55d-cb49996feb44',
@@ -58,9 +58,8 @@ VALUES
      40000.0000,
      0.00,
      0,
-     80,
+     0,
      0.00,
-     8.00,
      100.00,
      100.00),
     -- Support specialist in Latin America
@@ -73,7 +72,6 @@ VALUES
      2080.00,
      8.00,
      80,
-     2080.00,
      1664,
      100.00,
      100.00),
@@ -150,8 +148,8 @@ VALUES
      True,
      120000.0000,
      0.00,
-     8.00,
-     80,
+     0,
+     0,
      0,
      100.00,
      100.00);
