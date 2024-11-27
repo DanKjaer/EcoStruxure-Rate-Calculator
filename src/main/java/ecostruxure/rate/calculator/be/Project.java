@@ -28,9 +28,6 @@ public class Project {
     private BigDecimal projectGrossMargin;
 
     @Column(precision = 15, scale = 2)
-    private BigDecimal projectMargin;
-
-    @Column(precision = 15, scale = 2)
     private BigDecimal projectPrice;
 
     @Column(precision = 15, scale = 2)
@@ -99,14 +96,6 @@ public class Project {
 
     public void setProjectGrossMargin(BigDecimal projectGrossMargin) {
         this.projectGrossMargin = projectGrossMargin;
-    }
-
-    public BigDecimal getProjectMargin() {
-        return projectMargin;
-    }
-
-    public void setProjectMargin(BigDecimal projectMargin) {
-        this.projectMargin = projectMargin;
     }
 
     public BigDecimal getProjectPrice() {
