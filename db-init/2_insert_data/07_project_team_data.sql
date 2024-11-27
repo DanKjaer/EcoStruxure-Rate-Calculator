@@ -1,6 +1,6 @@
 INSERT INTO ProjectTeam (project_team_id,
                          project_id,
-                         teams_id,
+                         team_id,
                          allocation_percentage)
 VALUES  ('17b1adfd-778e-4d2f-a2f7-903ae2e36f48',
          '769f922a-6e19-40d5-b46d-8ebd43960736',

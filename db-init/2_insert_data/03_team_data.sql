@@ -1,4 +1,4 @@
-INSERT INTO Teams (team_id,
+INSERT INTO Team (team_id,
                    name,
                    markup_percentage,
                    total_cost_with_markup,

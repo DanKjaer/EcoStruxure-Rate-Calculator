@@ -289,6 +289,5 @@ VALUES ('Africa'), -- 254
        ('Oceania'), -- 285
        ('Australia and New Zealand'), -- 286 Same as ANZ but with Norfolk Island as well
        ('Melanesia'), -- 287
-       ('Micronesia'), -- 288
-       ('Polynesia'), -- 289
-       ('NORAM'); -- 290 North America; US, Canada, and sometimes Mexico
+       ('Polynesia'), -- 288
+       ('NORAM'); -- 289 North America; US, Canada, and sometimes Mexico
