@@ -1,4 +1,4 @@
-INSERT INTO dbo.project (project_id,
+INSERT INTO Project (project_id,
                          project_name,
                          project_sales_number,
                          project_description,
