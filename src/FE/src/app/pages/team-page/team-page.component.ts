@@ -1,14 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {MatOption} from '@angular/material/core';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
-import {MatSelect} from '@angular/material/select';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TranslateModule} from '@ngx-translate/core';
@@ -17,6 +14,8 @@ import {TeamDTO, TeamProfiles} from '../../models';
 import {ActivatedRoute} from '@angular/router';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-team-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-team-page',
@@ -48,12 +47,14 @@ export class TeamPageComponent implements OnInit {
   constructor(private teamProfileService: TeamProfileService,
               private route: ActivatedRoute,
               private menuService: MenuService,
-              protected currencyService: CurrencyService) {
+              protected currencyService: CurrencyService,
+              private changeDetectorRef: ChangeDetectorRef) {
   }
-
+  readonly dialog = inject(MatDialog)
   teamInfo: TeamDTO | undefined;
   profiles: TeamProfiles[] = [];
   isMenuOpen: boolean | undefined;
+  teamProfiles!: TeamProfiles;
 
   statBoxes = {
     rawHourlyRate: 0,
@@ -92,6 +93,18 @@ export class TeamPageComponent implements OnInit {
     }
     this.loading = false;
   }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddToTeamDialogComponent);
+    this.loading = true;
+    dialogRef.componentInstance.teamProfiles = this.teamProfiles;
+    dialogRef.componentInstance.AddToTeamProfiles.subscribe((teamProfiles: TeamProfiles) => {
+      this.teamProfiles.profileId = teamProfiles.profileId;
+    });
+    this.loading = false;
+    this.changeDetectorRef.detectChanges();
+  }
+
 
   applySearch(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
