@@ -6,12 +6,12 @@ import ecostruxure.rate.calculator.bll.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
+
     @Autowired
     private ProfileService profileService;
 
@@ -24,7 +24,7 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public List<Profile> getProfiles() throws Exception {
+    public Iterable<Profile> getProfiles() throws Exception {
         return profileService.all();
     }
 
@@ -40,6 +40,6 @@ public class ProfileController {
 
     @DeleteMapping("/{id}")
     public boolean deleteProfile(@PathVariable UUID id) throws Exception {
-        return profileService.archive(id, true);
+        return profileService.delete(id);
     }
 }

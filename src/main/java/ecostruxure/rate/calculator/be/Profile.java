@@ -16,9 +16,6 @@ public class Profile {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String currency;
-
     @ManyToOne
     @JoinColumn(name = "geography_id")
     private Geography geography;
@@ -69,14 +66,6 @@ public class Profile {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     public Geography getGeography() {

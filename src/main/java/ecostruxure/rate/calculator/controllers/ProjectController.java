@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.controllers;
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.be.dto.ProjectDTO;
 import ecostruxure.rate.calculator.bll.service.ProjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,10 +12,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
-    private final ProjectService projectService;
+
+    @Autowired
+    private ProjectService projectService;
 
     public ProjectController() throws Exception {
-        projectService = new ProjectService();
     }
 
     @GetMapping()
@@ -23,7 +25,7 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public List<Project> getProjects() throws Exception {
+    public Iterable<Project> getProjects() throws Exception {
         return projectService.getProjects();
     }
 
@@ -39,7 +41,7 @@ public class ProjectController {
 
     @DeleteMapping()
     public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
-        return projectService.deleteProjectMember(projectId, teamId);
+        return projectService.deleteProjectTeam(projectId, teamId);
     }
 
     @PutMapping("/update")

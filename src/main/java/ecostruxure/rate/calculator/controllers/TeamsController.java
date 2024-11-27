@@ -19,7 +19,7 @@ public class TeamsController {
     }
 
     @GetMapping()
-    public List<Team> get() throws Exception {
+    public Iterable<Team> get() throws Exception {
         return teamService.all();
     }
 
@@ -37,13 +37,12 @@ public class TeamsController {
     }
 
     @PutMapping()
-    public Team update(@RequestParam UUID teamId, @RequestBody Team team) throws Exception {
-        teamService.calculateTotalMarkupAndTotalGrossMargin(team);
-        return teamService.update(teamId, team);
+    public Team update(@RequestBody Team team) throws Exception {
+        return teamService.update(team);
     }
 
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable UUID id) throws Exception {
-        return teamService.archive(id, true);
+        return teamService.delete(id);
     }
 }

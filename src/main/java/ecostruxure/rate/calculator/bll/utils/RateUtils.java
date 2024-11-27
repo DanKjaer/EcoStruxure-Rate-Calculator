@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.bll.utils;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.ProfileTeamItemModel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
