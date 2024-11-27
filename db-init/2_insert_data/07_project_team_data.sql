@@ -1,4 +1,4 @@
-INSERT INTO dbo.project_members (project_team_id,
+INSERT INTO ProjectTeam (project_team_id,
                                  project_id,
                                  teams_id,
                                  allocation_on_project,
