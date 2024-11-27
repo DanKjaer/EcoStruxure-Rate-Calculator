@@ -12,9 +12,6 @@ public class Geography {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
-    private boolean predefined;
-
     // Getters and Setters
     public int getId() {
         return id;
@@ -30,13 +27,5 @@ public class Geography {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isPredefined() {
-        return predefined;
-    }
-
-    public void setPredefined(boolean predefined) {
-        this.predefined = predefined;
     }
 }
