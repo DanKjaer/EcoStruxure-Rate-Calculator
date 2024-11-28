@@ -17,16 +17,16 @@ public class Team {
     private String name;
 
     @Column(precision = 15, scale = 2)
-    private BigDecimal markup;
+    private BigDecimal markupPercentage;
 
     @Column(precision = 15, scale = 2)
-    private BigDecimal totalMarkup;
+    private BigDecimal totalCostWithMarkup;
 
     @Column(precision = 15, scale = 2)
-    private BigDecimal grossMargin;
+    private BigDecimal grossMarginPercentage;
 
     @Column(precision = 15, scale = 2)
-    private BigDecimal totalGrossMargin;
+    private BigDecimal totalCostWithGrossMargin;
 
     @Column(precision = 15, scale = 2)
     private BigDecimal hourlyRate;
@@ -51,7 +51,7 @@ public class Team {
     @JoinTable(
             name = "team_geography",
             joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "geography_id")
+            inverseJoinColumns = @JoinColumn(name = "geopgraphy_id")
     )
     private List<Geography> geographies;
 
@@ -72,36 +72,36 @@ public class Team {
         this.name = name;
     }
 
-    public BigDecimal getMarkup() {
-        return markup;
+    public BigDecimal getMarkupPercentage() {
+        return markupPercentage;
     }
 
-    public void setMarkup(BigDecimal markup) {
-        this.markup = markup;
+    public void setMarkupPercentage(BigDecimal markup) {
+        this.markupPercentage = markup;
     }
 
-    public BigDecimal getTotalMarkup() {
-        return totalMarkup;
+    public BigDecimal getTotalCostWithMarkup() {
+        return totalCostWithMarkup;
     }
 
-    public void setTotalMarkup(BigDecimal totalMarkup) {
-        this.totalMarkup = totalMarkup;
+    public void setTotalCostWithMarkup(BigDecimal totalMarkup) {
+        this.totalCostWithMarkup = totalMarkup;
     }
 
-    public BigDecimal getGrossMargin() {
-        return grossMargin;
+    public BigDecimal getGrossMarginPercentage() {
+        return grossMarginPercentage;
     }
 
-    public void setGrossMargin(BigDecimal grossMargin) {
-        this.grossMargin = grossMargin;
+    public void setGrossMarginPercentage(BigDecimal grossMargin) {
+        this.grossMarginPercentage = grossMargin;
     }
 
-    public BigDecimal getTotalGrossMargin() {
-        return totalGrossMargin;
+    public BigDecimal getTotalCostWithGrossMargin() {
+        return totalCostWithGrossMargin;
     }
 
-    public void setTotalGrossMargin(BigDecimal totalGrossMargin) {
-        this.totalGrossMargin = totalGrossMargin;
+    public void setTotalCostWithGrossMargin(BigDecimal totalGrossMargin) {
+        this.totalCostWithGrossMargin = totalGrossMargin;
     }
 
     public BigDecimal getHourlyRate() {

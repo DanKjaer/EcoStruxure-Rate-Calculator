@@ -1,4 +1,4 @@
-CREATE TABLE TeamProfile (
+CREATE TABLE team_profile (
                              team_profile_id UUID PRIMARY KEY,
                              team_id UUID REFERENCES Team(team_id),
                              profile_id UUID REFERENCES Profile(profile_id),

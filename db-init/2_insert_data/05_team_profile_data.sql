@@ -1,4 +1,4 @@
-INSERT INTO TeamProfile (team_profile_id,
+INSERT INTO team_profile (team_profile_id,
                          team_id,
                          profile_id,
                          allocation_percentage_hours,

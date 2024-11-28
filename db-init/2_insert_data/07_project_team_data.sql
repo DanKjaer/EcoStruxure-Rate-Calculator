@@ -1,4 +1,4 @@
-INSERT INTO ProjectTeam (project_team_id,
+INSERT INTO project_team (project_team_id,
                          project_id,
                          team_id,
                          allocation_percentage)

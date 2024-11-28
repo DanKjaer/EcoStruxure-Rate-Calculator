@@ -1,0 +1,15 @@
+DROP TABLE IF EXISTS project_team;
+
+DROP TABLE IF EXISTS team_profile;
+
+DROP TABLE IF EXISTS team_geography;
+
+DROP TABLE IF EXISTS Project;
+
+DROP TABLE IF EXISTS Profile;
+
+DROP TABLE IF EXISTS Team;
+
+DROP TABLE IF EXISTS Geography;
+
+DROP TABLE IF EXISTS Currency;
