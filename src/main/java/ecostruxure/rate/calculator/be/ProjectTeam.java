@@ -22,7 +22,7 @@ public class ProjectTeam {
     @Column(precision = 5, scale = 2, nullable = false)
     private BigDecimal allocationPercentage;
 
-    // Getters and Setters
+    //region Getters and Setters
     public UUID getProjectTeamId() {
         return projectTeamId;
     }
@@ -54,4 +54,5 @@ public class ProjectTeam {
     public void setAllocationPercentage(BigDecimal allocationPercentage) {
         this.allocationPercentage = allocationPercentage;
     }
+    //endregion
 }

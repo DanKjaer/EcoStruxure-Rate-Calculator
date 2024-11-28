@@ -38,8 +38,8 @@ public class ProfileController {
         return profileService.update(profile);
     }
 
-    @DeleteMapping("/{id}")
-    public boolean deleteProfile(@PathVariable UUID id) throws Exception {
+    @DeleteMapping()
+    public boolean deleteProfile(@RequestParam UUID id) throws Exception {
         return profileService.delete(id);
     }
 }

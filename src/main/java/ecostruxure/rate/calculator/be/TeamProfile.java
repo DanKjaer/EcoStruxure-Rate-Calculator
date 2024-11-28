@@ -1,10 +1,13 @@
 package ecostruxure.rate.calculator.be;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "teamProfileId")
 public class TeamProfile {
 
     @Id
@@ -35,7 +38,7 @@ public class TeamProfile {
     @Column(precision = 15, scale = 2)
     private BigDecimal allocatedCost; // Derived: annual_cost * allocationPercentageCost / 100
 
-    // Getters and Setters
+    //region Getters and Setters
     public UUID getTeamProfileId() {
         return teamProfileId;
     }
@@ -91,4 +94,5 @@ public class TeamProfile {
     public void setAllocatedCost(BigDecimal allocatedCost) {
         this.allocatedCost = allocatedCost;
     }
+    //endregion
 }

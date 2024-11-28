@@ -49,7 +49,7 @@ public class Project {
     @Column(unique = true)
     private String projectSalesNumber;
 
-    // Getters and Setters
+    //region Getters and Setters
     public UUID getProjectId() {
         return projectId;
     }
@@ -169,4 +169,5 @@ public class Project {
     public void setProjectSalesNumber(String projectSalesNumber) {
         this.projectSalesNumber = projectSalesNumber;
     }
+    //endregion
 }
