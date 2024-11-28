@@ -1,17 +1,12 @@
 package ecostruxure.rate.calculator.bll.service;
 
-import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
-import ecostruxure.rate.calculator.dal.interfaces.ITeamRepository;
-import org.apache.commons.lang3.NotImplementedException;
+import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
+import ecostruxure.rate.calculator.dal.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -19,24 +14,23 @@ public class TeamService {
 
     @Autowired
     private ITeamRepository teamRepository;
+    @Autowired
+    private ITeamProfileRepository teamProfileRepository;
 
-    public TeamService() throws Exception {
+    public Team create(Team team) throws Exception {
+        return teamRepository.save(team);
     }
 
     public Iterable<Team> all() throws Exception {
         return teamRepository.findAll();
     }
 
-    public Team get(UUID teamId) throws Exception {
+    public Team getById(UUID teamId) throws Exception {
         return teamRepository.findById(teamId).orElse(null);
     }
 
     public List<TeamProfile> getByProfileId(UUID profileId) throws Exception {
-        throw new NotImplementedException();
-    }
-
-    public Team create(Team team, List<TeamProfile> teamProfiles) throws Exception {
-        return teamRepository.save(team);
+        return teamProfileRepository.findTeamProfilesByProfile_ProfileId(profileId);
     }
 
     public Team update(Team team) throws Exception {

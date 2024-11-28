@@ -4,6 +4,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.bll.service.TeamService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,13 +13,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/teams")
 public class TeamsController {
-    private final TeamService teamService;
 
-    public TeamsController() throws Exception{
-        this.teamService = new TeamService();
-    }
+    @Autowired
+    private TeamService teamService;
 
-    @GetMapping()
+    @GetMapping("/all")
     public Iterable<Team> get() throws Exception {
         return teamService.all();
     }
@@ -32,8 +31,9 @@ public class TeamsController {
     public Team create(@RequestBody TeamDTO teamDTO) throws Exception {
         Team team = teamDTO.getTeam();
         List<TeamProfile> teamProfiles = teamDTO.getTeamProfiles();
+        team.setTeamProfiles(teamProfiles);
 
-        return teamService.create(team, teamProfiles);
+        return teamService.create(team);
     }
 
     @PutMapping()

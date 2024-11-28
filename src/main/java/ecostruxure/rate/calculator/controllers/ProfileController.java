@@ -15,9 +15,6 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
-    public ProfileController() {
-    }
-
     @GetMapping(produces = "application/json")
     public Profile getProfile(@RequestParam UUID id) throws Exception {
         return profileService.getById(id);

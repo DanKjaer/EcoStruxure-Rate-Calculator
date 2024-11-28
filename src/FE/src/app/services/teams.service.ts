@@ -16,7 +16,7 @@ export class TeamsService {
    * Gets all teams.
    */
   getTeams(): Promise<Team[]> {
-    return firstValueFrom(this.http.get<Team[]>(`${this.apiUrl}`));
+    return firstValueFrom(this.http.get<Team[]>(`${this.apiUrl}/all`));
   }
 
   /**

@@ -1,12 +1,11 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Project;
-import ecostruxure.rate.calculator.dal.interfaces.IProjectRepository;
-import ecostruxure.rate.calculator.dal.interfaces.IProjectTeamRepository;
+import ecostruxure.rate.calculator.dal.IProjectRepository;
+import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 @Service

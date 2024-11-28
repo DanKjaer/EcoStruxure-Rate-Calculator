@@ -1,7 +1,7 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.dal.interfaces.IProfileRepository;
+import ecostruxure.rate.calculator.dal.IProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +17,6 @@ public class ProfileService {
 
     @Autowired
     private IProfileRepository profileRepository;
-
-
-    public ProfileService() throws Exception {
-    }
 
     public Profile create(Profile profile) throws Exception {
         return profileRepository.save(profile);

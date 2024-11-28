@@ -1,7 +1,7 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Geography;
-import ecostruxure.rate.calculator.dal.interfaces.IGeographyRepository;
+import ecostruxure.rate.calculator.dal.IGeographyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

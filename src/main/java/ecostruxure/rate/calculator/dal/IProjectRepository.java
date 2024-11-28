@@ -1,4 +1,4 @@
-package ecostruxure.rate.calculator.dal.interfaces;
+package ecostruxure.rate.calculator.dal;
 
 import ecostruxure.rate.calculator.be.Project;
 import org.springframework.data.repository.CrudRepository;
