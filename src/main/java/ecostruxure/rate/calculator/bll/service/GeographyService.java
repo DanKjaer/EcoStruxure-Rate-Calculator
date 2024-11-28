@@ -21,7 +21,7 @@ public class GeographyService {
     }
 
     public Geography getById(int id) throws Exception {
-        return geographyRepository.findById(id).orElse(null);
+        return geographyRepository.findById(id).orElseThrow(() -> new Exception("Geography not found."));
     }
 
 //    public List<Geography> getGeographies() throws Exception {

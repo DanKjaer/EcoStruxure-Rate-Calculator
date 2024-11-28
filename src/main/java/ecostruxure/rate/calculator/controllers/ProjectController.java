@@ -6,7 +6,6 @@ import ecostruxure.rate.calculator.bll.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -15,9 +14,6 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
-
-    public ProjectController() throws Exception {
-    }
 
     @GetMapping()
     public Project getProject(@RequestParam UUID projectId) throws Exception {
@@ -40,8 +36,13 @@ public class ProjectController {
     }
 
     @DeleteMapping()
-    public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
+    public boolean deleteProjectTeam(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
         return projectService.deleteProjectTeam(projectId, teamId);
+    }
+
+    @DeleteMapping("/archive")
+    public boolean archiveProject(@RequestParam UUID projectId) throws Exception {
+        return projectService.archiveProject(projectId);
     }
 
     @PutMapping("/update")

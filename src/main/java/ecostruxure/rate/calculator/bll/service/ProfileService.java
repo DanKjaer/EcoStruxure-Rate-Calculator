@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,11 @@ public class ProfileService {
     }
 
     public Iterable<Profile> all() throws Exception {
-        return profileRepository.findAll();
+        return profileRepository.findAllByArchived(false);
     }
 
     public Profile getById(UUID profileId) throws Exception {
-        return profileRepository.findById(profileId).orElse(null);
+        return profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
     }
 
     public Profile update(Profile profile) throws Exception {
@@ -36,6 +37,13 @@ public class ProfileService {
 
     public boolean delete(UUID profileId) throws Exception {
         profileRepository.deleteById(profileId);
+        return true;
+    }
+
+    public boolean archive(UUID profileId) throws Exception {
+        var profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
+        profile.setArchived(true);
+        profileRepository.save(profile);
         return true;
     }
 

@@ -21,7 +21,7 @@ public class CurrencyService {
     }
 
     public Currency get(String code) throws Exception {
-        return currencyRepository.findById(code).orElse(null);
+        return currencyRepository.findById(code).orElseThrow(() -> new Exception(code + " not found"));
     }
 
     public void importCurrencies(Currency[] currencies) throws Exception {

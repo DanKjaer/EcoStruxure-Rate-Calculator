@@ -35,8 +35,13 @@ public class ProfileController {
         return profileService.update(profile);
     }
 
-    @DeleteMapping()
-    public boolean deleteProfile(@RequestParam UUID id) throws Exception {
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable UUID id) throws Exception {
         return profileService.delete(id);
+    }
+
+    @DeleteMapping("/archive")
+    public boolean archive(@RequestParam UUID id) throws Exception {
+        return profileService.archive(id);
     }
 }

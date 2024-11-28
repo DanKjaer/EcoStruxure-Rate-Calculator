@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.bll.service;
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,11 @@ public class ProjectService {
     }
 
     public Project getProject(UUID projectId) throws Exception {
-        return projectRepository.findById(projectId).orElse(null);
+        return projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Project not found"));
     }
 
     public Iterable<Project> getProjects() throws Exception {
-        return projectRepository.findAll();
+        return projectRepository.findAllByProjectArchived(false);
     }
 
     public Project createProject(Project project) throws Exception {
@@ -36,12 +37,19 @@ public class ProjectService {
 
     public boolean deleteProject(UUID projectId) throws Exception {
         projectRepository.deleteById(projectId);
+        return !projectRepository.existsById(projectId);
+    }
+
+    public boolean archiveProject(UUID projectId) throws Exception {
+        var project = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Project not found"));
+        project.setProjectArchived(true);
+        projectRepository.save(project);
         return true;
     }
 
     public boolean deleteProjectTeam(UUID projectId, UUID teamId) throws Exception {
         projectTeamRepository.findProjectTeamByProject_ProjectId(projectId).deleteById(teamId);
-        return true;
+        return !projectTeamRepository.existsById(projectId);
     }
 
 //    public Project createProject(Project project) throws SQLException {

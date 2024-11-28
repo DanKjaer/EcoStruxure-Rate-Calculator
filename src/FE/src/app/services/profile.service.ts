@@ -50,7 +50,7 @@ export class ProfileService {
    * @param profileId
    */
   deleteProfile(profileId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?id=${profileId}`));
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${profileId}`));
   }
 
 }

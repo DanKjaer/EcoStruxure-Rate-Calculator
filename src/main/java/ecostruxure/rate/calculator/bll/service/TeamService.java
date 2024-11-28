@@ -22,11 +22,11 @@ public class TeamService {
     }
 
     public Iterable<Team> all() throws Exception {
-        return teamRepository.findAll();
+        return teamRepository.findAllByArchived(false);
     }
 
     public Team getById(UUID teamId) throws Exception {
-        return teamRepository.findById(teamId).orElse(null);
+        return teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
     }
 
     public List<TeamProfile> getByProfileId(UUID profileId) throws Exception {
@@ -39,6 +39,13 @@ public class TeamService {
 
     public boolean delete(UUID teamId) throws Exception {
         teamRepository.deleteById(teamId);
+        return !teamRepository.existsById(teamId);
+    }
+
+    public boolean archive(UUID teamId) throws Exception {
+        var team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
+        team.setArchived(true);
+        teamRepository.save(team);
         return true;
     }
 
