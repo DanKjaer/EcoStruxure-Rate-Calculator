@@ -1,5 +1,7 @@
 package ecostruxure.rate.calculator.be;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "profileId")
 public class Profile {
 
     @Id
@@ -51,7 +54,7 @@ public class Profile {
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamProfile> teamProfiles;
 
-    // Getters and Setters
+    //region Getters and Setters
     public UUID getProfileId() {
         return profileId;
     }
@@ -163,4 +166,5 @@ public class Profile {
     public void setTeamProfiles(List<TeamProfile> teamProfiles) {
         this.teamProfiles = teamProfiles;
     }
+    //endregion
 }

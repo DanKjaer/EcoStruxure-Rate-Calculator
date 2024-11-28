@@ -12,7 +12,7 @@ public class Geography {
     @Column(nullable = false, unique = true)
     private String name;
 
-    // Getters and Setters
+    //region Getters and Setters
     public int getId() {
         return id;
     }
@@ -28,4 +28,5 @@ public class Geography {
     public void setName(String name) {
         this.name = name;
     }
+    //endregion
 }

@@ -55,7 +55,7 @@ public class Team {
     )
     private List<Geography> geographies;
 
-    // Getters and Setters
+    //region Getters and Setters
     public UUID getTeamId() {
         return teamId;
     }
@@ -167,4 +167,5 @@ public class Team {
     public void setGeographies(List<Geography> geographies) {
         this.geographies = geographies;
     }
+    //endregion
 }

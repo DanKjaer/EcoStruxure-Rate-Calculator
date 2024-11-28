@@ -17,7 +17,7 @@ public class Currency {
 
     public Currency() {}
 
-    // Getters and Setters
+    //region Getters and Setters
     public String getCurrencyCode() {
         return currencyCode;
     }
@@ -41,4 +41,5 @@ public class Currency {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
+    //endregion
 }
