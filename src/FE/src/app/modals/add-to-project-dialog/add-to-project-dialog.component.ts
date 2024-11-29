@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Project, ProjectMembers } from "../../models";
+import {Project, ProjectTeam } from "../../models";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -35,8 +35,8 @@ import {MatDivider} from '@angular/material/divider';
 })
 export class AddToProjectDialogComponent implements OnInit {
   teamForm!: FormGroup;
-  teamList: ProjectMembers[] = [];
-  selectedTeams: ProjectMembers[] = [];
+  teamList: ProjectTeam[] = [];
+  selectedTeams: ProjectTeam[] = [];
   @Output() AddToProject = new EventEmitter<Project>();
   @Input() project!: Project;
 
@@ -55,33 +55,29 @@ export class AddToProjectDialogComponent implements OnInit {
 
     let teams = await this.teamService.getTeams();
     let potentialProjectMembers = teams.map(team => {
-      let projectMember: ProjectMembers = {
-        projectId: this.project.projectId!,
-        teamId: team.teamId!,
-        name: team.name,
-        dayRate: team.dayRate,
-        markup: team.markupPercentage,
+      let projectMember: ProjectTeam = {
+        projectTeamId: '',
+        project: this.project!,
+        team: team!,
         projectAllocation: 0
       }
       return projectMember;
     });
     this.teamList = potentialProjectMembers.filter(potentialProjectMember =>
-      !this.project.projectMembers.some(alreadyMember =>
-        alreadyMember.teamId === potentialProjectMember.teamId));
+      !this.project.projectTeams.some(alreadyMember =>
+        alreadyMember.team.teamId === potentialProjectMember.team.teamId));
   }
 
   async onSave() {
     let teams = this.selectedTeams;
-    teams.forEach( (team) => {
-      let projectMember: ProjectMembers = {
-        projectId: '',
-        teamId: team.teamId!,
-        name: team.name,
-        dayRate: team.dayRate,
-        markup: team.markup,
+    teams.forEach((team) => {
+      let projectTeam: ProjectTeam = {
+        projectTeamId: '',
+        project: this.project!,
+        team: team.team!,
         projectAllocation: team.projectAllocation
       }
-      this.project.projectMembers.push(projectMember);
+      this.project.projectTeams.push(projectTeam);
     });
     try{
     const updateProject = await this.projectService.putProject(this.project)

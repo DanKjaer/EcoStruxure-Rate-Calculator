@@ -129,7 +129,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
         project.startDateString = this.formatter.formatDate(project.projectStartDate);
         project.endDateString = this.formatter.formatDate(project.projectEndDate);
 
-        project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
+        project.projectMembersString = project.projectTeams.map(member => member.team.name).join(', ');
       });
       this.datasource.data = projects;
 
@@ -168,7 +168,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
       project.startDateString = this.formatter.formatDate(project.projectStartDate);
       project.endDateString = this.formatter.formatDate(project.projectEndDate);
-      project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
+      project.projectMembersString = project.projectTeams.map(member => member.team.name).join(', ');
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });

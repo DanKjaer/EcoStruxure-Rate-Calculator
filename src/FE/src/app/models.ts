@@ -59,29 +59,28 @@ export interface Project {
   projectId?: string;
   projectName: string;
   projectDescription: string;
-  projectMembers: ProjectMembers[];
+  projectTeams: ProjectTeam[];
+  projectDayRate?: number;
+  projectGrossMargin?: number;
   projectPrice?: number;
-  projectStartDate: Date;
-  startDateString?: string;
-  projectEndDate: Date;
-  endDateString?: string;
+  projectTotalCostAtChange?: number;
   projectTotalDays?: number;
+  projectStartDate: Date;
+  projectEndDate: Date;
   projectLocation: Geography;
   projectArchived?: boolean;
-  projectDayRate?: number;
+  projectRestCostDate?: Date;
   projectSalesNumber?: number;
-  projectGrossMargin?: number;
+  startDateString?: string;
+  endDateString?: string;
   projectMembersString?: string;
 }
 
-export interface ProjectMembers {
-  teamId: string;
-  projectId: string;
-  name: string;
+export interface ProjectTeam {
+  projectTeamId: string;
+  team: Team;
+  project: Project;
   projectAllocation: number;
-  markup?: number;
-  dayRate?: number;
-  dayRateWithMarkup?: number;
 }
 
 export interface Currency {

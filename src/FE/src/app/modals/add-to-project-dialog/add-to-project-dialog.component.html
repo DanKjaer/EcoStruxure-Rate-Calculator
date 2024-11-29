@@ -11,8 +11,8 @@
   </div>
   <div class="projectMembersContainer">
     <mat-selection-list #teams formControlName="teams" (selectionChange)="onSelectionChange($event)">
-      @for (team of teamList; track team) {
-        <mat-list-option [value]="team" >{{ team.name }}</mat-list-option>
+      @for (projectTeam of teamList; track projectTeam) {
+        <mat-list-option [value]="projectTeam" >{{ projectTeam.team.name }}</mat-list-option>
       }
     </mat-selection-list>
   </div>
@@ -21,13 +21,13 @@
 <mat-dialog-content class="container">
   <div class="allocationContainer">
     <mat-list>
-      @for (team of selectedTeams; track team) {
+      @for (projectTeam of selectedTeams; track projectTeam) {
         <mat-list-item>
           <div class ="allocationItem">
-            <span>{{ team.name }}</span>
+            <span>{{ projectTeam.team.name }}</span>
             <mat-form-field class="allocationInput">
               <span matSuffix>%</span>
-              <input type="number" matInput placeholder="Ex. 75" [(ngModel)]="team.projectAllocation">
+              <input type="number" matInput placeholder="Ex. 75" [(ngModel)]="projectTeam.projectAllocation">
             </mat-form-field>
           </div>
         </mat-list-item>
