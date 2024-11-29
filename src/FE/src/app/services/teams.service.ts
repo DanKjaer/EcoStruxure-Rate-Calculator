@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {Team, TeamProfiles} from "../models";
+import {Team, TeamProfile} from "../models";
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +23,8 @@ export class TeamsService {
    * Gets team profiles by team id.
    * @param id
    */
-  getTeamProfiles(id: string): Promise<TeamProfiles[]> {
-    return firstValueFrom(this.http.get<TeamProfiles[]>(`${this.apiUrl}/profiles?profileId=${id}`));
+  getTeamProfiles(id: string): Promise<TeamProfile[]> {
+    return firstValueFrom(this.http.get<TeamProfile[]>(`${this.apiUrl}/profiles?profileId=${id}`));
   }
 
   /**
@@ -32,7 +32,7 @@ export class TeamsService {
    * @param team
    * @param teamProfiles
    */
-  postTeam(team: Team, teamProfiles: TeamProfiles[]): Promise<Team> {
+  postTeam(team: Team, teamProfiles: TeamProfile[]): Promise<Team> {
     return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {team, teamProfiles}));
   }
 

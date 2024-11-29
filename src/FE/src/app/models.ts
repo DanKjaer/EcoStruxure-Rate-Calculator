@@ -19,37 +19,34 @@ export interface Profile {
 export interface Team {
   teamId?: string; // UUID
   name: string;
-  markup?: number;
-  grossMargin?: number;
-  isArchived?: boolean;
-  updatedAt?: Date;
-  updatedAtString?: string;
+  markupPercentage?: number;
+  totalCostWithMarkup?: number;
+  grossMarginPercentage?: number;
+  totalCostWithGrossMargin?: number;
   hourlyRate?: number;
   dayRate?: number;
-  totalAllocatedCost?: number;
   totalAllocatedHours?: number;
-  totalMarkup?: number;
-  totalGrossMargin?: number;
+  totalAllocatedCost?: number;
+  updatedAt?: Date;
+  updatedAtString?: string;
+  archived?: boolean;
+  teamProfiles?: TeamProfile[];
   geographies?: Geography[];
 }
 
 export interface TeamDTO {
   team: Team;
-  teamProfiles: TeamProfiles[];
+  teamProfiles: TeamProfile[];
 }
 
-export interface TeamProfiles {
-  teamId?: string;
-  profileId: string;
-  name: string;
-  annualCost: number;
-  annualHours: number;
-  costAllocation: number;
-  allocatedCostOnTeam?: number;
-  hourAllocation: number;
-  allocatedHoursOnTeam?: number;
-  dayRateOnTeam?: number;
-  geography: Geography;
+export interface TeamProfile {
+  teamProfileId?: string;
+  team?: Team;
+  profile?: Profile;
+  allocationPercentageHours: number;
+  allocatedHours?: number;
+  allocationPercentageCost: number;
+  allocatedCost?: number;
 }
 
 export interface Geography {

@@ -241,11 +241,11 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   }
 
   private getTotalMarkup(displayedData: Team[]) {
-    this.totalMarkup = displayedData.reduce((acc: number, team: Team) => acc + team.totalMarkup!, 0);
+    this.totalMarkup = displayedData.reduce((acc: number, team: Team) => acc + team.totalCostWithMarkup!, 0);
   }
 
   private getTotalGrossMargin(displayedData: Team[]) {
-    this.totalGrossMargin = displayedData.reduce((acc: number, team: Team) => acc + team.totalGrossMargin!, 0);
+    this.totalGrossMargin = displayedData.reduce((acc: number, team: Team) => acc + team.totalCostWithGrossMargin!, 0);
   }
 
   private getDisplayedData() {

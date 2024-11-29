@@ -60,7 +60,7 @@ export class AddToProjectDialogComponent implements OnInit {
         teamId: team.teamId!,
         name: team.name,
         dayRate: team.dayRate,
-        markup: team.markup,
+        markup: team.markupPercentage,
         projectAllocation: 0
       }
       return projectMember;

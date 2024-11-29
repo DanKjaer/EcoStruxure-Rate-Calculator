@@ -20,7 +20,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
 import {ActivatedRoute} from '@angular/router';
-import {Currency, Geography, Profile, TeamProfiles} from '../../models';
+import {Currency, Geography, Profile, TeamProfile} from '../../models';
 import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
 import {MenuService} from '../../services/menu.service';
@@ -55,7 +55,7 @@ export class ProfilePageComponent implements OnInit {
   protected readonly localStorage = localStorage;
   locations: Geography[] = [];
   currentProfile: WritableSignal<Profile | null> = signal<Profile | null>(null);
-  teams: WritableSignal<TeamProfiles[]> = signal<TeamProfiles[]>([]);
+  teams: WritableSignal<TeamProfile[]> = signal<TeamProfile[]>([]);
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
@@ -85,10 +85,10 @@ export class ProfilePageComponent implements OnInit {
       };
     }
 
-    const totalDayRate = teams.reduce((sum, item) => sum + item.dayRateOnTeam!, 0);
+    const totalDayRate = teams.reduce((sum, item) => sum + this.calculateDayRate(item.profile!), 0);
     const totalHourlyRate = totalDayRate / profile.hoursPerDay!;
-    const totalAnnualCost = teams.reduce((sum, item) => sum + item.annualCost, 0);
-    const totalAnnualHours = teams.reduce((sum, item) => sum + item.annualHours, 0);
+    const totalAnnualCost = teams.reduce((sum, item) => sum + item.profile!.annualCost!, 0);
+    const totalAnnualHours = teams.reduce((sum, item) => sum + item.profile?.annualHours!, 0);
 
     return { totalDayRate, totalHourlyRate, totalAnnualCost, totalAnnualHours };
   });
@@ -229,4 +229,8 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
+  private calculateDayRate(profile: Profile) {
+    let hourlyRate = profile.annualCost! / profile.annualHours!;
+    return hourlyRate * profile.hoursPerDay!;
+  }
 }
