@@ -10,6 +10,7 @@ import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {Geography, Project, ProjectMembers, Team} from '../../models';
+//Eventuelt tilføje MatListModule?
 import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {
   MatDatepickerModule

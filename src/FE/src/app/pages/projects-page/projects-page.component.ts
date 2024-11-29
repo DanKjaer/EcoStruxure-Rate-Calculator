@@ -1,5 +1,6 @@
 import {AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
+//Kan vi importere et module her os ?
 import {
   MatCell,
   MatCellDef,

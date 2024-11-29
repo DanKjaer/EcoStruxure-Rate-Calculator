@@ -1,12 +1,9 @@
 import {
-  AfterViewInit,
-  booleanAttribute,
-  ChangeDetectorRef,
   Component,
   computed,
   OnInit,
   signal,
-  Signal, WritableSignal
+  WritableSignal
 } from '@angular/core';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatFormFieldModule} from '@angular/material/form-field';

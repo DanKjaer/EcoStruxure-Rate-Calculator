@@ -17,7 +17,7 @@ import {MatDivider} from '@angular/material/divider';
 import {
   MatList,
   MatListItem,
-  MatListItemIcon, MatListItemLine,
+  MatListItemLine,
   MatListItemTitle,
   MatListSubheaderCssMatStyler
 } from '@angular/material/list';
