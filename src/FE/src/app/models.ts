@@ -52,7 +52,6 @@ export interface TeamProfile {
 export interface Geography {
   id: number;
   name: string;
-  predefined?: boolean;
 }
 
 export interface Project {
@@ -86,6 +85,5 @@ export interface ProjectTeam {
 export interface Currency {
   currencyCode: string;
   eurConversionRate: number;
-  usdConversionRate: number;
   symbol: string;
 }
