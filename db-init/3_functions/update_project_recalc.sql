@@ -5,7 +5,9 @@ BEGIN
     IF NEW.project_end_date IS DISTINCT FROM OLD.project_end_date OR
        NEW.project_start_date IS DISTINCT FROM OLD.project_start_date THEN
         NEW.project_total_days := NEW.project_end_date - NEW.project_start_date;
+        NEW.project_total_days := business_days_between(NEW.project_start_date, NEW.project_end_date);
     END IF;
+
     IF NEW.project_price IS DISTINCT FROM OLD.project_price THEN
         IF NEW.project_price IS NOT NULL THEN
 
