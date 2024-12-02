@@ -1,5 +1,6 @@
 package ecostruxure.rate.calculator.be;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -16,10 +17,12 @@ public class TeamProfile {
 
     @ManyToOne
     @JoinColumn(name = "team_id", nullable = false)
+    @JsonBackReference
     private Team team;
 
     @ManyToOne
     @JoinColumn(name = "profile_id", nullable = false)
+    @JsonBackReference
     private Profile profile;
 
     // Percentage of time allocated

@@ -21,14 +21,14 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public Iterable<Profile> getProfiles() throws Exception {
+    public Iterable<ProfileDTO> getProfiles() throws Exception {
         return profileService.all();
     }
 
-    @PostMapping
-    public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
-        return profileService.create(profileDTO.getProfile());
-    }
+//    @PostMapping
+//    public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
+//        return profileService.create(profileDTO.getProfile());
+//    }
 
     @PutMapping()
     public Profile updateProfile(@RequestBody Profile profile) throws Exception {

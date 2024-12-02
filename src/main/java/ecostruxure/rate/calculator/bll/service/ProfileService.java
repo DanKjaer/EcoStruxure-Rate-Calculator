@@ -1,12 +1,17 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.modelmapper.internal.bytebuddy.description.method.MethodDescription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.lang.reflect.Type;
 
 @Service
 public class ProfileService {
@@ -19,12 +24,19 @@ public class ProfileService {
     @Autowired
     private IProfileRepository profileRepository;
 
+    private final ModelMapper modelMapper = new ModelMapper();
+
     public Profile create(Profile profile) throws Exception {
         return profileRepository.save(profile);
     }
 
-    public Iterable<Profile> all() throws Exception {
-        return profileRepository.findAllByArchived(false);
+    public Iterable<ProfileDTO> all() throws Exception {
+        var profiles = profileRepository.findAllByArchived(false);
+
+        Type listType = new TypeToken<Iterable<ProfileDTO>>() {}.getType();
+
+        Iterable<ProfileDTO> profilesDto = modelMapper.map(profiles, listType);
+        return profilesDto;
     }
 
     public Profile getById(UUID profileId) throws Exception {

@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.be;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -47,7 +48,8 @@ public class Team {
 
     private boolean archived;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<TeamProfile> teamProfiles;
 
     @ManyToMany
