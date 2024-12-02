@@ -17,12 +17,12 @@ public class TeamProfile {
 
     @ManyToOne
     @JoinColumn(name = "team_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "team-teamProfiles")
     private Team team;
 
     @ManyToOne
     @JoinColumn(name = "profile_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "profile-teamProfiles")
     private Profile profile;
 
     // Percentage of time allocated

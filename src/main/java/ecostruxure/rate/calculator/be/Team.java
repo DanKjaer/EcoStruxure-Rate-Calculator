@@ -49,7 +49,7 @@ public class Team {
     private boolean archived;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonManagedReference(value = "team-teamProfiles")
     private List<TeamProfile> teamProfiles;
 
     @ManyToMany

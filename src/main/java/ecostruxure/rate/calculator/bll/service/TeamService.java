@@ -6,6 +6,7 @@ import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -17,6 +18,7 @@ public class TeamService {
     @Autowired
     private ITeamProfileRepository teamProfileRepository;
 
+    @Transactional
     public Team create(Team team) throws Exception {
         return teamRepository.save(team);
     }

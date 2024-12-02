@@ -53,7 +53,7 @@ public class Profile {
 
     // Relationships
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonManagedReference(value = "profile-teamProfiles")
     private List<TeamProfile> teamProfiles;
 
     //region Getters and Setters
