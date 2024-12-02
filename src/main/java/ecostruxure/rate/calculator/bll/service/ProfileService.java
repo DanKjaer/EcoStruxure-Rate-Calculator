@@ -25,8 +25,9 @@ public class ProfileService {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public Profile create(Profile profile) throws Exception {
-        return profileRepository.save(profile);
+    public Profile create(ProfileDTO profile) throws Exception {
+        var newProfile = modelMapper.map(profile, Profile.class);
+        return profileRepository.save(newProfile);
     }
 
     public Iterable<ProfileDTO> all() throws Exception {
