@@ -4,6 +4,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,15 @@ public class TeamService {
     }
 
     public Team update(Team team) throws Exception {
+        for(TeamProfile teamProfile : team.getTeamProfiles()) {
+            if(teamProfile.getProfile() == null) {
+                UUID teamProfileId = teamProfile.getTeamProfileId();
+                TeamProfile existingTeamprofile = teamProfileRepository.findById(teamProfileId)
+                        .orElseThrow(() -> new EntityNotFoundException("Team profile not found with ID: " + teamProfileId));
+
+                teamProfile.setProfile(existingTeamprofile.getProfile());
+            }
+        }
         return teamRepository.save(team);
     }
 
