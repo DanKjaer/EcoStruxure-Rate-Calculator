@@ -1,4 +1,4 @@
-create function update_team_on_profile_change() returns trigger
+create OR REPLACE function update_team_on_profile_change() returns trigger
     language plpgsql
 as
 $$

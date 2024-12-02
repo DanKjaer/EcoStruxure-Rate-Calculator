@@ -1,8 +1,10 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
+import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -22,6 +24,8 @@ public class ProfileService {
 
     @Autowired
     private IProfileRepository profileRepository;
+    @Autowired
+    private ITeamProfileRepository teamProfileRepository;
 
     private final ModelMapper modelMapper = new ModelMapper();
 
@@ -44,6 +48,15 @@ public class ProfileService {
     }
 
     public Profile update(Profile profile) throws Exception {
+        for (TeamProfile teamProfile : profile.getTeamProfiles()) {
+            if (teamProfile.getTeam() == null) {
+                UUID teamProfileId = teamProfile.getTeamProfileId();
+                TeamProfile existingTeamProfile = teamProfileRepository.findById(teamProfileId)
+                        .orElseThrow(() -> new EntityNotFoundException("TeamProfile not found with ID: " + teamProfileId));
+
+                teamProfile.setTeam(existingTeamProfile.getTeam());
+            }
+        }
         return profileRepository.save(profile);
     }
 
