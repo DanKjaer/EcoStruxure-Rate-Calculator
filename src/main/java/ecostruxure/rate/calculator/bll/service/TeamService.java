@@ -42,7 +42,6 @@ public class TeamService {
                 UUID teamProfileId = teamProfile.getTeamProfileId();
                 TeamProfile existingTeamprofile = teamProfileRepository.findById(teamProfileId)
                         .orElseThrow(() -> new EntityNotFoundException("Team profile not found with ID: " + teamProfileId));
-
                 teamProfile.setProfile(existingTeamprofile.getProfile());
             }
         }
