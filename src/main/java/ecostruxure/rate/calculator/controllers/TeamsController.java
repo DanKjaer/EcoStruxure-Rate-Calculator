@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.controllers;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
+import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.bll.team.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class TeamsController {
     }
 
     @GetMapping("/profiles")
-    public List<TeamProfile> getByProfileId(@RequestParam UUID profileId) throws Exception {
+    public List<TeamProfileDTO> getByProfileId(@RequestParam UUID profileId) throws Exception {
         return teamService.getByProfileId(profileId);
     }
 

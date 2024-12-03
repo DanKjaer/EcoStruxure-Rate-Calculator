@@ -83,11 +83,10 @@ export class ProfilePageComponent implements OnInit {
         totalAnnualHours: 0
       };
     }
-
-    const totalDayRate = teams.reduce((sum, item) => sum + this.calculateDayRate(item.profile!), 0);
+    const totalDayRate = teams.reduce((sum, item) => sum + this.calculateDayRate(item, profile), 0);
     const totalHourlyRate = totalDayRate / profile.hoursPerDay!;
-    const totalAnnualCost = teams.reduce((sum, item) => sum + item.profile!.annualCost!, 0);
-    const totalAnnualHours = teams.reduce((sum, item) => sum + item.profile?.annualHours!, 0);
+    const totalAnnualCost = teams.reduce((sum, item) => sum + item.allocatedCost!, 0);
+    const totalAnnualHours = teams.reduce((sum, item) => sum + item.allocatedHours!, 0);
 
     return { totalDayRate, totalHourlyRate, totalAnnualCost, totalAnnualHours };
   });
@@ -220,8 +219,8 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  private calculateDayRate(profile: Profile) {
-    let hourlyRate = profile.annualCost! / profile.annualHours!;
+  private calculateDayRate(teamProfile: TeamProfile, profile: Profile) {
+    let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!
     return hourlyRate * profile.hoursPerDay!;
   }
 }

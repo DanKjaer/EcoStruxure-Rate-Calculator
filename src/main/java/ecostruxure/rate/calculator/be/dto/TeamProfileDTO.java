@@ -1,20 +1,23 @@
 package ecostruxure.rate.calculator.be.dto;
 
+import ecostruxure.rate.calculator.be.Profile;
+import ecostruxure.rate.calculator.be.Team;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class TeamProfileDTO {
     private UUID id;
-    private TeamDTO team;
-    private ProfileDTO profile;
+    private Team team;
+    private Profile profile;
     private BigDecimal allocationPercentageHours;
     private BigDecimal allocatedHours;
     private BigDecimal allocationPercentageCost;
     private BigDecimal allocatedCost;
 
     public TeamProfileDTO(UUID id,
-                          TeamDTO team,
-                          ProfileDTO profile,
+                          Team team,
+                          Profile profile,
                           BigDecimal allocationPercentageHours,
                           BigDecimal allocatedHours,
                           BigDecimal allocationPercentageCost,
@@ -36,19 +39,19 @@ public class TeamProfileDTO {
         this.id = id;
     }
 
-    public TeamDTO getTeam() {
+    public Team getTeam() {
         return team;
     }
 
-    public void setTeam(TeamDTO team) {
+    public void setTeam(Team team) {
         this.team = team;
     }
 
-    public ProfileDTO getProfile() {
+    public Profile getProfile() {
         return profile;
     }
 
-    public void setProfile(ProfileDTO profile) {
+    public void setProfile(Profile profile) {
         this.profile = profile;
     }
 

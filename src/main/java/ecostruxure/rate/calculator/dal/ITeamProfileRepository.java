@@ -10,5 +10,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ITeamProfileRepository extends CrudRepository<TeamProfile, UUID> {
-    List<TeamProfile> findAllByProfile_ProfileId(UUID profileProfileId);
+    List<TeamProfile> findAllByProfile_ProfileId(UUID profileId);
 }
