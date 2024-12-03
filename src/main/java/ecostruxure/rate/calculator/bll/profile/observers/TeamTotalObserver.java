@@ -4,6 +4,7 @@ import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.bll.profile.IProfileObserver;
+import ecostruxure.rate.calculator.bll.team.ITeamObserver;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,12 @@ import java.util.List;
 public class TeamTotalObserver implements IProfileObserver {
     @Autowired
     private ITeamRepository teamRepository;
+    private final List<ITeamObserver> teamObservers;
+
+    @Autowired
+    public TeamTotalObserver(List<ITeamObserver> teamObservers) {
+        this.teamObservers = teamObservers;
+    }
 
     @Override
     public void update(Profile profile) {
@@ -41,6 +48,14 @@ public class TeamTotalObserver implements IProfileObserver {
                             .divide(new BigDecimal("100.00"), 2, BigDecimal.ROUND_HALF_UP))));
 
             teamRepository.save(team);
+
+            notifyTeamObservers(team);
+        }
+    }
+
+    private void notifyTeamObservers(Team team) {
+        for (ITeamObserver teamObserver : teamObservers) {
+            teamObserver.update(team);
         }
     }
 }

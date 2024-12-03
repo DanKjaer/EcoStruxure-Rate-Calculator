@@ -32,8 +32,7 @@ public class ProfileService {
     private ITeamProfileRepository teamProfileRepository;
 
     private final ModelMapper modelMapper = new ModelMapper();
-
-    private List<IProfileObserver> observers = new ArrayList<>();
+    private final List<IProfileObserver> observers;
 
     @Autowired
     public ProfileService(List<IProfileObserver> observers) {

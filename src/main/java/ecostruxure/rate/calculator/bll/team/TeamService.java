@@ -2,8 +2,6 @@ package ecostruxure.rate.calculator.bll.team;
 
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
-import ecostruxure.rate.calculator.be.dto.ProfileDTO;
-import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
@@ -18,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +30,13 @@ public class TeamService {
     private ITeamProfileRepository teamProfileRepository;
     @PersistenceContext
     private EntityManager em;
+
+    private final List<ITeamObserver> teamObservers;
+
+    @Autowired
+    public TeamService(List<ITeamObserver> teamObservers) {
+        this.teamObservers = teamObservers;
+    }
 
     @Transactional
     public Team create(Team team) throws Exception {
@@ -76,7 +83,18 @@ public class TeamService {
                 teamProfile.setProfile(existingTeamprofile.getProfile());
             }
         }
-        return teamRepository.save(team);
+        team = calculateTotalMarkupAndTotalGrossMargin(team);
+        Team updatedTeam = teamRepository.save(team);
+
+        notifyTeamObservers(updatedTeam);
+
+        return updatedTeam;
+    }
+
+    private void notifyTeamObservers(Team updatedTeam) {
+        for (ITeamObserver teamObserver : teamObservers) {
+            teamObserver.update(updatedTeam);
+        }
     }
 
     public boolean delete(UUID teamId) throws Exception {
@@ -452,17 +470,17 @@ public class TeamService {
 //        }
 //    }
 //
-//    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) throws SQLException {
-//        BigDecimal markup = team.getMarkup().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-//        BigDecimal grossMargin = team.getGrossMargin().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-//        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
-//
-//        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
-//        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
-//
-//        team.setTotalMarkup(totalMarkup);
-//        team.setTotalGrossMargin(totalGrossMargin);
-//
-//        return team;
-//    }
+    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
+        BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
+
+        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
+        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
+
+        team.setTotalCostWithMarkup(totalMarkup);
+        team.setTotalCostWithGrossMargin(totalGrossMargin);
+
+        return team;
+    }
 }

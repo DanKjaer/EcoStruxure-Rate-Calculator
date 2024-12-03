@@ -123,7 +123,7 @@ public class ProjectService {
         return totalCostAtChange;
     }
 
-    private BigDecimal calculateDayRate(List<ProjectTeam> projectTeams) {
+    public BigDecimal calculateDayRate(List<ProjectTeam> projectTeams) {
         BigDecimal totalDayRate = BigDecimal.ZERO;
         for (ProjectTeam projectTeam : projectTeams) {
             BigDecimal markup = projectTeam.getTeam().getMarkupPercentage();
