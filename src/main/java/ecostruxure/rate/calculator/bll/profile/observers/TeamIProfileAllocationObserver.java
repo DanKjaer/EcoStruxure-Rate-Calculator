@@ -18,7 +18,7 @@ public class TeamIProfileAllocationObserver implements IProfileObserver {
 
     @Override
     public void update(Profile profile) {
-        List<TeamProfile> teamProfiles = teamProfileRepository.findTeamProfilesByProfile_ProfileId(profile.getProfileId());
+        List<TeamProfile> teamProfiles = teamProfileRepository.findAllByProfile_ProfileId(profile.getProfileId());
         for (TeamProfile teamProfile : teamProfiles) {
             teamProfile.setAllocatedCost(profile.getAnnualCost().multiply(teamProfile.getAllocationPercentageCost()
                     .divide(new BigDecimal("100.00"), 2, BigDecimal.ROUND_HALF_UP)));
