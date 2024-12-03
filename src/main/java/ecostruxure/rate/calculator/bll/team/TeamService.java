@@ -1,8 +1,7 @@
-package ecostruxure.rate.calculator.bll.service;
+package ecostruxure.rate.calculator.bll.team;
 
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
-import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import jakarta.persistence.EntityNotFoundException;

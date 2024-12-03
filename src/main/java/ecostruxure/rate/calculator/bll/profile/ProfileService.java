@@ -33,10 +33,10 @@ public class ProfileService {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    private List<ProfileObserver> observers = new ArrayList<>();
+    private List<IProfileObserver> observers = new ArrayList<>();
 
     @Autowired
-    public ProfileService(List<ProfileObserver> observers) {
+    public ProfileService(List<IProfileObserver> observers) {
         this.observers = observers;
     }
 
@@ -79,7 +79,7 @@ public class ProfileService {
     }
 
     private void notifyObservers(Profile updatedProfile) {
-        for (ProfileObserver observer : observers) {
+        for (IProfileObserver observer : observers) {
             observer.update(updatedProfile);
         }
     }

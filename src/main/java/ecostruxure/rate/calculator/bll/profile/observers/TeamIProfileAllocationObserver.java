@@ -2,9 +2,8 @@ package ecostruxure.rate.calculator.bll.profile.observers;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.TeamProfile;
-import ecostruxure.rate.calculator.bll.profile.ProfileObserver;
+import ecostruxure.rate.calculator.bll.profile.IProfileObserver;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
-import ecostruxure.rate.calculator.dal.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class TeamProfileAllocationObserver implements ProfileObserver {
+public class TeamIProfileAllocationObserver implements IProfileObserver {
 
     @Autowired
     private ITeamProfileRepository teamProfileRepository;
