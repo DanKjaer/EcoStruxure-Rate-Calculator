@@ -80,10 +80,9 @@ public class RateUtils {
         for (ProjectTeam projectTeam : projectTeams) {
             BigDecimal markup = projectTeam.getTeam().getMarkupPercentage();
             var dayRateWithMarkup = projectTeam.getTeam().getDayRate()
-                    .multiply(markup.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE));
+                    .multiply(BigDecimal.ONE.add(markup.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)));
             var allocatedDayRate = dayRateWithMarkup.multiply(projectTeam.getAllocationPercentage()
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
-            projectTeam.getTeam().setDayRate(allocatedDayRate);
             totalDayRate = totalDayRate.add(allocatedDayRate);
         }
         return totalDayRate;
