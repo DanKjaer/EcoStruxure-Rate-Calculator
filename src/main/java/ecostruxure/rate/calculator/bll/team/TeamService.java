@@ -2,9 +2,16 @@ package ecostruxure.rate.calculator.bll.team;
 
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
+import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamService {
@@ -20,6 +28,9 @@ public class TeamService {
     private ITeamRepository teamRepository;
     @Autowired
     private ITeamProfileRepository teamProfileRepository;
+    @PersistenceContext
+    private EntityManager em;
+
     private final List<ITeamObserver> teamObservers;
 
     @Autowired
@@ -40,13 +51,32 @@ public class TeamService {
         return teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
     }
 
-    public List<TeamProfile> getByProfileId(UUID profileId) throws Exception {
-        return teamProfileRepository.findAllByProfile_ProfileId(profileId);
+    public List<TeamProfileDTO> getByProfileId(UUID profileId) throws Exception {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<TeamProfile> cq = cb.createQuery(TeamProfile.class);
+        Root<TeamProfile> teamProfile = cq.from(TeamProfile.class);
+
+        teamProfile.fetch("team", JoinType.LEFT);
+        teamProfile.fetch("profile", JoinType.LEFT);
+
+        cq.select(teamProfile).where(cb.equal(teamProfile.get("profile").get("profileId"), profileId));
+
+        List<TeamProfile> teamProfiles = em.createQuery(cq).getResultList();
+        return teamProfiles.stream()
+                .map(tp -> new TeamProfileDTO(
+                        tp.getTeamProfileId(),
+                        tp.getTeam(),
+                        tp.getProfile(),
+                        tp.getAllocationPercentageHours(),
+                        tp.getAllocatedHours(),
+                        tp.getAllocationPercentageCost(),
+                        tp.getAllocatedCost()
+                )).collect(Collectors.toList());
     }
 
     public Team update(Team team) throws Exception {
-        for(TeamProfile teamProfile : team.getTeamProfiles()) {
-            if(teamProfile.getProfile() == null) {
+        for (TeamProfile teamProfile : team.getTeamProfiles()) {
+            if (teamProfile.getProfile() == null) {
                 UUID teamProfileId = teamProfile.getTeamProfileId();
                 TeamProfile existingTeamprofile = teamProfileRepository.findById(teamProfileId)
                         .orElseThrow(() -> new EntityNotFoundException("Team profile not found with ID: " + teamProfileId));
