@@ -8,6 +8,7 @@ import ecostruxure.rate.calculator.bll.team.ITeamObserver;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,21 +35,21 @@ public class TeamTotalObserver implements IProfileObserver {
             for (TeamProfile teamProfile : teamProfiles) {
                 totalCost = totalCost.add(teamProfile.getAllocatedCost());
                 totalHours = totalHours.add(teamProfile.getAllocatedHours());
-                System.out.println("total cost: " + totalCost);
-                System.out.println("total hours: " + totalHours);
             }
-
+            team.setTotalAllocatedHours(totalHours);
             team.setTotalAllocatedCost(totalCost);
+
             team.setTotalCostWithMarkup(totalCost.multiply(BigDecimal.ONE.add(team.getMarkupPercentage()
                     .divide(new BigDecimal("100.00"), 2, BigDecimal.ROUND_HALF_UP))));
-
-            team.setTotalAllocatedHours(totalHours);
             team.setTotalCostWithGrossMargin(team.getTotalCostWithMarkup().multiply(BigDecimal.ONE.add(
                     team.getGrossMarginPercentage()
                             .divide(new BigDecimal("100.00"), 2, BigDecimal.ROUND_HALF_UP))));
 
-            teamRepository.save(team);
+            team.setHourlyRate(team.getTotalAllocatedCost()
+                    .divide(team.getTotalAllocatedHours(), 2, BigDecimal.ROUND_HALF_UP));
+            team.setDayRate(team.getHourlyRate().multiply(BigDecimal.valueOf(8)));
 
+            teamRepository.save(team);
             notifyTeamObservers(team);
         }
     }
