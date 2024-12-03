@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.ProjectTeam;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -8,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,10 +38,12 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+/*
     @Transactional
     public Project updateProject(Project project) throws Exception {
         return projectRepository.save(project);
     }
+*/
 
     public boolean deleteProject(UUID projectId) throws Exception {
         projectRepository.deleteById(projectId);
@@ -77,48 +85,42 @@ public class ProjectService {
 //        return projectDAO.archiveProject(projectId);
 //    }
 //
-//    public Project updateProject(Project project) throws Exception {
-//        try {
-//            var projectContainsMembers = project.getProjectMembers() != null;
-//            var projectContainsDayRate = project.getProjectDayRate() != null;
-//            var projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
-//
-//            // Calculate, if rest cost have been calc. before
-//            if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() != null) {
-//                project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
-//                project.setProjectRestCostDate(LocalDate.now());
-//                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
-//                project.setProjectGrossMargin(calculateGrossMargin(project));
-//            }
-//            // Calculate, if project members are present and project is started
-//            else if (projectContainsMembers && projectContainsDayRate && projectIsStarted) {
-//                project.setProjectTotalCostAtChange(calculateTotalCostAtChange(project));
-//                project.setProjectRestCostDate(LocalDate.now());
-//                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
-//                project.setProjectGrossMargin(calculateGrossMargin(project));
-//            }
-//
-//            // Calculate, if project members are present and project is not started
-//            else if (projectContainsMembers && projectContainsDayRate) {
-//                project.setProjectDayRate(calculateDayRate(project.getProjectMembers()));
-//                project.setProjectGrossMargin(calculateGrossMargin(project));
-//            }
-//
-//            project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
-//
-//            validateProject(project);
-//
-//            var updateSuccess = projectDAO.updateProject(project);
-//
-//            if (updateSuccess && !project.getProjectMembers().isEmpty()) {
-//                projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectMembers()
-//                );
-//            }
-//            return project;
-//        }catch(SQLException e){
-//            throw new SQLException("Failed to update project", e);
-//        }
-//    }
+    public Project updateProject(Project project) throws Exception {
+        var projectContainsMembers = project.getProjectTeams() != null;
+        var projectContainsDayRate = project.getProjectDayRate() != null;
+        var projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
+
+        // Calculate, if rest cost have been calc. before
+        if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() != null) {
+            project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
+            project.setProjectRestCostDate(LocalDate.now());
+            project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
+            project.setProjectGrossMargin(calculateGrossMargin(project));
+        }
+        // Calculate, if project members are present and project is started
+        else if (projectContainsMembers && projectContainsDayRate && projectIsStarted) {
+            project.setProjectTotalCostAtChange(calculateTotalCostAtChange(project));
+            project.setProjectRestCostDate(LocalDate.now());
+            project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
+            project.setProjectGrossMargin(calculateGrossMargin(project));
+        }
+
+        // Calculate, if project members are present and project is not started
+        else if (projectContainsMembers && projectContainsDayRate) {
+            project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
+            project.setProjectGrossMargin(calculateGrossMargin(project));
+        }
+
+        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+
+        /*            var updateSuccess =
+
+        *//*            if (updateSuccess && !project.getProjectTeams().isEmpty()) {
+                        projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectTeams()
+                        );
+                    }*/
+        return projectRepository.save(project);
+    }
 //
 //    public void updateProjectBasedOnTeam(Team team) throws Exception {
 //        var projectList = projectDAO.getProjectsBasedOnTeam(team.getTeamId());
@@ -130,19 +132,19 @@ public class ProjectService {
 //        }
 //    }
 //
-//    private BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
-//        BigDecimal totalCostAtChange;
-//        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
-//        totalCostAtChange = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed));
-//        return totalCostAtChange;
-//    }
-//
-//    private BigDecimal calculateTotalCostAtChange(Project project) {
-//        BigDecimal totalCostAtChange = project.getProjectTotalCostAtChange();
-//        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectRestCostDate().toEpochDay();
-//        totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
-//        return totalCostAtChange;
-//    }
+    private BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
+        BigDecimal totalCostAtChange;
+        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
+        totalCostAtChange = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed));
+        return totalCostAtChange;
+    }
+
+    private BigDecimal calculateTotalCostAtChange(Project project) {
+        BigDecimal totalCostAtChange = project.getProjectTotalCostAtChange();
+        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectRestCostDate().toEpochDay();
+        totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
+        return totalCostAtChange;
+    }
 //
 //    private void validateProject(Project project) throws Exception {
 //        BigDecimal grossMargin = project.getProjectGrossMargin();
@@ -151,36 +153,36 @@ public class ProjectService {
 //        }
 //    }
 //
-//    private BigDecimal calculateDayRate(List<ProjectMember> projectMembers) {
-//        BigDecimal totalDayRate = BigDecimal.ZERO;
-//        for (ProjectMember projectMember : projectMembers) {
-//            BigDecimal markup = projectMember.getMarkup();
-//            var dayRateWithMarkup = projectMember.getDayRate()
-//                    .multiply(markup.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE));
-//            var allocatedDayRate = dayRateWithMarkup.multiply(projectMember.getProjectAllocation()
-//                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
-//            projectMember.setDayRateWithMarkup(allocatedDayRate);
-//            totalDayRate = totalDayRate.add(allocatedDayRate);
-//        }
-//        return totalDayRate;
-//    }
-//
-//    private int calculateWorkingDays(LocalDate startDate, LocalDate endDate) {
-//        int count = 0;
-//        LocalDate currentDate = startDate;
-//        while (!currentDate.isAfter(endDate)) {
-//            DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-//            if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
-//                count++;
-//            }
-//            currentDate = currentDate.plusDays(1);
-//        }
-//        return count;
-//    }
-//
-//    private BigDecimal calculateGrossMargin(Project project) {
-//        BigDecimal grossMarginNumber = project.getProjectPrice().subtract(project.getProjectDayRate().multiply(BigDecimal.valueOf(project.getProjectTotalDays())));
-//        BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
-//        return grossMarginPercentage;
-//    }
+    private BigDecimal calculateDayRate(List<ProjectTeam> projectTeams) {
+        BigDecimal totalDayRate = BigDecimal.ZERO;
+        for (ProjectTeam projectTeam : projectTeams) {
+            BigDecimal markup = projectTeam.getTeam().getMarkupPercentage();
+            var dayRateWithMarkup = projectTeam.getTeam().getDayRate()
+                    .multiply(markup.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE));
+            var allocatedDayRate = dayRateWithMarkup.multiply(projectTeam.getAllocationPercentage()
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+            projectTeam.getTeam().setDayRate(allocatedDayRate);
+            totalDayRate = totalDayRate.add(allocatedDayRate);
+        }
+        return totalDayRate;
+    }
+
+    private int calculateWorkingDays(LocalDate startDate, LocalDate endDate) {
+        int count = 0;
+        LocalDate currentDate = startDate;
+        while (!currentDate.isAfter(endDate)) {
+            DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+            if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+                count++;
+            }
+            currentDate = currentDate.plusDays(1);
+        }
+        return count;
+    }
+
+    private BigDecimal calculateGrossMargin(Project project) {
+        BigDecimal grossMarginNumber = project.getProjectPrice().subtract(project.getProjectDayRate().multiply(BigDecimal.valueOf(project.getProjectTotalDays())));
+        BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        return grossMarginPercentage;
+    }
 }
