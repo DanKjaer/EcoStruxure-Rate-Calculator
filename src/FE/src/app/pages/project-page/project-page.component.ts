@@ -9,7 +9,7 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatLabel} from "@angular/material/form-field";
-import {Project, ProjectTeam} from "../../models";
+import {Project, ProjectTeam, Team} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
@@ -152,21 +152,30 @@ export class ProjectPageComponent implements OnInit {
 
   async update() {
     if (this.projectForm.valid) {
-      let updatedProject = {
-        projectId: this.project.projectId,
-        projectName: this.projectForm.value.projectName,
-        projectDescription: this.projectForm.value.projectDescription,
-        projectTeams: this.project.projectTeams,
-        projectDayRate: this.project.projectDayRate || 0,
-        projectPrice: this.projectForm.value.projectPrice,
-        projectSalesNumber: this.projectForm.value.salesNumber,
-        projectStartDate: this.projectForm.value.startDate,
-        projectEndDate: this.projectForm.value.endDate,
-        projectLocation: this.project.projectLocation
-      };
-
-      const response = await this.projectService.putProject(updatedProject);
-      if (response != undefined) {
+      // let updatedProject = {
+      //   projectId: this.project.projectId,
+      //   projectName: this.projectForm.value.projectName,
+      //   projectDescription: this.projectForm.value.projectDescription,
+      //   projectTeams: this.project.projectTeams,
+      //   projectDayRate: this.project.projectDayRate || 0,
+      //   projectPrice: this.projectForm.value.projectPrice,
+      //   projectSalesNumber: this.projectForm.value.salesNumber,
+      //   projectStartDate: this.projectForm.value.startDate,
+      //   projectEndDate: this.projectForm.value.endDate,
+      //   projectLocation: this.project.projectLocation
+      // };
+      this.project.projectName = this.projectForm.value.projectName;
+      this.project.projectSalesNumber = this.projectForm.value.salesNumber;
+      this.project.projectDescription = this.projectForm.value.projectDescription;
+      this.project.projectPrice = this.projectForm.value.projectPrice;
+      this.project.projectStartDate = this.projectForm.value.startDate;
+      this.project.projectEndDate = this.projectForm.value.endDate;
+      console.log("Project before: ", this.project);
+      this.project = await this.projectService.putProject(this.project);
+      console.log("Project after: ", this.project);
+      if (this.project != undefined) {
+        this.fillStatBox();
+        this.fillProjectForm();
         this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_UPDATED'), true);
       } else {
         this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);
@@ -213,7 +222,7 @@ export class ProjectPageComponent implements OnInit {
 
     this.project.projectTeams.forEach(member => {
       if(member.team.teamId === selectedProject.teamId) {
-        member.projectAllocation = selectedProject.projectAllocation;
+        member.allocationPercentage = selectedProject.allocationPercentage;
       }
     });
 
@@ -258,12 +267,19 @@ export class ProjectPageComponent implements OnInit {
   }
 
   private calculateProjectDayRate(){
-    let totalDayRate = 0;
     /**
      * Outcommented, skal måske bruge det i fremtiden, for at se hvor ting går galt
      */
-/*    this.project.projectTeams.forEach(member => totalDayRate += member.dayRateWithMarkup!);*/
-    this.project.projectDayRate = totalDayRate;
+    /*    let totalDayRate = 0;
+
+    this.project.projectTeams.forEach(member => totalDayRate += member.dayRateWithMarkup!);
+    this.project.projectDayRate = totalDayRate;*/
     this.fillStatBox();
+  }
+
+  CalculateDayRateForTeam(team: Team): number {
+    let dayRate = team.dayRate!;
+    let markup = team.markupPercentage!;
+    return dayRate * (1 + (markup / 100));
   }
 }

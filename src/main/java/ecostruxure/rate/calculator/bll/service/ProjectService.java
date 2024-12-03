@@ -6,6 +6,7 @@ import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    @Transactional
     public Project updateProject(Project project) throws Exception {
         return projectRepository.save(project);
     }

@@ -79,7 +79,7 @@ export interface ProjectTeam {
   projectTeamId: string;
   team: Team;
   project: Project;
-  projectAllocation: number;
+  allocationPercentage: number;
 }
 
 export interface Currency {

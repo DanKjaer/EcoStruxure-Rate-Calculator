@@ -59,7 +59,7 @@ export class AddToProjectDialogComponent implements OnInit {
         projectTeamId: '',
         project: this.project!,
         team: team!,
-        projectAllocation: 0
+        allocationPercentage: 0
       }
       return projectMember;
     });
@@ -75,7 +75,7 @@ export class AddToProjectDialogComponent implements OnInit {
         projectTeamId: '',
         project: this.project!,
         team: team.team!,
-        projectAllocation: team.projectAllocation
+        allocationPercentage: team.allocationPercentage
       }
       this.project.projectTeams.push(projectTeam);
     });
