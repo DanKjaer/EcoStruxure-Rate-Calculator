@@ -6,7 +6,7 @@
 //import ecostruxure.rate.calculator.be.enums.AdjustmentType;
 //import ecostruxure.rate.calculator.be.enums.RateType;
 //import ecostruxure.rate.calculator.be.data.Rates;
-//import ecostruxure.rate.calculator.bll.service.ProfileService;
+//import ecostruxure.rate.calculator.bll.profile.ProfileService;
 //import ecostruxure.rate.calculator.bll.service.TeamService;
 //import ecostruxure.rate.calculator.bll.utils.RateUtils;
 //import ecostruxure.rate.calculator.be.ProfileTeamItemModel;

@@ -2,7 +2,7 @@ package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
-import ecostruxure.rate.calculator.bll.service.ProfileService;
+import ecostruxure.rate.calculator.bll.profile.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,8 +1,9 @@
-package ecostruxure.rate.calculator.bll.service;
+package ecostruxure.rate.calculator.bll.profile;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
+import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,6 +12,8 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.lang.reflect.Type;
 
@@ -22,12 +25,21 @@ public class ProfileService {
 //
 //    private static final BigDecimal HUNDRED = new BigDecimal(100);
 
+
     @Autowired
     private IProfileRepository profileRepository;
     @Autowired
     private ITeamProfileRepository teamProfileRepository;
 
     private final ModelMapper modelMapper = new ModelMapper();
+
+    private List<ProfileObserver> observers = new ArrayList<>();
+
+    @Autowired
+    public ProfileService(List<ProfileObserver> observers) {
+        this.observers = observers;
+    }
+
 
     public Profile create(ProfileDTO profile) throws Exception {
         var newProfile = modelMapper.map(profile, Profile.class);
@@ -48,6 +60,8 @@ public class ProfileService {
     }
 
     public Profile update(Profile profile) throws Exception {
+        profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
+
         for (TeamProfile teamProfile : profile.getTeamProfiles()) {
             if (teamProfile.getTeam() == null) {
                 UUID teamProfileId = teamProfile.getTeamProfileId();
@@ -57,7 +71,15 @@ public class ProfileService {
                 teamProfile.setTeam(existingTeamProfile.getTeam());
             }
         }
-        return profileRepository.save(profile);
+        Profile updatedProfile = profileRepository.save(profile);
+        notifyObservers(updatedProfile);
+        return updatedProfile;
+    }
+
+    private void notifyObservers(Profile updatedProfile) {
+        for (ProfileObserver observer : observers) {
+            observer.update(updatedProfile);
+        }
     }
 
     public boolean delete(UUID profileId) throws Exception {
