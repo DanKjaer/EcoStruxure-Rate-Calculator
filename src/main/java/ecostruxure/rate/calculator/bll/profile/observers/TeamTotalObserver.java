@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class TeamTotalObserverI implements IProfileObserver {
+public class TeamTotalObserver implements IProfileObserver {
     @Autowired
     private ITeamRepository teamRepository;
 
