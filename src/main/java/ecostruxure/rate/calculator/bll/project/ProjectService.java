@@ -1,4 +1,4 @@
-package ecostruxure.rate.calculator.bll.service;
+package ecostruxure.rate.calculator.bll.project;
 
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.be.ProjectTeam;
@@ -37,13 +37,6 @@ public class ProjectService {
     public Project createProject(Project project) throws Exception {
         return projectRepository.save(project);
     }
-
-/*
-    @Transactional
-    public Project updateProject(Project project) throws Exception {
-        return projectRepository.save(project);
-    }
-*/
 
     public boolean deleteProject(UUID projectId) throws Exception {
         projectRepository.deleteById(projectId);
@@ -85,13 +78,14 @@ public class ProjectService {
 //        return projectDAO.archiveProject(projectId);
 //    }
 //
+    @Transactional
     public Project updateProject(Project project) throws Exception {
         var projectContainsMembers = project.getProjectTeams() != null;
         var projectContainsDayRate = project.getProjectDayRate() != null;
         var projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
 
         // Calculate, if rest cost have been calc. before
-        if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() != null) {
+        if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() == null) {
             project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
             project.setProjectRestCostDate(LocalDate.now());
             project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
@@ -104,7 +98,6 @@ public class ProjectService {
             project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
             project.setProjectGrossMargin(calculateGrossMargin(project));
         }
-
         // Calculate, if project members are present and project is not started
         else if (projectContainsMembers && projectContainsDayRate) {
             project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
@@ -113,25 +106,9 @@ public class ProjectService {
 
         project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
 
-        /*            var updateSuccess =
-
-        *//*            if (updateSuccess && !project.getProjectTeams().isEmpty()) {
-                        projectDAO.updateAssignedProfiles(project.getProjectId(), project.getProjectTeams()
-                        );
-                    }*/
         return projectRepository.save(project);
     }
-//
-//    public void updateProjectBasedOnTeam(Team team) throws Exception {
-//        var projectList = projectDAO.getProjectsBasedOnTeam(team.getTeamId());
-//        if (projectList == null) {
-//            return;
-//        }
-//        for (Project project : projectList) {
-//            updateProject(project);
-//        }
-//    }
-//
+
     private BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
         BigDecimal totalCostAtChange;
         var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
@@ -145,14 +122,7 @@ public class ProjectService {
         totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
         return totalCostAtChange;
     }
-//
-//    private void validateProject(Project project) throws Exception {
-//        BigDecimal grossMargin = project.getProjectGrossMargin();
-//        if (grossMargin.compareTo(new BigDecimal("-999.99")) < 0 || grossMargin.compareTo(new BigDecimal("999.99")) > 0) {
-//            throw new Exception("Project gross margin must be between -999.99 and 999.99 inclusive");
-//        }
-//    }
-//
+
     private BigDecimal calculateDayRate(List<ProjectTeam> projectTeams) {
         BigDecimal totalDayRate = BigDecimal.ZERO;
         for (ProjectTeam projectTeam : projectTeams) {

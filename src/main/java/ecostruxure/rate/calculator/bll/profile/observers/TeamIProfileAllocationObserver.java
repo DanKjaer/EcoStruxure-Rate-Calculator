@@ -26,6 +26,5 @@ public class TeamIProfileAllocationObserver implements IProfileObserver {
                     .divide(new BigDecimal("100.00"), 2, BigDecimal.ROUND_HALF_UP)));
             teamProfileRepository.save(teamProfile);
         }
-
     }
 }
