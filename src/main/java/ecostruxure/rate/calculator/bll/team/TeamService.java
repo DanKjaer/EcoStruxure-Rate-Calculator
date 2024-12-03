@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.team;
 
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
+import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
@@ -12,10 +13,13 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -32,6 +36,7 @@ public class TeamService {
     private EntityManager em;
 
     private final List<ITeamObserver> teamObservers;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     public TeamService(List<ITeamObserver> teamObservers) {
@@ -40,7 +45,10 @@ public class TeamService {
 
     @Transactional
     public Team create(Team team) throws Exception {
-        return teamRepository.save(team);
+        em.getTransaction().begin();
+        em.persist(team);
+        em.getTransaction().commit();
+        return team;
     }
 
     public Iterable<Team> all() throws Exception {
@@ -56,22 +64,19 @@ public class TeamService {
         CriteriaQuery<TeamProfile> cq = cb.createQuery(TeamProfile.class);
         Root<TeamProfile> teamProfile = cq.from(TeamProfile.class);
 
+        //include
         teamProfile.fetch("team", JoinType.LEFT);
         teamProfile.fetch("profile", JoinType.LEFT);
 
+        //select by profile id
         cq.select(teamProfile).where(cb.equal(teamProfile.get("profile").get("profileId"), profileId));
 
         List<TeamProfile> teamProfiles = em.createQuery(cq).getResultList();
-        return teamProfiles.stream()
-                .map(tp -> new TeamProfileDTO(
-                        tp.getTeamProfileId(),
-                        tp.getTeam(),
-                        tp.getProfile(),
-                        tp.getAllocationPercentageHours(),
-                        tp.getAllocatedHours(),
-                        tp.getAllocationPercentageCost(),
-                        tp.getAllocatedCost()
-                )).collect(Collectors.toList());
+
+        //map to TeamProfileDTO list
+        Type listType = new TypeToken<List<TeamProfileDTO>>() {}.getType();
+        List<TeamProfileDTO> teamProfilesDTO = modelMapper.map(teamProfiles, listType);
+        return teamProfilesDTO;
     }
 
     public Team update(Team team) throws Exception {

@@ -6,7 +6,9 @@ import ecostruxure.rate.calculator.be.dto.ProfileDTO;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class ProfileService {
     private IProfileRepository profileRepository;
     @Autowired
     private ITeamProfileRepository teamProfileRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     private final ModelMapper modelMapper = new ModelMapper();
     private final List<IProfileObserver> observers;
@@ -42,7 +46,10 @@ public class ProfileService {
 
     public Profile create(ProfileDTO profile) throws Exception {
         var newProfile = modelMapper.map(profile, Profile.class);
-        return profileRepository.save(newProfile);
+        em.getTransaction().begin();
+        em.persist(newProfile);
+        em.getTransaction().commit();
+        return newProfile;
     }
 
     public Iterable<ProfileDTO> all() throws Exception {

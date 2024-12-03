@@ -31,6 +31,10 @@ public class TeamProfileDTO {
         this.allocatedCost = allocatedCost;
     }
 
+    //empty constructor for model mapping
+    public TeamProfileDTO() {
+    }
+
     public UUID getId() {
         return id;
     }
