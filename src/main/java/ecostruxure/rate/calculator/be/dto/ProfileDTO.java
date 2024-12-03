@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 public class ProfileDTO {
     private String ProfileId;
     private String name;
-    private String currency;
     private GeographyDTO geography;
     private boolean resourceType;
     private BigDecimal annualCost;
@@ -35,7 +34,6 @@ public class ProfileDTO {
                       Timestamp updatedAt) {
         ProfileId = profileId;
         this.name = name;
-        this.currency = currency;
         this.geography = geography;
         this.resourceType = resourceType;
         this.annualCost = annualCost;
@@ -47,6 +45,9 @@ public class ProfileDTO {
         this.totalHourAllocation = totalHourAllocation;
         this.archived = archived;
         this.updatedAt = updatedAt;
+    }
+
+    public ProfileDTO() {
     }
 
     public String getProfileId() {
@@ -63,14 +64,6 @@ public class ProfileDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     public GeographyDTO getGeography() {

@@ -9,6 +9,9 @@ public class GeographyDTO {
         this.name = name;
     }
 
+    public GeographyDTO() {
+    }
+
     public int getId() {
         return id;
     }

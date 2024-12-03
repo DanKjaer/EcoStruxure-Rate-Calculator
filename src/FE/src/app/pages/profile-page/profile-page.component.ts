@@ -69,7 +69,6 @@ export class ProfilePageComponent implements OnInit {
     'annual cost',
     'options'
   ];
-  currencies: Currency[] | undefined;
 
   //Create a computed property to calculate the stat boxes
   statBoxes = computed(() => {
@@ -111,15 +110,12 @@ export class ProfilePageComponent implements OnInit {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
       location: ['', Validators.required],
-      currency: ['', Validators.required],
       resource_type: [null, Validators.required],
       annual_cost: [''],
       annual_hours: [{value: '', disabled: true}],
       hours_per_day: [''],
       effectiveness: ['']
     });
-
-    this.currencies = await this.currencyService.getCurrencies();
 
     this.locations = await this.geographyService.getCountries();
 
@@ -128,13 +124,13 @@ export class ProfilePageComponent implements OnInit {
     this.currentProfile.set(await this.profileService.getProfile(id));
     this.prepProfileForm();
     await this.prepTeamList(id);
-    // this.setStatBoxes();
 
     this.loading = false;
   }
 
   private async prepTeamList(id: string) {
     let response = await this.teamsService.getTeamProfiles(id);
+    console.log(response);
     this.teams.set(response);
     this.datasource.data = response;
   }
@@ -143,7 +139,6 @@ export class ProfilePageComponent implements OnInit {
     this.profileForm = this.fb.group({
       name: [this.currentProfile()!.name, Validators.required],
       location: [this.currentProfile()!.geography.id, Validators.required],
-      currency: [this.currentProfile()!.currency, Validators.required],
       resource_type: [this.currentProfile()!.resourceType, Validators.required],
       annual_cost: [this.currentProfile()!.annualCost],
       annual_hours: [{value: this.currentProfile()!.annualHours, disabled: true}],
@@ -183,16 +178,13 @@ export class ProfilePageComponent implements OnInit {
       this.currentProfile()!.geography = this.locations.find((location) => {
         return location.id === this.profileForm.value.location
       })!;
-      this.currentProfile()!.currency = this.profileForm.value.currency;
       this.currentProfile()!.resourceType = this.profileForm.value.resource_type;
       this.currentProfile()!.annualCost = this.profileForm.value.annual_cost;
       this.currentProfile()!.annualHours = this.profileForm.value.annual_hours;
       this.currentProfile()!.effectivenessPercentage = this.profileForm.value.effectiveness;
       this.currentProfile()!.hoursPerDay = this.profileForm.value.hours_per_day;
-      console.log("before update: ", this.currentProfile());
       let response = await this.profileService.putProfile(this.currentProfile()!);
       this.currentProfile.set(response);
-      console.log("after update: ", this.currentProfile());
       this.prepTeamList(this.currentProfile()!.profileId!);
       this.prepProfileForm();
       this.snackBar.openSnackBar(this.translate.instant('REASON_UPDATED_PROFILE'), true);
@@ -206,7 +198,6 @@ export class ProfilePageComponent implements OnInit {
     this.profileForm = this.fb.group({
       name: [this.currentProfile()!.name],
       location: [this.currentProfile()!.geography.id],
-      currency: [this.currentProfile()!.currency],
       resource_type: [this.currentProfile()!.resourceType],
       annual_cost: [this.currentProfile()!.annualCost],
       annual_hours: [this.currentProfile()!.annualHours],

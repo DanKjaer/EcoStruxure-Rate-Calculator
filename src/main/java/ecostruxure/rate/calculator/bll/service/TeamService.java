@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.service;
 
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
+import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,7 +34,7 @@ public class TeamService {
     }
 
     public List<TeamProfile> getByProfileId(UUID profileId) throws Exception {
-        return teamProfileRepository.findTeamProfilesByProfile_ProfileId(profileId);
+        return teamProfileRepository.findAllByProfile_ProfileId(profileId);
     }
 
     public Team update(Team team) throws Exception {

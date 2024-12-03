@@ -55,8 +55,10 @@ public class ProfileService {
         return profilesDto;
     }
 
-    public Profile getById(UUID profileId) throws Exception {
-        return profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
+    public ProfileDTO getById(UUID profileId) throws Exception {
+        var profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
+        var dto = modelMapper.map(profile, ProfileDTO.class);
+        return dto;
     }
 
     public Profile update(Profile profile) throws Exception {

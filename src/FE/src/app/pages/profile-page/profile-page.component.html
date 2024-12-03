@@ -183,19 +183,6 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div>
-          <!-- currency select -->
-          <mat-form-field>
-            <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
-            <mat-select formControlName="currency">
-              @for (currency of currencies; track currency) {
-                <mat-option [value]="currency.currencyCode">
-                  {{ currency.currencyCode }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
       </div>
 
       <!-- resource type select -->
@@ -218,7 +205,6 @@
           <mat-form-field>
             <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
             <span matTextSuffix>
-              {{ this.profileForm.value.currency.symbol }}
             </span>
             <input matInput placeholder="0" formControlName="annual_cost">
           </mat-form-field>

@@ -1,7 +1,6 @@
 export interface Profile {
   profileId?: string;
   name: string;
-  currency: string;
   geography: Geography;
   resourceType: boolean;
   annualCost?: number;
