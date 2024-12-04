@@ -2,10 +2,10 @@ package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.be.dto.ProjectDTO;
-import ecostruxure.rate.calculator.bll.service.ProjectService;
+import ecostruxure.rate.calculator.bll.project.ProjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -13,8 +13,9 @@ import java.util.UUID;
 public class ProjectController {
     private final ProjectService projectService;
 
-    public ProjectController() throws Exception {
-        projectService = new ProjectService();
+    @Autowired
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @GetMapping()
@@ -23,7 +24,7 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public List<Project> getProjects() throws Exception {
+    public Iterable<Project> getProjects() throws Exception {
         return projectService.getProjects();
     }
 
@@ -38,8 +39,13 @@ public class ProjectController {
     }
 
     @DeleteMapping()
-    public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
-        return projectService.deleteProjectMember(projectId, teamId);
+    public boolean deleteProjectTeam(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
+        return projectService.deleteProjectTeam(projectId, teamId);
+    }
+
+    @DeleteMapping("/archive")
+    public boolean archiveProject(@RequestParam UUID projectId) throws Exception {
+        return projectService.archiveProject(projectId);
     }
 
     @PutMapping("/update")

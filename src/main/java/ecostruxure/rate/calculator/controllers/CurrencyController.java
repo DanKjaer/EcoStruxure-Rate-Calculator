@@ -1,10 +1,9 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Currency;
-import ecostruxure.rate.calculator.bll.service.CurrencyService;
+import ecostruxure.rate.calculator.bll.currency.CurrencyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
@@ -12,12 +11,13 @@ import java.util.List;
 public class CurrencyController {
     private final CurrencyService currencyService;
 
-    public CurrencyController() throws Exception {
-        this.currencyService = new CurrencyService();
+    @Autowired
+    public CurrencyController(CurrencyService currencyService) throws Exception {
+        this.currencyService = currencyService;
     }
 
     @GetMapping
-    public List<Currency> getAll() throws Exception {
+    public Iterable<Currency> getAll() throws Exception {
         return this.currencyService.all();
     }
 

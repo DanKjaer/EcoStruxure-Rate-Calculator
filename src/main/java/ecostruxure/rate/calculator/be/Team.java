@@ -1,124 +1,66 @@
 package ecostruxure.rate.calculator.be;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "teamId")
 public class Team {
+
+    @Id
+    @GeneratedValue
     private UUID teamId;
+
+    @Column(nullable = false)
     private String name;
-    private BigDecimal markup;
-    private BigDecimal totalMarkup;
-    private BigDecimal grossMargin;
-    private BigDecimal totalGrossMargin;
+
+    @Column(precision = 15, scale = 2)
+    private BigDecimal markupPercentage;
+
+    @Column(precision = 15, scale = 2)
+    private BigDecimal totalCostWithMarkup;
+
+    @Column(precision = 15, scale = 2)
+    private BigDecimal grossMarginPercentage;
+
+    @Column(precision = 15, scale = 2)
+    private BigDecimal totalCostWithGrossMargin;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal hourlyRate;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal dayRate;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal totalAllocatedHours;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal totalAllocatedCost;
+
     private Timestamp updatedAt;
+
     private boolean archived;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "team-teamProfiles")
+    private List<TeamProfile> teamProfiles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "team_geography",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "geopgraphy_id")
+    )
     private List<Geography> geographies;
 
-    public Team() {}
-
-    private Team(Builder builder) {
-        this.teamId = builder.teamId;
-        this.name = builder.name;
-        this.markup = builder.markup;
-        this.totalMarkup = builder.totalMarkup;
-        this.grossMargin = builder.grossMargin;
-        this.totalGrossMargin = builder.totalGrossMargin;
-        this.hourlyRate = builder.hourlyRate;
-        this.dayRate = builder.dayRate;
-        this.totalAllocatedHours = builder.totalAllocatedHours;
-        this.totalAllocatedCost = builder.totalAllocatedCost;
-        this.updatedAt = builder.updatedAt;
-        this.archived = builder.archived;
-    }
-
-    public static class Builder {
-        private UUID teamId;
-        private String name;
-        private BigDecimal markup;
-        private BigDecimal totalMarkup;
-        private BigDecimal grossMargin;
-        private BigDecimal totalGrossMargin;
-        private BigDecimal hourlyRate;
-        private BigDecimal dayRate;
-        private BigDecimal totalAllocatedHours;
-        private BigDecimal totalAllocatedCost;
-        private Timestamp updatedAt;
-        private boolean archived;
-
-
-        public Builder teamId(UUID teamId) {
-            this.teamId = teamId;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder markup(BigDecimal markup) {
-            this.markup = markup;
-            return this;
-        }
-
-        public Builder totalMarkup(BigDecimal totalMarkup) {
-            this.totalMarkup = totalMarkup;
-            return this;
-        }
-
-        public Builder grossMargin(BigDecimal grossMargin) {
-            this.grossMargin = grossMargin;
-            return this;
-        }
-
-        public Builder totalGrossMargin(BigDecimal totalGrossMargin) {
-            this.totalGrossMargin = totalGrossMargin;
-            return this;
-        }
-
-        public Builder hourlyRate(BigDecimal hourlyRate) {
-            this.hourlyRate = hourlyRate;
-            return this;
-        }
-
-        public Builder dayRate(BigDecimal dayRate) {
-            this.dayRate = dayRate;
-            return this;
-        }
-
-        public Builder totalAllocatedHours(BigDecimal totalAllocatedHours) {
-            this.totalAllocatedHours = totalAllocatedHours;
-            return this;
-        }
-
-        public Builder totalAllocatedCost(BigDecimal totalAllocatedCost) {
-            this.totalAllocatedCost = totalAllocatedCost;
-            return this;
-        }
-
-        public Builder updatedAt(Timestamp updatedAt) {
-            this.updatedAt = updatedAt;
-            return this;
-        }
-
-        public Builder archived(boolean archived) {
-            this.archived = archived;
-            return this;
-        }
-
-        public Team build() {
-            return new Team(this);
-        }
-    }
-
-    // Getters og setters
+    //region Getters and Setters
     public UUID getTeamId() {
         return teamId;
     }
@@ -135,20 +77,36 @@ public class Team {
         this.name = name;
     }
 
-    public BigDecimal getMarkup() {
-        return markup;
+    public BigDecimal getMarkupPercentage() {
+        return markupPercentage;
     }
 
-    public void setMarkup(BigDecimal markup) {
-        this.markup = markup;
+    public void setMarkupPercentage(BigDecimal markup) {
+        this.markupPercentage = markup;
     }
 
-    public BigDecimal getGrossMargin() {
-        return grossMargin;
+    public BigDecimal getTotalCostWithMarkup() {
+        return totalCostWithMarkup;
     }
 
-    public void setGrossMargin(BigDecimal grossMargin) {
-        this.grossMargin = grossMargin;
+    public void setTotalCostWithMarkup(BigDecimal totalMarkup) {
+        this.totalCostWithMarkup = totalMarkup;
+    }
+
+    public BigDecimal getGrossMarginPercentage() {
+        return grossMarginPercentage;
+    }
+
+    public void setGrossMarginPercentage(BigDecimal grossMargin) {
+        this.grossMarginPercentage = grossMargin;
+    }
+
+    public BigDecimal getTotalCostWithGrossMargin() {
+        return totalCostWithGrossMargin;
+    }
+
+    public void setTotalCostWithGrossMargin(BigDecimal totalGrossMargin) {
+        this.totalCostWithGrossMargin = totalGrossMargin;
     }
 
     public BigDecimal getHourlyRate() {
@@ -199,20 +157,12 @@ public class Team {
         this.archived = archived;
     }
 
-    public BigDecimal getTotalMarkup() {
-        return totalMarkup;
+    public List<TeamProfile> getTeamProfiles() {
+        return teamProfiles;
     }
 
-    public void setTotalMarkup(BigDecimal totalMarkup) {
-        this.totalMarkup = totalMarkup;
-    }
-
-    public BigDecimal getTotalGrossMargin() {
-        return totalGrossMargin;
-    }
-
-    public void setTotalGrossMargin(BigDecimal totalGrossMargin) {
-        this.totalGrossMargin = totalGrossMargin;
+    public void setTeamProfiles(List<TeamProfile> teamProfiles) {
+        this.teamProfiles = teamProfiles;
     }
 
     public List<Geography> getGeographies() {
@@ -222,4 +172,5 @@ public class Team {
     public void setGeographies(List<Geography> geographies) {
         this.geographies = geographies;
     }
+    //endregion
 }

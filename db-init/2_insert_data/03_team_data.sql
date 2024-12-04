@@ -1,0 +1,20 @@
+INSERT INTO Team (team_id,
+                   name,
+                   markup_percentage,
+                   total_cost_with_markup,
+                   gross_margin_percentage,
+                   total_cost_with_gross_margin,
+                   hourly_rate,
+                   day_rate,
+                   total_allocated_hours,
+                   total_allocated_cost)
+VALUES
+    ('937b379c-c326-4db2-9575-8313f59ddf2c', 'Low cost team', 10.00,176000,
+     20.00,211200, 26.00,208.00,6240,
+     160000),
+    ('67e1e024-e589-4637-af32-e9ebc0303c9c', 'Medium cost team', 25.00, 375000,
+     40.00,525000, 48.00,384.00, 6240,
+     300000),
+    ('eba9685d-9621-48a2-ab7f-ed708e4dd63d', 'High cost team', 20.00,504000,
+     35.00,680400, 67.00,536.00,6240,
+     420000);

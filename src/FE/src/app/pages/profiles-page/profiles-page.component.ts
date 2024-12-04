@@ -101,7 +101,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   async ngAfterViewInit() {
-    this.datasource.data = await this.profileService.getProfiles();
+    const profiles = await this.profileService.getProfiles();
+    this.datasource.data = profiles;
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
