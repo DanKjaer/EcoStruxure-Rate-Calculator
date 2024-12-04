@@ -83,7 +83,6 @@ export class AddProfileDialogComponent implements OnInit {
       let profileDTO: Profile = {
           name: this.profileForm.value.name,
           geography: this.profileForm.value.geography,
-          currency: this.profileForm.value.currency.currencyCode,
           resourceType: this.profileForm.value.resource_type,
           annualCost: this.currencyService.convert(this.profileForm.value.annual_cost, this.profileForm.value.currency, "EUR"),
           annualHours: this.profileForm.value.annual_hours || 0,

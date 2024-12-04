@@ -50,9 +50,9 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ element['markup'] + '%' }}
+            {{ element['markupPercentage'] + '%' }}
           </span>
-          <input matInput *ngIf="element.isEditing" [(ngModel)]="element['markup']"/>
+          <input matInput *ngIf="element.isEditing" [(ngModel)]="element['markupPercentage']"/>
         </td>
         <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
@@ -64,9 +64,9 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ element['grossMargin'] + '%' }}
+            {{ element['grossMarginPercentage'] + '%' }}
           </span>
-          <input matInput *ngIf="element.isEditing" [(ngModel)]="element['grossMargin']"/>
+          <input matInput *ngIf="element.isEditing" [(ngModel)]="element['grossMarginPercentage']"/>
         </td>
         <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
@@ -136,7 +136,7 @@
         </th>
         <td mat-cell *matCellDef="let element">
           {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-          {{ this.currencyService.convert(element['totalMarkup'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+          {{ this.currencyService.convert(element['totalCostWithMarkup'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{totalMarkup | number:'1.0-2'}}</td>
       </ng-container>
@@ -148,7 +148,7 @@
         </th>
         <td mat-cell *matCellDef="let element">
           {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-          {{ this.currencyService.convert(element['totalGrossMargin'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+          {{ this.currencyService.convert(element['totalCostWithGrossMargin'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
         <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{totalGrossMargin | number:'1.0-2' }}</td>
       </ng-container>

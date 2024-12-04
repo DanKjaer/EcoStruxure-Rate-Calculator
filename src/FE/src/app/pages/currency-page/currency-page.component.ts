@@ -30,7 +30,6 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
   displayedColumns: string[] = [
     'currency',
     'eur conversion rate',
-    'usd conversion rate',
     'symbol'
   ];
 
@@ -84,8 +83,7 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
       return {
         currencyCode: values[0].trim() || '',
         eurConversionRate: values[1] ? parseFloat(values[1]) : 0,
-        usdConversionRate: values[2] ? parseFloat(values[2]) : 0,
-        symbol: values[3].trim() || ''
+        symbol: values[2].trim() || ''
       } as Currency;
     })
   }

@@ -9,7 +9,7 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatLabel} from "@angular/material/form-field";
-import {Project, ProjectMembers} from "../../models";
+import {Project, ProjectTeam, Team} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
@@ -53,7 +53,7 @@ export class ProjectPageComponent implements OnInit {
   project!: Project;
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
-  selectedRow: ProjectMembers | null = null;
+  selectedRow: ProjectTeam | null = null;
 
   statBoxes = {
     totalDayRate: 0,
@@ -103,8 +103,7 @@ export class ProjectPageComponent implements OnInit {
   }
 
   private fillTableWithTeams() {
-    this.project.projectMembers.forEach(member => console.log(member.name, member.dayRateWithMarkup));
-    this.datasource.data = this.project.projectMembers;
+    this.datasource.data = this.project.projectTeams;
     this.datasource._updateChangeSubscription();
   }
 
@@ -134,7 +133,7 @@ export class ProjectPageComponent implements OnInit {
     this.loading = true;
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
-      this.project.projectMembers = project.projectMembers;
+      this.project.projectTeams = project.projectTeams;
       this.fillTableWithTeams();
       this.fillStatBox();
     });
@@ -153,21 +152,18 @@ export class ProjectPageComponent implements OnInit {
 
   async update() {
     if (this.projectForm.valid) {
-      let updatedProject = {
-        projectId: this.project.projectId,
-        projectName: this.projectForm.value.projectName,
-        projectSalesNumber: this.projectForm.value.salesNumber,
-        projectPrice: this.projectForm.value.projectPrice,
-        projectDescription: this.projectForm.value.projectDescription,
-        projectStartDate: this.projectForm.value.startDate,
-        projectEndDate: this.projectForm.value.endDate,
-        projectLocation: this.project.projectLocation,
-        projectMembers: this.project.projectMembers,
-        projectDayRate: this.project.projectDayRate || 0
-      };
-
-      const response = await this.projectService.putProject(updatedProject);
-      if (response != undefined) {
+      this.project.projectName = this.projectForm.value.projectName;
+      this.project.projectSalesNumber = this.projectForm.value.salesNumber;
+      this.project.projectDescription = this.projectForm.value.projectDescription;
+      this.project.projectPrice = this.projectForm.value.projectPrice;
+      this.project.projectStartDate = this.projectForm.value.startDate;
+      this.project.projectEndDate = this.projectForm.value.endDate;
+      console.log("Project before: ", this.project);
+      this.project = await this.projectService.putProject(this.project);
+      console.log("Project after: ", this.project);
+      if (this.project != undefined) {
+        this.fillStatBox();
+        this.fillProjectForm();
         this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_UPDATED'), true);
       } else {
         this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);
@@ -187,12 +183,12 @@ export class ProjectPageComponent implements OnInit {
   }
 
   async onRemove() {
-    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.teamId!);
+    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.team.teamId!);
     if (result) {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
-      this.project.projectMembers = this.project.projectMembers.filter(member => member.teamId !== this.selectedRow?.teamId);
+      this.project.projectTeams = this.project.projectTeams.filter(member => member.team.teamId !== this.selectedRow?.team.teamId);
       this.fillTableWithTeams();
-      this.calculateProjectDayRate();
+      this.fillStatBox();
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
     }
@@ -212,9 +208,9 @@ export class ProjectPageComponent implements OnInit {
     this.isEditingRow = false;
     this.loading = true;
 
-    this.project.projectMembers.forEach(member => {
-      if(member.teamId === selectedProject.teamId) {
-        member.projectAllocation = selectedProject.projectAllocation;
+    this.project.projectTeams.forEach(member => {
+      if(member.team.teamId === selectedProject.teamId) {
+        member.allocationPercentage = selectedProject.allocationPercentage;
       }
     });
 
@@ -224,11 +220,14 @@ export class ProjectPageComponent implements OnInit {
         projectDayRate: this.project.projectDayRate
       }
       this.project = await this.projectService.putProject(updatedProject);
-      this.project.projectMembers.forEach(member => {
-        if(member.teamId === selectedProject.teamId) {
-          member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1) * (member.projectAllocation / 100);
-        }
-      });
+      /**
+       * Outcommented, skal måske bruge det i fremtiden, for at se hvor ting går galt
+       */
+      /*      this.project.projectTeams.forEach(member => {
+              if(member.team.teamId === selectedProject.teamId) {
+                member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1) * (member.projectAllocation / 100);
+              }
+            });*/
       this.fillTableWithTeams();
       this.fillProjectForm();
       this.fillStatBox();
@@ -251,14 +250,13 @@ export class ProjectPageComponent implements OnInit {
     this.isEditingRow = false;
   }
 
-  selectRow(row: ProjectMembers) {
+  selectRow(row: ProjectTeam) {
     this.selectedRow = row;
   }
 
-  private calculateProjectDayRate(){
-    let totalDayRate = 0;
-    this.project.projectMembers.forEach(member => totalDayRate += member.dayRateWithMarkup!);
-    this.project.projectDayRate = totalDayRate;
-    this.fillStatBox();
+  CalculateDayRateForTeam(team: Team): number {
+    let dayRate = team.dayRate!;
+    let markup = team.markupPercentage!;
+    return dayRate * (1 + (markup / 100));
   }
 }

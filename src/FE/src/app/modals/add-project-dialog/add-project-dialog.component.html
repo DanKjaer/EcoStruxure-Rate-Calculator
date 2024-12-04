@@ -87,14 +87,14 @@
     <mat-dialog-content class="container">
       <div class="allocationContainer">
         <mat-list>
-          @for (team of selectedProjectMembers; track team) {
+          @for (projectTeam of selectedProjectTeam; track projectTeam) {
             <mat-list-item>
               <div class="allocationItem">
-                <span>{{ team.name }}</span>
+                <span>{{ projectTeam.team.name }}</span>
                 <mat-form-field class="allocationInput">
                   <span matSuffix>%</span>
                   <input type="number" matInput placeholder="{{ 'EXAMPLE'| translate}}: 10"
-                         [(ngModel)]="team.projectAllocation">
+                         [(ngModel)]="projectTeam.allocationPercentage">
                 </mat-form-field>
               </div>
             </mat-list-item>

@@ -15,7 +15,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatListModule, MatSelectionListChange} from '@angular/material/list';
 import {TeamsService} from '../../services/teams.service';
 import {ProfileService} from '../../services/profile.service';
-import {Profile, Team, TeamProfiles} from '../../models';
+import {Profile, Team, TeamProfile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
@@ -67,16 +67,12 @@ export class AddTeamDialogComponent implements OnInit {
       name : this.teamForm.value.name,
     };
     let profiles = this.selectedProfiles;
-    let teamProfiles :TeamProfiles[] = [];
+    let teamProfiles :TeamProfile[] = [];
     profiles.forEach(profile => {
-      let teamProfile: TeamProfiles = {
-        profileId : profile.profileId!,
-        name : profile.name,
-        annualCost : profile.annualCost!,
-        annualHours : profile.annualHours!,
-        costAllocation : 100,
-        hourAllocation : 100,
-        geography : profile.geography!,
+      let teamProfile: TeamProfile = {
+        profile : profile,
+        allocationPercentageCost : 100,
+        allocationPercentageHours : 100,
       };
       teamProfiles.push(teamProfile);
     });

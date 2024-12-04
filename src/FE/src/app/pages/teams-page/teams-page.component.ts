@@ -166,6 +166,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     let result : Team | null = null;
     try{
       result = await this.teamService.putTeam(selectedTeam);
+      result.updatedAtString = this.formatter.formatDateTime(new Date());
       this.updateTableFooterData();
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_SAVED'), true);
       this.loading = false;
@@ -188,8 +189,8 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     let original = this.originalRowData[selectedTeam.id];
     if (original) {
       selectedTeam.name = original.name;
-      selectedTeam.markup = original.markup;
-      selectedTeam.grossMargin = original.grossMargin;
+      selectedTeam.markupPercentage = original.markupPercentage;
+      selectedTeam.grossMarginPercentage = original.grossMarginPercentage;
       selectedTeam.updatedAt = original.updatedAt;
     }
     selectedTeam['isEditing'] = false;
@@ -241,11 +242,11 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   }
 
   private getTotalMarkup(displayedData: Team[]) {
-    this.totalMarkup = displayedData.reduce((acc: number, team: Team) => acc + team.totalMarkup!, 0);
+    this.totalMarkup = displayedData.reduce((acc: number, team: Team) => acc + team.totalCostWithMarkup!, 0);
   }
 
   private getTotalGrossMargin(displayedData: Team[]) {
-    this.totalGrossMargin = displayedData.reduce((acc: number, team: Team) => acc + team.totalGrossMargin!, 0);
+    this.totalGrossMargin = displayedData.reduce((acc: number, team: Team) => acc + team.totalCostWithGrossMargin!, 0);
   }
 
   private getDisplayedData() {

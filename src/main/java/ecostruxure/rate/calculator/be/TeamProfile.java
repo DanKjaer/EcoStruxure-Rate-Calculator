@@ -1,50 +1,59 @@
 package ecostruxure.rate.calculator.be;
 
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "teamProfileId")
 public class TeamProfile {
-    private Profile profile;
+
+    @Id
+    @GeneratedValue
+    private UUID teamProfileId;
+
+    @ManyToOne
+    @JoinColumn(name = "team_id", nullable = false)
+    @JsonBackReference(value = "team-teamProfiles")
     private Team team;
-    private UUID teamId;
-    private UUID profileId;
-    private String name;
-    private BigDecimal annualCost;
-    private BigDecimal annualHours;
-    private BigDecimal dayRateOnTeam;
-    private BigDecimal costAllocation;
-    private BigDecimal hourAllocation;
-    private BigDecimal allocatedCostOnTeam;
-    private BigDecimal allocatedHoursOnTeam;
-    private Geography geography;
 
-    public TeamProfile() { }
+    @ManyToOne
+    @JoinColumn(name = "profile_id", nullable = false)
+    @JsonBackReference(value = "profile-teamProfiles")
+    private Profile profile;
 
-    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRateOnTeam,
-                       BigDecimal costAllocation, BigDecimal hourAllocation,
-                       BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam) {
-        this.teamId = teamId;
-        this.profileId = profileId;
-        this.name = name;
-        this.dayRateOnTeam = dayRateOnTeam;
-        this.costAllocation = costAllocation;
-        this.hourAllocation = hourAllocation;
-        this.allocatedCostOnTeam = allocatedCostOnTeam;
-        this.allocatedHoursOnTeam = allocatedHoursOnTeam;
+    // Percentage of time allocated
+    @Column(precision = 5, scale = 2, nullable = false)
+    private BigDecimal allocationPercentageHours; // Percentage of hours (e.g., 75%)
+
+    // Actual allocated hours for this profile on this team
+    @Column(precision = 15, scale = 2)
+    private BigDecimal allocatedHours; // Derived: annual_hours * allocationPercentageHours / 100
+
+    // Percentage of cost allocated
+    @Column(precision = 5, scale = 2, nullable = false)
+    private BigDecimal allocationPercentageCost; // Percentage of cost (e.g., 50%)
+
+    // Pre-calculated allocated cost for this team-profile relationship
+    @Column(precision = 15, scale = 2)
+    private BigDecimal allocatedCost; // Derived: annual_cost * allocationPercentageCost / 100
+
+    //region Getters and Setters
+    public UUID getTeamProfileId() {
+        return teamProfileId;
     }
 
-    public TeamProfile(UUID teamId, UUID profileId, String name, BigDecimal dayRate, BigDecimal costAllocation, BigDecimal hourAllocation, BigDecimal allocatedCostOnTeam, BigDecimal allocatedHoursOnTeam, BigDecimal annualCost, BigDecimal annualHours, Geography geography) {
-        this.teamId = teamId;
-        this.profileId = profileId;
-        this.name = name;
-        this.dayRateOnTeam = dayRate;
-        this.costAllocation = costAllocation;
-        this.hourAllocation = hourAllocation;
-        this.allocatedCostOnTeam = allocatedCostOnTeam;
-        this.allocatedHoursOnTeam = allocatedHoursOnTeam;
-        this.annualCost = annualCost;
-        this.annualHours = annualHours;
-        this.geography = geography;
+    public void setTeamProfileId(UUID teamProfileId) {
+        this.teamProfileId = teamProfileId;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public Profile getProfile() {
@@ -55,99 +64,36 @@ public class TeamProfile {
         this.profile = profile;
     }
 
-    public BigDecimal getAnnualCost() {
-        return annualCost;
+    public BigDecimal getAllocationPercentageHours() {
+        return allocationPercentageHours;
     }
 
-    public void setAnnualCost(BigDecimal annualCost) {
-        this.annualCost = annualCost;
+    public void setAllocationPercentageHours(BigDecimal allocationPercentageHours) {
+        this.allocationPercentageHours = allocationPercentageHours;
     }
 
-    public BigDecimal getAnnualHours() {
-        return annualHours;
+    public BigDecimal getAllocatedHours() {
+        return allocatedHours;
     }
 
-    public void setAnnualHours(BigDecimal annualHours) {
-        this.annualHours = annualHours;
+    public void setAllocatedHours(BigDecimal allocatedHours) {
+        this.allocatedHours = allocatedHours;
     }
 
-    public UUID getTeamId() {
-        return teamId;
+    public BigDecimal getAllocationPercentageCost() {
+        return allocationPercentageCost;
     }
 
-    public UUID getProfileId() {
-        return profileId;
+    public void setAllocationPercentageCost(BigDecimal allocationPercentageCost) {
+        this.allocationPercentageCost = allocationPercentageCost;
     }
 
-    public String getName() {
-        return name;
+    public BigDecimal getAllocatedCost() {
+        return allocatedCost;
     }
 
-    public BigDecimal getDayRateOnTeam() {
-        return dayRateOnTeam;
+    public void setAllocatedCost(BigDecimal allocatedCost) {
+        this.allocatedCost = allocatedCost;
     }
-
-    public BigDecimal getCostAllocation() {
-        return costAllocation;
-    }
-
-    public BigDecimal getHourAllocation() {
-        return hourAllocation;
-    }
-
-    public BigDecimal getAllocatedCostOnTeam() {
-        return allocatedCostOnTeam;
-    }
-
-    public BigDecimal getAllocatedHoursOnTeam() {
-        return allocatedHoursOnTeam;
-    }
-
-    public void setTeamId(UUID teamId) {
-        this.teamId = teamId;
-    }
-
-    public void setProfileId(UUID profileId) {
-        this.profileId = profileId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDayRateOnTeam(BigDecimal dayRateOnTeam) {
-        this.dayRateOnTeam = dayRateOnTeam;
-    }
-
-    public void setCostAllocation(BigDecimal costAllocation) {
-        this.costAllocation = costAllocation;
-    }
-
-    public void setHourAllocation(BigDecimal hourAllocation) {
-        this.hourAllocation = hourAllocation;
-    }
-
-    public void setAllocatedCostOnTeam(BigDecimal allocatedCostOnTeam) {
-        this.allocatedCostOnTeam = allocatedCostOnTeam;
-    }
-
-    public void setAllocatedHoursOnTeam(BigDecimal allocatedHoursOnTeam) {
-        this.allocatedHoursOnTeam = allocatedHoursOnTeam;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team){
-        this.team = team;
-    }
-
-    public Geography getGeography() {
-        return geography;
-    }
-
-    public void setGeography(Geography geography) {
-        this.geography = geography;
-    }
+    //endregion
 }

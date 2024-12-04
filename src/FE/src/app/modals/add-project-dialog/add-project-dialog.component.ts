@@ -9,11 +9,10 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {Geography, Project, ProjectMembers, Team} from '../../models';
-import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {
-  MatDatepickerModule
-} from '@angular/material/datepicker';
+import {Geography, Project, ProjectTeam, Team} from '../../models';
+//Eventuelt tilføje MatListModule?
+import {MatListModule, MatSelectionListChange} from '@angular/material/list';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { ChangeDetectorRef } from '@angular/core';
 import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
@@ -34,14 +33,11 @@ import {MatDivider} from '@angular/material/divider';
     MatInput,
     MatOption,
     MatDialogModule,
-    MatListOption,
-    MatSelectionList,
+    MatListModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
     MatDivider,
-    MatList,
-    MatListItem,
     FormsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +49,7 @@ export class AddProjectDialogComponent implements OnInit {
   teamForm!: FormGroup;
   teamList: Team[] = [];
   locations!: Geography[];
-  selectedProjectMembers: ProjectMembers[] = [];
+  selectedProjectTeam: ProjectTeam[] = [];
   @Output() projectAdded = new EventEmitter<Project>();
 
 
@@ -88,7 +84,7 @@ export class AddProjectDialogComponent implements OnInit {
   }
 
   onSelectionChange($event: MatSelectionListChange) {
-    this.selectedProjectMembers = $event.source.selectedOptions.selected.map(team => team.value);
+    this.selectedProjectTeam = $event.source.selectedOptions.selected.map(team => team.value);
   }
 
   async getCountries() {
@@ -108,7 +104,7 @@ export class AddProjectDialogComponent implements OnInit {
         projectName: this.projectForm.value.projectName,
         projectSalesNumber: this.projectForm.value.projectSalesNumber,
         projectDescription: this.projectForm.value.projectDescription,
-        projectMembers: this.selectedProjectMembers,
+        projectTeams: this.selectedProjectTeam,
         projectDayRate: 0,
         projectStartDate: startDateUtc,
         projectEndDate: endDateUtc,
