@@ -1,4 +1,4 @@
-package ecostruxure.rate.calculator.bll.service;
+package ecostruxure.rate.calculator.bll.currency;
 
 import ecostruxure.rate.calculator.be.Currency;
 import ecostruxure.rate.calculator.dal.ICurrencyRepository;
