@@ -3,6 +3,7 @@ package ecostruxure.rate.calculator.bll.team;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
+import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
@@ -55,8 +56,23 @@ public class TeamService {
         return teamRepository.findAllByArchived(false);
     }
 
-    public Team getById(UUID teamId) throws Exception {
-        return teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
+    public TeamDTO getById(UUID teamId) throws Exception {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Team> cq = cb.createQuery(Team.class);
+        Root<Team> team = cq.from(Team.class);
+
+        //include
+        team.fetch("teamProfiles", JoinType.LEFT).fetch("profile", JoinType.LEFT);
+
+        //select by team id
+        cq.select(team).where(cb.equal(team.get("teamId"), teamId));
+
+        Team result = em.createQuery(cq).getSingleResult();
+
+        //map to TeamDTO
+        TeamDTO teamDTO = modelMapper.map(result, TeamDTO.class);
+        System.out.println("name on a profile: " + teamDTO.getTeamProfiles().get(0).getProfile().getName());
+        return teamDTO;
     }
 
     public List<TeamProfileDTO> getByProfileId(UUID profileId) throws Exception {

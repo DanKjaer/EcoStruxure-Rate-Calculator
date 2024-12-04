@@ -20,6 +20,14 @@ export class TeamsService {
   }
 
   /**
+   * Gets a team by id.
+   * @param id
+   */
+  getTeam(id: string): Promise<Team> {
+    return firstValueFrom(this.http.get<Team>(`${this.apiUrl}?teamId=${id}`));
+  }
+
+  /**
    * Gets team profiles by team id.
    * @param id
    */
