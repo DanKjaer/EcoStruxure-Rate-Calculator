@@ -10,10 +10,11 @@ import java.util.*;
 @Service
 public class CurrencyService {
 
-    @Autowired
-    private ICurrencyRepository currencyRepository;
+    private final ICurrencyRepository currencyRepository;
 
-    public CurrencyService() throws Exception {
+    @Autowired
+    public CurrencyService(ICurrencyRepository currencyRepository) throws Exception {
+        this.currencyRepository = currencyRepository;
     }
 
     public Iterable<Currency> all() throws Exception {

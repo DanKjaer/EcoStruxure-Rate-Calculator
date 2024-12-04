@@ -13,12 +13,14 @@ import java.util.UUID;
 
 @Service
 public class ProjectService {
-    @Autowired
-    private IProjectRepository projectRepository;
-    @Autowired
-    private IProjectTeamRepository projectTeamRepository;
+    private final IProjectRepository projectRepository;
+    private final IProjectTeamRepository projectTeamRepository;
 
-    public ProjectService() throws Exception {
+    @Autowired
+    public ProjectService(IProjectRepository projectRepository,
+                          IProjectTeamRepository projectTeamRepository) throws Exception {
+        this.projectRepository = projectRepository;
+        this.projectTeamRepository = projectTeamRepository;
     }
 
     public Project getProject(UUID projectId) throws Exception {

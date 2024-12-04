@@ -11,9 +11,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
+    private final ProjectService projectService;
 
     @Autowired
-    private ProjectService projectService;
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @GetMapping()
     public Project getProject(@RequestParam UUID projectId) throws Exception {

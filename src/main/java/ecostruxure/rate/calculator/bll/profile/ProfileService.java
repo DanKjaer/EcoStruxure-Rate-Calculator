@@ -20,20 +20,21 @@ import java.lang.reflect.Type;
 
 @Service
 public class ProfileService {
-
-    @Autowired
-    private IProfileRepository profileRepository;
-    @Autowired
-    private ITeamProfileRepository teamProfileRepository;
     @PersistenceContext
     private EntityManager em;
 
+    private final IProfileRepository profileRepository;
+    private final ITeamProfileRepository teamProfileRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final List<IProfileObserver> observers;
 
     @Autowired
-    public ProfileService(List<IProfileObserver> observers) {
+    public ProfileService(List<IProfileObserver> observers,
+                          IProfileRepository profileRepository,
+                          ITeamProfileRepository teamProfileRepository) {
         this.observers = observers;
+        this.profileRepository = profileRepository;
+        this.teamProfileRepository = teamProfileRepository;
     }
 
 

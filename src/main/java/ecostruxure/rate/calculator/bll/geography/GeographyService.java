@@ -9,18 +9,14 @@ import java.io.IOException;
 
 @Service
 public class GeographyService {
+    private final IGeographyRepository geographyRepository;
 
     @Autowired
-    private IGeographyRepository geographyRepository;
-
-    public GeographyService() throws IOException {
+    public GeographyService(IGeographyRepository geographyRepository){
+        this.geographyRepository = geographyRepository;
     }
 
     public Iterable<Geography> all() throws Exception {
         return geographyRepository.findAll();
-    }
-
-    public Geography getById(int id) throws Exception {
-        return geographyRepository.findById(id).orElseThrow(() -> new Exception("Geography not found."));
     }
 }

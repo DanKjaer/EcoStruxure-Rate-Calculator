@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/currency")
 public class CurrencyController {
+    private final CurrencyService currencyService;
 
     @Autowired
-    private CurrencyService currencyService;
-
-    public CurrencyController() throws Exception {
+    public CurrencyController(CurrencyService currencyService) throws Exception {
+        this.currencyService = currencyService;
     }
 
     @GetMapping

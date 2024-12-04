@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/geography")
 public class GeographyController {
+    private final GeographyService geographyService;
 
     @Autowired
-    private GeographyService geographyService;
-
-    public GeographyController() throws Exception {
+    public GeographyController(GeographyService geographyService) throws Exception {
+        this.geographyService = geographyService;
     }
 
     @GetMapping()

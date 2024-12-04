@@ -26,23 +26,23 @@ import java.util.*;
 
 @Service
 public class TeamService {
-
-    @Autowired
-    private ITeamRepository teamRepository;
-    @Autowired
-    private ITeamProfileRepository teamProfileRepository;
     @PersistenceContext
     private EntityManager em;
 
+    private final ITeamRepository teamRepository;
+    private final ITeamProfileRepository teamProfileRepository;
     private final List<ITeamObserver> teamObservers;
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public TeamService(List<ITeamObserver> teamObservers) {
+    public TeamService(List<ITeamObserver> teamObservers,
+                       ITeamRepository teamRepository,
+                       ITeamProfileRepository teamProfileRepository) {
         this.teamObservers = teamObservers;
+        this.teamRepository = teamRepository;
+        this.teamProfileRepository = teamProfileRepository;
     }
 
-    @Transactional
     public Team create(Team team) throws Exception {
         em.getTransaction().begin();
         em.persist(team);

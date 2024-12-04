@@ -11,9 +11,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
+    private final ProfileService profileService;
 
     @Autowired
-    private ProfileService profileService;
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @GetMapping(produces = "application/json")
     public ProfileDTO getProfile(@RequestParam UUID id) throws Exception {

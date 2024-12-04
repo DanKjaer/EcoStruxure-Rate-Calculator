@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.bll.team.TeamService;
@@ -14,9 +13,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/teams")
 public class TeamsController {
+    private final TeamService teamService;
 
     @Autowired
-    private TeamService teamService;
+    public TeamsController(TeamService teamService) {
+        this.teamService = teamService;
+    }
 
     @GetMapping("/all")
     public Iterable<Team> get() throws Exception {
