@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>{{ 'ADD_NEW_PROJECT_MEMBER' | translate }}</h2>
+<mat-dialog-content class="container" [formGroup]="profileForm">
+  <div class="searchContainer">
+      <mat-form-field>
+        <mat-label>
+          {{ 'SEARCH_PROMPT' | translate }}
+        </mat-label>
+        <input matInput>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+  </div>
+  <div class="teamsContainer">
+    <!-- Left container: First projectMembersContainer -->
+    <div class="projectMembersContainer leftContainer">
+      <mat-selection-list formControlName="profiles" (selectionChange)="onSelectionChange($event)">
+        @for (profile of profileList; track profile) {
+          <mat-list-option [value]="profile">{{ profile.name }}</mat-list-option>
+        }
+      </mat-selection-list>
+    </div>
+
+    <!-- Right container: Second projectMembersContainer -->
+    <div class="projectMembersContainer rightContainer" *ngIf="selectedProfiles.length > 0">
+      <mat-list>
+        @for (profile of selectedProfiles; track profile) {
+          <mat-list-item>
+            <div class="allocationItem">
+              <span>{{ profile.name }}</span>
+              <mat-form-field class="allocationInput">
+                <span matSuffix>%</span>
+                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="profile.totalCostAllocation" min="0" max="100">
+                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="profile.totalHourAllocation" min="0" max="100">
+              </mat-form-field>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        }
+      </mat-list>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="buttonContainer">
+    <button mat-stroked-button mat-dialog-close>
+      <mat-icon> cancel </mat-icon>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+      <mat-icon> check_circle </mat-icon>
+      {{ 'ADD' | translate }}
+    </button>
+  </div>
+</mat-dialog-actions>

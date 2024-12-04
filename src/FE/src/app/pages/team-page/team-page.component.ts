@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
@@ -9,11 +9,14 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TranslateModule} from '@ngx-translate/core';
-import {Team, TeamProfile} from '../../models';
+import {Project, Team, TeamProfile} from '../../models';
 import {ActivatedRoute} from '@angular/router';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {TeamsService} from '../../services/teams.service';
+import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
+import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-team-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-team-page',
@@ -45,12 +48,15 @@ export class TeamPageComponent implements OnInit {
   constructor(private teamService: TeamsService,
               private route: ActivatedRoute,
               private menuService: MenuService,
-              protected currencyService: CurrencyService) {
+              protected currencyService: CurrencyService,
+              private changeDetectorRef: ChangeDetectorRef) {
   }
 
+  readonly dialog = inject(MatDialog);
   team: Team | undefined;
   teamProfiles: TeamProfile[] = [];
   isMenuOpen: boolean | undefined;
+  teams!: Team;
 
   statBoxes = {
     rawHourlyRate: 0,
@@ -90,6 +96,22 @@ export class TeamPageComponent implements OnInit {
     this.loading = false;
     console.log("team: ", this.team);
     console.log("teamProfiles: ", this.teamProfiles);
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddToTeamDialogComponent,{
+      minHeight: '80vh',
+        maxHeight: '800px',
+        minWidth: '60vw',
+        maxWidth: '1200px',
+    });
+    this.loading = true;
+    dialogRef.componentInstance.team = this.teams;
+    dialogRef.componentInstance.AddToTeam.subscribe((team: Team) => {
+      this.teams.teamProfiles = team.teamProfiles;
+    });
+    this.loading = false;
+    this.changeDetectorRef.detectChanges();
   }
 
   applySearch(event: Event) {
