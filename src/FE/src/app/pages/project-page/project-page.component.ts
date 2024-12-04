@@ -152,18 +152,6 @@ export class ProjectPageComponent implements OnInit {
 
   async update() {
     if (this.projectForm.valid) {
-      // let updatedProject = {
-      //   projectId: this.project.projectId,
-      //   projectName: this.projectForm.value.projectName,
-      //   projectDescription: this.projectForm.value.projectDescription,
-      //   projectTeams: this.project.projectTeams,
-      //   projectDayRate: this.project.projectDayRate || 0,
-      //   projectPrice: this.projectForm.value.projectPrice,
-      //   projectSalesNumber: this.projectForm.value.salesNumber,
-      //   projectStartDate: this.projectForm.value.startDate,
-      //   projectEndDate: this.projectForm.value.endDate,
-      //   projectLocation: this.project.projectLocation
-      // };
       this.project.projectName = this.projectForm.value.projectName;
       this.project.projectSalesNumber = this.projectForm.value.salesNumber;
       this.project.projectDescription = this.projectForm.value.projectDescription;
@@ -200,7 +188,7 @@ export class ProjectPageComponent implements OnInit {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
       this.project.projectTeams = this.project.projectTeams.filter(member => member.team.teamId !== this.selectedRow?.team.teamId);
       this.fillTableWithTeams();
-      this.calculateProjectDayRate();
+      this.fillStatBox();
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
     }
@@ -264,17 +252,6 @@ export class ProjectPageComponent implements OnInit {
 
   selectRow(row: ProjectTeam) {
     this.selectedRow = row;
-  }
-
-  private calculateProjectDayRate(){
-    /**
-     * Outcommented, skal måske bruge det i fremtiden, for at se hvor ting går galt
-     */
-    /*    let totalDayRate = 0;
-
-    this.project.projectTeams.forEach(member => totalDayRate += member.dayRateWithMarkup!);
-    this.project.projectDayRate = totalDayRate;*/
-    this.fillStatBox();
   }
 
   CalculateDayRateForTeam(team: Team): number {

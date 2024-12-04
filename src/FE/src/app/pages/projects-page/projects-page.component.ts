@@ -1,23 +1,10 @@
 import {AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
-//Kan vi importere et module her os ?
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef, MatFooterCell, MatFooterCellDef, MatFooterRow, MatFooterRowDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-  MatTableDataSource
-} from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
+import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
@@ -39,26 +26,17 @@ import {CurrencyService} from '../../services/currency.service';
   standalone: true,
   imports: [
     MatButton,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
+    MatTableModule,
     MatIcon,
     MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
     MatPaginator,
-    MatRow,
-    MatRowDef,
     MatSort,
     MatSortHeader,
-    MatTable,
     NgIf,
     TranslateModule,
-    MatHeaderCellDef,
     NgClass,
     MatInput,
     ReactiveFormsModule,
@@ -70,10 +48,6 @@ import {CurrencyService} from '../../services/currency.service';
     MatDatepickerInput,
     MatDatepicker,
     DecimalPipe,
-    MatFooterRow,
-    MatFooterCell,
-    MatFooterCellDef,
-    MatFooterRowDef,
     MatPrefix
   ],
   templateUrl: './projects-page.component.html',

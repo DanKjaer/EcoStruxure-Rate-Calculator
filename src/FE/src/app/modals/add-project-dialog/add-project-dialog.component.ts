@@ -11,10 +11,8 @@ import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {Geography, Project, ProjectTeam, Team} from '../../models';
 //Eventuelt tilføje MatListModule?
-import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {
-  MatDatepickerModule
-} from '@angular/material/datepicker';
+import {MatListModule, MatSelectionListChange} from '@angular/material/list';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { ChangeDetectorRef } from '@angular/core';
 import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
@@ -35,14 +33,11 @@ import {MatDivider} from '@angular/material/divider';
     MatInput,
     MatOption,
     MatDialogModule,
-    MatListOption,
-    MatSelectionList,
+    MatListModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
     MatDivider,
-    MatList,
-    MatListItem,
     FormsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

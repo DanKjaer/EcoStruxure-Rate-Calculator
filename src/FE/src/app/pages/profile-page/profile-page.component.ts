@@ -129,7 +129,6 @@ export class ProfilePageComponent implements OnInit {
 
   private async prepTeamList(id: string) {
     let response = await this.teamsService.getTeamProfiles(id);
-    console.log(response);
     this.teams.set(response);
     this.datasource.data = response;
   }
