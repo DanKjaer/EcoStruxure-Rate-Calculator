@@ -3,12 +3,17 @@ package ecostruxure.rate.calculator.bll.profile;
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
+import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +51,20 @@ public class ProfileService {
         return newProfile;
     }
 
-    public Iterable<ProfileDTO> all() throws Exception {
-        var profiles = profileRepository.findAllByArchived(false);
+    public List<ProfileDTO> all() throws Exception {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Profile> cq = cb.createQuery(Profile.class);
+        Root<Profile> profile = cq.from(Profile.class);
 
-        Type listType = new TypeToken<Iterable<ProfileDTO>>() {}.getType();
+        profile.fetch("teamProfiles", JoinType.LEFT);
 
-        Iterable<ProfileDTO> profilesDto = modelMapper.map(profiles, listType);
-        return profilesDto;
+        cq.select(profile).where(cb.equal(profile.get("archived"), false));
+
+        List<Profile> result = em.createQuery(cq).getResultList();
+
+        Type listType = new TypeToken<List<ProfileDTO>>() {}.getType();
+        List<ProfileDTO> profilesDTO = modelMapper.map(result, listType);
+        return profilesDTO;
     }
 
     public ProfileDTO getById(UUID profileId) throws Exception {
