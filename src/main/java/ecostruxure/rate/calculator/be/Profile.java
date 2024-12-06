@@ -51,11 +51,6 @@ public class Profile {
 
     private Timestamp updatedAt;
 
-    // Relationships
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "profile-teamProfiles")
-    private List<TeamProfile> teamProfiles;
-
     //region Getters and Setters
     public UUID getProfileId() {
         return profileId;
@@ -159,14 +154,6 @@ public class Profile {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<TeamProfile> getTeamProfiles() {
-        return teamProfiles;
-    }
-
-    public void setTeamProfiles(List<TeamProfile> teamProfiles) {
-        this.teamProfiles = teamProfiles;
     }
     //endregion
 }
