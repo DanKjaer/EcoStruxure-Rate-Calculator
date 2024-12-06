@@ -48,7 +48,6 @@ import {NgForOf, NgIf} from "@angular/common";
   styleUrl: './add-to-team-dialog.component.css'
 })
 export class AddToTeamDialogComponent implements OnInit {
-  profileForm!: FormGroup;
   teamProfileList:  TeamProfile[] = [];
   selectedTeamProfiles: TeamProfile[] = [];
   @Output() AddToTeam = new EventEmitter<Team>();
@@ -64,10 +63,6 @@ export class AddToTeamDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.profileForm = this.formBuilder.group({
-      profiles: [[], Validators.required],
-    })
-
     let profiles = await this.profileService.getProfiles();
     let potentialTeamProfiles = profiles.map(profile => {
       let teamProfile: TeamProfile = {
@@ -76,7 +71,6 @@ export class AddToTeamDialogComponent implements OnInit {
       };
       return teamProfile;
     });
-    this.teamProfileList = potentialTeamProfiles;
     this.teamProfileList = potentialTeamProfiles.filter(potentialTeamProfile =>
       !this.team.teamProfiles!.some(alreadyProfile =>
         alreadyProfile.profile!.profileId === potentialTeamProfile.profile!.profileId));

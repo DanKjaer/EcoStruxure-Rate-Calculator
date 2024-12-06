@@ -1,6 +1,6 @@
 import {
   Component,
-  computed,
+  computed, inject,
   OnInit,
   signal,
   WritableSignal
@@ -20,12 +20,17 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
 import {ActivatedRoute} from '@angular/router';
-import {Currency, Geography, Profile, TeamProfile} from '../../models';
+import {Currency, Geography, Profile, Team, TeamProfile} from '../../models';
 import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {SnackbarService} from '../../services/snackbar.service';
+import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-team-dialog.component';
+import {
+  AddProfileToTeamDialogComponent
+} from '../../modals/add-profile-to-team-dialog/add-profile-to-team-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-profile-page',
@@ -90,6 +95,7 @@ export class ProfilePageComponent implements OnInit {
 
     return { totalDayRate, totalHourlyRate, totalAnnualCost, totalAnnualHours };
   });
+  readonly dialog = inject(MatDialog);
 
   constructor(private fb: FormBuilder,
               private profileService: ProfileService,
@@ -231,5 +237,22 @@ export class ProfilePageComponent implements OnInit {
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_TEAM_REMOVED'), false);
     }
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileToTeamDialogComponent, {
+      minHeight: '60vh',
+      maxHeight: '800px',
+      minWidth: '50vw',
+      maxWidth: '1000px',
+    });
+    this.loading = true;
+    dialogRef.componentInstance.profile = this.currentProfile()!;
+    dialogRef.componentInstance.teamProfiles = this.teams();
+    dialogRef.componentInstance.addedProfileToTeam.subscribe((team: Team) => {
+      //todo: add to list
+    });
+    this.loading = false;
+    this.datasource._updateChangeSubscription();
   }
 }
