@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.bll.team.TeamService;
@@ -43,6 +44,11 @@ public class TeamsController {
     @PutMapping()
     public TeamDTO update(@RequestBody Team team) throws Exception {
         return teamService.update(team);
+    }
+
+    @PutMapping("/addProfileToTeams")
+    public List<TeamProfileDTO> addProfileToTeams(@RequestBody List<TeamProfile> teamProfiles) throws Exception {
+        return teamService.addProfileToTeams(teamProfiles);
     }
 
     @DeleteMapping()

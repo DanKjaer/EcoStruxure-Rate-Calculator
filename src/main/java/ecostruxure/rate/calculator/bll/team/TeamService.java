@@ -130,23 +130,22 @@ public class TeamService {
         return true;
     }
 
-    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
-        BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-        BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
-
-        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
-        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
-
-        team.setTotalCostWithMarkup(totalMarkup);
-        team.setTotalCostWithGrossMargin(totalGrossMargin);
-
-        return team;
-    }
-
     public boolean deleteTeamProfile(UUID teamProfileId) throws Exception{
         teamProfileRepository.deleteById(teamProfileId);
         return !teamProfileRepository.existsById(teamProfileId);
     }
 
+    public List<TeamProfileDTO> addProfileToTeams(List<TeamProfile> teamProfiles) {
+        Iterable<TeamProfile> updatedTeamProfiles =  teamProfileRepository.saveAll(teamProfiles);
+
+        List<TeamProfileDTO> teamProfilesDTO = new ArrayList<>();
+        for (TeamProfile teamProfile : updatedTeamProfiles) {
+            TeamProfileDTO teamProfileDTO = modelMapper.map(teamProfile, TeamProfileDTO.class);
+            System.out.println("name on a profile: " + teamProfileDTO.getProfile().getName() + ' ' + teamProfileDTO.getProfile().getProfileId());
+            notifyTeamObservers(teamProfile.getTeam());
+            teamProfilesDTO.add(teamProfileDTO);
+        }
+
+        return teamProfilesDTO;
+    }
 }
