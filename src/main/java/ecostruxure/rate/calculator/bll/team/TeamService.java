@@ -130,11 +130,6 @@ public class TeamService {
         return true;
     }
 
-    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception {
-        teamProfileRepository.deleteById(teamProfileId);
-        return !teamProfileRepository.existsById(teamProfileId);
-    }
-
     public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
         BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
         BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);

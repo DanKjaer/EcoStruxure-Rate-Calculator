@@ -223,8 +223,8 @@ export class ProfilePageComponent implements OnInit {
     return hourlyRate * profile.hoursPerDay!;
   }
 
-  async remove(row: any) {
-    let result = await this.teamsService.deleteTeamProfile(row.id);
+  async remove(row: TeamProfile) {
+    let result = await this.teamsService.deleteTeamProfile(row.teamProfileId!);
     this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
     if (result) {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
