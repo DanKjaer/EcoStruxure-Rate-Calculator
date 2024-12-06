@@ -172,7 +172,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   goToProfile(profileId: string): void {
-    this.router.navigate(['/profile', profileId]);
+    this.router.navigate(['/profiles', profileId]);
   }
 
   openDialog() {

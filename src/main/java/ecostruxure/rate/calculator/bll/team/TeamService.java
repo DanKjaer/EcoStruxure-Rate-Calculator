@@ -4,6 +4,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
+import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import jakarta.persistence.EntityManager;
@@ -68,7 +69,6 @@ public class TeamService {
 
         //map to TeamDTO
         TeamDTO teamDTO = modelMapper.map(result, TeamDTO.class);
-        System.out.println("name on a profile: " + teamDTO.getTeamProfiles().get(0).getProfile().getName());
         return teamDTO;
     }
 
@@ -92,7 +92,7 @@ public class TeamService {
         return teamProfilesDTO;
     }
 
-    public Team update(Team team) throws Exception {
+    public TeamDTO update(Team team) throws Exception {
         for (TeamProfile teamProfile : team.getTeamProfiles()) {
             if (teamProfile.getProfile() == null) {
                 UUID teamProfileId = teamProfile.getTeamProfileId();
@@ -101,10 +101,12 @@ public class TeamService {
                 teamProfile.setProfile(existingTeamprofile.getProfile());
             }
         }
-        team = calculateTotalMarkupAndTotalGrossMargin(team);
-        Team updatedTeam = teamRepository.save(team);
-
-        notifyTeamObservers(updatedTeam);
+        team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+        team = RateUtils.calculateRates(team);
+        team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+        teamRepository.save(team);
+        notifyTeamObservers(team);
+        TeamDTO updatedTeam = getById(team.getTeamId());
 
         return updatedTeam;
     }
@@ -127,22 +129,27 @@ public class TeamService {
         return true;
     }
 
-    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception {
+    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception{
         teamProfileRepository.deleteById(teamProfileId);
         return !teamProfileRepository.existsById(teamProfileId);
     }
 
-    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
-        BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-        BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
+    public List<TeamProfileDTO> addProfileToTeams(List<TeamProfile> teamProfiles) {
+        Iterable<TeamProfile> updatedTeamProfiles =  teamProfileRepository.saveAll(teamProfiles);
 
-        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
-        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
+        List<TeamProfileDTO> teamProfilesDTO = new ArrayList<>();
+        for (TeamProfile teamProfile : updatedTeamProfiles) {
+            TeamProfileDTO teamProfileDTO = modelMapper.map(teamProfile, TeamProfileDTO.class);
+            Team team = teamRepository.findById(teamProfile.getTeam().getTeamId()).orElseThrow(() ->
+                    new EntityNotFoundException("Team not found with ID: " + teamProfile.getTeam().getTeamId()));
+            team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+            team = RateUtils.calculateRates(team);
+            team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+            teamRepository.save(team);
+            notifyTeamObservers(team);
+            teamProfilesDTO.add(teamProfileDTO);
+        }
 
-        team.setTotalCostWithMarkup(totalMarkup);
-        team.setTotalCostWithGrossMargin(totalGrossMargin);
-
-        return team;
+        return teamProfilesDTO;
     }
 }

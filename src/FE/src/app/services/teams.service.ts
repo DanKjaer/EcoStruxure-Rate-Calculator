@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {Team, TeamProfile} from "../models";
+import {Team, TeamDTO, TeamProfile} from "../models";
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +48,7 @@ export class TeamsService {
    * Updates a team by id.
    * @param team
    */
-  putTeam(team: Team): Promise<Team> {
+  putTeam(team: TeamDTO): Promise<Team> {
     return firstValueFrom(this.http.put<Team>(`${this.apiUrl}`, team));
   }
 
@@ -61,10 +61,14 @@ export class TeamsService {
   }
 
   /**
-   * Deletes a teamProfile by id.
-   * @param teamProfileID
+   * Deletes a teamProfile by id from a team.
+   * @param teamProfile
    */
-  deleteTeamProfile(teamProfileID: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/teamProfile?id=${teamProfileID}`));
+  deleteTeamProfile(teamProfileId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/teamProfile?teamProfileId=${teamProfileId}`));
+  }
+
+  addProfileToTeams(newTeamProfiles: TeamProfile[]) {
+    return firstValueFrom(this.http.put<TeamProfile[]>(`${this.apiUrl}/addProfileToTeams`, newTeamProfiles));
   }
 }

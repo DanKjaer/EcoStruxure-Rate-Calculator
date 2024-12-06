@@ -1,8 +1,6 @@
 package ecostruxure.rate.calculator.bll.utils;
 
-import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.Project;
-import ecostruxure.rate.calculator.be.ProjectTeam;
+import ecostruxure.rate.calculator.be.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,6 +17,9 @@ public class RateUtils {
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
     private static final BigDecimal HUNDRED = new BigDecimal("100.00");
 
+
+    //region Profile
+    // This method is for calculations on profiles
     // Method to calculate the effective work hours based on effectiveness percentage
     public static BigDecimal effectiveWorkHours(Profile profile) {
         // If annual hours is zero, return zero to avoid division by zero
@@ -31,7 +32,46 @@ public class RateUtils {
 
         return effectiveWorkHours;
     }
+    //endregion
 
+    //region teams
+    //These methods are for calculations on teams
+    public static Team calculateTotalAllocatedHoursAndCost(Team team){
+        BigDecimal totalCost = BigDecimal.ZERO;
+        BigDecimal totalHours = BigDecimal.ZERO;
+        for (TeamProfile teamProfile : team.getTeamProfiles()) {
+            totalCost = totalCost.add(teamProfile.getAllocatedCost());
+            totalHours = totalHours.add(teamProfile.getAllocatedHours());
+        }
+        team.setTotalAllocatedHours(totalHours);
+        team.setTotalAllocatedCost(totalCost);
+        return team;
+    }
+
+    public static Team calculateRates(Team team) {
+        team.setHourlyRate(team.getTotalAllocatedCost()
+                .divide(team.getTotalAllocatedHours(), 2, BigDecimal.ROUND_HALF_UP));
+        team.setDayRate(team.getHourlyRate().multiply(BigDecimal.valueOf(8)));
+        return team;
+    }
+
+    public static Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
+        BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
+
+        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
+        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
+
+        team.setTotalCostWithMarkup(totalMarkup);
+        team.setTotalCostWithGrossMargin(totalGrossMargin);
+
+        return team;
+    }
+    //endregion
+
+    //region projects
+    //These methods are for calculations on projects
     public static Project updateProjectRates(Project project) {
         var projectContainsMembers = project.getProjectTeams() != null;
         var projectContainsDayRate = project.getProjectDayRate() != null;
@@ -106,4 +146,5 @@ public class RateUtils {
         BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return grossMarginPercentage;
     }
+    //endregion
 }

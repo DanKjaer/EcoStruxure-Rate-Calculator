@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Team;
+import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.bll.team.TeamService;
@@ -41,8 +42,13 @@ public class TeamsController {
     }
 
     @PutMapping()
-    public Team update(@RequestBody Team team) throws Exception {
+    public TeamDTO update(@RequestBody Team team) throws Exception {
         return teamService.update(team);
+    }
+
+    @PutMapping("/addProfileToTeams")
+    public List<TeamProfileDTO> addProfileToTeams(@RequestBody List<TeamProfile> teamProfiles) throws Exception {
+        return teamService.addProfileToTeams(teamProfiles);
     }
 
     @DeleteMapping()
@@ -55,8 +61,8 @@ public class TeamsController {
         return teamService.archiveTeam(id);
     }
 
-    @DeleteMapping("teamProfile/")
-    public boolean deleteTeamProfile(@RequestParam UUID id) throws Exception {
-        return teamService.deleteTeamProfile(id);
+    @DeleteMapping("/teamProfile")
+    public boolean deleteTeamProfile(@RequestParam UUID teamProfileId) throws Exception {
+        return teamService.deleteTeamProfile(teamProfileId);
     }
 }

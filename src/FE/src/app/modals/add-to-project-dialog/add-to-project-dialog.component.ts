@@ -56,7 +56,6 @@ export class AddToProjectDialogComponent implements OnInit {
     let teams = await this.teamService.getTeams();
     let potentialProjectMembers = teams.map(team => {
       let projectMember: ProjectTeam = {
-        projectTeamId: '',
         project: this.project!,
         team: team!,
         allocationPercentage: 0
