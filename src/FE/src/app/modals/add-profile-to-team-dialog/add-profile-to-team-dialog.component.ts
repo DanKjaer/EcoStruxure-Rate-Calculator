@@ -63,8 +63,8 @@ export class AddProfileToTeamDialogComponent implements OnInit{
     });
     let teams = await this.teamService.getTeams();
     let teamsAvailable = teams.filter(potentialTeam => {
-      return this.teamProfiles!.some(teamProfile =>
-        teamProfile.team!.teamId !== potentialTeam.teamId);
+      return !this.teamProfiles.some(teamProfile =>
+        teamProfile.team!.teamId === potentialTeam.teamId);
     });
     teamsAvailable.forEach(team => {
       let newTeamProfile: TeamProfile = {
