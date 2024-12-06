@@ -54,4 +54,9 @@ public class TeamsController {
     public boolean archiveTeam(@PathVariable UUID id) throws Exception {
         return teamService.archive(id);
     }
+
+    @DeleteMapping()
+    public boolean deleteProjectTeam(@RequestParam UUID teamProfileId) throws Exception {
+        return teamService.deleteTeamProfile(teamProfileId);
+    }
 }

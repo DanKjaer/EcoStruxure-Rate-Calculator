@@ -18,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -130,4 +129,24 @@ public class TeamService {
         teamRepository.save(team);
         return true;
     }
+
+    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
+        BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
+        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
+
+        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
+        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
+
+        team.setTotalCostWithMarkup(totalMarkup);
+        team.setTotalCostWithGrossMargin(totalGrossMargin);
+
+        return team;
+    }
+
+    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception{
+        teamProfileRepository.deleteById(teamProfileId);
+        return !teamProfileRepository.existsById(teamProfileId);
+    }
+
 }

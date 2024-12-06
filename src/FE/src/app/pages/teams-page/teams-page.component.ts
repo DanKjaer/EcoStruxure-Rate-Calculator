@@ -202,7 +202,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   }
 
   goToTeam(teamId: string) {
-    this.router.navigate(['/team', teamId]);
+    this.router.navigate(['/teams', teamId]);
   }
 
 

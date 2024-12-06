@@ -8,15 +8,15 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
-import {TranslateModule} from '@ngx-translate/core';
-import {Project, Team, TeamProfile} from '../../models';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {Team, TeamProfile} from '../../models';
 import {ActivatedRoute} from '@angular/router';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {TeamsService} from '../../services/teams.service';
-import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
 import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-team-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-team-page',
@@ -49,8 +49,10 @@ export class TeamPageComponent implements OnInit {
               private route: ActivatedRoute,
               private menuService: MenuService,
               protected currencyService: CurrencyService,
-              private changeDetectorRef: ChangeDetectorRef) {
-  }
+              private changeDetectorRef: ChangeDetectorRef,
+              private snackBar: SnackbarService,
+              private translate: TranslateService) {
+  };
 
   readonly dialog = inject(MatDialog);
   team!: Team;
@@ -62,7 +64,7 @@ export class TeamPageComponent implements OnInit {
     markupHourlyRate: 0,
     gmHourlyRate: 0,
     totalAnnualHours: 0
-  }
+  };
   protected readonly localStorage = localStorage;
   loading: boolean = true;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
@@ -74,8 +76,8 @@ export class TeamPageComponent implements OnInit {
     'cost on team',
     'location',
     'day rate',
-    'options'
-  ]
+    'delete'
+  ];
 
   async ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -100,7 +102,7 @@ export class TeamPageComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(AddToTeamDialogComponent,{
+    const dialogRef = this.dialog.open(AddToTeamDialogComponent, {
       minHeight: '60vh',
       maxHeight: '800px',
       minWidth: '50vw',
@@ -128,10 +130,31 @@ export class TeamPageComponent implements OnInit {
   }
 
   calculateDayRate(teamProfile: TeamProfile) {
-    if(teamProfile.allocatedHours === 0) {
+    if (teamProfile.allocatedHours === 0) {
       return 0;
     }
     let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!;
     return hourlyRate * 8;
+  }
+
+  async onRemove(row: TeamProfile) {
+    console.log("row: ", row);
+
+    if (!row || !row.profile?.profileId) {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
+      return;
+    }
+
+    const result = await this.teamService.deleteTeamProfile(row.teamProfileId!);
+    if (result) {
+
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_DELETED'), true);
+      this.team.teamProfiles = this.team.teamProfiles!.filter(teamProfile =>
+        teamProfile.teamProfileId !== row.teamProfileId);
+      this.datasource.data = this.team.teamProfiles;
+      this.datasource._updateChangeSubscription();
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
+    }
   }
 }

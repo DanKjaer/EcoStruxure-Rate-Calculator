@@ -12,7 +12,7 @@ export const routes: Routes = [
   { path: 'profiles', component: ProfilesPageComponent },
   { path: 'profile/:id', component: ProfilePageComponent },
   { path: 'teams', component: TeamsPageComponent },
-  { path: 'team/:id', component: TeamPageComponent },
+  { path: 'teams/:id', component: TeamPageComponent },
   { path: 'projects', component: ProjectsPageComponent },
   { path: 'projects/:id', component: ProjectPageComponent },
   { path: 'currency', component: CurrencyPageComponent },
