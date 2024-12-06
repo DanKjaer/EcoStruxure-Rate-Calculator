@@ -142,7 +142,13 @@ public class TeamService {
         for (TeamProfile teamProfile : updatedTeamProfiles) {
             TeamProfileDTO teamProfileDTO = modelMapper.map(teamProfile, TeamProfileDTO.class);
             System.out.println("name on a profile: " + teamProfileDTO.getProfile().getName() + ' ' + teamProfileDTO.getProfile().getProfileId());
-            notifyTeamObservers(teamProfile.getTeam());
+            Team team = teamRepository.findById(teamProfile.getTeam().getTeamId()).orElseThrow(() ->
+                    new EntityNotFoundException("Team not found with ID: " + teamProfile.getTeam().getTeamId()));
+            team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+            team = RateUtils.calculateRates(team);
+            team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+            teamRepository.save(team);
+            notifyTeamObservers(team);
             teamProfilesDTO.add(teamProfileDTO);
         }
 
