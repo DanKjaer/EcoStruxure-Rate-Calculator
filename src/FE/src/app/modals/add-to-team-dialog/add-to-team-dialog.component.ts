@@ -91,13 +91,11 @@ export class AddToTeamDialogComponent implements OnInit {
     });
     this.team.teamProfiles!.push(...this.selectedTeamProfiles);
     let DTO: TeamDTO = this.createDTO();
-    console.log("team profiler i add-to-team-dialog: ", DTO.teamProfiles);
     try {
       const updatedTeam = await this.teamService.putTeam(DTO);
 
       if (updatedTeam != undefined) {
         this.AddToTeam.emit(updatedTeam);
-        console.log("team profiler i add-to-team-dialog efter update: ", updatedTeam.teamProfiles);
         this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_UPDATED'), true);
       } else {
         this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_UPDATED'), false);

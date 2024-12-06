@@ -84,6 +84,11 @@ export class TeamPageComponent implements OnInit {
     this.team = await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!);
     this.teamProfiles = this.team.teamProfiles!;
     this.datasource.data = this.teamProfiles;
+    this.fillStatBoxes();
+    this.loading = false;
+  }
+
+  private fillStatBoxes() {
     let markupHourlyRate = this.team.hourlyRate! * ((this.team.markupPercentage! / 100) + 1);
     let gmHourlyRate = markupHourlyRate * ((this.team.grossMarginPercentage! / 100) + 1);
     this.statBoxes = {
@@ -92,7 +97,6 @@ export class TeamPageComponent implements OnInit {
       gmHourlyRate: gmHourlyRate,
       totalAnnualHours: this.teamProfiles.reduce((sum, item) => sum + item.allocatedHours!, 0)
     }
-    this.loading = false;
   }
 
   openDialog() {
@@ -107,7 +111,7 @@ export class TeamPageComponent implements OnInit {
     dialogRef.componentInstance.AddToTeam.subscribe((team: Team) => {
       this.team = team;
       this.datasource.data = this.team.teamProfiles!;
-      console.log("teamProfiles i Team-page: ",this.team.teamProfiles);
+      this.fillStatBoxes();
     });
     this.loading = false;
     this.datasource._updateChangeSubscription();

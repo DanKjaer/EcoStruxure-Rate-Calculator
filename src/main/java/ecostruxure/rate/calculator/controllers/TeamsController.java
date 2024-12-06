@@ -41,7 +41,7 @@ public class TeamsController {
     }
 
     @PutMapping()
-    public Team update(@RequestBody Team team) throws Exception {
+    public TeamDTO update(@RequestBody Team team) throws Exception {
         return teamService.update(team);
     }
 

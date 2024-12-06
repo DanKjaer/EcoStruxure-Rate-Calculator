@@ -93,7 +93,7 @@ public class TeamService {
         return teamProfilesDTO;
     }
 
-    public Team update(Team team) throws Exception {
+    public TeamDTO update(Team team) throws Exception {
         for (TeamProfile teamProfile : team.getTeamProfiles()) {
             if (teamProfile.getProfile() == null) {
                 UUID teamProfileId = teamProfile.getTeamProfileId();
@@ -103,10 +103,9 @@ public class TeamService {
             }
         }
         team = calculateTotalMarkupAndTotalGrossMargin(team);
-//        Team teamToUpdate = modelMapper.map(team, Team.class);
-        Team updatedTeam = teamRepository.save(team);
-
-        notifyTeamObservers(updatedTeam);
+        teamRepository.save(team);
+        notifyTeamObservers(team);
+        TeamDTO updatedTeam = getById(team.getTeamId());
 
         return updatedTeam;
     }
