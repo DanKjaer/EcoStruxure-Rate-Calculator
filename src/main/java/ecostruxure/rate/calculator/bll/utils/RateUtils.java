@@ -17,12 +17,10 @@ public class RateUtils {
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
     private static final BigDecimal HUNDRED = new BigDecimal("100.00");
 
-    /**
-     * This method is for calculations on profiles
-     *  Method to calculate the effective work hours based on effectiveness percentage
-     * @param profile
-     * @return
-     */
+
+    //region Profile
+    // This method is for calculations on profiles
+    // Method to calculate the effective work hours based on effectiveness percentage
     public static BigDecimal effectiveWorkHours(Profile profile) {
         // If annual hours is zero, return zero to avoid division by zero
         if (profile.getAnnualHours().compareTo(BigDecimal.ZERO) == 0) {
@@ -34,10 +32,10 @@ public class RateUtils {
 
         return effectiveWorkHours;
     }
+    //endregion
 
-    /**
-     * These methods are for calculations on teams
-     */
+    //region teams
+    //These methods are for calculations on teams
     public static Team calculateTotalAllocatedHoursAndCost(Team team){
         BigDecimal totalCost = BigDecimal.ZERO;
         BigDecimal totalHours = BigDecimal.ZERO;
@@ -70,12 +68,10 @@ public class RateUtils {
 
         return team;
     }
+    //endregion
 
-    /**
-     * These methods are for calculations on projects
-     * @param project
-     * @return
-     */
+    //region projects
+    //These methods are for calculations on projects
     public static Project updateProjectRates(Project project) {
         var projectContainsMembers = project.getProjectTeams() != null;
         var projectContainsDayRate = project.getProjectDayRate() != null;
@@ -150,4 +146,5 @@ public class RateUtils {
         BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return grossMarginPercentage;
     }
+    //endregion
 }
