@@ -248,7 +248,7 @@ export class ProfilePageComponent implements OnInit {
     });
     this.loading = true;
     dialogRef.componentInstance.profile = this.currentProfile()!;
-    dialogRef.componentInstance.teamProfiles = this.teams();
+    dialogRef.componentInstance.teamProfiles = this.datasource.data;
     dialogRef.componentInstance.addedProfileToTeam.subscribe((teamProfiles: TeamProfile[]) => {
       this.datasource.data.push(...teamProfiles);
       this.datasource._updateChangeSubscription();
