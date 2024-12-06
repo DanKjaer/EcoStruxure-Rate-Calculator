@@ -20,7 +20,6 @@ public class ProfileDTO {
 
     public ProfileDTO(String profileId,
                       String name,
-                      String currency,
                       GeographyDTO geography,
                       boolean resourceType,
                       BigDecimal annualCost,

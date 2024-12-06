@@ -7,6 +7,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {NgClass} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {ExportService} from '../../services/export.service';
 
 @Component({
   selector: 'app-sidemenu',
@@ -28,7 +29,10 @@ export class SidemenuComponent {
   selectedCurrency: string | null;
   protected readonly localStorage = localStorage;
 
-  constructor(private translate: TranslateService, private menuService: MenuService, private currencyService: CurrencyService) {
+  constructor(private translate: TranslateService,
+              private menuService: MenuService,
+              private currencyService: CurrencyService,
+              private exportService: ExportService) {
     this.selectedCurrency = localStorage.getItem('selectedCurrency');
     translate.setDefaultLang('en');
     menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -61,4 +65,21 @@ export class SidemenuComponent {
     }
   }
 
+  async export() {
+    this.exportService.getExport().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export.xlsx';
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error exporting', error);
+      }
+    });
+  }
 }

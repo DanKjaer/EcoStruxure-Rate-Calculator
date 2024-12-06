@@ -48,6 +48,11 @@
           language
         </mat-icon>
       </button>
+      <button class="iconButton" mat-icon-button (click)="export()" matTooltip="{{ 'EXPORT' | translate }}">
+        <mat-icon>
+          download
+        </mat-icon>
+      </button>
       <button class="iconButton" mat-icon-button (click)="switchCurrency()" matTooltip="{{ 'CHANGE_CURRENCY' | translate }}">
         <mat-icon class="animatedIcon" [ngClass]="{ 'euro': selectedCurrency == 'EUR', 'dollar': selectedCurrency == 'USD' }">
           {{ this.selectedCurrency == "EUR" ? 'euro' : 'attach_money' }}
