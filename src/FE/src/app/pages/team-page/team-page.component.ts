@@ -138,7 +138,6 @@ export class TeamPageComponent implements OnInit {
   }
 
   async onRemove(row: TeamProfile) {
-    console.log("row: ", row);
 
     if (!row || !row.profile?.profileId) {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);

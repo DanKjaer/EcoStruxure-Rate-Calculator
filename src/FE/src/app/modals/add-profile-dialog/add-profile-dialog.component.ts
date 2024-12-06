@@ -78,7 +78,6 @@ export class AddProfileDialogComponent implements OnInit {
   }
 
   async onSave() {
-    console.log(this.profileForm.value.geography);
     if (this.profileForm.valid) {
       let profileDTO: Profile = {
           name: this.profileForm.value.name,

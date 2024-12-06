@@ -59,11 +59,9 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
 
         reader.onload = async (e: ProgressEvent<FileReader>) => {
           const csvData = e.target?.result;
-          console.log(typeof csvData);
           if (typeof csvData === "string") {
 
             const data = this.parseCsv(csvData);
-            console.log(data);
             await this.currencyService.importCurrency(data);
             this.datasource.data = data!;
           }

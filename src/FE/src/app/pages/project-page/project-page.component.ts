@@ -158,9 +158,7 @@ export class ProjectPageComponent implements OnInit {
       this.project.projectPrice = this.projectForm.value.projectPrice;
       this.project.projectStartDate = this.projectForm.value.startDate;
       this.project.projectEndDate = this.projectForm.value.endDate;
-      console.log("Project before: ", this.project);
       this.project = await this.projectService.putProject(this.project);
-      console.log("Project after: ", this.project);
       if (this.project != undefined) {
         this.fillStatBox();
         this.fillProjectForm();
