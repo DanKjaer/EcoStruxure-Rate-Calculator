@@ -74,17 +74,6 @@ public class ProfileService {
     public Profile update(Profile profile) throws Exception {
         profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
 
-        List<TeamProfile> teamProfiles = teamProfileRepository.findAllByProfile_ProfileId(profile.getProfileId());
-
-        for (TeamProfile teamProfile : teamProfiles) {
-            if (teamProfile.getTeam() == null) {
-                UUID teamProfileId = teamProfile.getTeamProfileId();
-                TeamProfile existingTeamProfile = teamProfileRepository.findById(teamProfileId)
-                        .orElseThrow(() -> new EntityNotFoundException("TeamProfile not found with ID: " + teamProfileId));
-
-                teamProfile.setTeam(existingTeamProfile.getTeam());
-            }
-        }
         Profile updatedProfile = profileRepository.save(profile);
         notifyObservers(updatedProfile);
         return updatedProfile;
