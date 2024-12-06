@@ -4,6 +4,7 @@ import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.TeamDTO;
 import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
+import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import jakarta.persistence.EntityManager;
@@ -102,7 +103,9 @@ public class TeamService {
                 teamProfile.setProfile(existingTeamprofile.getProfile());
             }
         }
-        team = calculateTotalMarkupAndTotalGrossMargin(team);
+        team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+        team = RateUtils.calculateRates(team);
+        team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
         teamRepository.save(team);
         notifyTeamObservers(team);
         TeamDTO updatedTeam = getById(team.getTeamId());
@@ -126,19 +129,5 @@ public class TeamService {
         team.setArchived(true);
         teamRepository.save(team);
         return true;
-    }
-
-    public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
-        BigDecimal markup = team.getMarkupPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-        BigDecimal grossMargin = team.getGrossMarginPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE);
-        BigDecimal totalAnnualCost = team.getTotalAllocatedCost();
-
-        BigDecimal totalMarkup = totalAnnualCost.multiply(markup);
-        BigDecimal totalGrossMargin = totalMarkup.multiply(grossMargin);
-
-        team.setTotalCostWithMarkup(totalMarkup);
-        team.setTotalCostWithGrossMargin(totalGrossMargin);
-
-        return team;
     }
 }
