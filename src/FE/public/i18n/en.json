@@ -176,6 +176,8 @@
   "SUCCESS_EXPORT_TEAM": "Team successfully exported",
   "SUCCESS_EXPORT_TEAMS": "Teams successfully exported",
   "SUCCESS_IMPORT_CURRENCIES": "Currencies imported successfully!",
+  "SUCCESS_PROFILE_TEAM_REMOVED": "Profile removed from team successfully",
+  "ERROR_PROFILE_TEAM_REMOVED": "Failed to remove profile from team",
   "REASON": "Reason for change",
   "REASON_TEAM_CREATED": "Team created",
   "REASON_ASSIGNED_PROFILE": "Profile assigned",

@@ -59,4 +59,12 @@ export class TeamsService {
   deleteTeam(teamID: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${teamID}`));
   }
+
+  /**
+   * Deletes a teamProfile by id.
+   * @param teamProfileID
+   */
+  deleteTeamProfile(teamProfileID: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/teamProfile?id=${teamProfileID}`));
+  }
 }

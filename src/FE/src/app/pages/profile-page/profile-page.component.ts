@@ -67,7 +67,7 @@ export class ProfilePageComponent implements OnInit {
     'hourly rate',
     'day rate',
     'annual cost',
-    'options'
+    'remove'
   ];
 
   //Create a computed property to calculate the stat boxes
@@ -221,5 +221,15 @@ export class ProfilePageComponent implements OnInit {
   private calculateDayRate(teamProfile: TeamProfile, profile: Profile) {
     let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!
     return hourlyRate * profile.hoursPerDay!;
+  }
+
+  async remove(row: any) {
+    let result = await this.teamsService.deleteTeamProfile(row.id);
+    this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
+    if (result) {
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_TEAM_REMOVED'), false);
+    }
   }
 }
