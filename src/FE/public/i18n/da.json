@@ -170,6 +170,8 @@
   "SUCCESS_EXPORT_TEAM": "Team eksporteret succesfuldt",
   "SUCCESS_EXPORT_TEAMS": "Teamsne eksporteret succesfuldt",
   "SUCCESS_IMPORT_CURRENCIES": "Valutaer importeret succesfuldt!",
+  "SUCCESS_PROFILE_TEAM_REMOVED": "Profil fjernet fra team succesfuldt",
+  "ERROR_PROFILE_TEAM_REMOVED": "Kunne ikke fjerne profil fra team",
   "REASON": "Årsag til ændring",
   "REASON_TEAM_CREATED": "Team oprettet",
   "REASON_ASSIGNED_PROFILE": "Profil tildelt",

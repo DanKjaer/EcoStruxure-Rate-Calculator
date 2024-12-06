@@ -171,3 +171,7 @@
   gap: 2rem;
   width: 100%;
 }
+
+.removeButton:hover {
+  color: darkred;
+}
