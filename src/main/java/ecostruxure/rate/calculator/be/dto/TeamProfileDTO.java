@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class TeamProfileDTO {
-    private UUID id;
+    private UUID teamProfileId;
     private Team team;
     private Profile profile;
     private BigDecimal allocationPercentageHours;
@@ -15,14 +15,14 @@ public class TeamProfileDTO {
     private BigDecimal allocationPercentageCost;
     private BigDecimal allocatedCost;
 
-    public TeamProfileDTO(UUID id,
+    public TeamProfileDTO(UUID teamProfileId,
                           Team team,
                           Profile profile,
                           BigDecimal allocationPercentageHours,
                           BigDecimal allocatedHours,
                           BigDecimal allocationPercentageCost,
                           BigDecimal allocatedCost) {
-        this.id = id;
+        this.teamProfileId = teamProfileId;
         this.team = team;
         this.profile = profile;
         this.allocationPercentageHours = allocationPercentageHours;
@@ -35,12 +35,12 @@ public class TeamProfileDTO {
     public TeamProfileDTO() {
     }
 
-    public UUID getId() {
-        return id;
+    public UUID getTeamProfileId() {
+        return teamProfileId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setTeamProfileId(UUID teamProfileId) {
+        this.teamProfileId = teamProfileId;
     }
 
     public Team getTeam() {

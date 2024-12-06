@@ -53,10 +53,9 @@ export class TeamPageComponent implements OnInit {
   }
 
   readonly dialog = inject(MatDialog);
-  team: Team | undefined;
+  team!: Team;
   teamProfiles: TeamProfile[] = [];
   isMenuOpen: boolean | undefined;
-  teams!: Team;
 
   statBoxes = {
     rawHourlyRate: 0,
@@ -94,23 +93,24 @@ export class TeamPageComponent implements OnInit {
       totalAnnualHours: this.teamProfiles.reduce((sum, item) => sum + item.allocatedHours!, 0)
     }
     this.loading = false;
-    console.log("team: ", this.team);
-    console.log("teamProfiles: ", this.teamProfiles);
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(AddToTeamDialogComponent,{
-      minHeight: '80vh',
-        maxHeight: '800px',
-        minWidth: '60vw',
-        maxWidth: '1200px',
+      minHeight: '60vh',
+      maxHeight: '800px',
+      minWidth: '50vw',
+      maxWidth: '1000px',
     });
     this.loading = true;
-    dialogRef.componentInstance.team = this.teams;
+    dialogRef.componentInstance.team = this.team;
     dialogRef.componentInstance.AddToTeam.subscribe((team: Team) => {
-      this.teams.teamProfiles = team.teamProfiles;
+      this.team = team;
+      this.datasource.data = this.team.teamProfiles!;
+      console.log("teamProfiles i Team-page: ",this.team.teamProfiles);
     });
     this.loading = false;
+    this.datasource._updateChangeSubscription();
     this.changeDetectorRef.detectChanges();
   }
 
