@@ -45,14 +45,19 @@ public class TeamsController {
         return teamService.update(team);
     }
 
-    @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable UUID id) throws Exception {
-        return teamService.delete(id);
+    @DeleteMapping()
+    public boolean deleteTeam(@RequestParam UUID id) throws Exception {
+        return teamService.deleteTeam(id);
     }
 
     @DeleteMapping("/archive")
-    public boolean archiveTeam(@PathVariable UUID id) throws Exception {
-        return teamService.archive(id);
+    public boolean archiveTeam(@RequestParam UUID id) throws Exception {
+        return teamService.archiveTeam(id);
+    }
+
+    @DeleteMapping("teamProfile/")
+    public boolean deleteTeamProfile(@RequestParam UUID id) throws Exception {
+        return teamService.deleteTeamProfile(id);
     }
 
     @DeleteMapping()

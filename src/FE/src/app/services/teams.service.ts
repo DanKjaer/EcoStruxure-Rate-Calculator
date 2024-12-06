@@ -61,7 +61,7 @@ export class TeamsService {
   }
 
   /**
-   * Deletes a profile from a team.
+   * Deletes a teamProfile by id from a team.
    * @param teamProfile
    */
   deleteTeamProfile(teamProfileId: string): Promise<boolean> {

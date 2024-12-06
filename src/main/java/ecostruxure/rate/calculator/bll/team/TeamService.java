@@ -118,16 +118,21 @@ public class TeamService {
         }
     }
 
-    public boolean delete(UUID teamId) throws Exception {
+    public boolean deleteTeam(UUID teamId) throws Exception {
         teamRepository.deleteById(teamId);
         return !teamRepository.existsById(teamId);
     }
 
-    public boolean archive(UUID teamId) throws Exception {
+    public boolean archiveTeam(UUID teamId) throws Exception {
         var team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         team.setArchived(true);
         teamRepository.save(team);
         return true;
+    }
+
+    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception {
+        teamProfileRepository.deleteById(teamProfileId);
+        return !teamProfileRepository.existsById(teamProfileId);
     }
 
     public Team calculateTotalMarkupAndTotalGrossMargin(Team team) {
