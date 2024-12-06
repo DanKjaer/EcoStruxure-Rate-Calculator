@@ -56,8 +56,6 @@ public class ProfileService {
         CriteriaQuery<Profile> cq = cb.createQuery(Profile.class);
         Root<Profile> profile = cq.from(Profile.class);
 
-        profile.fetch("teamProfiles", JoinType.LEFT);
-
         cq.select(profile).where(cb.equal(profile.get("archived"), false));
 
         List<Profile> result = em.createQuery(cq).getResultList();
@@ -76,15 +74,6 @@ public class ProfileService {
     public Profile update(Profile profile) throws Exception {
         profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
 
-        for (TeamProfile teamProfile : profile.getTeamProfiles()) {
-            if (teamProfile.getTeam() == null) {
-                UUID teamProfileId = teamProfile.getTeamProfileId();
-                TeamProfile existingTeamProfile = teamProfileRepository.findById(teamProfileId)
-                        .orElseThrow(() -> new EntityNotFoundException("TeamProfile not found with ID: " + teamProfileId));
-
-                teamProfile.setTeam(existingTeamProfile.getTeam());
-            }
-        }
         Profile updatedProfile = profileRepository.save(profile);
         notifyObservers(updatedProfile);
         return updatedProfile;
