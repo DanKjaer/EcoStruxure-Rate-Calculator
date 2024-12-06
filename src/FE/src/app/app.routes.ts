@@ -10,7 +10,7 @@ import {WorldOverviewPageComponent} from './pages/world-overview-page/world-over
 
 export const routes: Routes = [
   { path: 'profiles', component: ProfilesPageComponent },
-  { path: 'profile/:id', component: ProfilePageComponent },
+  { path: 'profiles/:id', component: ProfilePageComponent },
   { path: 'teams', component: TeamsPageComponent },
   { path: 'teams/:id', component: TeamPageComponent },
   { path: 'projects', component: ProjectsPageComponent },

@@ -76,7 +76,7 @@ export class TeamPageComponent implements OnInit {
     'cost on team',
     'location',
     'day rate',
-    'delete'
+    'remove'
   ];
 
   async ngOnInit() {
