@@ -17,7 +17,7 @@ export interface Profile {
 
 export interface Team {
   teamId?: string; // UUID
-  name: string;
+  name?: string;
   markupPercentage?: number;
   totalCostWithMarkup?: number;
   grossMarginPercentage?: number;
@@ -33,19 +33,41 @@ export interface Team {
   geographies?: Geography[];
 }
 
-export interface TeamDTO {
-  team: Team;
-  teamProfiles: TeamProfile[];
-}
-
 export interface TeamProfile {
   teamProfileId?: string;
   team?: Team;
   profile?: Profile;
-  allocationPercentageHours: number;
+  allocationPercentageHours?: number;
   allocatedHours?: number;
-  allocationPercentageCost: number;
+  allocationPercentageCost?: number;
   allocatedCost?: number;
+}
+
+export interface TeamDTO {
+  teamId?: string;
+  name: string;
+  markupPercentage: number;
+  totalCostWithMarkup: number;
+  grossMarginPercentage: number;
+  totalCostWithGrossMargin: number;
+  hourlyRate: number;
+  dayRate: number;
+  totalAllocatedHours: number;
+  totalAllocatedCost: number;
+  updatedAt: Date;
+  archived: boolean;
+  teamProfiles: TeamProfileDTO[];
+  geographies: Geography[];
+}
+
+export interface TeamProfileDTO {
+  teamProfileId?: string;
+  team: Team | string;
+  profile: Profile;
+  allocationPercentageHours: number;
+  allocatedHours: number;
+  allocationPercentageCost: number;
+  allocatedCost: number;
 }
 
 export interface Geography {
@@ -75,7 +97,7 @@ export interface Project {
 }
 
 export interface ProjectTeam {
-  projectTeamId: string;
+  projectTeamId?: string;
   team: Team;
   project: Project;
   allocationPercentage: number;

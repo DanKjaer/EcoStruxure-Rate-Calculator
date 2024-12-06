@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {Team, TeamProfile} from "../models";
+import {Team, TeamDTO, TeamProfile} from "../models";
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +48,7 @@ export class TeamsService {
    * Updates a team by id.
    * @param team
    */
-  putTeam(team: Team): Promise<Team> {
+  putTeam(team: TeamDTO): Promise<Team> {
     return firstValueFrom(this.http.put<Team>(`${this.apiUrl}`, team));
   }
 

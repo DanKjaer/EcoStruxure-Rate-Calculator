@@ -41,6 +41,8 @@
 
 .allocationInput {
     width: 20rem;
+    padding-top: 2%;
+    margin-left: 1rem;
 }
 
 .allocationItem {
@@ -50,8 +52,10 @@
     width: 100%;
 }
 
-.profileAllocationWrapper{
+.allocationInputDiv {
     display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
     align-items: center;
-    gap: 20px;
+    width: 100%;
 }
