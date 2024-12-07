@@ -69,7 +69,7 @@
   <!-- Right side dialog -->
   <div class="dialog-section">
     <h2 mat-dialog-title>{{ 'TEAM_LIST' | translate }}</h2>
-    <mat-dialog-content class="container" [formGroup]="teamForm">
+    <mat-dialog-content class="container">
       <div class="searchContainer">
         <mat-form-field>
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
@@ -78,7 +78,7 @@
         </mat-form-field>
       </div>
       <div class="teamsContainer">
-        <mat-selection-list #teams formControlName="teams" (selectionChange)="onSelectionChange($event)">
+        <mat-selection-list (selectionChange)="onSelectionChange($event)">
           <mat-list-option *ngFor="let team of teamList" [value]="team">{{ team.name }}</mat-list-option>
         </mat-selection-list>
       </div>

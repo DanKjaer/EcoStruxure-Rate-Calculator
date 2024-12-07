@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.bll.project;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.ProjectTeam;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
@@ -32,7 +33,12 @@ public class ProjectService {
     }
 
     public Project createProject(Project project) throws Exception {
+        //virker ikke da project er null på project teams. Ide er at lave project og tilføj til projectTeam,
+        //kunne måske også virker hvis man med en løkke går igennem projectTeam og tilføjer projekt til dem...
         Project calculatedProject = RateUtils.updateProjectRates(project);
+        for (ProjectTeam projectTeam : calculatedProject.getProjectTeams()) {
+            projectTeam.setProject(calculatedProject);
+        }
         return projectRepository.save(calculatedProject);
     }
 
