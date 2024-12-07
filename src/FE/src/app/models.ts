@@ -99,8 +99,8 @@ export interface Project {
 export interface ProjectTeam {
   projectTeamId?: string;
   team: Team;
-  project: Project;
-  allocationPercentage: number;
+  project?: Project | string;
+  allocationPercentage?: number;
 }
 
 export interface Currency {

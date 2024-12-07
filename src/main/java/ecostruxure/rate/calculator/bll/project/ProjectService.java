@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.bll.project;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.ProjectTeam;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
@@ -33,6 +34,9 @@ public class ProjectService {
 
     public Project createProject(Project project) throws Exception {
         Project calculatedProject = RateUtils.updateProjectRates(project);
+        for (ProjectTeam projectTeam : calculatedProject.getProjectTeams()) {
+            projectTeam.setProject(calculatedProject);
+        }
         return projectRepository.save(calculatedProject);
     }
 
