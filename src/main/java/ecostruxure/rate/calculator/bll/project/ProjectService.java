@@ -52,9 +52,13 @@ public class ProjectService {
         return true;
     }
 
-    public boolean deleteProjectTeam(UUID projectId, UUID teamId) throws Exception {
-        projectTeamRepository.findProjectTeamByProject_ProjectId(projectId).deleteById(teamId);
-        return !projectTeamRepository.existsById(projectId);
+    public Project deleteProjectTeam(UUID projectTeamId) throws Exception {
+        ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId).orElseThrow(() ->
+                new EntityNotFoundException("Project Team not found"));
+        projectTeamRepository.deleteById(projectTeamId);
+        var updatedProject = RateUtils.updateProjectRates(projectTeam.getProject());
+        projectRepository.save(updatedProject);
+        return updatedProject;
     }
 
     @Transactional
@@ -62,5 +66,4 @@ public class ProjectService {
         Project updatedProject = RateUtils.updateProjectRates(project);
         return projectRepository.save(updatedProject);
     }
-
 }
