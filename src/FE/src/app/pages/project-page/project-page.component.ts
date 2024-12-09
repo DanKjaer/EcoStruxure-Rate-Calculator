@@ -19,33 +19,32 @@ import {MatDialog} from '@angular/material/dialog';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
 
 @Component({
-  selector: 'app-project-page',
-  standalone: true,
-  imports: [
-    DecimalPipe,
-    FormsModule,
-    MatButton,
-    MatIcon,
-    MatIconButton,
-    MatInput,
-    MatLabel,
-    MatMenu,
-    MatMenuItem,
-    MatProgressSpinner,
-    MatTableModule,
-    NgIf,
-    TranslateModule,
-    NgClass,
-    MatFormField,
-    MatMenuTrigger,
-    ReactiveFormsModule,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatPrefix
-  ],
-  templateUrl: './project-page.component.html',
-  styleUrl: './project-page.component.css'
+    selector: 'app-project-page',
+    imports: [
+        DecimalPipe,
+        FormsModule,
+        MatButton,
+        MatIcon,
+        MatIconButton,
+        MatInput,
+        MatLabel,
+        MatMenu,
+        MatMenuItem,
+        MatProgressSpinner,
+        MatTableModule,
+        NgIf,
+        TranslateModule,
+        NgClass,
+        MatFormField,
+        MatMenuTrigger,
+        ReactiveFormsModule,
+        MatDatepickerInput,
+        MatDatepickerToggle,
+        MatDatepicker,
+        MatPrefix
+    ],
+    templateUrl: './project-page.component.html',
+    styleUrl: './project-page.component.css'
 })
 export class ProjectPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);

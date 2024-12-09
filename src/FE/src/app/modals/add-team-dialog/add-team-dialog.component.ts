@@ -19,23 +19,22 @@ import {Profile, Team, TeamProfile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
-  selector: 'app-add-team-dialog',
-  standalone: true,
-  imports: [
-    MatDialogModule,
-    TranslateModule,
-    FormsModule,
-    MatFormField,
-    MatInput,
-    MatLabel,
-    ReactiveFormsModule,
-    MatButton,
-    MatIcon,
-    MatListModule,
-    MatPrefix
-  ],
-  templateUrl: './add-team-dialog.component.html',
-  styleUrl: './add-team-dialog.component.css'
+    selector: 'app-add-team-dialog',
+    imports: [
+        MatDialogModule,
+        TranslateModule,
+        FormsModule,
+        MatFormField,
+        MatInput,
+        MatLabel,
+        ReactiveFormsModule,
+        MatButton,
+        MatIcon,
+        MatListModule,
+        MatPrefix
+    ],
+    templateUrl: './add-team-dialog.component.html',
+    styleUrl: './add-team-dialog.component.css'
 })
 export class AddTeamDialogComponent implements OnInit {
   teamForm!: FormGroup;

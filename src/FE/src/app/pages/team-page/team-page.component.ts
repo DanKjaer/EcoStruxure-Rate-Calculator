@@ -19,29 +19,28 @@ import {MatDialog} from '@angular/material/dialog';
 import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
-  selector: 'app-team-page',
-  standalone: true,
-  imports: [
-    MatButton,
-    MatTableModule,
-    MatFormField,
-    MatIcon,
-    MatIconButton,
-    MatInput,
-    MatLabel,
-    MatMenu,
-    MatMenuItem,
-    MatPrefix,
-    MatProgressSpinner,
-    NgIf,
-    ReactiveFormsModule,
-    TranslateModule,
-    MatMenuTrigger,
-    NgClass,
-    DecimalPipe
-  ],
-  templateUrl: './team-page.component.html',
-  styleUrl: './team-page.component.css'
+    selector: 'app-team-page',
+    imports: [
+        MatButton,
+        MatTableModule,
+        MatFormField,
+        MatIcon,
+        MatIconButton,
+        MatInput,
+        MatLabel,
+        MatMenu,
+        MatMenuItem,
+        MatPrefix,
+        MatProgressSpinner,
+        NgIf,
+        ReactiveFormsModule,
+        TranslateModule,
+        MatMenuTrigger,
+        NgClass,
+        DecimalPipe
+    ],
+    templateUrl: './team-page.component.html',
+    styleUrl: './team-page.component.css'
 })
 export class TeamPageComponent implements OnInit {
 

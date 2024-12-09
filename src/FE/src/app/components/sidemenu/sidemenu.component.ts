@@ -10,19 +10,18 @@ import {CurrencyService} from '../../services/currency.service';
 import {ExportService} from '../../services/export.service';
 
 @Component({
-  selector: 'app-sidemenu',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    TranslateModule,
-    RouterLink,
-    MatIconButton,
-    MatIcon,
-    MatTooltipModule,
-    NgClass
-  ],
-  templateUrl: './sidemenu.component.html',
-  styleUrl: './sidemenu.component.css'
+    selector: 'app-sidemenu',
+    imports: [
+        MatButtonModule,
+        TranslateModule,
+        RouterLink,
+        MatIconButton,
+        MatIcon,
+        MatTooltipModule,
+        NgClass
+    ],
+    templateUrl: './sidemenu.component.html',
+    styleUrl: './sidemenu.component.css'
 })
 export class SidemenuComponent {
 

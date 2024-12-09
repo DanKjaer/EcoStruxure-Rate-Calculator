@@ -13,25 +13,24 @@ import {MatButton} from '@angular/material/button';
 import {MatDivider} from '@angular/material/divider';
 
 @Component({
-  selector: 'app-add-to-project-dialog',
-  standalone: true,
-  imports: [
-    TranslateModule,
-    MatDialogContent,
-    MatFormField,
-    ReactiveFormsModule,
-    MatIcon,
-    MatListModule,
-    MatDialogActions,
-    MatDialogClose,
-    MatInputModule,
-    MatDialogTitle,
-    FormsModule,
-    MatButton,
-    MatDivider
-  ],
-  templateUrl: './add-to-project-dialog.component.html',
-  styleUrl: './add-to-project-dialog.component.css'
+    selector: 'app-add-to-project-dialog',
+    imports: [
+        TranslateModule,
+        MatDialogContent,
+        MatFormField,
+        ReactiveFormsModule,
+        MatIcon,
+        MatListModule,
+        MatDialogActions,
+        MatDialogClose,
+        MatInputModule,
+        MatDialogTitle,
+        FormsModule,
+        MatButton,
+        MatDivider
+    ],
+    templateUrl: './add-to-project-dialog.component.html',
+    styleUrl: './add-to-project-dialog.component.css'
 })
 export class AddToProjectDialogComponent implements OnInit {
   teamForm!: FormGroup;

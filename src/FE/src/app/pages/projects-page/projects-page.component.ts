@@ -22,36 +22,35 @@ import {CurrencyService} from '../../services/currency.service';
 
 
 @Component({
-  selector: 'app-projects-page',
-  standalone: true,
-  imports: [
-    MatButton,
-    MatTableModule,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    MatPaginator,
-    MatSort,
-    MatSortHeader,
-    NgIf,
-    TranslateModule,
-    NgClass,
-    MatInput,
-    ReactiveFormsModule,
-    FormsModule,
-    MatDatepickerToggle,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatDatepickerInput,
-    MatDatepicker,
-    DecimalPipe,
-    MatPrefix
-  ],
-  templateUrl: './projects-page.component.html',
-  styleUrl: './projects-page.component.css'
+    selector: 'app-projects-page',
+    imports: [
+        MatButton,
+        MatTableModule,
+        MatIcon,
+        MatIconButton,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+        MatPaginator,
+        MatSort,
+        MatSortHeader,
+        NgIf,
+        TranslateModule,
+        NgClass,
+        MatInput,
+        ReactiveFormsModule,
+        FormsModule,
+        MatDatepickerToggle,
+        MatFormField,
+        MatLabel,
+        MatSuffix,
+        MatDatepickerInput,
+        MatDatepicker,
+        DecimalPipe,
+        MatPrefix
+    ],
+    templateUrl: './projects-page.component.html',
+    styleUrl: './projects-page.component.css'
 })
 export class ProjectsPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);

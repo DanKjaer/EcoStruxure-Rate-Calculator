@@ -23,33 +23,32 @@ import {CurrencyService} from '../../services/currency.service';
 import {MatLabel} from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-profiles-page',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatTooltipModule,
-    MatCardModule,
-    MatIconModule,
-    TranslateModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatProgressSpinnerModule,
-    NgIf,
-    MatMenuTrigger,
-    MatMenuModule,
-    MatMenuItem,
-    MatDialogModule,
-    FormsModule,
-    MatInput,
-    NgClass,
-    DecimalPipe,
-    MatFormField,
-    MatLabel,
-    MatPrefix
-  ],
-  templateUrl: './profiles-page.component.html',
-  styleUrl: './profiles-page.component.css'
+    selector: 'app-profiles-page',
+    imports: [
+        MatButtonModule,
+        MatTooltipModule,
+        MatCardModule,
+        MatIconModule,
+        TranslateModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatProgressSpinnerModule,
+        NgIf,
+        MatMenuTrigger,
+        MatMenuModule,
+        MatMenuItem,
+        MatDialogModule,
+        FormsModule,
+        MatInput,
+        NgClass,
+        DecimalPipe,
+        MatFormField,
+        MatLabel,
+        MatPrefix
+    ],
+    templateUrl: './profiles-page.component.html',
+    styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit, OnInit {
 

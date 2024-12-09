@@ -21,28 +21,27 @@ import {GeographyService} from '../../services/geography.service';
 import {MatDivider} from '@angular/material/divider';
 
 @Component({
-  selector: 'app-add-project-dialog',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatSelect,
-    TranslateModule,
-    ReactiveFormsModule,
-    MatButton,
-    MatIcon,
-    MatInput,
-    MatOption,
-    MatDialogModule,
-    MatListModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatFormFieldModule,
-    MatDivider,
-    FormsModule,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './add-project-dialog.component.html',
-  styleUrl: './add-project-dialog.component.css'
+    selector: 'app-add-project-dialog',
+    imports: [
+        CommonModule,
+        MatSelect,
+        TranslateModule,
+        ReactiveFormsModule,
+        MatButton,
+        MatIcon,
+        MatInput,
+        MatOption,
+        MatDialogModule,
+        MatListModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatFormFieldModule,
+        MatDivider,
+        FormsModule,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './add-project-dialog.component.html',
+    styleUrl: './add-project-dialog.component.css'
 })
 export class AddProjectDialogComponent implements OnInit {
   projectForm!: FormGroup;

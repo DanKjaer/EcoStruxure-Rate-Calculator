@@ -44,34 +44,33 @@ interface listItem {
 }
 
 @Component({
-  selector: 'app-world-overview-page',
-  standalone: true,
-  imports: [
-    NgClass,
-    DecimalPipe,
-    MatTableModule,
-    MatFormField,
-    MatIcon,
-    MatInput,
-    MatLabel,
-    MatPrefix,
-    MatProgressSpinner,
-    NgIf,
-    ReactiveFormsModule,
-    TranslateModule,
-    MatIconButton,
-    MatExpansionModule,
-    MatTooltip,
-    MatTreeModule,
-    MatDivider,
-    MatList,
-    MatListSubheaderCssMatStyler,
-    MatListItem,
-    MatListItemTitle,
-    MatListItemLine
-  ],
-  templateUrl: './world-overview-page.component.html',
-  styleUrl: './world-overview-page.component.css'
+    selector: 'app-world-overview-page',
+    imports: [
+        NgClass,
+        DecimalPipe,
+        MatTableModule,
+        MatFormField,
+        MatIcon,
+        MatInput,
+        MatLabel,
+        MatPrefix,
+        MatProgressSpinner,
+        NgIf,
+        ReactiveFormsModule,
+        TranslateModule,
+        MatIconButton,
+        MatExpansionModule,
+        MatTooltip,
+        MatTreeModule,
+        MatDivider,
+        MatList,
+        MatListSubheaderCssMatStyler,
+        MatListItem,
+        MatListItemTitle,
+        MatListItemLine
+    ],
+    templateUrl: './world-overview-page.component.html',
+    styleUrl: './world-overview-page.component.css'
 })
 
 export class WorldOverviewPageComponent implements OnInit, AfterViewInit {

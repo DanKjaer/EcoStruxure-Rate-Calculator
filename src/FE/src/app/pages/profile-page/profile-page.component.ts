@@ -33,27 +33,26 @@ import {
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-profile-page',
-  standalone: true,
-  imports: [
-    TranslateModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatOption,
-    MatRadioModule,
-    MatSelect,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatTableModule,
-    NgIf,
-    MatMenuModule,
-    MatProgressSpinner,
-    NgClass,
-    DecimalPipe
-  ],
-  templateUrl: './profile-page.component.html',
-  styleUrl: './profile-page.component.css'
+    selector: 'app-profile-page',
+    imports: [
+        TranslateModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatOption,
+        MatRadioModule,
+        MatSelect,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatTableModule,
+        NgIf,
+        MatMenuModule,
+        MatProgressSpinner,
+        NgClass,
+        DecimalPipe
+    ],
+    templateUrl: './profile-page.component.html',
+    styleUrl: './profile-page.component.css'
 })
 export class ProfilePageComponent implements OnInit {
   profileForm: FormGroup = new FormGroup({});

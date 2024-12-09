@@ -21,31 +21,30 @@ import {TeamsService} from '../../services/teams.service';
 import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
-  selector: 'app-add-to-team-dialog',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButton,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogContent,
-    MatDialogTitle,
-    MatDivider,
-    MatFormField,
-    MatIcon,
-    MatInput,
-    MatLabel,
-    MatList,
-    MatListItem,
-    MatListOption,
-    MatSelectionList,
-    MatSuffix,
-    ReactiveFormsModule,
-    TranslateModule,
-    NgIf,
-  ],
-  templateUrl: './add-to-team-dialog.component.html',
-  styleUrl: './add-to-team-dialog.component.css'
+    selector: 'app-add-to-team-dialog',
+    imports: [
+        FormsModule,
+        MatButton,
+        MatDialogActions,
+        MatDialogClose,
+        MatDialogContent,
+        MatDialogTitle,
+        MatDivider,
+        MatFormField,
+        MatIcon,
+        MatInput,
+        MatLabel,
+        MatList,
+        MatListItem,
+        MatListOption,
+        MatSelectionList,
+        MatSuffix,
+        ReactiveFormsModule,
+        TranslateModule,
+        NgIf,
+    ],
+    templateUrl: './add-to-team-dialog.component.html',
+    styleUrl: './add-to-team-dialog.component.css'
 })
 export class AddToTeamDialogComponent implements OnInit {
   teamProfileList:  TeamProfile[] = [];

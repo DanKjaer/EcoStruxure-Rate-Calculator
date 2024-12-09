@@ -14,31 +14,30 @@ import {MatInput} from '@angular/material/input';
 import {NgIf} from '@angular/common';
 
 @Component({
-  selector: 'app-add-profile-to-team-dialog',
-  standalone: true,
-  imports: [
-    MatButton,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogContent,
-    MatDialogTitle,
-    MatDivider,
-    MatFormField,
-    MatIcon,
-    MatInput,
-    MatLabel,
-    MatList,
-    MatListItem,
-    MatListOption,
-    MatSelectionList,
-    MatSuffix,
-    NgIf,
-    ReactiveFormsModule,
-    TranslateModule,
-    FormsModule
-  ],
-  templateUrl: './add-profile-to-team-dialog.component.html',
-  styleUrl: './add-profile-to-team-dialog.component.css'
+    selector: 'app-add-profile-to-team-dialog',
+    imports: [
+        MatButton,
+        MatDialogActions,
+        MatDialogClose,
+        MatDialogContent,
+        MatDialogTitle,
+        MatDivider,
+        MatFormField,
+        MatIcon,
+        MatInput,
+        MatLabel,
+        MatList,
+        MatListItem,
+        MatListOption,
+        MatSelectionList,
+        MatSuffix,
+        NgIf,
+        ReactiveFormsModule,
+        TranslateModule,
+        FormsModule
+    ],
+    templateUrl: './add-profile-to-team-dialog.component.html',
+    styleUrl: './add-profile-to-team-dialog.component.css'
 })
 export class AddProfileToTeamDialogComponent implements OnInit{
   @Output() addedProfileToTeam = new EventEmitter<TeamProfile[]>();

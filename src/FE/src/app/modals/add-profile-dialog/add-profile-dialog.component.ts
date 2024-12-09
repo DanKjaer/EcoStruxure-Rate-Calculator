@@ -15,22 +15,21 @@ import {SnackbarService} from '../../services/snackbar.service';
 import {CurrencyService} from '../../services/currency.service';
 
 @Component({
-  selector: 'app-add-profile-dialog',
-  standalone: true,
-  imports: [
-    TranslateModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatRadioModule,
-    MatSelect,
-    MatOption,
-    ReactiveFormsModule
-  ],
-  templateUrl: './add-profile-dialog.component.html',
-  styleUrl: './add-profile-dialog.component.css'
+    selector: 'app-add-profile-dialog',
+    imports: [
+        TranslateModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatRadioModule,
+        MatSelect,
+        MatOption,
+        ReactiveFormsModule
+    ],
+    templateUrl: './add-profile-dialog.component.html',
+    styleUrl: './add-profile-dialog.component.css'
 })
 export class AddProfileDialogComponent implements OnInit {
   profileForm: FormGroup = new FormGroup({});
