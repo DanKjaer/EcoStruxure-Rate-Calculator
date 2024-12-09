@@ -10,6 +10,8 @@ import {HttpClient, provideHttpClient} from '@angular/common/http';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core';
+import {NgxEchartsModule} from 'ngx-echarts';
+import * as echarts from 'echarts';
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './i18n/', '.json');
@@ -25,7 +27,8 @@ export const appConfig: ApplicationConfig = {
         useFactory: httpLoaderFactory,
         deps: [HttpClient]
       }
-    })]),
+    })],
+      NgxEchartsModule.forRoot({ echarts }),),
     provideAnimationsAsync(),
     provideNativeDateAdapter(),
     [{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}]

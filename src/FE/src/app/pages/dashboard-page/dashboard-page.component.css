@@ -16,7 +16,8 @@
 
 .graphContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  max-width: 90vw;
   width: 90vw;
   height: 30vh;
   background-color: whitesmoke;
@@ -25,6 +26,17 @@
   padding: 1rem;
   font-size: 1.5rem;
   transition: width 0.3s ease;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.projectsGraphContainer{
+  display: flex;
+  flex-direction: row;
+  max-width: 30vw;
+  width: 30vw;
+  max-height: 30vh;
+  height: 30vh;
 }
 
 .countriesContainer {

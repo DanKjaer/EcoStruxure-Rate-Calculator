@@ -35,7 +35,6 @@ import {SnackbarService} from '../../services/snackbar.service';
         NgIf,
         ReactiveFormsModule,
         TranslateModule,
-        MatMenuTrigger,
         NgClass,
         DecimalPipe
     ],

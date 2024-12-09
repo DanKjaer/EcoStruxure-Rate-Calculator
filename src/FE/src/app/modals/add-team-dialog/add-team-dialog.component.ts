@@ -30,8 +30,7 @@ import {SnackbarService} from '../../services/snackbar.service';
         ReactiveFormsModule,
         MatButton,
         MatIcon,
-        MatListModule,
-        MatPrefix
+        MatListModule
     ],
     templateUrl: './add-team-dialog.component.html',
     styleUrl: './add-team-dialog.component.css'
