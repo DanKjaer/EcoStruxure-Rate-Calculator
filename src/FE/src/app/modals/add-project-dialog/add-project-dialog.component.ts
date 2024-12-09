@@ -10,7 +10,6 @@ import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {Geography, Project, ProjectTeam, Team} from '../../models';
-//Eventuelt tilføje MatListModule?
 import {MatListModule, MatSelectionListChange} from '@angular/material/list';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { ChangeDetectorRef } from '@angular/core';
@@ -46,7 +45,6 @@ import {MatDivider} from '@angular/material/divider';
 })
 export class AddProjectDialogComponent implements OnInit {
   projectForm!: FormGroup;
-  teamForm!: FormGroup;
   teamList: Team[] = [];
   locations!: Geography[];
   selectedProjectTeam: ProjectTeam[] = [];
@@ -74,17 +72,19 @@ export class AddProjectDialogComponent implements OnInit {
       projectDescription: ['']
     })
 
-    this.teamForm = this.formBuilder.group({
-      teams: [[], Validators.required]
-    });
-
     this.teamList = await this.teamService.getTeams();
     this.getCountries();
     this.ChangeDetectorRef.detectChanges();
   }
 
   onSelectionChange($event: MatSelectionListChange) {
-    this.selectedProjectTeam = $event.source.selectedOptions.selected.map(team => team.value);
+    this.selectedProjectTeam = $event.source.selectedOptions.selected.map(team => {
+      let selectedTeam: Team = team.value
+      let projectTeam: ProjectTeam = {
+        team: selectedTeam,
+      };
+      return projectTeam;
+    });
   }
 
   async getCountries() {
@@ -111,6 +111,8 @@ export class AddProjectDialogComponent implements OnInit {
         projectPrice: this.projectForm.value.projectPrice,
         projectLocation: this.projectForm.value.geography
       }
+
+      project.projectTeams = this.selectedProjectTeam;
       const newProject = await this.projectService.postProject(project);
       if (newProject) {
         this.projectAdded.emit(newProject);
