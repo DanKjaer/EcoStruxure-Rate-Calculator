@@ -230,9 +230,9 @@ export class ProfilePageComponent implements OnInit {
   }
 
   async remove(row: TeamProfile) {
-    let result = await this.teamsService.deleteTeamProfile(row.teamProfileId!);
-    this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
+    let result = await this.teamsService.deleteTeamProfile(row.teamProfileId!, row.team!.teamId!);
     if (result) {
+      this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_TEAM_REMOVED'), false);

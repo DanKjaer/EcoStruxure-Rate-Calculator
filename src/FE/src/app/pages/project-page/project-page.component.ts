@@ -17,6 +17,7 @@ import {SnackbarService} from '../../services/snackbar.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
+import {CalculationsService} from '../../services/calculations.service';
 
 @Component({
   selector: 'app-project-page',
@@ -74,10 +75,11 @@ export class ProjectPageComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private projectService: ProjectService,
-              private route: ActivatedRoute,
               private menuService: MenuService,
               private snackBar: SnackbarService,
               private translate: TranslateService,
+              protected calculationsService: CalculationsService,
+              private route: ActivatedRoute,
               private changeDetectorRef: ChangeDetectorRef) {
   }
 
@@ -242,11 +244,5 @@ export class ProjectPageComponent implements OnInit {
 
   selectRow(row: ProjectTeam) {
     this.selectedRow = row;
-  }
-
-  CalculateDayRateForTeam(team: Team): number {
-    let dayRate = team.dayRate!;
-    let markup = team.markupPercentage!;
-    return dayRate * (1 + (markup / 100));
   }
 }
