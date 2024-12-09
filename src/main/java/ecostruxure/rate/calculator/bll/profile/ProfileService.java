@@ -45,7 +45,6 @@ public class ProfileService {
 
     @Transactional
     public Profile create(Profile profile) throws Exception {
-//        var newProfile = modelMapper.map(profile, Profile.class);
         em.persist(profile);
         return profile;
     }
