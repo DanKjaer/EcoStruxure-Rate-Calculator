@@ -111,9 +111,7 @@ export class AddProjectDialogComponent implements OnInit {
         projectPrice: this.projectForm.value.projectPrice,
         projectLocation: this.projectForm.value.geography
       }
-      // this.selectedProjectTeam.forEach(projectTeam => {
-      //   projectTeam.project = project;
-      // });
+
       project.projectTeams = this.selectedProjectTeam;
       const newProject = await this.projectService.postProject(project);
       if (newProject) {
