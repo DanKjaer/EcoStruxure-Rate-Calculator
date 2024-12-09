@@ -133,7 +133,7 @@ export class ProjectPageComponent implements OnInit {
     this.loading = true;
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
-      this.project.projectTeams = project.projectTeams;
+      this.project = project;
       this.fillTableWithTeams();
       this.fillStatBox();
     });
@@ -181,10 +181,10 @@ export class ProjectPageComponent implements OnInit {
   }
 
   async onRemove() {
-    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.team.teamId!);
+    const result = await this.projectService.deleteProjectMember(this.selectedRow!.projectTeamId!, this.project.projectId!);
     if (result) {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
-      this.project.projectTeams = this.project.projectTeams.filter(member => member.team.teamId !== this.selectedRow?.team.teamId);
+      this.project = await this.projectService.getProject(this.project.projectId!);
       this.fillTableWithTeams();
       this.fillStatBox();
     } else {
