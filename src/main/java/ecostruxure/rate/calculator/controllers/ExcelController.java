@@ -1,6 +1,6 @@
 package ecostruxure.rate.calculator.controllers;
 
-import ecostruxure.rate.calculator.bll.service.ExcelService;
+import ecostruxure.rate.calculator.bll.excelExport.ExcelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
