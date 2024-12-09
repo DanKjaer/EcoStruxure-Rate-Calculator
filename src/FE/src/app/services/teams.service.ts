@@ -40,8 +40,8 @@ export class TeamsService {
    * @param team
    * @param teamProfiles
    */
-  postTeam(team: Team, teamProfiles: TeamProfile[]): Promise<Team> {
-    return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {team, teamProfiles}));
+  postTeam(team: Team): Promise<Team> {
+    return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, team));
   }
 
   /**

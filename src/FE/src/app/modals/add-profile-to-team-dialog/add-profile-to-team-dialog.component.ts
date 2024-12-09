@@ -12,6 +12,7 @@ import {MatFormField, MatLabel, MatSuffix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {NgIf} from '@angular/common';
+import {CalculationsService} from '../../services/calculations.service';
 
 @Component({
   selector: 'app-add-profile-to-team-dialog',
@@ -53,6 +54,7 @@ export class AddProfileToTeamDialogComponent implements OnInit{
     private teamService: TeamsService,
     private snackBar: SnackbarService,
     private translate: TranslateService,
+    private calculationsService: CalculationsService,
     private formBuilder: FormBuilder
   ) {}
 
@@ -83,8 +85,8 @@ export class AddProfileToTeamDialogComponent implements OnInit{
   async onSave() {
     let newTeamProfiles: TeamProfile[] = [];
     this.selectedTeams.forEach(teamProfile => {
-      teamProfile.allocatedCost = this.calculateCostAllocation(teamProfile);
-      teamProfile.allocatedHours = this.calculateHourAllocation(teamProfile);
+      teamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfile);
+      teamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfile);
       newTeamProfiles.push(teamProfile);
     });
     let response = await this.teamService.addProfileToTeams(newTeamProfiles)
@@ -94,19 +96,5 @@ export class AddProfileToTeamDialogComponent implements OnInit{
     } else {
       this.snackBar.openSnackBar(this.translate.instant('team.addProfileToTeamError'), false);
     }
-  }
-
-  private calculateCostAllocation(teamProfile: TeamProfile): number {
-    if (teamProfile.allocationPercentageCost) {
-      return teamProfile.profile!.annualCost! * (teamProfile.allocationPercentageCost / 100);
-    }
-    return 0;
-  }
-
-  private calculateHourAllocation(teamProfile: TeamProfile): number {
-    if (teamProfile.allocationPercentageHours) {
-      return teamProfile.profile!.annualHours! * (teamProfile.allocationPercentageHours / 100);
-    }
-    return 0;
   }
 }

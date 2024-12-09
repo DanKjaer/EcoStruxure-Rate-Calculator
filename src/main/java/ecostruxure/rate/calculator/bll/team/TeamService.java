@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -43,10 +44,14 @@ public class TeamService {
         this.teamProfileRepository = teamProfileRepository;
     }
 
+    @Transactional
     public Team create(Team team) throws Exception {
-        em.getTransaction().begin();
-        em.persist(team);
-        em.getTransaction().commit();
+        Team newTeam = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+        newTeam = RateUtils.calculateRates(newTeam);
+        newTeam.setTotalCostWithMarkup(newTeam.getTotalAllocatedCost());
+        newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
+        em.persist(newTeam);
+        notifyTeamObservers(newTeam);
         return team;
     }
 
@@ -111,12 +116,6 @@ public class TeamService {
         return updatedTeam;
     }
 
-    private void notifyTeamObservers(Team updatedTeam) {
-        for (ITeamObserver teamObserver : teamObservers) {
-            teamObserver.update(updatedTeam);
-        }
-    }
-
     public boolean deleteTeam(UUID teamId) throws Exception {
         teamRepository.deleteById(teamId);
         return !teamRepository.existsById(teamId);
@@ -151,5 +150,11 @@ public class TeamService {
         }
 
         return teamProfilesDTO;
+    }
+
+    private void notifyTeamObservers(Team updatedTeam) {
+        for (ITeamObserver teamObserver : teamObservers) {
+            teamObserver.update(updatedTeam);
+        }
     }
 }

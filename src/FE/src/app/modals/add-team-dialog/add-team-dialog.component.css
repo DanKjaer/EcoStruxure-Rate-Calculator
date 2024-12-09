@@ -19,3 +19,30 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.allocationContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.allocationInput {
+  width: 20rem;
+  padding-top: 2%;
+  margin-left: 1rem;
+}
+
+.allocationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.allocationInputDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
