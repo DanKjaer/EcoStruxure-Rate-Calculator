@@ -38,6 +38,7 @@ public class TeamsController {
 
     @PostMapping
     public Team create(@RequestBody Team team) throws Exception {
+        System.out.println("Creating team: " + team.getName());
         return teamService.create(team);
     }
 

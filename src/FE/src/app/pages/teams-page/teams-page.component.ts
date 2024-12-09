@@ -123,7 +123,12 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
 
   openDialog() {
     this.loading = true;
-    const dialogRef = this.dialog.open(AddTeamDialogComponent);
+    const dialogRef = this.dialog.open(AddTeamDialogComponent, {
+      minHeight: '60vh',
+      maxHeight: '800px',
+      minWidth: '50vw',
+      maxWidth: '1000px',
+    });
 
     dialogRef.componentInstance.teamAdded.subscribe((team: Team) => {
       team.updatedAtString = this.formatter.formatDateTime(team.updatedAt!);

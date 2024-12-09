@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -43,10 +44,9 @@ public class TeamService {
         this.teamProfileRepository = teamProfileRepository;
     }
 
+    @Transactional
     public Team create(Team team) throws Exception {
-        em.getTransaction().begin();
         em.persist(team);
-        em.getTransaction().commit();
         return team;
     }
 
