@@ -1,14 +1,30 @@
 .container {
   display: flex;
   flex-direction: column;
+  max-width: 80vw;
   width: 80vw;
   padding-top: 1rem;
   overflow: auto;
   transition: width 0.3s ease;
+  gap: 1rem;
 }
 
 .container.menuClosed {
+  max-width: 90vw;
   width: 90vw;
+}
+
+.graphContainer {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  height: 30vh;
+  background-color: whitesmoke;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  transition: width 0.3s ease;
 }
 
 .countriesContainer {
@@ -20,10 +36,9 @@
 .countryContainer {
   display: flex;
   flex-direction: column;
-  max-width: 90vw;
   width: 90vw;
   max-height: 90vh;
-  height: 90vh;
+  height: 55vh;
   background-color: whitesmoke;
   border: 1px solid gray;
   border-radius: 0.5rem;
@@ -81,7 +96,7 @@
   transition: width 0.3s ease;
   padding: 1rem;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 55vh;
 }
 
 .buttonContainer {
