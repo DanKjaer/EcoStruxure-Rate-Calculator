@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,13 +43,11 @@ public class ProfileService {
         this.teamProfileRepository = teamProfileRepository;
     }
 
-
-    public Profile create(ProfileDTO profile) throws Exception {
-        var newProfile = modelMapper.map(profile, Profile.class);
-        em.getTransaction().begin();
-        em.persist(newProfile);
-        em.getTransaction().commit();
-        return newProfile;
+    @Transactional
+    public Profile create(Profile profile) throws Exception {
+//        var newProfile = modelMapper.map(profile, Profile.class);
+        em.persist(profile);
+        return profile;
     }
 
     public List<ProfileDTO> all() throws Exception {

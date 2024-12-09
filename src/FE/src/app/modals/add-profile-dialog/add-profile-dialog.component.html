@@ -24,19 +24,6 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div>
-      <!-- currency select -->
-      <mat-form-field>
-        <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
-        <mat-select formControlName="currency">
-          @for (currency of currencies; track currency) {
-            <mat-option [value]="currency">
-              {{ currency.currencyCode }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
   </div>
 
   <!-- resource type select -->
@@ -59,7 +46,7 @@
       <mat-form-field>
         <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
         <span matTextSuffix>
-          {{ this.profileForm.value.currency.symbol }}
+          €
         </span>
         <input matInput placeholder="0" formControlName="annual_cost">
       </mat-form-field>
@@ -108,7 +95,7 @@
       </mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()" [disabled]="!this.profileForm.valid">
       <mat-icon>
         check_circle
       </mat-icon>

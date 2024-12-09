@@ -31,11 +31,7 @@ export class ProfileService {
    * @param profile
    */
   postProfile(profile: Profile): Promise<Profile> {
-    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}`, {profile}))
-        .catch(error => {
-            console.error('Error saving profile: ', error);
-            throw error;
-        });
+    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}`, profile));
   }
 
   /**
