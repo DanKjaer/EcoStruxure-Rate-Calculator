@@ -29,8 +29,8 @@ public class ProfileController {
     }
 
     @PostMapping
-    public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
-        return profileService.create(profileDTO);
+    public Profile createProfile(@RequestBody Profile profile) throws Exception {
+        return profileService.create(profile);
     }
 
     @PutMapping()
