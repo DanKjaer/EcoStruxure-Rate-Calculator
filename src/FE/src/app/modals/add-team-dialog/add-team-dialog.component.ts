@@ -18,6 +18,7 @@ import {ProfileService} from '../../services/profile.service';
 import {Profile, Team, TeamProfile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 import {NgIf} from '@angular/common';
+import {CalculationsService} from '../../services/calculations.service';
 
 @Component({
   selector: 'app-add-team-dialog',
@@ -46,11 +47,12 @@ export class AddTeamDialogComponent implements OnInit {
   @Output() teamAdded = new EventEmitter<Team>();
 
   constructor(
-    private fb: FormBuilder
-    , private teamService: TeamsService
-    , private profileService: ProfileService
-    , private snackBar: SnackbarService
-    , private translate: TranslateService) {
+    private fb: FormBuilder,
+    private teamService: TeamsService,
+    private profileService: ProfileService,
+    private snackBar: SnackbarService,
+    private calculationsService: CalculationsService,
+    private translate: TranslateService) {
   }
 
   async ngOnInit() {
@@ -65,14 +67,19 @@ export class AddTeamDialogComponent implements OnInit {
   }
 
   async onSave() {
+    this.selectedProfiles.forEach(teamProfile => {
+      teamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfile);
+      teamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfile);
+    });
+
     let team: Team = {
       name : this.teamForm.value.name,
       teamProfiles: this.selectedProfiles,
       markupPercentage: 0,
       grossMarginPercentage: 0
     };
-    console.log(team);
     const newTeam = await this.teamService.postTeam(team);
+
     if (newTeam.teamId != undefined) {
       this.teamAdded.emit(newTeam);
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_CREATED'), true);
@@ -90,6 +97,5 @@ export class AddTeamDialogComponent implements OnInit {
       teamProfiles.push(teamProfile);
     });
     this.selectedProfiles = teamProfiles;
-    console.log(this.selectedProfiles);
   }
 }
