@@ -11,10 +11,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class TeamIProfileAllocationObserver implements IProfileObserver {
+public class TeamProfileAllocationObserver implements IProfileObserver {
+    private final ITeamProfileRepository teamProfileRepository;
 
     @Autowired
-    private ITeamProfileRepository teamProfileRepository;
+    public TeamProfileAllocationObserver(ITeamProfileRepository teamProfileRepository) {
+        this.teamProfileRepository = teamProfileRepository;
+    }
 
     @Override
     public void update(Profile profile) {

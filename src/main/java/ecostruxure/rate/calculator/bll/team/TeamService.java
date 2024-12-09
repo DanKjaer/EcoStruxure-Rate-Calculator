@@ -117,7 +117,9 @@ public class TeamService {
     }
 
     public boolean deleteTeam(UUID teamId) throws Exception {
+        Team oldTeam = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         teamRepository.deleteById(teamId);
+        notifyTeamObservers(oldTeam);
         return !teamRepository.existsById(teamId);
     }
 
