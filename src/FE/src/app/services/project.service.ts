@@ -50,6 +50,13 @@ export class ProjectService {
   }
 
   /**
+   * Archives a project
+   */
+  archiveProject(projectId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/archive?projectId=${projectId}`));
+  }
+
+  /**
    * Updates a project
    * @param selectedProject
    */

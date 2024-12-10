@@ -20,6 +20,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {CurrencyService} from '../../services/currency.service';
 import {SearchConfigService} from '../../services/search-config.service';
+import {addWarning} from '@angular-devkit/build-angular/src/utils/webpack-diagnostics';
 
 
 @Component({
@@ -170,7 +171,6 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.selectedRow = row;
   }
 
-
   goToProject(projectId: string): void {
     this.router.navigate(['/projects', projectId]);
   }
@@ -230,6 +230,22 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
   handlePageEvent($event: PageEvent) {
     this.updateTableFooterData();
+  }
+
+  async onArchive() {
+    try {
+      const result = await this.projectService.archiveProject(this.selectedRow?.projectId!);
+      if (result) {
+        this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
+        this.datasource._updateChangeSubscription();
+        this.updateTableFooterData();
+        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_ARCHIVED'), true);
+      } else {
+        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_ARCHIVED'), false);
+      }
+    } catch (error) {
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_ARCHIVED'), false);
+    }
   }
 
   private updateTableFooterData(searching: boolean = false) {
