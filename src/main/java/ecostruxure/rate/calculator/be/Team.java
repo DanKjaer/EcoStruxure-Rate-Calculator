@@ -173,4 +173,19 @@ public class Team {
         this.geographies = geographies;
     }
     //endregion
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name= '" + name + '\'' +
+                ", markupPercentage= " + markupPercentage +
+                ", totalCostWithMarkup= " + totalCostWithMarkup +
+                ", grossMarginPercentage= " + grossMarginPercentage +
+                ", totalCostWithGrossMargin= " + totalCostWithGrossMargin +
+                ", hourlyRate= " + hourlyRate +
+                ", dayRate= " + dayRate +
+                ", totalAllocatedHours= " + totalAllocatedHours +
+                ", totalAllocatedCost= " + totalAllocatedCost +
+                '}';
+    }
 }

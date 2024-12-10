@@ -7,9 +7,9 @@ import {MatInput} from '@angular/material/input';
 import {MatMenu, MatMenuItem} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {Team, TeamProfile} from '../../models';
+import {Team, TeamDTO, TeamProfile} from '../../models';
 import {ActivatedRoute} from '@angular/router';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
@@ -18,6 +18,7 @@ import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-t
 import {MatDialog} from '@angular/material/dialog';
 import {SnackbarService} from '../../services/snackbar.service';
 import {CalculationsService} from '../../services/calculations.service';
+import {GenerateDTOService} from '../../services/generate-dto.service';
 
 @Component({
   selector: 'app-team-page',
@@ -38,26 +39,19 @@ import {CalculationsService} from '../../services/calculations.service';
     ReactiveFormsModule,
     TranslateModule,
     NgClass,
-    DecimalPipe
+    DecimalPipe,
+    FormsModule
   ],
   templateUrl: './team-page.component.html',
   styleUrl: './team-page.component.css'
 })
 export class TeamPageComponent implements OnInit {
-
-  constructor(private teamService: TeamsService,
-              private menuService: MenuService,
-              protected currencyService: CurrencyService,
-              private snackBar: SnackbarService,
-              private translate: TranslateService,
-              protected calculationsService: CalculationsService,
-              private route: ActivatedRoute,
-              private changeDetectorRef: ChangeDetectorRef) {}
-
   readonly dialog = inject(MatDialog);
   team!: Team;
   teamProfiles: TeamProfile[] = [];
   isMenuOpen: boolean | undefined;
+  originalRowData: { [key: number]: any } = {};
+  protected isEditingRow: boolean = false;
 
   statBoxes = {
     rawHourlyRate: 0,
@@ -78,6 +72,18 @@ export class TeamPageComponent implements OnInit {
     'day rate',
     'remove'
   ];
+
+  constructor(private teamService: TeamsService,
+              private menuService: MenuService,
+              protected currencyService: CurrencyService,
+              private snackBar: SnackbarService,
+              private translate: TranslateService,
+              protected calculationsService: CalculationsService,
+              private generateDTOService: GenerateDTOService,
+              private route: ActivatedRoute,
+              private changeDetectorRef: ChangeDetectorRef) {}
+
+
 
   async ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -146,5 +152,59 @@ export class TeamPageComponent implements OnInit {
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
     }
+  }
+
+  editRow(selectedTeamProfile: any) {
+    if (this.isEditingRow) {
+      return;
+    }
+    this.isEditingRow = true;
+    selectedTeamProfile['isEditing'] = true;
+    if (!this.originalRowData[selectedTeamProfile.teamProfileId]){
+      this.originalRowData[selectedTeamProfile.teamProfileId] = {...selectedTeamProfile};
+    }
+  }
+
+  async saveEdit(selectedTeamProfile: any) {
+    this.loading = true;
+    //apply change to the team profile
+    selectedTeamProfile['isEditing'] = false;
+    this.isEditingRow = false;
+    selectedTeamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(selectedTeamProfile);
+    selectedTeamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(selectedTeamProfile);
+    this.teamProfiles.forEach((teamProfile) => {
+      if (teamProfile.teamProfileId === selectedTeamProfile.teamProfileId) {
+        teamProfile.allocationPercentageCost = selectedTeamProfile.allocationPercentageCost;
+        teamProfile.allocationPercentageHours = selectedTeamProfile.allocationPercentageHours;
+        teamProfile.allocatedCost = selectedTeamProfile.allocatedCost;
+        teamProfile.allocatedHours = selectedTeamProfile.allocatedHours;
+      }
+    });
+    this.team.teamProfiles = this.teamProfiles;
+
+    //update team
+    let DTO: TeamDTO = this.generateDTOService.createTeamDTO(this.team);
+    let updatedTeam = await this.teamService.putTeam(DTO);
+    if (updatedTeam) {
+      this.team = updatedTeam;
+      this.teamProfiles = this.team.teamProfiles!;
+      this.datasource.data = this.teamProfiles!;
+      this.fillStatBoxes();
+      this.loading = false;
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_UPDATED'), true);
+    } else {
+      this.loading = false;
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_UPDATED'), false);
+    }
+  }
+
+  cancelEdit(selectedTeamProfile: any) {
+    let original = this.originalRowData[selectedTeamProfile.teamProfileId!];
+    if (original) {
+      selectedTeamProfile.allocationPercentageCost = original.allocationPercentageCost;
+      selectedTeamProfile.allocationPercentageHours = original.allocationPercentageHours;
+    }
+    selectedTeamProfile['isEditing'] = false;
+    this.isEditingRow = false;
   }
 }

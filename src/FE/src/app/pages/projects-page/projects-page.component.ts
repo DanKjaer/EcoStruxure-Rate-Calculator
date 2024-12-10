@@ -173,7 +173,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   }
 
   editRow(element: any): void {
-    if (this.isEditingRow) return;
+    if (this.isEditingRow) {
+      return;
+    }
     this.isEditingRow = true;
     element['isEditing'] = true;
     if (!this.originalRowData[element.id]) {
