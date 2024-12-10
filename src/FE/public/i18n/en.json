@@ -237,5 +237,6 @@
   "COUNTRIES_REGIONS": "Countries and regions",
   "CLOSE_PANEL": "Close panel",
   "EXPORT": "Export data",
-  "ADD_PROFILE_TO_TEAM": "Add profile to team"
+  "ADD_PROFILE_TO_TEAM": "Add profile to team",
+  "SUCCESS_UPDATING_CURRENCY": "Currency updated successfully"
 }

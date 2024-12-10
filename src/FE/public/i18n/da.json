@@ -231,5 +231,6 @@
   "COUNTRIES_REGIONS": "Lande og regioner",
   "CLOSE_PANEL": "Luk panel",
   "EXPORT": "Eksporter data",
-  "ADD_PROFILE_TO_TEAM": "Tilføj profil til team"
+  "ADD_PROFILE_TO_TEAM": "Tilføj profil til team",
+  "SUCCESS_UPDATING_CURRENCY": "Valuta opdateret succesfuldt"
 }

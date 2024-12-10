@@ -176,7 +176,6 @@ export class ProfilePageComponent implements OnInit {
 
   applySearch(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
-    console.log(searchValue.trim().toLowerCase());
     this.datasource.filter = searchValue.trim().toLowerCase();
 
     if (this.datasource.paginator) {

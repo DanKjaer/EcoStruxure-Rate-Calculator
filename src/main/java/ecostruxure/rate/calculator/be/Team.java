@@ -186,6 +186,7 @@ public class Team {
                 ", dayRate= " + dayRate +
                 ", totalAllocatedHours= " + totalAllocatedHours +
                 ", totalAllocatedCost= " + totalAllocatedCost +
+                ", updatedAt= " + updatedAt +
                 '}';
     }
 }
