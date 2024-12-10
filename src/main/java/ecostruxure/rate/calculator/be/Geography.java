@@ -29,4 +29,13 @@ public class Geography {
         this.name = name;
     }
     //endregion
+
+
+    @Override
+    public String toString() {
+        return "Geography{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

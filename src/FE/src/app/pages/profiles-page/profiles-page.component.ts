@@ -53,13 +53,6 @@ import {MatLabel} from '@angular/material/form-field';
 })
 export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
-  constructor(private profileService: ProfileService,
-              private router: Router,
-              private snackBar: SnackbarService,
-              private translate: TranslateService,
-              private menuService: MenuService,
-              protected currencyService: CurrencyService) {
-  }
 
   //#region vars
   readonly dialog = inject(MatDialog);
@@ -93,6 +86,14 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   //#endregion
 
+  constructor(private profileService: ProfileService,
+              private router: Router,
+              private snackBar: SnackbarService,
+              private translate: TranslateService,
+              private menuService: MenuService,
+              protected currencyService: CurrencyService) {
+  }
+
   //#region inits
   ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -108,7 +109,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.datasource.paginator = this.paginator;
     this.updateTableFooterData();
   }
-
   //#endregion
 
   //#region functions
@@ -143,6 +143,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
           profile.name = response.name;
           profile.annualHours = response.annualHours;
           profile.effectivenessPercentage = response.effectivenessPercentage;
+          profile.effectiveWorkHours = response.effectiveWorkHours;
           profile.annualCost = response.annualCost;
         }
       });

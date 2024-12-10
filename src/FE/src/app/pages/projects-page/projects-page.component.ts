@@ -19,6 +19,7 @@ import {MatFormField, MatInput, MatLabel, MatPrefix, MatSuffix} from '@angular/m
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {CurrencyService} from '../../services/currency.service';
+import {SearchConfigService} from '../../services/search-config.service';
 
 
 @Component({
@@ -84,11 +85,12 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   totalDayRate: number = 0;
 
   constructor(private projectService: ProjectService,
-              private formatter: FormatterService,
-              private snackBar: SnackbarService,
-              private ChangeDetectorRef: ChangeDetectorRef,
-              private translate: TranslateService,
+              private formatterService: FormatterService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
               private menuService: MenuService,
+              private searchConfigService: SearchConfigService,
+              private ChangeDetectorRef: ChangeDetectorRef,
               private router: Router,
               protected currencyService: CurrencyService) {}
 
@@ -100,8 +102,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     try {
       const projects = await this.projectService.getProjects();
       projects.forEach(project => {
-        project.startDateString = this.formatter.formatDate(project.projectStartDate);
-        project.endDateString = this.formatter.formatDate(project.projectEndDate);
+        project.startDateString = this.formatterService.formatDate(project.projectStartDate);
+        project.endDateString = this.formatterService.formatDate(project.projectEndDate);
 
         project.projectMembersString = project.projectTeams.map(member => member.team.name).join(', ');
       });
@@ -110,6 +112,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     } catch (error) {
       console.error('Failed to load projects:', error);
     } finally {
+      this.searchConfigService.configureFilter(this.datasource, ['projectLocation.name']);
       this.loading = false;
       this.updateTableFooterData();
     }
@@ -140,8 +143,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     });
     this.loading = true;
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
-      project.startDateString = this.formatter.formatDate(project.projectStartDate);
-      project.endDateString = this.formatter.formatDate(project.projectEndDate);
+      project.startDateString = this.formatterService.formatDate(project.projectStartDate);
+      project.endDateString = this.formatterService.formatDate(project.projectEndDate);
       project.projectMembersString = project.projectTeams.map(member => member.team.name).join(', ');
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
@@ -157,9 +160,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
       this.datasource._updateChangeSubscription();
       this.updateTableFooterData();
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_DELETED'), true);
     } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_DELETED'), false);
     }
   }
 
@@ -198,18 +201,18 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
           project.projectGrossMargin = response.projectGrossMargin;
           project.projectPrice = response.projectPrice;
           project.projectEndDate = response.projectEndDate;
-          project.endDateString = this.formatter.formatDate(project.projectEndDate);
+          project.endDateString = this.formatterService.formatDate(project.projectEndDate);
           project.projectTotalDays = response.projectTotalDays;
         }
       });
       this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_SAVED'), true);
       this.updateTableFooterData();
       this.datasource._updateChangeSubscription();
     } catch (e) {
       this.cancelEdit(selectedProject);
       this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_SAVED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_SAVED'), false);
     }
   }
 
@@ -252,6 +255,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   private getTotalDays(displayedData: Project[]) {
     this.totalDays = displayedData.reduce((acc: number, project: Project) => acc + project.projectTotalDays!, 0);
   }
+
   private getDisplayedData() {
     const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
     const endIndex = startIndex + this.datasource.paginator!.pageSize;

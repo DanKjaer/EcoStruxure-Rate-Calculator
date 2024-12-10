@@ -73,7 +73,6 @@ public class ProfileService {
 
     public Profile update(Profile profile) throws Exception {
         profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
-
         Profile updatedProfile = profileRepository.save(profile);
         notifyObservers(updatedProfile);
         return updatedProfile;

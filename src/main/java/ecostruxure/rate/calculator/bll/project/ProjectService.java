@@ -37,6 +37,7 @@ public class ProjectService {
         for (ProjectTeam projectTeam : calculatedProject.getProjectTeams()) {
             projectTeam.setProject(calculatedProject);
         }
+        calculatedProject.setProjectArchived(false);
         return projectRepository.save(calculatedProject);
     }
 

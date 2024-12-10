@@ -31,6 +31,7 @@ import {
   AddProfileToTeamDialogComponent
 } from '../../modals/add-profile-to-team-dialog/add-profile-to-team-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -87,6 +88,13 @@ export class ProfilePageComponent implements OnInit {
         totalAnnualCost: 0,
         totalAnnualHours: 0
       };
+    } else if (profile.annualHours === 0) {
+      return {
+        totalDayRate: 0,
+        totalHourlyRate: 0,
+        totalAnnualCost: teams.reduce((sum, item) => sum + item.allocatedCost!, 0),
+        totalAnnualHours: 0
+      };
     }
     const totalDayRate = teams.reduce((sum, item) => sum + this.calculateDayRate(item, profile), 0);
     const totalHourlyRate = totalDayRate / profile.hoursPerDay!;
@@ -97,15 +105,16 @@ export class ProfilePageComponent implements OnInit {
   });
   readonly dialog = inject(MatDialog);
 
-  constructor(private fb: FormBuilder,
+  constructor(protected currencyService: CurrencyService,
               private profileService: ProfileService,
               private geographyService: GeographyService,
               private teamsService: TeamsService,
-              private route: ActivatedRoute,
               private menuService: MenuService,
-              protected currencyService: CurrencyService,
-              private snackBar: SnackbarService,
-              private translate: TranslateService) { }
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
+              private searchConfigService: SearchConfigService,
+              private fb: FormBuilder,
+              private route: ActivatedRoute) { }
 
   async ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -129,7 +138,7 @@ export class ProfilePageComponent implements OnInit {
     this.currentProfile.set(await this.profileService.getProfile(id));
     this.prepProfileForm();
     await this.prepTeamList(id);
-
+    this.searchConfigService.configureFilter(this.datasource, ['team.name']);
     this.loading = false;
   }
 
@@ -167,6 +176,7 @@ export class ProfilePageComponent implements OnInit {
 
   applySearch(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
+    console.log(searchValue.trim().toLowerCase());
     this.datasource.filter = searchValue.trim().toLowerCase();
 
     if (this.datasource.paginator) {
@@ -191,9 +201,9 @@ export class ProfilePageComponent implements OnInit {
       this.currentProfile.set(response);
       this.prepTeamList(this.currentProfile()!.profileId!);
       this.prepProfileForm();
-      this.snackBar.openSnackBar(this.translate.instant('REASON_UPDATED_PROFILE'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('REASON_UPDATED_PROFILE'), true);
     } catch (e) {
-      this.snackBar.openSnackBar(this.translate.instant('FAILED_UPDATED_PROFILE'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('FAILED_UPDATED_PROFILE'), false);
     }
     this.loading = false;
   }
@@ -233,9 +243,9 @@ export class ProfilePageComponent implements OnInit {
     let result = await this.teamsService.deleteTeamProfile(row.teamProfileId!, row.team!.teamId!);
     if (result) {
       this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
     } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_TEAM_REMOVED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_TEAM_REMOVED'), false);
     }
   }
 

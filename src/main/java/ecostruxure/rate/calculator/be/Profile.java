@@ -156,4 +156,22 @@ public class Profile {
         this.updatedAt = updatedAt;
     }
     //endregion
+
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "profileId= " + profileId +
+                ", name= '" + name + '\'' +
+                ", geography= " + geography +
+                ", resourceType= " + resourceType +
+                ", annualCost= " + annualCost +
+                ", annualHours= " + annualHours +
+                ", hoursPerDay= " + hoursPerDay +
+                ", effectivenessPercentage= " + effectivenessPercentage +
+                ", effectiveWorkHours= " + effectiveWorkHours +
+                ", totalCostAllocation= " + totalCostAllocation +
+                ", totalHourAllocation= " + totalHourAllocation +
+                '}';
+    }
 }
