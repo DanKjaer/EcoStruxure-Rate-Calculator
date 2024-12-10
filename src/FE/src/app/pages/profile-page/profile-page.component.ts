@@ -183,9 +183,27 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
+  openDialog() {
+    const dialogRef = this.dialog.open(AddProfileToTeamDialogComponent, {
+      minHeight: '60vh',
+      maxHeight: '800px',
+      minWidth: '50vw',
+      maxWidth: '1000px',
+    });
+    this.loading = true;
+    dialogRef.componentInstance.profile = this.currentProfile()!;
+    dialogRef.componentInstance.teamProfiles = this.datasource.data;
+    dialogRef.componentInstance.addedProfileToTeam.subscribe((teamProfiles: TeamProfile[]) => {
+      this.datasource.data.push(...teamProfiles);
+      this.teams.set(this.teams().concat(teamProfiles));
+      this.datasource._updateChangeSubscription();
+    });
+
+    this.loading = false;
+  }
+
   async update() {
     this.loading = true;
-    //todo: update the profile in db
     try {
       this.currentProfile()!.name = this.profileForm.value.name;
       this.currentProfile()!.geography = this.locations.find((location) => {
@@ -233,14 +251,10 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  private calculateDayRate(teamProfile: TeamProfile, profile: Profile) {
-    let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!
-    return hourlyRate * profile.hoursPerDay!;
-  }
-
   async remove(row: TeamProfile) {
     let result = await this.teamsService.deleteTeamProfile(row.teamProfileId!, row.team!.teamId!);
     if (result) {
+      this.teams.set(this.teams().filter(teamProfile => teamProfile !== row));
       this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
       this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
     } else {
@@ -248,20 +262,8 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProfileToTeamDialogComponent, {
-      minHeight: '60vh',
-      maxHeight: '800px',
-      minWidth: '50vw',
-      maxWidth: '1000px',
-    });
-    this.loading = true;
-    dialogRef.componentInstance.profile = this.currentProfile()!;
-    dialogRef.componentInstance.teamProfiles = this.datasource.data;
-    dialogRef.componentInstance.addedProfileToTeam.subscribe((teamProfiles: TeamProfile[]) => {
-      this.datasource.data.push(...teamProfiles);
-      this.datasource._updateChangeSubscription();
-    });
-    this.loading = false;
+  private calculateDayRate(teamProfile: TeamProfile, profile: Profile) {
+    let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!
+    return hourlyRate * profile.hoursPerDay!;
   }
 }
