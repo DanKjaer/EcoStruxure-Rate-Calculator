@@ -124,28 +124,24 @@
             <div mat-subheader>Country Total</div>
             <mat-list-item>
               <div matListItemTitle>Total cost</div>
-              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalCost | number: '1.0-2' }}</div>
+              <div
+                matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalCost | number: '1.0-2' }}
+              </div>
             </mat-list-item>
             <mat-list-item>
               <div matListItemTitle>Total price</div>
-              <div matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalPrice | number: '1.0-2' }}</div>
+              <div
+                matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalPrice | number: '1.0-2' }}
+              </div>
             </mat-list-item>
           </mat-list>
         </div>
       </div>
     </div>
   </div>
-  <div class="countriesContainer">
-    <div class="graphContainer">
-      <div class="projectsGraphContainer">
-        <app-projects-graph></app-projects-graph>
-      </div>
-      <div class="projectsGraphContainer">
-        <app-projects-graph></app-projects-graph>
-      </div>
-      <div class="projectsGraphContainer">
-        <app-projects-graph></app-projects-graph>
-      </div>
-    </div>
+  <div class="graphContainer">
+      <app-projects-graph></app-projects-graph>
+      <app-projects-graph></app-projects-graph>
+      <app-projects-graph></app-projects-graph>
   </div>
 </div>
