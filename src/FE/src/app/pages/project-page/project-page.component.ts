@@ -18,6 +18,7 @@ import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
 import {CalculationsService} from '../../services/calculations.service';
+import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
   selector: 'app-project-page',
@@ -73,12 +74,13 @@ export class ProjectPageComponent implements OnInit {
   ];
 
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(protected calculationsService: CalculationsService,
               private projectService: ProjectService,
               private menuService: MenuService,
               private snackBar: SnackbarService,
               private translate: TranslateService,
-              protected calculationsService: CalculationsService,
+              private searchConfigService: SearchConfigService,
+              private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private changeDetectorRef: ChangeDetectorRef) {
   }
@@ -99,9 +101,10 @@ export class ProjectPageComponent implements OnInit {
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
     this.fillTableWithTeams();
-    this.loading = false;
     this.fillStatBox();
     this.fillProjectForm();
+    this.searchConfigService.configureFilter(this.datasource, ['team.name']);
+    this.loading = false;
   }
 
   private fillTableWithTeams() {

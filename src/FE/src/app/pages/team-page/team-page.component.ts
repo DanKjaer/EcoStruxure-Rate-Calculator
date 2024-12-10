@@ -19,6 +19,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {SnackbarService} from '../../services/snackbar.service';
 import {CalculationsService} from '../../services/calculations.service';
 import {GenerateDTOService} from '../../services/generate-dto.service';
+import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
   selector: 'app-team-page',
@@ -76,9 +77,10 @@ export class TeamPageComponent implements OnInit {
   constructor(private teamService: TeamsService,
               private menuService: MenuService,
               protected currencyService: CurrencyService,
-              private snackBar: SnackbarService,
-              private translate: TranslateService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
               protected calculationsService: CalculationsService,
+              private searchConfigService: SearchConfigService,
               private generateDTOService: GenerateDTOService,
               private route: ActivatedRoute,
               private changeDetectorRef: ChangeDetectorRef) {}
@@ -93,6 +95,7 @@ export class TeamPageComponent implements OnInit {
     this.teamProfiles = this.team.teamProfiles!;
     this.datasource.data = this.teamProfiles;
     this.fillStatBoxes();
+    this.searchConfigService.configureFilter(this.datasource, ['profile.name','profile.geography.name']);
     this.loading = false;
   }
 
@@ -137,20 +140,20 @@ export class TeamPageComponent implements OnInit {
 
   async onRemove(row: TeamProfile) {
     if (!row || !row.profile?.profileId) {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
       return;
     }
 
     const result = await this.teamService.deleteTeamProfile(row.teamProfileId!, this.team.teamId!);
     if (result) {
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_DELETED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
       this.team = await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!);
       this.teamProfiles = this.team.teamProfiles!;
       this.datasource.data = this.teamProfiles;
       this.datasource._updateChangeSubscription();
       this.fillStatBoxes();
     } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
     }
   }
 
@@ -191,10 +194,10 @@ export class TeamPageComponent implements OnInit {
       this.datasource.data = this.teamProfiles!;
       this.fillStatBoxes();
       this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_UPDATED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_TEAM_UPDATED'), true);
     } else {
       this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_UPDATED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_TEAM_UPDATED'), false);
     }
   }
 
