@@ -4,7 +4,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {MatMenu, MatMenuItem} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
@@ -17,6 +17,7 @@ import {TeamsService} from '../../services/teams.service';
 import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-team-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {SnackbarService} from '../../services/snackbar.service';
+import {CalculationsService} from '../../services/calculations.service';
 
 @Component({
   selector: 'app-team-page',
@@ -36,7 +37,6 @@ import {SnackbarService} from '../../services/snackbar.service';
     NgIf,
     ReactiveFormsModule,
     TranslateModule,
-    MatMenuTrigger,
     NgClass,
     DecimalPipe
   ],
@@ -46,13 +46,13 @@ import {SnackbarService} from '../../services/snackbar.service';
 export class TeamPageComponent implements OnInit {
 
   constructor(private teamService: TeamsService,
-              private route: ActivatedRoute,
               private menuService: MenuService,
               protected currencyService: CurrencyService,
-              private changeDetectorRef: ChangeDetectorRef,
               private snackBar: SnackbarService,
-              private translate: TranslateService) {
-  };
+              private translate: TranslateService,
+              protected calculationsService: CalculationsService,
+              private route: ActivatedRoute,
+              private changeDetectorRef: ChangeDetectorRef) {}
 
   readonly dialog = inject(MatDialog);
   team!: Team;
@@ -129,29 +129,20 @@ export class TeamPageComponent implements OnInit {
     }
   }
 
-  calculateDayRate(teamProfile: TeamProfile) {
-    if (teamProfile.allocatedHours === 0) {
-      return 0;
-    }
-    let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!;
-    return hourlyRate * 8;
-  }
-
   async onRemove(row: TeamProfile) {
-
     if (!row || !row.profile?.profileId) {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
       return;
     }
 
-    const result = await this.teamService.deleteTeamProfile(row.teamProfileId!);
+    const result = await this.teamService.deleteTeamProfile(row.teamProfileId!, this.team.teamId!);
     if (result) {
-
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_DELETED'), true);
-      this.team.teamProfiles = this.team.teamProfiles!.filter(teamProfile =>
-        teamProfile.teamProfileId !== row.teamProfileId);
-      this.datasource.data = this.team.teamProfiles;
+      this.team = await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!);
+      this.teamProfiles = this.team.teamProfiles!;
+      this.datasource.data = this.teamProfiles;
       this.datasource._updateChangeSubscription();
+      this.fillStatBoxes();
     } else {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
     }

@@ -130,7 +130,25 @@ public class TeamService {
         return true;
     }
 
-    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception{
+    public boolean deleteTeamProfile(UUID teamProfileId, UUID teamId) throws Exception{
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
+        for (TeamProfile teamProfile : team.getTeamProfiles()) {
+            if (teamProfile.getTeamProfileId().equals(teamProfileId)) {
+                teamProfile.setAllocationPercentageCost(BigDecimal.ZERO);
+                teamProfile.setAllocationPercentageHours(BigDecimal.ZERO);
+                teamProfile.setAllocatedCost(BigDecimal.ZERO);
+                teamProfile.setAllocatedHours(BigDecimal.ZERO);
+                break;
+            }
+        }
+
+        team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+        team = RateUtils.calculateRates(team);
+        team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+        teamRepository.save(team);
+        em.detach(team);
+
+        notifyTeamObservers(team);
         teamProfileRepository.deleteById(teamProfileId);
         return !teamProfileRepository.existsById(teamProfileId);
     }
