@@ -7,6 +7,7 @@ import {ProjectsPageComponent} from './pages/projects-page/projects-page.compone
 import {TeamPageComponent} from './pages/team-page/team-page.component';
 import {ProjectPageComponent} from './pages/project-page/project-page.component';
 import {WorldOverviewPageComponent} from './pages/world-overview-page/world-overview-page.component';
+import {LoginPageComponent} from './pages/login-page/login-page.component';
 
 export const routes: Routes = [
   { path: 'profiles', component: ProfilesPageComponent },
@@ -16,5 +17,6 @@ export const routes: Routes = [
   { path: 'projects', component: ProjectsPageComponent },
   { path: 'projects/:id', component: ProjectPageComponent },
   { path: 'currency', component: CurrencyPageComponent },
-  { path: 'world', component: WorldOverviewPageComponent }
+  { path: 'world', component: WorldOverviewPageComponent },
+  { path: 'login', component: LoginPageComponent },
 ];
