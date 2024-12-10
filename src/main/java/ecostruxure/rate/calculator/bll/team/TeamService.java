@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -47,12 +48,17 @@ public class TeamService {
     @Transactional
     public Team create(Team team) throws Exception {
         Team newTeam = RateUtils.calculateTotalAllocatedHoursAndCost(team);
-        newTeam = RateUtils.calculateRates(newTeam);
+        boolean anyTeamProfiles = newTeam.getTeamProfiles() != null && !newTeam.getTeamProfiles().isEmpty();
+        if (anyTeamProfiles) {
+            newTeam = RateUtils.calculateRates(newTeam);
+        }
         newTeam.setTotalCostWithMarkup(newTeam.getTotalAllocatedCost());
         newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
+        newTeam.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
         em.persist(newTeam);
         notifyTeamObservers(newTeam);
-        return team;
+        return newTeam;
     }
 
     public Iterable<Team> all() throws Exception {
@@ -109,6 +115,7 @@ public class TeamService {
         team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+        team.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         teamRepository.save(team);
         notifyTeamObservers(team);
         TeamDTO updatedTeam = getById(team.getTeamId());

@@ -49,6 +49,11 @@ public class RateUtils {
     }
 
     public static Team calculateRates(Team team) {
+        if (team.getTotalAllocatedHours().compareTo(BigDecimal.ZERO) == 0) {
+            team.setHourlyRate(BigDecimal.ZERO);
+            team.setDayRate(BigDecimal.ZERO);
+            return team;
+        }
         team.setHourlyRate(team.getTotalAllocatedCost()
                 .divide(team.getTotalAllocatedHours(), 2, BigDecimal.ROUND_HALF_UP));
         team.setDayRate(team.getHourlyRate().multiply(BigDecimal.valueOf(8)));

@@ -1,11 +1,12 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatTableModule, MatTableDataSource} from '@angular/material/table';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {NgClass, NgIf} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {Currency} from '../../models';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-currency-page',
@@ -22,7 +23,10 @@ import {Currency} from '../../models';
 })
 export class CurrencyPageComponent implements AfterViewInit, OnInit {
 
-  constructor(private menuService: MenuService, private currencyService: CurrencyService) {
+  constructor(private menuService: MenuService,
+              private currencyService: CurrencyService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService) {
   }
 
   isMenuOpen: boolean | undefined;
@@ -64,6 +68,7 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
             const data = this.parseCsv(csvData);
             await this.currencyService.importCurrency(data);
             this.datasource.data = data!;
+            this.snackbarService.openSnackBar(this.translateService.instant("SUCCESS_UPDATING_CURRENCY"), true);
           }
         };
 

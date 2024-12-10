@@ -78,14 +78,18 @@ export class AddTeamDialogComponent implements OnInit {
       markupPercentage: 0,
       grossMarginPercentage: 0
     };
-    const newTeam = await this.teamService.postTeam(team);
+     try {
+      const newTeam = await this.teamService.postTeam(team);
 
-    if (newTeam.teamId != undefined) {
-      this.teamAdded.emit(newTeam);
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_CREATED'), true);
-    } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
-    }
+      if (newTeam.teamId != undefined) {
+        this.teamAdded.emit(newTeam);
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_CREATED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
+      }
+    } catch (error) {
+       this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
+     }
   }
 
   onSelectionChange($event: MatSelectionListChange) {

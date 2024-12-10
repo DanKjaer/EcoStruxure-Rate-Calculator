@@ -21,6 +21,7 @@ import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {MatLabel} from '@angular/material/form-field';
+import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
   selector: 'app-profiles-page',
@@ -65,6 +66,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     'contributed annual cost',
     'allocated hours',
     'cost allocation',
+    'location',
     'options'
   ];
 
@@ -86,12 +88,13 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   //#endregion
 
-  constructor(private profileService: ProfileService,
-              private router: Router,
-              private snackBar: SnackbarService,
-              private translate: TranslateService,
+  constructor(protected currencyService: CurrencyService,
+              private profileService: ProfileService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
               private menuService: MenuService,
-              protected currencyService: CurrencyService) {
+              private searchConfigService: SearchConfigService,
+              private router: Router) {
   }
 
   //#region inits
@@ -108,6 +111,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
     this.updateTableFooterData();
+    this.searchConfigService.configureFilter(this.datasource, ['geography.name']);
   }
   //#endregion
 
@@ -147,12 +151,12 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
           profile.annualCost = response.annualCost;
         }
       });
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_UPDATED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_UPDATED'), true);
       this.updateTableFooterData();
       this.loading = false;
     } catch (e) {
       this.cancelEdit(element)
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_UPDATED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_UPDATED'), false);
       this.loading = false;
     }
   }
@@ -195,9 +199,9 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     if (result) {
       this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
       this.datasource._updateChangeSubscription();
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_DELETED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
     } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
     }
   }
 

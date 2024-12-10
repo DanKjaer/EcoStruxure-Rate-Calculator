@@ -11,7 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatOption} from '@angular/material/core';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatSelect} from '@angular/material/select';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -20,7 +20,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
 import {ActivatedRoute} from '@angular/router';
-import {Currency, Geography, Profile, Team, TeamProfile} from '../../models';
+import {Currency, Geography, Profile, Team, TeamDTO, TeamProfile} from '../../models';
 import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
 import {MenuService} from '../../services/menu.service';
@@ -32,6 +32,8 @@ import {
 } from '../../modals/add-profile-to-team-dialog/add-profile-to-team-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {SearchConfigService} from '../../services/search-config.service';
+import {CalculationsService} from '../../services/calculations.service';
+import {GenerateDTOService} from '../../services/generate-dto.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -51,7 +53,8 @@ import {SearchConfigService} from '../../services/search-config.service';
     MatMenuModule,
     MatProgressSpinner,
     NgClass,
-    DecimalPipe
+    DecimalPipe,
+    FormsModule
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
@@ -75,6 +78,9 @@ export class ProfilePageComponent implements OnInit {
     'annual cost',
     'remove'
   ];
+  originalRowData: { [key: number]: any } = {};
+  protected isEditingRow: boolean = false;
+
 
   //Create a computed property to calculate the stat boxes
   statBoxes = computed(() => {
@@ -113,6 +119,8 @@ export class ProfilePageComponent implements OnInit {
               private snackbarService: SnackbarService,
               private translateService: TranslateService,
               private searchConfigService: SearchConfigService,
+              private calculationsService: CalculationsService,
+              private teamService: TeamsService,
               private fb: FormBuilder,
               private route: ActivatedRoute) { }
 
@@ -142,41 +150,8 @@ export class ProfilePageComponent implements OnInit {
     this.loading = false;
   }
 
-  private async prepTeamList(id: string) {
-    let response = await this.teamsService.getTeamProfiles(id);
-    this.teams.set(response);
-    this.datasource.data = response;
-  }
-
-  private prepProfileForm() {
-    this.profileForm = this.fb.group({
-      name: [this.currentProfile()!.name, Validators.required],
-      location: [this.currentProfile()!.geography.id, Validators.required],
-      resource_type: [this.currentProfile()!.resourceType, Validators.required],
-      annual_cost: [this.currentProfile()!.annualCost],
-      annual_hours: [{value: this.currentProfile()!.annualHours, disabled: true}],
-      effectiveness: [this.currentProfile()!.effectivenessPercentage],
-      hours_per_day: [this.currentProfile()!.hoursPerDay]
-    })
-
-    if (!this.profileForm.get('resource_type')?.value) {
-      this.profileForm.get('annual_hours')?.enable();
-    } else {
-      this.profileForm.get('annual_hours')?.disable();
-    }
-
-    this.profileForm.get('resource_type')?.valueChanges.subscribe((value: boolean) => {
-      if (value) {
-        this.profileForm.get('annual_hours')?.reset({value: 0, disabled: true});
-      } else {
-        this.profileForm.get('annual_hours')?.enable();
-      }
-    });
-  }
-
   applySearch(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
-    console.log(searchValue.trim().toLowerCase());
     this.datasource.filter = searchValue.trim().toLowerCase();
 
     if (this.datasource.paginator) {
@@ -184,9 +159,27 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
+  openDialog() {
+    this.loading = true;
+    const dialogRef = this.dialog.open(AddProfileToTeamDialogComponent, {
+      minHeight: '60vh',
+      maxHeight: '800px',
+      minWidth: '50vw',
+      maxWidth: '1000px',
+    });
+    dialogRef.componentInstance.profile = this.currentProfile()!;
+    dialogRef.componentInstance.teamProfiles = this.datasource.data;
+    dialogRef.componentInstance.addedProfileToTeam.subscribe((teamProfiles: TeamProfile[]) => {
+      this.datasource.data.push(...teamProfiles);
+      this.teams.set(this.teams().concat(teamProfiles));
+      this.datasource._updateChangeSubscription();
+    });
+
+    this.loading = false;
+  }
+
   async update() {
     this.loading = true;
-    //todo: update the profile in db
     try {
       this.currentProfile()!.name = this.profileForm.value.name;
       this.currentProfile()!.geography = this.locations.find((location) => {
@@ -234,14 +227,10 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  private calculateDayRate(teamProfile: TeamProfile, profile: Profile) {
-    let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!
-    return hourlyRate * profile.hoursPerDay!;
-  }
-
   async remove(row: TeamProfile) {
     let result = await this.teamsService.deleteTeamProfile(row.teamProfileId!, row.team!.teamId!);
     if (result) {
+      this.teams.set(this.teams().filter(teamProfile => teamProfile !== row));
       this.datasource.data = this.datasource.data.filter(teamProfile => teamProfile !== row);
       this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_TEAM_REMOVED'), true);
     } else {
@@ -249,20 +238,88 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(AddProfileToTeamDialogComponent, {
-      minHeight: '60vh',
-      maxHeight: '800px',
-      minWidth: '50vw',
-      maxWidth: '1000px',
-    });
+  editRow(selectedTeamProfile: any) {
+    if (this.isEditingRow) {
+      return;
+    }
+    this.isEditingRow = true;
+    selectedTeamProfile['isEditing'] = true;
+    if (!this.originalRowData[selectedTeamProfile.teamProfileId]){
+      this.originalRowData[selectedTeamProfile.teamProfileId] = {...selectedTeamProfile};
+    }
+  }
+
+  async saveEditRow(selectedTeamProfile: any) {
     this.loading = true;
-    dialogRef.componentInstance.profile = this.currentProfile()!;
-    dialogRef.componentInstance.teamProfiles = this.datasource.data;
-    dialogRef.componentInstance.addedProfileToTeam.subscribe((teamProfiles: TeamProfile[]) => {
-      this.datasource.data.push(...teamProfiles);
-      this.datasource._updateChangeSubscription();
+    selectedTeamProfile['isEditing'] = false;
+    this.isEditingRow = false;
+    let teamProfileToUpdate: TeamProfile = selectedTeamProfile;
+    teamProfileToUpdate.profile = this.currentProfile()!;
+    teamProfileToUpdate.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfileToUpdate);
+    teamProfileToUpdate.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfileToUpdate);
+    teamProfileToUpdate.team = {teamId: teamProfileToUpdate.team!.teamId,
+                                name: teamProfileToUpdate.team!.name}
+    try {
+      let updatedTeamProfile = await this.teamService.addProfileToTeams([teamProfileToUpdate]);
+      this.teams.set(this.teams().map((teamProfile) => {
+        if (teamProfile.teamProfileId === updatedTeamProfile[0].teamProfileId) {
+          return updatedTeamProfile[0];
+        }
+        return teamProfile;
+      }));
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_TEAM_UPDATED'), true);
+      this.loading = false;
+    } catch (e) {
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_TEAM_UPDATED'), false);
+      this.cancelEditRow(selectedTeamProfile);
+      this.loading = false;
+    }
+  }
+
+  cancelEditRow(selectedTeamProfile: any) {
+    let original = this.originalRowData[selectedTeamProfile.teamProfileId!];
+    if (original) {
+      selectedTeamProfile.allocationPercentageCost = original.allocationPercentageCost;
+      selectedTeamProfile.allocationPercentageHours = original.allocationPercentageHours;
+    }
+    selectedTeamProfile['isEditing'] = false;
+    this.isEditingRow = false;
+  }
+
+  private async prepTeamList(id: string) {
+    let response = await this.teamsService.getTeamProfiles(id);
+    this.teams.set(response);
+    this.datasource.data = response;
+  }
+
+  private prepProfileForm() {
+    this.profileForm = this.fb.group({
+      name: [this.currentProfile()!.name, Validators.required],
+      location: [this.currentProfile()!.geography.id, Validators.required],
+      resource_type: [this.currentProfile()!.resourceType, Validators.required],
+      annual_cost: [this.currentProfile()!.annualCost],
+      annual_hours: [{value: this.currentProfile()!.annualHours, disabled: true}],
+      effectiveness: [this.currentProfile()!.effectivenessPercentage],
+      hours_per_day: [this.currentProfile()!.hoursPerDay]
+    })
+
+    if (!this.profileForm.get('resource_type')?.value) {
+      this.profileForm.get('annual_hours')?.enable();
+    } else {
+      this.profileForm.get('annual_hours')?.disable();
+    }
+
+    this.profileForm.get('resource_type')?.valueChanges.subscribe((value: boolean) => {
+      if (value) {
+        this.profileForm.get('annual_hours')?.reset({value: 0, disabled: true});
+      } else {
+        this.profileForm.get('annual_hours')?.enable();
+      }
     });
-    this.loading = false;
+  }
+
+  private calculateDayRate(teamProfile: TeamProfile, profile: Profile) {
+    let hourlyRate = teamProfile.allocatedCost! / teamProfile.allocatedHours!
+    return hourlyRate * profile.hoursPerDay!;
   }
 }

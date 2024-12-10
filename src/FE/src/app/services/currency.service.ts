@@ -68,7 +68,10 @@ export class CurrencyService {
    * @param to
    */
   convert(amount: number, from: string, to: string): number {
-    if(!this.currencies[from] || !this.currencies[to]){
+    if (amount === Infinity) {
+      return 0;
+    }
+    else if(!this.currencies[from] || !this.currencies[to]){
       return amount;
     }
     const amountInEUR = amount / this.currencies[from].eurConversionRate;
