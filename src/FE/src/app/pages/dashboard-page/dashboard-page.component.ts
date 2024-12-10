@@ -125,8 +125,14 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   }
 
   clearSelection() {
-    this.countrySelected = false;
-    this.selectedCountry = null;
+    const container = document.querySelector('.selectedCountryContainer');
+    container!.classList.add('closing');
+
+    setTimeout(() => {
+      this.countrySelected = false;
+      this.selectedCountry = null;
+      container!.classList.remove('closing');
+    }, 100);
   }
 
   // MOCK DATA
