@@ -1,10 +1,10 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatButtonModule, MatIconButton} from '@angular/material/button';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {RouterLink} from '@angular/router';
+import {NavigationEnd, Router, RouterLink} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {NgClass} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {ExportService} from '../../services/export.service';
@@ -19,20 +19,24 @@ import {ExportService} from '../../services/export.service';
     MatIconButton,
     MatIcon,
     MatTooltipModule,
-    NgClass
+    NgClass,
+    NgIf
   ],
   templateUrl: './sidemenu.component.html',
   styleUrl: './sidemenu.component.css'
 })
-export class SidemenuComponent {
+export class SidemenuComponent implements OnInit {
 
   selectedCurrency: string | null;
   protected readonly localStorage = localStorage;
+  isMenuOpen = true;
+  showSidemenu: boolean = true;
 
   constructor(private translate: TranslateService,
               private menuService: MenuService,
               private currencyService: CurrencyService,
-              private exportService: ExportService) {
+              private exportService: ExportService,
+              private router: Router) {
     this.selectedCurrency = localStorage.getItem('selectedCurrency');
     translate.setDefaultLang('en');
     menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -41,7 +45,14 @@ export class SidemenuComponent {
     currencyService.setCurrency("EUR");
   }
 
-  isMenuOpen = true;
+  ngOnInit(): void {
+        this.router.events.subscribe(event => {
+          if (event instanceof NavigationEnd) {
+            const currentUrl = event.urlAfterRedirects;
+            this.showSidemenu = !currentUrl.includes('/login');
+          }
+        })
+    }
 
   toggleMenu(): void {
     this.menuService.toggleMenu();
