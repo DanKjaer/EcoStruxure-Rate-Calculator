@@ -72,4 +72,11 @@ export class TeamsService {
   addProfileToTeams(newTeamProfiles: TeamProfile[]) {
     return firstValueFrom(this.http.put<TeamProfile[]>(`${this.apiUrl}/addProfileToTeams`, newTeamProfiles));
   }
+
+  /**
+   * Update a team profile.
+   */
+  updateTeamProfile(teamProfile: TeamProfile) {
+    return firstValueFrom(this.http.put<TeamProfile>(`${this.apiUrl}/updateProfile`, teamProfile));
+  }
 }
