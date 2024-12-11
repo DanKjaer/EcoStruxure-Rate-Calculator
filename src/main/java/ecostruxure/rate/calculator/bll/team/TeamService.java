@@ -54,8 +54,8 @@ public class TeamService {
         newTeam.setTotalCostWithMarkup(newTeam.getTotalAllocatedCost());
         newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
         newTeam.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-
-        entityManager.persist(newTeam);
+        
+        teamRepository.save(newTeam);
         notifyTeamObservers(newTeam);
         return newTeam;
     }
@@ -116,22 +116,23 @@ public class TeamService {
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
         team.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        entityManager.merge(team);
+        teamRepository.save(team);
         notifyTeamObservers(team);
         TeamDTO updatedTeam = getById(team.getTeamId());
 
         return updatedTeam;
     }
+
     @Transactional
     public boolean deleteTeam(UUID teamId) throws Exception {
         Team oldTeam = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
-        entityManager.remove(teamId);
+        teamRepository.deleteById(teamId);
         notifyTeamObservers(oldTeam);
         return !teamRepository.existsById(teamId);
     }
 
     public boolean archiveTeam(UUID teamId) throws Exception {
-        var team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         team.setArchived(true);
         teamRepository.save(team);
         return true;
@@ -153,18 +154,18 @@ public class TeamService {
             }
         }
 
-        if(teamProfileToDelete == null) {
-            throw new Exception("TeamProfile not found.");
+        if(teamProfileToDelete == null){
+            throw new Exception("team profile not found");
         }
 
         team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+        teamRepository.save(team);
+        entityManager.detach(team);
 
-        team.getTeamProfiles().remove(teamProfileToDelete);
-
-        entityManager.remove(teamProfileToDelete);
         notifyTeamObservers(team);
+        teamProfileRepository.deleteById(teamProfileId);
         return !teamRepository.existsById(teamProfileId);
     }
 
@@ -180,8 +181,8 @@ public class TeamService {
             team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
             team = RateUtils.calculateRates(team);
             team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+            teamRepository.save(team);
 
-            entityManager.merge(team);
             notifyTeamObservers(team);
             teamProfilesDTO.add(teamProfileDTO);
         }

@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.lang.reflect.Type;
 
@@ -29,7 +28,6 @@ public class ProfileService {
     private EntityManager entityManager;
 
     private final IProfileRepository profileRepository;
-    private final ITeamProfileRepository teamProfileRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final List<IProfileObserver> observers;
 
@@ -39,12 +37,11 @@ public class ProfileService {
                           ITeamProfileRepository teamProfileRepository) {
         this.observers = observers;
         this.profileRepository = profileRepository;
-        this.teamProfileRepository = teamProfileRepository;
     }
 
     @Transactional
     public Profile create(Profile profile) throws Exception {
-        entityManager.persist(profile);
+        profileRepository.save(profile);
         return profile;
     }
 
@@ -72,7 +69,7 @@ public class ProfileService {
     @Transactional
     public Profile update(Profile profile) throws Exception {
         profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
-        Profile updatedProfile = entityManager.merge(profile);
+        Profile updatedProfile = profileRepository.save(profile);
         notifyObservers(updatedProfile);
         return updatedProfile;
     }
@@ -85,15 +82,12 @@ public class ProfileService {
 
     @Transactional
     public boolean delete(UUID profileId) throws Exception {
-        Optional<Profile> profile = profileRepository.findById(profileId);
-        if(profile.isPresent()){
-            entityManager.remove(profile.get());
-        }
-        return !profileRepository.existsById(profileId);
+        profileRepository.deleteById(profileId);
+        return true;
     }
 
     public boolean archive(UUID profileId) throws Exception {
-        var profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
         profile.setArchived(true);
         profileRepository.save(profile);
         return true;
