@@ -6,7 +6,6 @@ import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +14,12 @@ import java.util.UUID;
 
 @Service
 public class ProjectService {
-    @PersistenceContext
     private final IProjectRepository projectRepository;
     private final IProjectTeamRepository projectTeamRepository;
 
     @Autowired
-    public ProjectService(IProjectRepository projectRepository, IProjectTeamRepository projectTeamRepository) throws Exception {
+    public ProjectService(IProjectRepository projectRepository,
+                          IProjectTeamRepository projectTeamRepository) throws Exception {
         this.projectRepository = projectRepository;
         this.projectTeamRepository = projectTeamRepository;
     }
