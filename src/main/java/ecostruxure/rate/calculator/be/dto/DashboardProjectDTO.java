@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 public class DashboardProjectDTO {
     private String name;
-    private BigDecimal cost;
-    private BigDecimal totalCost;
+    private BigDecimal price;
+    private BigDecimal grossMargin;
 
-    public DashboardProjectDTO(String name, BigDecimal cost, BigDecimal totalCost) {
+    public DashboardProjectDTO(String name, BigDecimal price, BigDecimal grossMargin) {
         this.name = name;
-        this.cost = cost;
-        this.totalCost = totalCost;
+        this.price = price;
+        this.grossMargin = grossMargin;
     }
 
     //#region Getters and setters
@@ -22,20 +22,20 @@ public class DashboardProjectDTO {
         this.name = name;
     }
 
-    public BigDecimal getCost() {
-        return cost;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public BigDecimal getTotalCost() {
-        return totalCost;
+    public BigDecimal getGrossMargin() {
+        return grossMargin;
     }
 
-    public void setTotalCost(BigDecimal totalCost) {
-        this.totalCost = totalCost;
+    public void setGrossMargin(BigDecimal grossMargin) {
+        this.grossMargin = grossMargin;
     }
     //#endregion
 }

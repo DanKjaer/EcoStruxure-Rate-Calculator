@@ -5,17 +5,15 @@ import java.math.BigDecimal;
 public class DashboardDTO {
     private String name;
     private BigDecimal dayRate;
-    private BigDecimal totalGrossMargin;
+    private BigDecimal grossMargin;
     private BigDecimal totalPrice;
-    private BigDecimal totalCost;
     private DashboardProjectDTO[] projects;
 
-    public DashboardDTO(String name, BigDecimal dayRate, BigDecimal totalGrossMargin, BigDecimal totalPrice, BigDecimal totalCost, DashboardProjectDTO[] projects) {
+    public DashboardDTO(String name, BigDecimal dayRate, BigDecimal totalGrossMargin, BigDecimal totalPrice, DashboardProjectDTO[] projects) {
         this.name = name;
         this.dayRate = dayRate;
-        this.totalGrossMargin = totalGrossMargin;
+        this.grossMargin = totalGrossMargin;
         this.totalPrice = totalPrice;
-        this.totalCost = totalCost;
         this.projects = projects;
     }
 
@@ -36,12 +34,12 @@ public class DashboardDTO {
         this.dayRate = dayRate;
     }
 
-    public BigDecimal getTotalGrossMargin() {
-        return totalGrossMargin;
+    public BigDecimal getGrossMargin() {
+        return grossMargin;
     }
 
-    public void setTotalGrossMargin(BigDecimal totalGrossMargin) {
-        this.totalGrossMargin = totalGrossMargin;
+    public void setGrossMargin(BigDecimal grossMargin) {
+        this.grossMargin = grossMargin;
     }
 
     public BigDecimal getTotalPrice() {
@@ -50,14 +48,6 @@ public class DashboardDTO {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public BigDecimal getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(BigDecimal totalCost) {
-        this.totalCost = totalCost;
     }
 
     public DashboardProjectDTO[] getProjects() {
