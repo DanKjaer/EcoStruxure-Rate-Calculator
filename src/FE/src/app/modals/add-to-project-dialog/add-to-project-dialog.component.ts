@@ -71,7 +71,7 @@ export class AddToProjectDialogComponent implements OnInit {
     teams.forEach((team) => {
       let projectTeam: ProjectTeam = {
         projectTeamId: '',
-        project: this.project!,
+        project: this.project.projectId,
         team: team.team!,
         allocationPercentage: team.allocationPercentage
       }

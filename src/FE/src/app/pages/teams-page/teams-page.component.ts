@@ -122,7 +122,12 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
 
   openDialog() {
     this.loading = true;
-    const dialogRef = this.dialog.open(AddTeamDialogComponent);
+    const dialogRef = this.dialog.open(AddTeamDialogComponent, {
+      minHeight: '60vh',
+      maxHeight: '800px',
+      minWidth: '50vw',
+      maxWidth: '1000px',
+    });
 
     dialogRef.componentInstance.teamAdded.subscribe((team: Team) => {
       team.updatedAtString = this.formatter.formatDateTime(team.updatedAt!);
@@ -161,11 +166,20 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
     this.loading = true;
-
-    let result : Team | null = null;
     try{
-      result = await this.teamService.putTeam(selectedTeam);
+      let result = await this.teamService.putTeam(selectedTeam);
       result.updatedAtString = this.formatter.formatDateTime(new Date());
+      const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);
+      if (index !== -1) {
+        result.teamProfiles!.forEach(teamProfile => {
+          teamProfile.profile = undefined;
+          teamProfile.team = undefined;
+        });
+
+        this.datasource.data[index] = result;
+        this.datasource._updateChangeSubscription();
+        delete this.originalRowData[selectedTeam!.teamId!];
+      }
       this.updateTableFooterData();
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_SAVED'), true);
       this.loading = false;
@@ -174,13 +188,6 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
       this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_SAVED'), false);
       this.loading = false;
       return;
-    }
-
-    const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);
-    if (index !== -1) {
-      this.datasource.data[index] = result;
-      this.datasource._updateChangeSubscription();
-      delete this.originalRowData[selectedTeam!.teamId!];
     }
   }
 

@@ -12,8 +12,12 @@ import java.util.List;
 
 @Service
 public class ProjectObserver implements ITeamObserver {
+    private final IProjectRepository projectRepository;
+
     @Autowired
-    private IProjectRepository projectRepository;
+    public ProjectObserver(IProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     @Override
     public void update(Team team) {

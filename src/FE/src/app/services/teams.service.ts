@@ -40,8 +40,8 @@ export class TeamsService {
    * @param team
    * @param teamProfiles
    */
-  postTeam(team: Team, teamProfiles: TeamProfile[]): Promise<Team> {
-    return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {team, teamProfiles}));
+  postTeam(team: Team): Promise<Team> {
+    return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, team));
   }
 
   /**
@@ -57,18 +57,26 @@ export class TeamsService {
    * @param teamID
    */
   deleteTeam(teamID: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${teamID}`));
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?id=${teamID}`));
   }
 
   /**
    * Deletes a teamProfile by id from a team.
-   * @param teamProfile
+   * @param teamProfileId
+   * @param teamId
    */
-  deleteTeamProfile(teamProfileId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/teamProfile?teamProfileId=${teamProfileId}`));
+  deleteTeamProfile(teamProfileId: string, teamId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/teamProfile?teamProfileId=${teamProfileId}&teamId=${teamId}`));
   }
 
   addProfileToTeams(newTeamProfiles: TeamProfile[]) {
     return firstValueFrom(this.http.put<TeamProfile[]>(`${this.apiUrl}/addProfileToTeams`, newTeamProfiles));
+  }
+
+  /**
+   * Update a team profile.
+   */
+  updateTeamProfile(teamProfile: TeamProfile) {
+    return firstValueFrom(this.http.put<TeamProfile>(`${this.apiUrl}/updateProfile`, teamProfile));
   }
 }

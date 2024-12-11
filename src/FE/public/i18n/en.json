@@ -236,5 +236,9 @@
   "WORLD_OVERVIEW": "World",
   "COUNTRIES_REGIONS": "Countries and regions",
   "CLOSE_PANEL": "Close panel",
-  "EXPORT": "Export data"
+  "EXPORT": "Export data",
+  "ADD_PROFILE_TO_TEAM": "Add profile to team",
+  "SUCCESS_UPDATING_CURRENCY": "Currency updated successfully",
+  "SUCCESS_PROJECT_ARCHIVED": "Project archived successfully",
+  "ERROR_PROJECT_ARCHIVED": "Failed to archive project"
 }

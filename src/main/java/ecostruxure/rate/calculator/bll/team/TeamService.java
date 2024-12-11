@@ -18,10 +18,12 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -43,11 +45,20 @@ public class TeamService {
         this.teamProfileRepository = teamProfileRepository;
     }
 
+    @Transactional
     public Team create(Team team) throws Exception {
-        em.getTransaction().begin();
-        em.persist(team);
-        em.getTransaction().commit();
-        return team;
+        Team newTeam = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+        boolean anyTeamProfiles = newTeam.getTeamProfiles() != null && !newTeam.getTeamProfiles().isEmpty();
+        if (anyTeamProfiles) {
+            newTeam = RateUtils.calculateRates(newTeam);
+        }
+        newTeam.setTotalCostWithMarkup(newTeam.getTotalAllocatedCost());
+        newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
+        newTeam.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        em.persist(newTeam);
+        notifyTeamObservers(newTeam);
+        return newTeam;
     }
 
     public Iterable<Team> all() throws Exception {
@@ -104,6 +115,7 @@ public class TeamService {
         team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+        team.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         teamRepository.save(team);
         notifyTeamObservers(team);
         TeamDTO updatedTeam = getById(team.getTeamId());
@@ -111,14 +123,10 @@ public class TeamService {
         return updatedTeam;
     }
 
-    private void notifyTeamObservers(Team updatedTeam) {
-        for (ITeamObserver teamObserver : teamObservers) {
-            teamObserver.update(updatedTeam);
-        }
-    }
-
     public boolean deleteTeam(UUID teamId) throws Exception {
+        Team oldTeam = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         teamRepository.deleteById(teamId);
+        notifyTeamObservers(oldTeam);
         return !teamRepository.existsById(teamId);
     }
 
@@ -129,7 +137,25 @@ public class TeamService {
         return true;
     }
 
-    public boolean deleteTeamProfile(UUID teamProfileId) throws Exception{
+    public boolean deleteTeamProfile(UUID teamProfileId, UUID teamId) throws Exception{
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
+        for (TeamProfile teamProfile : team.getTeamProfiles()) {
+            if (teamProfile.getTeamProfileId().equals(teamProfileId)) {
+                teamProfile.setAllocationPercentageCost(BigDecimal.ZERO);
+                teamProfile.setAllocationPercentageHours(BigDecimal.ZERO);
+                teamProfile.setAllocatedCost(BigDecimal.ZERO);
+                teamProfile.setAllocatedHours(BigDecimal.ZERO);
+                break;
+            }
+        }
+
+        team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
+        team = RateUtils.calculateRates(team);
+        team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
+        teamRepository.save(team);
+        em.detach(team);
+
+        notifyTeamObservers(team);
         teamProfileRepository.deleteById(teamProfileId);
         return !teamProfileRepository.existsById(teamProfileId);
     }
@@ -151,5 +177,11 @@ public class TeamService {
         }
 
         return teamProfilesDTO;
+    }
+
+    private void notifyTeamObservers(Team updatedTeam) {
+        for (ITeamObserver teamObserver : teamObservers) {
+            teamObserver.update(updatedTeam);
+        }
     }
 }

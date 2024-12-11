@@ -17,7 +17,7 @@ export interface Profile {
 
 export interface Team {
   teamId?: string; // UUID
-  name?: string;
+  name: string;
   markupPercentage?: number;
   totalCostWithMarkup?: number;
   grossMarginPercentage?: number;
@@ -99,8 +99,8 @@ export interface Project {
 export interface ProjectTeam {
   projectTeamId?: string;
   team: Team;
-  project: Project;
-  allocationPercentage: number;
+  project?: Project | string;
+  allocationPercentage?: number;
 }
 
 export interface Currency {

@@ -18,7 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.lang.reflect.Type;
@@ -42,13 +44,10 @@ public class ProfileService {
         this.teamProfileRepository = teamProfileRepository;
     }
 
-
-    public Profile create(ProfileDTO profile) throws Exception {
-        var newProfile = modelMapper.map(profile, Profile.class);
-        em.getTransaction().begin();
-        em.persist(newProfile);
-        em.getTransaction().commit();
-        return newProfile;
+    @Transactional
+    public Profile create(Profile profile) throws Exception {
+        em.persist(profile);
+        return profile;
     }
 
     public List<ProfileDTO> all() throws Exception {
@@ -62,6 +61,7 @@ public class ProfileService {
 
         Type listType = new TypeToken<List<ProfileDTO>>() {}.getType();
         List<ProfileDTO> profilesDTO = modelMapper.map(result, listType);
+        profilesDTO.sort(Comparator.comparing(ProfileDTO::getName));
         return profilesDTO;
     }
 
@@ -73,7 +73,6 @@ public class ProfileService {
 
     public Profile update(Profile profile) throws Exception {
         profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
-
         Profile updatedProfile = profileRepository.save(profile);
         notifyObservers(updatedProfile);
         return updatedProfile;

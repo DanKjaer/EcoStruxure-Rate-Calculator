@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.bll.project;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.ProjectTeam;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
@@ -33,6 +34,10 @@ public class ProjectService {
 
     public Project createProject(Project project) throws Exception {
         Project calculatedProject = RateUtils.updateProjectRates(project);
+        for (ProjectTeam projectTeam : calculatedProject.getProjectTeams()) {
+            projectTeam.setProject(calculatedProject);
+        }
+        calculatedProject.setProjectArchived(false);
         return projectRepository.save(calculatedProject);
     }
 
@@ -48,9 +53,13 @@ public class ProjectService {
         return true;
     }
 
-    public boolean deleteProjectTeam(UUID projectId, UUID teamId) throws Exception {
-        projectTeamRepository.findProjectTeamByProject_ProjectId(projectId).deleteById(teamId);
-        return !projectTeamRepository.existsById(projectId);
+    public Project deleteProjectTeam(UUID projectTeamId) throws Exception {
+        ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId).orElseThrow(() ->
+                new EntityNotFoundException("Project Team not found"));
+        projectTeamRepository.deleteById(projectTeamId);
+        var updatedProject = RateUtils.updateProjectRates(projectTeam.getProject());
+        projectRepository.save(updatedProject);
+        return updatedProject;
     }
 
     @Transactional
@@ -58,5 +67,4 @@ public class ProjectService {
         Project updatedProject = RateUtils.updateProjectRates(project);
         return projectRepository.save(updatedProject);
     }
-
 }

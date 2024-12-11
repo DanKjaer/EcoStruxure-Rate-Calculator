@@ -39,8 +39,8 @@ public class ProjectController {
     }
 
     @DeleteMapping()
-    public boolean deleteProjectTeam(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
-        return projectService.deleteProjectTeam(projectId, teamId);
+    public Project deleteProjectTeam(@RequestParam UUID projectTeamId) throws Exception {
+        return projectService.deleteProjectTeam(projectTeamId);
     }
 
     @DeleteMapping("/archive")

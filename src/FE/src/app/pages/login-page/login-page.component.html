@@ -1,0 +1,41 @@
+<div class="imageContainer">
+  <img src="images/sidebar_logo.png">
+</div>
+<mat-dialog-content class="loginContainer">
+
+  <mat-form-field class="groupContainer">
+    <mat-label>{{ 'USERNAME' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      id="username"
+      name="username"
+      class="form-control"
+      [(ngModel)]="username"
+      required
+    />
+  </mat-form-field>
+
+  <mat-form-field class="groupContainer">
+    <mat-label>{{ 'PASSWORD' | translate }}</mat-label>
+    <input
+      matInput
+      type="password"
+      id="password"
+      name="password"
+      class="form-control"
+      [(ngModel)]="password"
+      required
+    />
+  </mat-form-field>
+
+  <mat-dialog-actions>
+    <div class="buttonContainer">
+      <button mat-stroked-button (click)="onSubmit()" [disabled]="!username || !password">
+        Login
+      </button>
+    </div>
+  </mat-dialog-actions>
+</mat-dialog-content>
+
+

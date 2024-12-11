@@ -17,6 +17,8 @@ import {SnackbarService} from '../../services/snackbar.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
+import {CalculationsService} from '../../services/calculations.service';
+import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
     selector: 'app-project-page',
@@ -71,12 +73,14 @@ export class ProjectPageComponent implements OnInit {
   ];
 
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(protected calculationsService: CalculationsService,
               private projectService: ProjectService,
-              private route: ActivatedRoute,
               private menuService: MenuService,
               private snackBar: SnackbarService,
               private translate: TranslateService,
+              private searchConfigService: SearchConfigService,
+              private formBuilder: FormBuilder,
+              private route: ActivatedRoute,
               private changeDetectorRef: ChangeDetectorRef) {
   }
 
@@ -96,9 +100,10 @@ export class ProjectPageComponent implements OnInit {
 
     this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
     this.fillTableWithTeams();
-    this.loading = false;
     this.fillStatBox();
     this.fillProjectForm();
+    this.searchConfigService.configureFilter(this.datasource, ['team.name']);
+    this.loading = false;
   }
 
   private fillTableWithTeams() {
@@ -132,7 +137,7 @@ export class ProjectPageComponent implements OnInit {
     this.loading = true;
     dialogRef.componentInstance.project = this.project;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
-      this.project.projectTeams = project.projectTeams;
+      this.project = project;
       this.fillTableWithTeams();
       this.fillStatBox();
     });
@@ -180,10 +185,10 @@ export class ProjectPageComponent implements OnInit {
   }
 
   async onRemove() {
-    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.team.teamId!);
+    const result = await this.projectService.deleteProjectMember(this.selectedRow!.projectTeamId!, this.project.projectId!);
     if (result) {
       this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
-      this.project.projectTeams = this.project.projectTeams.filter(member => member.team.teamId !== this.selectedRow?.team.teamId);
+      this.project = await this.projectService.getProject(this.project.projectId!);
       this.fillTableWithTeams();
       this.fillStatBox();
     } else {
@@ -241,11 +246,5 @@ export class ProjectPageComponent implements OnInit {
 
   selectRow(row: ProjectTeam) {
     this.selectedRow = row;
-  }
-
-  CalculateDayRateForTeam(team: Team): number {
-    let dayRate = team.dayRate!;
-    let markup = team.markupPercentage!;
-    return dayRate * (1 + (markup / 100));
   }
 }

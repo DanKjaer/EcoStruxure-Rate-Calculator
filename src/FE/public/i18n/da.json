@@ -230,5 +230,9 @@
   "WORLD_OVERVIEW": "Verden",
   "COUNTRIES_REGIONS": "Lande og regioner",
   "CLOSE_PANEL": "Luk panel",
-  "EXPORT": "Eksporter data"
+  "EXPORT": "Eksporter data",
+  "ADD_PROFILE_TO_TEAM": "Tilføj profil til team",
+  "SUCCESS_UPDATING_CURRENCY": "Valuta opdateret succesfuldt",
+  "SUCCESS_PROJECT_ARCHIVED": "Projekt arkiveret succesfuldt",
+  "ERROR_PROJECT_ARCHIVED": "Kunne ikke arkivere projekt"
 }
