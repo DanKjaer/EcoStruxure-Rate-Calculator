@@ -54,7 +54,7 @@ public class TeamService {
         newTeam.setTotalCostWithMarkup(newTeam.getTotalAllocatedCost());
         newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
         newTeam.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        
+
         teamRepository.save(newTeam);
         notifyTeamObservers(newTeam);
         return newTeam;
@@ -131,6 +131,7 @@ public class TeamService {
         return !teamRepository.existsById(teamId);
     }
 
+    @Transactional
     public boolean archiveTeam(UUID teamId) throws Exception {
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         team.setArchived(true);

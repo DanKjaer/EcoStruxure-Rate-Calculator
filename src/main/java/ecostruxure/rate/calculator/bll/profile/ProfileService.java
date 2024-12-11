@@ -86,6 +86,7 @@ public class ProfileService {
         return true;
     }
 
+    @Transactional
     public boolean archive(UUID profileId) throws Exception {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Profile not found."));
         profile.setArchived(true);

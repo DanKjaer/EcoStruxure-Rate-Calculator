@@ -49,6 +49,7 @@ public class ProjectService {
         return !projectRepository.existsById(projectId);
     }
 
+    @Transactional
     public boolean archiveProject(UUID projectId) throws Exception {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Project not found"));
         project.setProjectArchived(true);
