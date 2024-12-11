@@ -6,9 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
 
 public class RateUtils {
     // Constants for financial and general scale precision and rounding mode

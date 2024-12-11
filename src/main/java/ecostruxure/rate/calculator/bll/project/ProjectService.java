@@ -5,23 +5,26 @@ import ecostruxure.rate.calculator.be.ProjectTeam;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.IProjectTeamRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class ProjectService {
+    @PersistenceContext
+    private EntityManager entityManager;
     private final IProjectRepository projectRepository;
-    private final IProjectTeamRepository projectTeamRepository;
 
     @Autowired
     public ProjectService(IProjectRepository projectRepository,
                           IProjectTeamRepository projectTeamRepository) throws Exception {
         this.projectRepository = projectRepository;
-        this.projectTeamRepository = projectTeamRepository;
     }
 
     public Project getProject(UUID projectId) throws Exception {
@@ -32,17 +35,23 @@ public class ProjectService {
         return projectRepository.findAllByProjectArchived(false);
     }
 
+    @Transactional
     public Project createProject(Project project) throws Exception {
         Project calculatedProject = RateUtils.updateProjectRates(project);
         for (ProjectTeam projectTeam : calculatedProject.getProjectTeams()) {
             projectTeam.setProject(calculatedProject);
         }
         calculatedProject.setProjectArchived(false);
-        return projectRepository.save(calculatedProject);
+        entityManager.persist(calculatedProject);
+        return calculatedProject;
     }
 
+    @Transactional
     public boolean deleteProject(UUID projectId) throws Exception {
-        projectRepository.deleteById(projectId);
+        Optional<Project> project = projectRepository.findById(projectId);
+        if((project.isPresent())) {
+            entityManager.remove(project.get());
+        }
         return !projectRepository.existsById(projectId);
     }
 
@@ -53,12 +62,18 @@ public class ProjectService {
         return true;
     }
 
+    @Transactional
     public Project deleteProjectTeam(UUID projectTeamId) throws Exception {
-        ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId).orElseThrow(() ->
-                new EntityNotFoundException("Project Team not found"));
-        projectTeamRepository.deleteById(projectTeamId);
-        var updatedProject = RateUtils.updateProjectRates(projectTeam.getProject());
-        projectRepository.save(updatedProject);
+        ProjectTeam projectTeam = entityManager.find(ProjectTeam.class, projectTeamId);
+        if (projectTeam == null) {
+            throw new EntityNotFoundException("Project Team not found");
+        }
+        Project project = projectTeam.getProject();
+        entityManager.remove(projectTeam);
+        project.getProjectTeams().remove(projectTeam);
+        var updatedProject = RateUtils.updateProjectRates(project);
+        updatedProject = entityManager.merge(updatedProject);
+
         return updatedProject;
     }
 

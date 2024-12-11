@@ -1,7 +1,6 @@
 package ecostruxure.rate.calculator.dal;
 
 import ecostruxure.rate.calculator.be.Project;
-import ecostruxure.rate.calculator.be.ProjectTeam;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

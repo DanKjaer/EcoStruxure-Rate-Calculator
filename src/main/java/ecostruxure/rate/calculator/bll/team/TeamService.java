@@ -22,14 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.*;
 
 @Service
 public class TeamService {
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
 
     private final ITeamRepository teamRepository;
     private final ITeamProfileRepository teamProfileRepository;
@@ -56,7 +55,7 @@ public class TeamService {
         newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
         newTeam.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        em.persist(newTeam);
+        entityManager.persist(newTeam);
         notifyTeamObservers(newTeam);
         return newTeam;
     }
@@ -66,7 +65,7 @@ public class TeamService {
     }
 
     public TeamDTO getById(UUID teamId) throws Exception {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Team> cq = cb.createQuery(Team.class);
         Root<Team> team = cq.from(Team.class);
 
@@ -76,7 +75,7 @@ public class TeamService {
         //select by team id
         cq.select(team).where(cb.equal(team.get("teamId"), teamId));
 
-        Team result = em.createQuery(cq).getSingleResult();
+        Team result = entityManager.createQuery(cq).getSingleResult();
 
         //map to TeamDTO
         TeamDTO teamDTO = modelMapper.map(result, TeamDTO.class);
@@ -84,7 +83,7 @@ public class TeamService {
     }
 
     public List<TeamProfileDTO> getByProfileId(UUID profileId) throws Exception {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamProfile> cq = cb.createQuery(TeamProfile.class);
         Root<TeamProfile> teamProfile = cq.from(TeamProfile.class);
 
@@ -95,7 +94,7 @@ public class TeamService {
         //select by profile id
         cq.select(teamProfile).where(cb.equal(teamProfile.get("profile").get("profileId"), profileId));
 
-        List<TeamProfile> teamProfiles = em.createQuery(cq).getResultList();
+        List<TeamProfile> teamProfiles = entityManager.createQuery(cq).getResultList();
 
         //map to TeamProfileDTO list
         Type listType = new TypeToken<List<TeamProfileDTO>>() {}.getType();
@@ -103,6 +102,7 @@ public class TeamService {
         return teamProfilesDTO;
     }
 
+    @Transactional
     public TeamDTO update(Team team) throws Exception {
         for (TeamProfile teamProfile : team.getTeamProfiles()) {
             if (teamProfile.getProfile() == null) {
@@ -116,16 +116,16 @@ public class TeamService {
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
         team.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        teamRepository.save(team);
+        entityManager.merge(team);
         notifyTeamObservers(team);
         TeamDTO updatedTeam = getById(team.getTeamId());
 
         return updatedTeam;
     }
-
+    @Transactional
     public boolean deleteTeam(UUID teamId) throws Exception {
         Team oldTeam = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
-        teamRepository.deleteById(teamId);
+        entityManager.remove(teamId);
         notifyTeamObservers(oldTeam);
         return !teamRepository.existsById(teamId);
     }
@@ -137,7 +137,9 @@ public class TeamService {
         return true;
     }
 
+    @Transactional
     public boolean deleteTeamProfile(UUID teamProfileId, UUID teamId) throws Exception{
+        TeamProfile teamProfileToDelete = null;
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         for (TeamProfile teamProfile : team.getTeamProfiles()) {
             if (teamProfile.getTeamProfileId().equals(teamProfileId)) {
@@ -145,21 +147,28 @@ public class TeamService {
                 teamProfile.setAllocationPercentageHours(BigDecimal.ZERO);
                 teamProfile.setAllocatedCost(BigDecimal.ZERO);
                 teamProfile.setAllocatedHours(BigDecimal.ZERO);
+
+                teamProfileToDelete = teamProfile;
                 break;
             }
+        }
+
+        if(teamProfileToDelete == null) {
+            throw new Exception("TeamProfile not found.");
         }
 
         team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
-        teamRepository.save(team);
-        em.detach(team);
 
+        team.getTeamProfiles().remove(teamProfileToDelete);
+
+        entityManager.remove(teamProfileToDelete);
         notifyTeamObservers(team);
-        teamProfileRepository.deleteById(teamProfileId);
-        return !teamProfileRepository.existsById(teamProfileId);
+        return !teamRepository.existsById(teamProfileId);
     }
 
+    @Transactional
     public List<TeamProfileDTO> addProfileToTeams(List<TeamProfile> teamProfiles) {
         Iterable<TeamProfile> updatedTeamProfiles =  teamProfileRepository.saveAll(teamProfiles);
 
@@ -171,7 +180,8 @@ public class TeamService {
             team = RateUtils.calculateTotalAllocatedHoursAndCost(team);
             team = RateUtils.calculateRates(team);
             team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
-            teamRepository.save(team);
+
+            entityManager.merge(team);
             notifyTeamObservers(team);
             teamProfilesDTO.add(teamProfileDTO);
         }
