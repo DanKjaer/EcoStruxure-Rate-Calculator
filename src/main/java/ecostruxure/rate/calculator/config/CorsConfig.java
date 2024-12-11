@@ -1,4 +1,4 @@
-package ecostruxure.rate.calculator;
+package ecostruxure.rate.calculator.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
