@@ -32,6 +32,7 @@ public class ProjectService {
         return projectRepository.findAllByProjectArchived(false);
     }
 
+    @Transactional
     public Project createProject(Project project) throws Exception {
         Project calculatedProject = RateUtils.updateProjectRates(project);
         for (ProjectTeam projectTeam : calculatedProject.getProjectTeams()) {
@@ -41,24 +42,28 @@ public class ProjectService {
         return projectRepository.save(calculatedProject);
     }
 
+    @Transactional
     public boolean deleteProject(UUID projectId) throws Exception {
         projectRepository.deleteById(projectId);
         return !projectRepository.existsById(projectId);
     }
 
+    @Transactional
     public boolean archiveProject(UUID projectId) throws Exception {
-        var project = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Project not found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Project not found"));
         project.setProjectArchived(true);
         projectRepository.save(project);
         return true;
     }
 
+    @Transactional
     public Project deleteProjectTeam(UUID projectTeamId) throws Exception {
-        ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId).orElseThrow(() ->
-                new EntityNotFoundException("Project Team not found"));
+        ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId).orElseThrow(()
+                -> new EntityNotFoundException("Project Team not found"));
         projectTeamRepository.deleteById(projectTeamId);
         var updatedProject = RateUtils.updateProjectRates(projectTeam.getProject());
         projectRepository.save(updatedProject);
+
         return updatedProject;
     }
 

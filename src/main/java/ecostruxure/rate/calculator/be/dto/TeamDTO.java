@@ -1,8 +1,6 @@
 package ecostruxure.rate.calculator.be.dto;
 
 import ecostruxure.rate.calculator.be.Geography;
-import ecostruxure.rate.calculator.be.Team;
-import ecostruxure.rate.calculator.be.TeamProfile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
