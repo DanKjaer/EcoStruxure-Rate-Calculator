@@ -60,7 +60,11 @@ public class ProjectService {
     public Project deleteProjectTeam(UUID projectTeamId) throws Exception {
         ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId).orElseThrow(()
                 -> new EntityNotFoundException("Project Team not found"));
+
+        Project project = projectTeam.getProject();
         projectTeamRepository.deleteById(projectTeamId);
+
+        project.getProjectTeams().remove(projectTeam);
         var updatedProject = RateUtils.updateProjectRates(projectTeam.getProject());
         projectRepository.save(updatedProject);
 
