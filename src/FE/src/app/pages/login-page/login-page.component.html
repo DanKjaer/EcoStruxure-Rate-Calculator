@@ -1,7 +1,7 @@
 <div class="imageContainer">
   <img src="images/sidebar_logo.png">
 </div>
-<mat-dialog-content class="loginContainer" [formGroup]="userForm">
+<mat-dialog-content class="loginContainer" [formGroup]="userForm" (keyup.enter)="onSubmit()">
 
   <mat-form-field class="groupContainer">
     <mat-label>{{ 'USERNAME' | translate }}</mat-label>

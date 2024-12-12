@@ -3,10 +3,11 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MatDialogActions, MatDialogContent} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatInput} from '@angular/material/input';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-login-page',
@@ -28,6 +29,8 @@ export class LoginPageComponent implements OnInit{
   userForm: FormGroup = new FormGroup({});
 
   constructor(private authenticationService: AuthenticationService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
               private formBuilder: FormBuilder,
               private router: Router) {}
 
@@ -41,9 +44,10 @@ export class LoginPageComponent implements OnInit{
   onSubmit() {
     this.authenticationService.authenticate(this.userForm.value).then((response) => {
       if (response) {
+        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_LOGIN'), true);
         this.router.navigate(['/']);
       } else {
-        // Show an error message
+        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_LOGIN'), false);
       }
     });
   }

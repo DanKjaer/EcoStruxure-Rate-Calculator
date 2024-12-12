@@ -8,6 +8,7 @@ import {NgClass, NgIf} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {ExportService} from '../../services/export.service';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-sidemenu',
@@ -32,13 +33,14 @@ export class SidemenuComponent implements OnInit {
   isMenuOpen = true;
   showSidemenu: boolean = true;
 
-  constructor(private translate: TranslateService,
+  constructor(private translateService: TranslateService,
+              private snackbarService: SnackbarService,
               private menuService: MenuService,
               private currencyService: CurrencyService,
               private exportService: ExportService,
               private router: Router) {
     this.selectedCurrency = localStorage.getItem('selectedCurrency');
-    translate.setDefaultLang('en');
+    translateService.setDefaultLang('en');
     menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     })
@@ -59,10 +61,10 @@ export class SidemenuComponent implements OnInit {
   }
 
   switchLanguage() {
-    if (this.translate.currentLang == 'en') {
-      this.translate.use('da');
+    if (this.translateService.currentLang == 'en') {
+      this.translateService.use('da');
     } else {
-      this.translate.use('en');
+      this.translateService.use('en');
     }
   }
 
@@ -92,5 +94,11 @@ export class SidemenuComponent implements OnInit {
         console.error('Error exporting', error);
       }
     });
+  }
+
+  onLogout() {
+    localStorage.removeItem('EcoStructureProjectJWT');
+    this.router.navigate(['/login']);
+    this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_LOGOUT'), true);
   }
 }
