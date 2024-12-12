@@ -3,7 +3,7 @@
     <div class="rawHourlyRateBox">
       <p class="boxValue">
         {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-        {{ this.currencyService.convert(this.statBoxes.rawHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+        {{ this.currencyService.convert(statBoxes().rawHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'RAW_HOURLY_RATE' | translate }}
@@ -12,7 +12,7 @@
     <div class="markupHourlyRateBox">
       <p class="boxValue">
         {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-        {{ this.currencyService.convert(this.statBoxes.markupHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+        {{ this.currencyService.convert(statBoxes().markupHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'MARKUP_HOURLY_RATE' | translate }}
@@ -21,7 +21,7 @@
     <div class="gmHourlyRateBox">
       <p class="boxValue">
         {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-        {{ this.currencyService.convert(this.statBoxes.gmHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+        {{ this.currencyService.convert(statBoxes().gmHourlyRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'GM_HOURLY_RATE' | translate }}
@@ -29,7 +29,7 @@
     </div>
     <div class="annualHoursBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalAnnualHours | number:'1.0-0' }}
+        {{ statBoxes().totalAnnualHours | number:'1.0-0' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_ANNUAL_HOURS' | translate }}

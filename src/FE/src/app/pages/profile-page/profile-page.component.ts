@@ -20,20 +20,18 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ProfileService} from '../../services/profile.service';
 import {ActivatedRoute} from '@angular/router';
-import {Currency, Geography, Profile, Team, TeamDTO, TeamProfile} from '../../models';
+import {Geography, Profile, TeamProfile} from '../../models';
 import {GeographyService} from "../../services/geography.service";
 import {TeamsService} from "../../services/teams.service";
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {SnackbarService} from '../../services/snackbar.service';
-import {AddToTeamDialogComponent} from '../../modals/add-to-team-dialog/add-to-team-dialog.component';
 import {
   AddProfileToTeamDialogComponent
 } from '../../modals/add-profile-to-team-dialog/add-profile-to-team-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {SearchConfigService} from '../../services/search-config.service';
 import {CalculationsService} from '../../services/calculations.service';
-import {GenerateDTOService} from '../../services/generate-dto.service';
 
 @Component({
   selector: 'app-profile-page',
