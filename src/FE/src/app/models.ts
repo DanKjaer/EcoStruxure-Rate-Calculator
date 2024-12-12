@@ -108,3 +108,22 @@ export interface Currency {
   eurConversionRate: number;
   symbol: string;
 }
+
+export interface DashboardCountry {
+  name: string;
+  dayRate: number;
+  grossMargin: number;
+  totalPrice: number;
+  projects: DashboardProject[];
+}
+
+export interface DashboardProject {
+  name: string;
+  price: number;
+  grossMargin: number;
+}
+
+export interface TreeNode {
+  name: string;
+  children?: TreeNode[];
+}

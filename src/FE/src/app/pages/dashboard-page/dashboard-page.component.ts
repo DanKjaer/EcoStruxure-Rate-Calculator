@@ -22,27 +22,11 @@ import {
   MatListSubheaderCssMatStyler
 } from '@angular/material/list';
 import {ProjectsGraphComponent} from '../../components/graphs/projects-graph/projects-graph.component';
-
-// mock model
-export interface countryData {
-  name: string;
-  dayRate: number;
-  totalGrossMargin: number;
-  totalPrice: number;
-  totalCost: number;
-  projects: listItem[];
-}
-
-interface treeNode {
-  name: string;
-  children?: treeNode[];
-}
-
-interface listItem {
-  name: string;
-  cost: number;
-  grossMargin: number;
-}
+import {DashboardCountry, TreeNode} from '../../models';
+import {DashboardService} from '../../services/dashboard.service';
+import {
+  CountryProjectsGraphComponent
+} from '../../components/graphs/country-projects-graph/country-projects-graph.component';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -70,7 +54,8 @@ interface listItem {
     MatListItem,
     MatListItemTitle,
     MatListItemLine,
-    ProjectsGraphComponent
+    ProjectsGraphComponent,
+    CountryProjectsGraphComponent
   ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.css'
@@ -89,19 +74,24 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   protected readonly localStorage = localStorage;
   loading: boolean = true;
   countrySelected: boolean = false;
-  selectedCountry: countryData | null = null;
+  selectedCountry: DashboardCountry | null = null;
+  data: DashboardCountry[] = [];
+  treeData: TreeNode[] = [];
 
-  childrenAccessor = (node: treeNode) => node.children ?? []
+  childrenAccessor = (node: TreeNode) => node.children ?? []
   hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
   constructor(protected currencyService: CurrencyService,
-              private menuService: MenuService) {
+              private menuService: MenuService,
+              private dashboardService: DashboardService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     });
+    this.data = await this.dashboardService.getDashboard();
+    console.log(this.data);
     this.datasource.data = this.data;
     this.loading = false;
   }
@@ -119,9 +109,10 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  selectCountry(row: countryData) {
+  selectCountry(row: DashboardCountry) {
     this.selectedCountry = row;
     this.countrySelected = true;
+    this.fillCountryData();
   }
 
   clearSelection() {
@@ -135,75 +126,17 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  // MOCK DATA
-
-  data: countryData[] = [
-    {
-      name: 'Denmark',
-      dayRate: 1000,
-      totalGrossMargin: 50,
-      totalPrice: 6000,
-      totalCost: 5000,
-      projects: [
-        {
-          name: 'Project 1',
-          cost: 2000,
-          grossMargin: 50
-        },
-        {
-          name: 'Project 2',
-          cost: 3000,
-          grossMargin: 100
-        }
-      ]
-    },
-    {
-      name: 'Russia',
-      dayRate: 2000,
-      totalGrossMargin: 75,
-      totalPrice: 3500,
-      totalCost: 2000,
-      projects: [
-        {
-          name: 'Project 3',
-          cost: 1000,
-          grossMargin: 50
-        },
-        {
-          name: 'Project 4',
-          cost: 1000,
-          grossMargin: 100
-        }
-      ]
-    },
-    {
-      name: 'China',
-      dayRate: 3000,
-      totalGrossMargin: 50,
-      totalPrice: 4500,
-      totalCost: 4000,
-      projects: [
-        {
-          name: 'Project 5',
-          cost: 1000,
-          grossMargin: 50
-        },
-        {
-          name: 'Project 6',
-          cost: 2000,
-          grossMargin: 100
-        }
-      ]
-    }
-  ];
-
-  treeData: treeNode[] = [
-    {
-      name: 'Projects',
-      children: [{name: 'Project 1'}, {name: 'Project 2'}]
-    }, {
-      name: 'Teams',
-      children: [{name: 'Team 1'}, {name: 'Team 2'}, {name: 'Team 3'}]
-    }
-  ];
+  fillCountryData() {
+    this.treeData = [
+      {
+        name: 'Projects',
+        children: this.selectedCountry!.projects.map(project => ({
+          name: `${project.name}`
+        }))
+      },
+      {
+        name: 'Teams'
+      }
+    ];
+  }
 }

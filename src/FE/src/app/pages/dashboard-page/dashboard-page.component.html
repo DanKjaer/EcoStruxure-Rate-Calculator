@@ -43,7 +43,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['totalGrossMargin'] | number:'1.0-0' }}%
+                {{ element['grossMargin'] | number:'1.0-0' }}%
               </span>
             </td>
           </ng-container>
@@ -74,6 +74,7 @@
       </div>
     </div>
 
+    <!-- selected country -->
     <div class="selectedCountryContainer" *ngIf="countrySelected">
       <div class="buttonContainer">
         <button mat-icon-button matTooltip="{{ 'CLOSE_PANEL' | translate }}" [matTooltipPosition]="'right'"
@@ -106,7 +107,7 @@
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
                 <div
-                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ countryData.cost | number: '1.0-2' }}
+                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ countryData.price | number: '1.0-2' }}
                 </div>
               </mat-list-item>
             }
@@ -120,27 +121,13 @@
                 </div>
               </mat-list-item>
             }
-            <mat-divider></mat-divider>
-            <div mat-subheader>Country Total</div>
-            <mat-list-item>
-              <div matListItemTitle>Total cost</div>
-              <div
-                matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalCost | number: '1.0-2' }}
-              </div>
-            </mat-list-item>
-            <mat-list-item>
-              <div matListItemTitle>Total price</div>
-              <div
-                matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ selectedCountry?.totalPrice | number: '1.0-2' }}
-              </div>
-            </mat-list-item>
           </mat-list>
         </div>
       </div>
     </div>
   </div>
   <div class="graphContainer">
-      <app-projects-graph/>
+      <app-country-projects-graph [data]="data!"/>
       <app-projects-graph/>
       <app-projects-graph/>
   </div>

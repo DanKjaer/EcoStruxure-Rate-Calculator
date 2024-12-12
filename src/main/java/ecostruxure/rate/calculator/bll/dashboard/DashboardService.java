@@ -1,6 +1,7 @@
 package ecostruxure.rate.calculator.bll.dashboard;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.dto.DashboardDTO;
 import ecostruxure.rate.calculator.be.dto.DashboardProjectDTO;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
