@@ -240,5 +240,16 @@
   "ADD_PROFILE_TO_TEAM": "Add profile to team",
   "SUCCESS_UPDATING_CURRENCY": "Currency updated successfully",
   "SUCCESS_PROJECT_ARCHIVED": "Project archived successfully",
-  "ERROR_PROJECT_ARCHIVED": "Failed to archive project"
+  "ERROR_PROJECT_ARCHIVED": "Failed to archive project",
+  "EMAIL": "Email",
+  "PASSWORD": "Password",
+  "USERS": "Users",
+  "NEW_USERS": "New users",
+  "USERNAME": "Username",
+  "ADD_USER": "Add user",
+  "CHANGE_PASSWORD": "Change password",
+  "NEW_PASSWORD": "New password",
+  "OLD_PASSWORD": "Old password",
+  "RESET_PASSWORD": "Reset password",
+  "REPEAT_PASSWORD": "Repeat password"
 }

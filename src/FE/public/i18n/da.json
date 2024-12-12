@@ -234,5 +234,16 @@
   "ADD_PROFILE_TO_TEAM": "Tilføj profil til team",
   "SUCCESS_UPDATING_CURRENCY": "Valuta opdateret succesfuldt",
   "SUCCESS_PROJECT_ARCHIVED": "Projekt arkiveret succesfuldt",
-  "ERROR_PROJECT_ARCHIVED": "Kunne ikke arkivere projekt"
+  "ERROR_PROJECT_ARCHIVED": "Kunne ikke arkivere projekt",
+  "EMAIL": "Email",
+  "PASSWORD": "Kodeord",
+  "USERS": "Brugere",
+  "NEW_USERS": "Nye brugere",
+  "USERNAME": "Brugernavn",
+  "ADD_USER": "Tilføjer bruger",
+  "CHANGE_PASSWORD": "Skift kodeord",
+  "NEW_PASSWORD": "Nyt kodeord",
+  "OLD_PASSWORD": "Gammelt kodeord",
+  "RESET_PASSWORD": "Nulstil kodeord",
+  "REPEAT_PASSWORD": "Gentag kodeord"
 }
