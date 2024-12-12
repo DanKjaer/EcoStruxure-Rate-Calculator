@@ -120,6 +120,7 @@ export interface DashboardCountry {
 export interface DashboardProject {
   name: string;
   price: number;
+  dayRate: number;
   grossMargin: number;
 }
 

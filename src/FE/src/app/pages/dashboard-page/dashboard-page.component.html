@@ -102,7 +102,7 @@
         <mat-divider></mat-divider>
         <div class="infoContainer">
           <mat-list>
-            <div mat-subheader>Costs</div>
+            <div mat-subheader>Price</div>
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
@@ -111,7 +111,7 @@
                 </div>
               </mat-list-item>
             }
-            <mat-divider></mat-divider>
+            <mat-divider/>
             <div mat-subheader>Gross margin</div>
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
@@ -121,14 +121,23 @@
                 </div>
               </mat-list-item>
             }
+            <mat-divider/>
+            <div mat-subheader>Day rate</div>
+            @for (countryData of selectedCountry!.projects; track countryData) {
+              <mat-list-item>
+                <div matListItemTitle>{{ countryData.name }}</div>
+                <div
+                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ countryData.dayRate | number: '1.0-2' }}
+                </div>
+              </mat-list-item>
+            }
           </mat-list>
         </div>
       </div>
     </div>
   </div>
   <div class="graphContainer">
-      <app-country-projects-graph [data]="data!"/>
-      <app-projects-graph/>
-      <app-projects-graph/>
+      <app-country-projects-graph [data]="countryData!"/>
+      <app-projects-graph [data]="selectedCountryProjects!" [country]="selectedCountry?.name" *ngIf="countrySelected"/>
   </div>
 </div>

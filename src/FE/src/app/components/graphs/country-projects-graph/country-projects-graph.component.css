@@ -1,4 +1,5 @@
 .echartsContainer {
+  max-height: 30vh;
   height: 30vh;
   width: 20vw;
   border: 1px solid gray;

@@ -23,7 +23,8 @@ export class CountryProjectsGraphComponent implements OnChanges{
   updateChart(): void {
     this.chartOptions = {
       title: {
-        text: 'Projects per country'
+        text: 'Projects in country',
+        subtext: 'Total: ' + this.data?.reduce((acc, country) => acc + country.projects.length, 0),
       },
       tooltip: {
         trigger: 'item',
@@ -38,15 +39,7 @@ export class CountryProjectsGraphComponent implements OnChanges{
           borderWidth: 2
         },
         label: {
-          show: false,
-          position: 'center'
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: '20',
-            fontWeight: 'bold'
-          }
+          show: false
         },
         labelLine: {
           show: false

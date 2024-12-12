@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {NgxEchartsDirective} from 'ngx-echarts';
-import {EChartsCoreOption} from 'echarts';
+import {DashboardProject} from '../../../models';
 
 @Component({
   selector: 'app-projects-graph',
@@ -11,39 +11,93 @@ import {EChartsCoreOption} from 'echarts';
   templateUrl: './projects-graph.component.html',
   styleUrls: ['./projects-graph.component.css']
 })
-export class ProjectsGraphComponent {
-  chartOptions: any = {
-    title: {
-      text: 'Project Chart'
-    },
-    tooltip: {},
-    xAxis: {
-      data: ['Project1', 'Project2', 'Project3']
-    },
-    yAxis: {},
-    series: [
-      {
-        name: 'Project Cost',
-        type: 'bar',
-        stack: 'a',
-        data: [5, 20, 36],
-        itemStyle: {
-          color: '#e63535'
+export class ProjectsGraphComponent implements OnChanges {
+  @Input() data?: DashboardProject[];
+  @Input() country?: string;
+  chartOptions: any;
+
+  ngOnChanges(change: SimpleChanges) {
+    if (change['data'] && this.data) {
+      this.updateChart();
+    }
+  }
+
+  updateChart(): void {
+    const dynamicWidth = ((this.data?.length || 1) * 100) + 300;
+    //Check for multiple projects to show average line
+    const hasMultipleValues = this.data && this.data
+      .map(project => project.price)
+      .filter(price => price !== null).length > 1;
+
+    this.chartOptions = {
+      title: {
+        text: `Projects in ${this.country}`,
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
         }
       },
-      {
-        name: 'Project GM',
-        type: 'bar',
-        stack: 'a',
-        data: [20, 12, 33],
-        itemStyle: {
-          color: '#36bd2f',
-          borderRadius: [20, 20, 0, 0]
+      xAxis: {
+        type: 'category',
+        data: this.data?.map(project => project.name)
+      },
+      yAxis: {
+        type: 'value',
+        nameTextStyle: {
+          align: 'right',
+          fontSize: 8,
+        },
+        axisLabel: {
+          formatter: (value: number) => {
+            if (value >= 1000000 || value <= -1000000) {
+              return (value / 1000000).toFixed(1) + 'M';
+            } else if (value > 1000 || value <= -1000) {
+              return (value / 1000).toFixed(1) + 'K';
+            } else {
+              return value.toString();
+            }
+          }
         }
-      }
-    ]
-  };
-
-  constructor() {
+      },
+      toolbox: {
+        show: true,
+        orient: 'vertical',
+        itemSize: 20,
+        feature: {
+          saveAsImage: {}
+        }
+      },
+      series: [
+        {
+          name: 'Project price',
+          type: 'bar',
+          stack: 'a',
+          data: this.data?.map(project => project.price),
+          markLine: hasMultipleValues ? {
+            lineStyle: {
+              type: [5, 8],
+              color: 'green',
+              width: 2
+            },
+            label: {
+              fontSize: 10,
+              formatter: (params: any) => {
+                return new Intl.NumberFormat('en-US').format(Math.round(params.value));
+              }
+            },
+            symbol: ['none', 'none'],
+            data: [{ type: 'average' }]
+          }
+          : undefined,
+        }
+      ]
+    };
+    const chartContainer = document.querySelector('.projectGraphContainer') as HTMLElement;
+    if (chartContainer && dynamicWidth) {
+      chartContainer.style.width = `${dynamicWidth}px`
+    }
   }
+
 }

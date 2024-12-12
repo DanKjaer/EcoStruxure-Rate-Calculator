@@ -66,8 +66,9 @@ public class DashboardService {
                             .map(project -> new DashboardProjectDTO(
                                     project.getProjectName(),
                                     project.getProjectPrice(),
-                                    project.getProjectGrossMargin()
-                            ))
+                                    project.getProjectGrossMargin(),
+                                    project.getProjectDayRate()
+                                    ))
                             .toArray(DashboardProjectDTO[]::new);
 
                     return new DashboardDTO(

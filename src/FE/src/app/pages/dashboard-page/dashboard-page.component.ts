@@ -22,7 +22,7 @@ import {
   MatListSubheaderCssMatStyler
 } from '@angular/material/list';
 import {ProjectsGraphComponent} from '../../components/graphs/projects-graph/projects-graph.component';
-import {DashboardCountry, TreeNode} from '../../models';
+import {DashboardCountry, DashboardProject, TreeNode} from '../../models';
 import {DashboardService} from '../../services/dashboard.service';
 import {
   CountryProjectsGraphComponent
@@ -75,7 +75,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   loading: boolean = true;
   countrySelected: boolean = false;
   selectedCountry: DashboardCountry | null = null;
-  data: DashboardCountry[] = [];
+  countryData: DashboardCountry[] = [];
+  selectedCountryProjects: DashboardProject[] = [];
   treeData: TreeNode[] = [];
 
   childrenAccessor = (node: TreeNode) => node.children ?? []
@@ -90,9 +91,9 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     });
-    this.data = await this.dashboardService.getDashboard();
-    console.log(this.data);
-    this.datasource.data = this.data;
+    this.countryData = await this.dashboardService.getDashboard();
+    console.log(this.countryData);
+    this.datasource.data = this.countryData;
     this.loading = false;
   }
 
@@ -113,6 +114,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     this.selectedCountry = row;
     this.countrySelected = true;
     this.fillCountryData();
+    this.selectedCountryProjects = this.selectedCountry!.projects;
   }
 
   clearSelection() {

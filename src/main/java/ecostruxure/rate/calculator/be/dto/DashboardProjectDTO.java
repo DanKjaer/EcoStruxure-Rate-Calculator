@@ -6,11 +6,13 @@ public class DashboardProjectDTO {
     private String name;
     private BigDecimal price;
     private BigDecimal grossMargin;
+    private BigDecimal dayRate;
 
-    public DashboardProjectDTO(String name, BigDecimal price, BigDecimal grossMargin) {
+    public DashboardProjectDTO(String name, BigDecimal price, BigDecimal grossMargin, BigDecimal dayRate) {
         this.name = name;
         this.price = price;
         this.grossMargin = grossMargin;
+        this.dayRate = dayRate;
     }
 
     //#region Getters and setters
@@ -37,5 +39,13 @@ public class DashboardProjectDTO {
     public void setGrossMargin(BigDecimal grossMargin) {
         this.grossMargin = grossMargin;
     }
-    //#endregion
+
+    public BigDecimal getDayRate() {
+        return dayRate;
+    }
+
+    public void setDayRate(BigDecimal dayRate) {
+        this.dayRate = dayRate;
+    }
+//#endregion
 }

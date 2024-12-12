@@ -8,15 +8,13 @@ public class DashboardDTO {
     private BigDecimal grossMargin;
     private BigDecimal totalPrice;
     private DashboardProjectDTO[] projects;
-    private DashboardTeamDTO[] teams;
 
-    public DashboardDTO(String name, BigDecimal dayRate, BigDecimal totalGrossMargin, BigDecimal totalPrice, DashboardProjectDTO[] projects, DashboardTeamDTO[] teams) {
+    public DashboardDTO(String name, BigDecimal dayRate, BigDecimal totalGrossMargin, BigDecimal totalPrice, DashboardProjectDTO[] projects) {
         this.name = name;
         this.dayRate = dayRate;
         this.grossMargin = totalGrossMargin;
         this.totalPrice = totalPrice;
         this.projects = projects;
-        this.teams = teams;
     }
 
     //#region Getters and setters
@@ -58,14 +56,6 @@ public class DashboardDTO {
 
     public void setProjects(DashboardProjectDTO[] projects) {
         this.projects = projects;
-    }
-
-    public DashboardTeamDTO[] getTeams() {
-        return teams;
-    }
-
-    public void setTeams(DashboardTeamDTO[] teams) {
-        this.teams = teams;
     }
 //#endregion
 }

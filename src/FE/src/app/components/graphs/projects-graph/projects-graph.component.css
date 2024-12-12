@@ -1,6 +1,9 @@
-.echartsContainer {
+.projectGraphContainer {
+  display: flex;
+  max-height: 30vh;
   height: 30vh;
-  width: 20vw;
+  max-width: 30vw;
+  width: 25vw;
   border: 1px solid gray;
   padding: 0.5rem;
   border-radius: 1rem;
