@@ -9,6 +9,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -36,13 +39,16 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public String authenticate(@RequestBody User user) {
+    public Map<String, String> authenticate(@RequestBody User user) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
         );
         final UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
-
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-        return jwt;
+
+        // Wrap the JWT in a JSON response
+        Map<String, String> response = new HashMap<>();
+        response.put("token", jwt);
+        return response;
     }
 }

@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatDialogActions, MatDialogContent} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {NgForOf} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatInput} from '@angular/material/input';
+import {AuthenticationService} from '../../services/authentication.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -15,20 +16,35 @@ import {MatInput} from '@angular/material/input';
     MatDialogActions,
     MatButton,
     MatFormFieldModule,
-    NgForOf,
     TranslateModule,
-    MatDialogTitle,
     MatDialogContent,
-    MatInput
+    MatInput,
+    ReactiveFormsModule
   ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
-export class LoginPageComponent {
-  username: any;
-  password: any;
+export class LoginPageComponent implements OnInit{
+  userForm: FormGroup = new FormGroup({});
+
+  constructor(private authenticationService: AuthenticationService,
+              private formBuilder: FormBuilder,
+              private router: Router) {}
+
+  ngOnInit(): void {
+    this.userForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+      });
+    }
 
   onSubmit() {
-
+    this.authenticationService.authenticate(this.userForm.value).then((response) => {
+      if (response) {
+        this.router.navigate(['/']);
+      } else {
+        // Show an error message
+      }
+    });
   }
 }
