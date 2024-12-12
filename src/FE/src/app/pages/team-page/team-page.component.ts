@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
@@ -48,18 +48,42 @@ import {SearchConfigService} from '../../services/search-config.service';
 })
 export class TeamPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
-  team!: Team;
-  teamProfiles: TeamProfile[] = [];
+  team: WritableSignal<Team | null> = signal<Team | null>(null);
+  teamProfiles: WritableSignal<TeamProfile[]> = signal<TeamProfile[]>([]);
   isMenuOpen: boolean | undefined;
   originalRowData: { [key: number]: any } = {};
   protected isEditingRow: boolean = false;
 
-  statBoxes = {
-    rawHourlyRate: 0,
-    markupHourlyRate: 0,
-    gmHourlyRate: 0,
-    totalAnnualHours: 0
-  };
+  statBoxes = computed (() =>{
+    const team = this.team();
+    const teamProfiles = this.teamProfiles();
+    let rawHourlyRate: number = 0;
+    let markupHourlyRate: number = 0;
+    let gmHourlyRate: number = 0;
+    let totalAnnualHours: number = 0;
+
+    if(!team) {
+      return {rawHourlyRate, markupHourlyRate, gmHourlyRate, totalAnnualHours};
+    }
+    rawHourlyRate = team.hourlyRate!;
+
+    if (team.markupPercentage === 0) {
+      markupHourlyRate = team.hourlyRate!;
+    }
+    else {
+      markupHourlyRate = team.hourlyRate! * ((team.markupPercentage! / 100) + 1);
+    }
+    if (team.grossMarginPercentage === 0){
+      gmHourlyRate = markupHourlyRate;
+    }
+    else {
+      gmHourlyRate = markupHourlyRate * ((team.grossMarginPercentage! / 100) + 1);
+    }
+    totalAnnualHours = teamProfiles.reduce((sum, item) =>
+      sum + item.allocatedHours!, 0);
+
+    return {rawHourlyRate, markupHourlyRate, gmHourlyRate, totalAnnualHours};
+  });
   protected readonly localStorage = localStorage;
   loading: boolean = true;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
@@ -91,24 +115,13 @@ export class TeamPageComponent implements OnInit {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     });
-    this.team = await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!);
-    this.teamProfiles = this.team.teamProfiles!;
-    this.datasource.data = this.teamProfiles;
-    this.fillStatBoxes();
+    this.team.set(await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!));
+    this.teamProfiles.set(this.team()!.teamProfiles!) ;
+    this.datasource.data = this.teamProfiles();
     this.searchConfigService.configureFilter(this.datasource, ['profile.name','profile.geography.name']);
     this.loading = false;
   }
 
-  private fillStatBoxes() {
-    let markupHourlyRate = this.team.hourlyRate! * ((this.team.markupPercentage! / 100) + 1);
-    let gmHourlyRate = markupHourlyRate * ((this.team.grossMarginPercentage! / 100) + 1);
-    this.statBoxes = {
-      rawHourlyRate: this.team.hourlyRate!,
-      markupHourlyRate: markupHourlyRate,
-      gmHourlyRate: gmHourlyRate,
-      totalAnnualHours: this.teamProfiles.reduce((sum, item) => sum + item.allocatedHours!, 0)
-    }
-  }
 
   openDialog() {
     const dialogRef = this.dialog.open(AddToTeamDialogComponent, {
@@ -118,11 +131,10 @@ export class TeamPageComponent implements OnInit {
       maxWidth: '1000px',
     });
     this.loading = true;
-    dialogRef.componentInstance.team = this.team;
+    dialogRef.componentInstance.team = this.team()!;
     dialogRef.componentInstance.AddToTeam.subscribe((team: Team) => {
-      this.team = team;
-      this.datasource.data = this.team.teamProfiles!;
-      this.fillStatBoxes();
+      this.team.set(team);
+      this.datasource.data = this.team()!.teamProfiles!;
     });
     this.loading = false;
     this.datasource._updateChangeSubscription();
@@ -144,14 +156,13 @@ export class TeamPageComponent implements OnInit {
       return;
     }
 
-    const result = await this.teamService.deleteTeamProfile(row.teamProfileId!, this.team.teamId!);
+    const result = await this.teamService.deleteTeamProfile(row.teamProfileId!, this.team()!.teamId!);
     if (result) {
       this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
-      this.team = await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!);
-      this.teamProfiles = this.team.teamProfiles!;
-      this.datasource.data = this.teamProfiles;
+      this.team.set(await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!));
+      this.teamProfiles.set(this.team()!.teamProfiles!);
+      this.datasource.data = this.teamProfiles();
       this.datasource._updateChangeSubscription();
-      this.fillStatBoxes();
     } else {
       this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
     }
@@ -175,7 +186,7 @@ export class TeamPageComponent implements OnInit {
     this.isEditingRow = false;
     selectedTeamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(selectedTeamProfile);
     selectedTeamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(selectedTeamProfile);
-    this.teamProfiles.forEach((teamProfile) => {
+    this.teamProfiles().forEach((teamProfile) => {
       if (teamProfile.teamProfileId === selectedTeamProfile.teamProfileId) {
         teamProfile.allocationPercentageCost = selectedTeamProfile.allocationPercentageCost;
         teamProfile.allocationPercentageHours = selectedTeamProfile.allocationPercentageHours;
@@ -183,16 +194,15 @@ export class TeamPageComponent implements OnInit {
         teamProfile.allocatedHours = selectedTeamProfile.allocatedHours;
       }
     });
-    this.team.teamProfiles = this.teamProfiles;
+    this.team()!.teamProfiles = this.teamProfiles();
 
     //update team
     let DTO: TeamDTO = this.generateDTOService.createTeamDTO(this.team);
     let updatedTeam = await this.teamService.putTeam(DTO);
     if (updatedTeam) {
-      this.team = updatedTeam;
-      this.teamProfiles = this.team.teamProfiles!;
-      this.datasource.data = this.teamProfiles!;
-      this.fillStatBoxes();
+      this.team.set(updatedTeam);
+      this.teamProfiles.set(this.team()!.teamProfiles!);
+      this.datasource.data = this.teamProfiles();
       this.loading = false;
       this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_TEAM_UPDATED'), true);
     } else {
