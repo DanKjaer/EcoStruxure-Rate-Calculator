@@ -234,5 +234,9 @@
   "ADD_PROFILE_TO_TEAM": "Tilføj profil til team",
   "SUCCESS_UPDATING_CURRENCY": "Valuta opdateret succesfuldt",
   "SUCCESS_PROJECT_ARCHIVED": "Projekt arkiveret succesfuldt",
-  "ERROR_PROJECT_ARCHIVED": "Kunne ikke arkivere projekt"
+  "ERROR_PROJECT_ARCHIVED": "Kunne ikke arkivere projekt",
+  "SUCCESS_LOGIN": "Login succesfuldt",
+  "ERROR_LOGIN": "Login fejlede, venligst prøv igen",
+  "ERROR_AUTHENTICATING": "Kunne ikke autentificere, venlist login igen",
+  "SUCCESS_LOGOUT": "Log ud succesfuldt"
 }

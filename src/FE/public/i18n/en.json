@@ -240,5 +240,9 @@
   "ADD_PROFILE_TO_TEAM": "Add profile to team",
   "SUCCESS_UPDATING_CURRENCY": "Currency updated successfully",
   "SUCCESS_PROJECT_ARCHIVED": "Project archived successfully",
-  "ERROR_PROJECT_ARCHIVED": "Failed to archive project"
+  "ERROR_PROJECT_ARCHIVED": "Failed to archive project",
+  "SUCCESS_LOGIN": "Login successful",
+  "ERROR_LOGIN": "Login failed, please try again",
+  "ERROR_AUTHENTICATING": "Failed to authenticate, please login again",
+  "SUCCESS_LOGOUT": "Logout successful"
 }
