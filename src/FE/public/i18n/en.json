@@ -247,5 +247,8 @@
   "SUCCESS_LOGOUT": "Logout successful",
   "PROJECT_PRICE": "Project price",
   "PROJECTS_IN_COUNTRY": "Projects in country",
-  "PROJECTS_IN": "Projects in"
+  "PROJECTS_IN": "Projects in",
+  "CONFIRM": "Confirm",
+  "UPDATE_CURRENCY_TITLE": "Update currency",
+  "UPDATE_CURRENCY_MESSAGE": "Selected file: "
 }
