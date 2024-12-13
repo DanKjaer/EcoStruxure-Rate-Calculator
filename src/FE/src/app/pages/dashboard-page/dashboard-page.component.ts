@@ -93,7 +93,6 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
       this.isMenuOpen = isOpen;
     });
     this.countryData = await this.dashboardService.getDashboard();
-    console.log(this.countryData);
     this.datasource.data = this.countryData;
     this.loading = false;
   }
