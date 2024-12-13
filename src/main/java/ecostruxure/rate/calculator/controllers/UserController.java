@@ -45,8 +45,8 @@ public class UserController {
         return userService.update(user);
     }
 
-    @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable UUID id) throws Exception {
+    @DeleteMapping()
+    public boolean delete(@RequestParam UUID id) throws Exception {
         return userService.delete(id);
     }
 

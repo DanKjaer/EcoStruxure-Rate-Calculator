@@ -167,7 +167,7 @@ export class UsersPageComponent implements OnInit {
   }
 
   async onDelete(row: any) {
-    const result = await this.userService.deleteUser(row.id!);
+    const result = await this.userService.deleteUser(row.userId!);
     if (result) {
       const updatedData = this.datasource.data.filter(user => user !== row);
       this.datasource.data = [...updatedData];

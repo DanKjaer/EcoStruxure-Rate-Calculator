@@ -23,11 +23,11 @@ public class User {
     private String password;
 
     //#region Getters and Setters
-    public UUID getId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setId(UUID userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

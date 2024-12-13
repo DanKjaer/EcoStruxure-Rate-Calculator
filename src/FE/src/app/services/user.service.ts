@@ -22,7 +22,7 @@ export class UserService{
   }
 
   deleteUser(userId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${userId}`));
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?id=${userId}`));
   }
 
   putUser(user: User): Promise<User> {

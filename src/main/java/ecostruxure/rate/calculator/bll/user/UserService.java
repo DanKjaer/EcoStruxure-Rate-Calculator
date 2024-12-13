@@ -3,8 +3,6 @@ package ecostruxure.rate.calculator.bll.user;
 import ecostruxure.rate.calculator.be.User;
 import ecostruxure.rate.calculator.dal.IUserRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +18,6 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     public UserService(IUserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -63,6 +59,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User update(User user) {
+        System.out.println("kodeordet: " + user.getPassword());
         user.setPassword(passwordEncoder.encode((user.getPassword())));
         return userRepository.save(user);
     }
