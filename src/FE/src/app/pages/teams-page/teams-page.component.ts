@@ -83,6 +83,15 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   totalHours: number = 0;
   totalMarkup: number = 0;
   totalGrossMargin: number = 0;
+  averageMarkupPercentage: number = 0;
+  averageGrossMarginPercentage: number = 0;
+  averageHourlyRate: number = 0;
+  averageDayRate: number = 0;
+  averageCost: number = 0;
+  averageHours: number = 0;
+  averageMarkup: number = 0;
+  averageGrossMargin: number = 0;
+
 
   constructor(private teamService: TeamsService,
               private formatter: FormatterService,
@@ -167,7 +176,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
     this.loading = true;
-    try{
+    try {
       let result = await this.teamService.putTeam(selectedTeam);
       result.updatedAtString = this.formatter.formatDateTime(new Date());
       const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);
@@ -224,12 +233,18 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     } else {
       displayedData = this.getDisplayedData();
     }
+    this.calculateTotals(displayedData);
+    this.calculateAverages(displayedData);
     this.getTotalHourlyRate(displayedData);
     this.getTotalDayRate(displayedData);
     this.getTotalCost(displayedData);
     this.getTotalHours(displayedData);
     this.getTotalMarkup(displayedData);
     this.getTotalGrossMargin(displayedData);
+  }
+
+  private calculateTotals(displayedData: Team[]) {
+
   }
 
   private getTotalHourlyRate(displayedData: Team[]) {
@@ -254,6 +269,65 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
 
   private getTotalGrossMargin(displayedData: Team[]) {
     this.totalGrossMargin = displayedData.reduce((acc: number, team: Team) => acc + team.totalCostWithGrossMargin!, 0);
+  }
+
+  private calculateAverages(displayedData: Team[]) {
+    this.getAverageMarkupPercentage(displayedData);
+    this.getAverageGrossMarginPercentage(displayedData);
+    this.getAverageHourlyRate(displayedData);
+    this.getAverageDayRate(displayedData);
+    this.getAverageCost(displayedData);
+    this.getAverageHours(displayedData);
+    this.getAverageMarkup(displayedData);
+    this.getAverageGrossMargin(displayedData);
+  }
+
+  private getAverageMarkupPercentage(displayedData: Team[]) {
+    const totalMarkupPercentage = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.markupPercentage!, 0);
+    this.averageMarkupPercentage = totalMarkupPercentage / displayedData.length;
+  }
+
+  private getAverageGrossMarginPercentage(displayedData: Team[]) {
+    const totalGrossMarginPercentage = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.grossMarginPercentage!, 0);
+    this.averageGrossMarginPercentage = totalGrossMarginPercentage / displayedData.length
+  }
+
+  private getAverageHourlyRate(displayedData: Team[]) {
+    const totalHourlyRate = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.hourlyRate!, 0);
+    this.averageHourlyRate = totalHourlyRate / displayedData.length;
+  }
+
+  private getAverageDayRate(displayedData: Team[]) {
+    const totalDayRate = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.dayRate!, 0);
+    this.averageDayRate = totalDayRate / displayedData.length;
+  }
+
+  private getAverageCost(displayedData: Team[]) {
+    const totalCost = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.totalAllocatedCost!, 0);
+    this.averageCost = totalCost / displayedData.length;
+  }
+
+  private getAverageHours(displayedData: Team[]) {
+    const totalHours = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.totalAllocatedHours!, 0);
+    this.averageHours = totalHours / displayedData.length;
+  }
+
+  private getAverageMarkup(displayedData: Team[]) {
+    const totalMarkup = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.totalCostWithMarkup!, 0);
+    this.averageMarkup = totalMarkup / displayedData.length;
+  }
+
+  private getAverageGrossMargin(displayedData: Team[]) {
+    const totalGrossMargin = displayedData.reduce((acc: number, team: Team) =>
+      acc + team.totalCostWithGrossMargin!, 0);
+    this.averageGrossMargin = totalGrossMargin / displayedData.length;
   }
 
   private getDisplayedData() {

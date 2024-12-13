@@ -105,7 +105,7 @@ export class ProfilePageComponent implements OnInit {
     const totalAnnualCost = teams.reduce((sum, item) => sum + item.allocatedCost!, 0);
     const totalAnnualHours = teams.reduce((sum, item) => sum + item.allocatedHours!, 0);
 
-    return { totalDayRate, totalHourlyRate, totalAnnualCost, totalAnnualHours };
+    return {totalDayRate, totalHourlyRate, totalAnnualCost, totalAnnualHours};
   });
   readonly dialog = inject(MatDialog);
 
@@ -120,7 +120,8 @@ export class ProfilePageComponent implements OnInit {
               private calculationsService: CalculationsService,
               private teamService: TeamsService,
               private fb: FormBuilder,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute) {
+  }
 
   async ngOnInit() {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -242,7 +243,7 @@ export class ProfilePageComponent implements OnInit {
     }
     this.isEditingRow = true;
     selectedTeamProfile['isEditing'] = true;
-    if (!this.originalRowData[selectedTeamProfile.teamProfileId]){
+    if (!this.originalRowData[selectedTeamProfile.teamProfileId]) {
       this.originalRowData[selectedTeamProfile.teamProfileId] = {...selectedTeamProfile};
     }
   }
@@ -255,8 +256,10 @@ export class ProfilePageComponent implements OnInit {
     teamProfileToUpdate.profile = this.currentProfile()!;
     teamProfileToUpdate.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfileToUpdate);
     teamProfileToUpdate.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfileToUpdate);
-    teamProfileToUpdate.team = {teamId: teamProfileToUpdate.team!.teamId,
-                                name: teamProfileToUpdate.team!.name}
+    teamProfileToUpdate.team = {
+      teamId: teamProfileToUpdate.team!.teamId,
+      name: teamProfileToUpdate.team!.name
+    }
     try {
       let updatedTeamProfile = await this.teamService.addProfileToTeams([teamProfileToUpdate]);
       this.teams.set(this.teams().map((teamProfile) => {

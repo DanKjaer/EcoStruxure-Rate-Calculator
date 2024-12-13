@@ -25,27 +25,28 @@ import {SnackbarService} from '../../services/snackbar.service';
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
-export class LoginPageComponent implements OnInit{
+export class LoginPageComponent implements OnInit {
   userForm: FormGroup = new FormGroup({});
 
   constructor(private authenticationService: AuthenticationService,
               private snackbarService: SnackbarService,
               private translateService: TranslateService,
               private formBuilder: FormBuilder,
-              private router: Router) {}
+              private router: Router) {
+  }
 
   ngOnInit(): void {
     this.userForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
-      });
-    }
+    });
+  }
 
   onSubmit() {
     this.authenticationService.authenticate(this.userForm.value).then((response) => {
       if (response) {
         this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_LOGIN'), true);
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       } else {
         this.snackbarService.openSnackBar(this.translateService.instant('ERROR_LOGIN'), false);
       }

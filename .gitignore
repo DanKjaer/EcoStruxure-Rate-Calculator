@@ -165,5 +165,3 @@ buildNumber.properties
 
 .idea
 src/main/resources/application.properties
-src/main/resources/jwtkey.txt
-src/main/resources/jwtkey

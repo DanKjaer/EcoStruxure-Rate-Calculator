@@ -198,8 +198,8 @@
   "TOTAL_PROJECTS": "Total projekter",
   "MEMBERS_OF_PROJECT": "Antal medlemmer i projektet",
   "PROJECT_DESCRIPTION": "Projekt beskrivelse",
-  "PROJECT_DAY_RATE": "Projektets dagsrate",
-  "PROJECT_GM": "Projektets GM",
+  "PROJECT_DAY_RATE": "Projekt dagsrate",
+  "PROJECT_GM": "Projekt GM",
   "PROJECT_TOTAL_PRICE": "Projektets samlede pris",
   "PROJECT_START_DATE": "Projektets startdato",
   "PROJECT_END_DATE": "Projektets slutdato",
@@ -249,5 +249,8 @@
   "SUCCESS_LOGIN": "Login succesfuldt",
   "ERROR_LOGIN": "Login fejlede, venligst prøv igen",
   "ERROR_AUTHENTICATING": "Kunne ikke autentificere, venlist login igen",
-  "SUCCESS_LOGOUT": "Log ud succesfuldt"
+  "SUCCESS_LOGOUT": "Log ud succesfuldt",
+  "PROJECT_PRICE": "Projekt pris",
+  "PROJECTS_IN_COUNTRY": "Projekter i lande",
+  "PROJECTS_IN": "Projekter i"
 }

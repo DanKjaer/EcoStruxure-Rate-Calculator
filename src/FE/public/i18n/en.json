@@ -255,5 +255,8 @@
   "SUCCESS_LOGIN": "Login successful",
   "ERROR_LOGIN": "Login failed, please try again",
   "ERROR_AUTHENTICATING": "Failed to authenticate, please login again",
-  "SUCCESS_LOGOUT": "Logout successful"
+  "SUCCESS_LOGOUT": "Logout successful",
+  "PROJECT_PRICE": "Project price",
+  "PROJECTS_IN_COUNTRY": "Projects in country",
+  "PROJECTS_IN": "Projects in"
 }

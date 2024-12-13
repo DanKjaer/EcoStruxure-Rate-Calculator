@@ -78,11 +78,16 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   isMenuOpen: boolean | undefined;
   isEditingRow: boolean = false;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
   totalDays: number = 0;
   totalPrice: number = 0;
   totalDayRate: number = 0;
+  averageDayRate: number = 0;
+  averageGrossMargin: number = 0;
+  averagePrice: number = 0;
+  averageDays: number = 0;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private projectService: ProjectService,
               private formatterService: FormatterService,
@@ -92,7 +97,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
               private searchConfigService: SearchConfigService,
               private ChangeDetectorRef: ChangeDetectorRef,
               private router: Router,
-              protected currencyService: CurrencyService) {}
+              protected currencyService: CurrencyService) {
+  }
 
   async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -226,7 +232,6 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.isEditingRow = false;
   }
 
-
   handlePageEvent($event: PageEvent) {
     this.updateTableFooterData();
   }
@@ -254,6 +259,10 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     } else {
       displayedData = this.getDisplayedData();
     }
+    this.calculateTotals(displayedData);
+    this.calculateAverages(displayedData);
+  }
+  private calculateTotals(displayedData: Project[]) {
     this.getTotalDayRate(displayedData);
     this.getTotalPrice(displayedData);
     this.getTotalDays(displayedData);
@@ -269,6 +278,38 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
   private getTotalDays(displayedData: Project[]) {
     this.totalDays = displayedData.reduce((acc: number, project: Project) => acc + project.projectTotalDays!, 0);
+  }
+
+  private calculateAverages(displayedData: Project[]) {
+    this.getAverageDayRate(displayedData);
+    this.getAverageGrossMargin(displayedData);
+    this.getAveragePrice(displayedData);
+    this.getAverageDays(displayedData);
+  }
+
+  private getAverageDayRate(displayedData: Project[]) {
+    const totalDayRate = this.totalDayRate;
+    const totalProjects = displayedData.length;
+    this.averageDayRate = totalDayRate / totalProjects;
+  }
+
+  private getAverageGrossMargin(displayedData: Project[]) {
+    const totalGrossMargin = displayedData.reduce((acc: number, project: Project) =>
+      acc + project.projectGrossMargin!, 0);
+    const totalProjects = displayedData.length;
+    this.averageGrossMargin = totalGrossMargin / totalProjects;
+  }
+
+  private getAveragePrice(displayedData: Project[]) {
+    const totalPrice = this.totalPrice;
+    const totalProjects = displayedData.length;
+    this.averagePrice = totalPrice / totalProjects;
+  }
+
+  private getAverageDays(displayedData: Project[]) {
+    const totalDays = this.totalDays;
+    const totalProjects = displayedData.length;
+    this.averageDays = totalDays / totalProjects;
   }
 
   private getDisplayedData() {

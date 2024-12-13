@@ -80,6 +80,13 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
   isMenuOpen: boolean | undefined;
+  totalAnnualHours: number = 0;
+  totalEffectiveWorkHours: number = 0;
+  totalAnnualCost: number = 0;
+  averageAnnualHours: number = 0;
+  averageEffectiveWorkHours: number = 0;
+  averageEffectiveness: number = 0;
+  averageAnnualCost: number = 0;
   averageCostAllocation: number = 0;
   averageHourAllocation: number = 0;
 
@@ -113,6 +120,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
     this.searchConfigService.configureFilter(this.datasource, ['geography.name']);
   }
+
   //#endregion
 
   //#region functions
@@ -235,21 +243,73 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     } else {
       displayedData = this.getDisplayedData();
     }
-    this.getAverageHourAllocation(displayedData);
-    this.getAverageCostAllocation(displayedData);
-  }
-
-  getAverageHourAllocation(displayedData: Profile[]) {
-    this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
-  }
-
-  getAverageCostAllocation(displayedData: Profile[]) {
-    this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
+    this.calculateTotalValues(displayedData);
+    this.calculateAverageValues(displayedData);
   }
 
   getDisplayedData() {
     const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
     const endIndex = startIndex + this.datasource.paginator!.pageSize;
     return this.datasource.data.slice(startIndex, endIndex);
+  }
+
+  private calculateTotalValues(displayedData: Profile[]) {
+    this.getTotalAnnualHours(displayedData);
+    this.getTotalEffectiveWorkHours(displayedData);
+    this.getTotalAnnualCost(displayedData);
+    this.getTotalEffectiveWorkHours(displayedData);
+    this.getTotalAnnualCost(displayedData);
+  }
+
+  private getTotalAnnualHours(displayedData: Profile[]) {
+    this.totalAnnualHours = displayedData.reduce((acc, profile) => acc + profile.annualHours!, 0);
+  }
+
+  private getTotalAnnualCost(displayedData: Profile[]) {
+    this.totalAnnualCost = displayedData.reduce((acc, profile) => acc + profile.annualCost!, 0);
+  }
+
+  private getTotalEffectiveWorkHours(displayedData: Profile[]) {
+    this.totalEffectiveWorkHours = displayedData.reduce((acc, profile) =>
+      acc + (profile.effectiveWorkHours ?? 0), 0);
+  }
+
+  private calculateAverageValues(displayedData: Profile[]) {
+    this.getAverageAnnualHours(displayedData);
+    this.getAverageEffectiveWorkHours(displayedData);
+    this.getAverageEffectiveness(displayedData);
+    this.getAverageAnnualCost(displayedData);
+    this.getAverageHourAllocation(displayedData);
+    this.getAverageCostAllocation(displayedData);
+  }
+
+  private getAverageAnnualHours(displayedData: Profile[]) {
+    this.averageAnnualHours = displayedData.reduce((acc, profile) =>
+      acc + (profile.annualHours ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageEffectiveWorkHours(displayedData: Profile[]) {
+    this.averageEffectiveWorkHours = displayedData.reduce((acc, profile) =>
+      acc + (profile.effectiveWorkHours ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageEffectiveness(displayedData: Profile[]) {
+    this.averageEffectiveness = displayedData.reduce((acc, profile) =>
+      acc + (profile.effectivenessPercentage ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageAnnualCost(displayedData: Profile[]) {
+    this.averageAnnualCost = displayedData.reduce((acc, profile) =>
+      acc + (profile.annualCost ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageHourAllocation(displayedData: Profile[]) {
+    this.averageHourAllocation = displayedData.reduce((acc, profile) =>
+      acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageCostAllocation(displayedData: Profile[]) {
+    this.averageCostAllocation = displayedData.reduce((acc, profile) =>
+      acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
   }
 }

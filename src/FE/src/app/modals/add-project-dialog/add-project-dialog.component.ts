@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {MatDialogModule} from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatNativeDateModule} from '@angular/material/core';
@@ -12,7 +12,7 @@ import {MatInput} from '@angular/material/input';
 import {Geography, Project, ProjectTeam, Team} from '../../models';
 import {MatListModule, MatSelectionListChange} from '@angular/material/list';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { ChangeDetectorRef } from '@angular/core';
+import {ChangeDetectorRef} from '@angular/core';
 import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {TeamsService} from '../../services/teams.service';

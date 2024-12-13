@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -12,14 +13,10 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    // JWT token secret key from jwtkey.txt
-    // Skal måske gøres på en anden måde i en produktions applikation
-    private final String SECRET_KEY;
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
-    public JwtUtil() throws IOException {
-        Path path = new ClassPathResource("jwtkey.txt").getFile().toPath();
-        SECRET_KEY = Files.readString(path);
-    }
+    public JwtUtil() throws IOException { }
 
     public String generateToken(String username) {
         return Jwts.builder()

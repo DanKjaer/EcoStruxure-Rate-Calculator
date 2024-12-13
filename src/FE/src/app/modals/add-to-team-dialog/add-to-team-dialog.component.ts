@@ -44,7 +44,7 @@ import {GenerateDTOService} from '../../services/generate-dto.service';
   styleUrl: './add-to-team-dialog.component.css'
 })
 export class AddToTeamDialogComponent implements OnInit {
-  teamProfileList:  TeamProfile[] = [];
+  teamProfileList: TeamProfile[] = [];
   selectedTeamProfiles: TeamProfile[] = [];
   @Output() AddToTeam = new EventEmitter<Team>();
   @Input() team!: Team;
@@ -57,13 +57,14 @@ export class AddToTeamDialogComponent implements OnInit {
     private calculationsService: CalculationsService,
     private translateService: TranslateService,
     private generateDTOService: GenerateDTOService
-    ) {}
+  ) {
+  }
 
   async ngOnInit(): Promise<void> {
     let profiles = await this.profileService.getProfiles();
     let potentialTeamProfiles = profiles.map(profile => {
       let teamProfile: TeamProfile = {
-        team: { ...this.team, teamProfiles: undefined },
+        team: {...this.team, teamProfiles: undefined},
         profile: profile!,
       };
       return teamProfile;

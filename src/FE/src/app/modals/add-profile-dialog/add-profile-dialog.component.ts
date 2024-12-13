@@ -42,7 +42,8 @@ export class AddProfileDialogComponent implements OnInit {
               public geographyService: GeographyService,
               private snackBar: SnackbarService,
               private translate: TranslateService,
-              ) { }
+  ) {
+  }
 
   async getCountries() {
     this.locations = await this.geographyService.getCountries();
@@ -72,13 +73,13 @@ export class AddProfileDialogComponent implements OnInit {
 
   async onSave() {
     let profile: Profile = {
-        name: this.profileForm.value.name,
-        geography: this.profileForm.value.geography,
-        resourceType: this.profileForm.value.resource_type,
-        annualCost: this.profileForm.value.annual_cost,
-        annualHours: this.profileForm.value.annual_hours || 0,
-        effectivenessPercentage: this.profileForm.value.effectiveness || 0,
-        hoursPerDay: this.profileForm.value.hours_per_day || 0
+      name: this.profileForm.value.name,
+      geography: this.profileForm.value.geography,
+      resourceType: this.profileForm.value.resource_type,
+      annualCost: this.profileForm.value.annual_cost,
+      annualHours: this.profileForm.value.annual_hours || 0,
+      effectivenessPercentage: this.profileForm.value.effectiveness || 0,
+      hoursPerDay: this.profileForm.value.hours_per_day || 0
     };
     const newProfile = await this.profileService.postProfile(profile);
     if (newProfile.profileId != undefined) {

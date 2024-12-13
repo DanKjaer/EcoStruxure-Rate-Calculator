@@ -10,6 +10,8 @@ import {HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core';
+import {NgxEchartsModule} from 'ngx-echarts';
+import * as echarts from 'echarts';
 import {AuthInterceptor} from './interceptor/auth.interceptor';
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
@@ -19,6 +21,16 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideAnimationsAsync(),
+    provideHttpClient(),
+    importProvidersFrom([TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })],
+      NgxEchartsModule.forRoot({ echarts }),),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom([
