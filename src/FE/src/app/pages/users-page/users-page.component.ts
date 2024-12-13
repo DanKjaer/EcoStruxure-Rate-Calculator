@@ -5,10 +5,14 @@ import {
   MatCell,
   MatCellDef,
   MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable, MatTableDataSource
+  MatRow,
+  MatRowDef,
+  MatTable,
+  MatTableDataSource
 } from '@angular/material/table';
 import {MatSuffix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
@@ -21,6 +25,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
+import {User} from '../../models';
 
 @Component({
   selector: 'app-users-page',
@@ -60,6 +65,7 @@ import {SnackbarService} from '../../services/snackbar.service';
 })
 export class UsersPageComponent implements OnInit{
   datasource: MatTableDataSource<any> = new MatTableDataSource();
+  selectedRow: User | null = null;
   userForm: FormGroup = new FormGroup({});
   displayedColumns: string[] = [
     'username',
@@ -78,7 +84,7 @@ export class UsersPageComponent implements OnInit{
               private translateService: TranslateService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
       this.userForm = this.formBuilder.group({
         username: [''],
         delete: ['']
@@ -91,13 +97,8 @@ export class UsersPageComponent implements OnInit{
         newPassword: ['']
       });
 
-      const data = [
-        { username: 'John Doe' },
-        { username: 'Jane Smith' },
-        { username: 'Sam Wilson' },
-      ];
-
-    this.datasource.data = data;
+    this.datasource.data = await this.userService.getUsers();
+    console.log('datasource: ', this.datasource.data);
   }
 
   applySearch(event: Event) {
@@ -112,6 +113,19 @@ export class UsersPageComponent implements OnInit{
 
   onSave() {
 
+    const user = {
+      username: this.createUserForm.get('username')?.value,
+      password: this.createUserForm.get('password')?.value
+    };
+
+    this.userService.postUser(user)
+      .then((savedUserResult) => {
+        this.createUserForm.reset();
+        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_CREATED'), true);
+      })
+      .catch((error) => {
+        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_CREATED'), false);
+      });
   }
 
   displayResetPassword() {
@@ -123,14 +137,20 @@ export class UsersPageComponent implements OnInit{
 
   }
 
-  async onDelete() {
-    const result = await this.userService.deleteUser(this.userForm.value.delete);
-    if(result){
-      this.datasource.data = this.datasource.data.filter((user: any) => user.userId !== this.userForm.value.userId);
-      this.datasource._updateChangeSubscription();
-      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
-    } else {
-      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
-    }
+  async onDelete(row: any) {
+    console.log('onDelete called', row);
+      const result = await this.userService.deleteUser(row.id!);
+      console.log('delete result: ', row);
+      if (result) {
+        const updatedData = this.datasource.data.filter(user => user !== row);
+        this.datasource.data = [...updatedData];
+        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
+      } else {
+        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
+      }
+  }
+
+  selectRow(row: User){
+    this.selectedRow = row;
   }
 }

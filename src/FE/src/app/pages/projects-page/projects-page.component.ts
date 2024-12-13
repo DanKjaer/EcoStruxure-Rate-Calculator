@@ -20,7 +20,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {CurrencyService} from '../../services/currency.service';
 import {SearchConfigService} from '../../services/search-config.service';
-import {addWarning} from '@angular-devkit/build-angular/src/utils/webpack-diagnostics';
 
 
 @Component({
