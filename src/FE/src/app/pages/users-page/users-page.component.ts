@@ -14,14 +14,9 @@ import {
   MatTable,
   MatTableDataSource
 } from '@angular/material/table';
-import {MatSuffix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatFormField, MatInput, MatLabel, MatPrefix} from '@angular/material/input';
-import {MatOption} from '@angular/material/core';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
-import {MatSelect} from '@angular/material/select';
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
@@ -31,7 +26,6 @@ import {User} from '../../models';
   selector: 'app-users-page',
   standalone: true,
   imports: [
-    DecimalPipe,
     MatButton,
     MatCell,
     MatCellDef,
@@ -44,15 +38,9 @@ import {User} from '../../models';
     MatIconButton,
     MatInput,
     MatLabel,
-    MatOption,
     MatPrefix,
-    MatProgressSpinner,
-    MatRadioButton,
-    MatRadioGroup,
     MatRow,
     MatRowDef,
-    MatSelect,
-    MatSuffix,
     MatTable,
     NgIf,
     ReactiveFormsModule,
@@ -90,15 +78,14 @@ export class UsersPageComponent implements OnInit{
         delete: ['']
       });
       this.createUserForm = this.formBuilder.group({
-        username: [''],
-        password: [''],
-        repeatPassword: [''],
+        username: ['', Validators.required],
+        password: ['', Validators.required],
+        repeatPassword: ['', Validators.required],
         oldPassword: [''],
         newPassword: ['']
       });
 
     this.datasource.data = await this.userService.getUsers();
-    console.log('datasource: ', this.datasource.data);
   }
 
   applySearch(event: Event) {
@@ -112,16 +99,25 @@ export class UsersPageComponent implements OnInit{
 
 
   onSave() {
+    const password = this.createUserForm.get('password')?.value;
+    const repeatPassword = this.createUserForm.get('repeatPassword')?.value;
+
+    if(password !== repeatPassword){
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PASSWORDS_DONT_MATCH'), false);
+      return;
+    }
 
     const user = {
       username: this.createUserForm.get('username')?.value,
-      password: this.createUserForm.get('password')?.value
+      password: this.createUserForm.get('password')?.value,
+      repeatPassword: this.createUserForm.get('repeatPassword')?.value
     };
 
     this.userService.postUser(user)
       .then((savedUserResult) => {
         this.createUserForm.reset();
         this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_CREATED'), true);
+        this.datasource._updateChangeSubscription();
       })
       .catch((error) => {
         this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_CREATED'), false);
@@ -138,9 +134,7 @@ export class UsersPageComponent implements OnInit{
   }
 
   async onDelete(row: any) {
-    console.log('onDelete called', row);
       const result = await this.userService.deleteUser(row.id!);
-      console.log('delete result: ', row);
       if (result) {
         const updatedData = this.datasource.data.filter(user => user !== row);
         this.datasource.data = [...updatedData];

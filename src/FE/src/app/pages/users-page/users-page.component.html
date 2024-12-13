@@ -63,12 +63,12 @@
 
             <mat-form-field>
                 <mat-label>{{ 'PASSWORD' | translate }}</mat-label>
-                <input matInput placeholder="Password" formControlName="password">
+                <input matInput placeholder="Password" formControlName="password" type="password">
             </mat-form-field>
 
             <mat-form-field>
                 <mat-label>{{ 'REPEAT_PASSWORD' | translate }}</mat-label>
-                <input matInput placeholder="repeatPassword" formControlName="repeatPassword">
+                <input matInput placeholder="repeatPassword" formControlName="repeatPassword" type="password">
             </mat-form-field>
 
             <button mat-raised-button (click)="onSave()">
@@ -82,11 +82,11 @@
                 <p>{{ 'CHANGE_PASSWORD' | translate }}</p>
                 <mat-form-field>
                     <mat-label>{{ 'OLD_PASSWORD' | translate }}</mat-label>
-                    <input matInput placeholder="Reset" formControlName="oldPassword">
+                    <input matInput placeholder="Reset" formControlName="oldPassword" type="password">
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>{{'NEW_PASSWORD' | translate}}</mat-label>
-                    <input matInput placeholder="Reset" formControlName="newPassword">
+                    <input matInput placeholder="Reset" formControlName="newPassword" type="password">
                 </mat-form-field>
 
                 <button mat-raised-button (click)="(onResetPassword())">

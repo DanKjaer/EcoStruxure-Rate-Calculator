@@ -22,7 +22,6 @@ export class UserService{
   }
 
   deleteUser(userId: string): Promise<boolean> {
-    console.log('delete user: ', userId);
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${userId}`));
   }
 }
