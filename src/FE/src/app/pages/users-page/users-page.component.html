@@ -29,8 +29,8 @@
                         <th mat-header-cell *matHeaderCellDef>
                             {{ 'CHANGE_PASSWORD' | translate }}
                         </th>
-                        <td mat-cell *matCellDef="let element">
-                            <button mat-icon-button (click)="showChangePassword()">
+                        <td mat-cell *matCellDef="let row">
+                            <button mat-icon-button (click)="showChangePassword(row)">
                                 <mat-icon>lock_reset</mat-icon>
                             </button>
                         </td>
@@ -80,21 +80,24 @@
 
             <div [ngClass]="{ 'resetClass': true, 'show-password-fields': showResetPasswordFields}" class="resetClass">
                 <p>{{ 'CHANGE_PASSWORD' | translate }}</p>
+              <form [formGroup]="createUserForm">
                 <mat-form-field>
-                    <mat-label>{{ 'OLD_PASSWORD' | translate }}</mat-label>
-                    <input matInput placeholder="Change" formControlName="oldPassword" type="password">
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-label>{{'NEW_PASSWORD' | translate}}</mat-label>
-                    <input matInput placeholder="Change" formControlName="newPassword" type="password">
+                  <mat-label>{{'NEW_PASSWORD' | translate}}</mat-label>
+                  <input matInput placeholder="Change" formControlName="newPassword" type="password">
                 </mat-form-field>
 
-                <button mat-raised-button (click)="(onChangePassword())">
+                <mat-form-field>
+                    <mat-label>{{ 'REPEAT_PASSWORD' | translate }}</mat-label>
+                    <input matInput placeholder="Change" formControlName="repeatPassword" type="password">
+                </mat-form-field>
+
+                <button mat-raised-button (click)="onChangePassword()">
                     <mat-icon>
                         lock_reset
                     </mat-icon>
                     {{ 'CHANGE_PASSWORD' | translate }}
                 </button>
+              </form>
             </div>
         </div>
     </div>

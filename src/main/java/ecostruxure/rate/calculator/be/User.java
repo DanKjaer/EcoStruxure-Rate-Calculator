@@ -27,8 +27,8 @@ public class User {
         return userId;
     }
 
-    public void setId(UUID id) {
-        this.userId = id;
+    public void setId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

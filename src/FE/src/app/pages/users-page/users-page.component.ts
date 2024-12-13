@@ -20,7 +20,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
-import {User} from '../../models';
+import {Profile, User} from '../../models';
 
 @Component({
   selector: 'app-users-page',
@@ -51,7 +51,7 @@ import {User} from '../../models';
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.css'
 })
-export class UsersPageComponent implements OnInit{
+export class UsersPageComponent implements OnInit {
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   selectedRow: User | null = null;
   userForm: FormGroup = new FormGroup({});
@@ -64,7 +64,6 @@ export class UsersPageComponent implements OnInit{
   showResetPasswordFields = false;
 
 
-
   constructor(private formBuilder: FormBuilder,
               private changeDetectorRef: ChangeDetectorRef,
               private userService: UserService,
@@ -73,17 +72,17 @@ export class UsersPageComponent implements OnInit{
   }
 
   async ngOnInit(): Promise<void> {
-      this.userForm = this.formBuilder.group({
-        username: [''],
-        delete: ['']
-      });
-      this.createUserForm = this.formBuilder.group({
-        username: ['', Validators.required],
-        password: ['', Validators.required],
-        repeatPassword: ['', Validators.required],
-        oldPassword: [''],
-        newPassword: ['']
-      });
+    this.userForm = this.formBuilder.group({
+      username: [''],
+      delete: ['']
+    });
+    this.createUserForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      repeatPassword: ['', Validators.required],
+      oldPassword: [''],
+      newPassword: ['']
+    });
 
     this.datasource.data = await this.userService.getUsers();
   }
@@ -102,7 +101,7 @@ export class UsersPageComponent implements OnInit{
     const password = this.createUserForm.get('password')?.value;
     const repeatPassword = this.createUserForm.get('repeatPassword')?.value;
 
-    if(password !== repeatPassword){
+    if (password !== repeatPassword) {
       this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PASSWORDS_DONT_MATCH'), false);
       return;
     }
@@ -124,27 +123,61 @@ export class UsersPageComponent implements OnInit{
       });
   }
 
-  showChangePassword() {
+  showChangePassword(row: User) {
+    console.log('row', row);
+    this.selectedRow = row;
     this.showResetPasswordFields = !this.showResetPasswordFields;
     this.changeDetectorRef.detectChanges();
   }
 
   onChangePassword() {
+    const newPassword = this.createUserForm.get('newPassword')?.value;
+    const repeatPassword = this.createUserForm.get('repeatPassword')?.value;
 
+    console.log('newPassword', newPassword);
+    console.log('repeatPassword', repeatPassword);
+
+    if (newPassword === repeatPassword) {
+      const user = {
+        userId: this.selectedRow!.userId,
+        username: this.selectedRow!.username,
+        password: newPassword,
+      };
+
+      console.log('user: ',user)
+      this.userService.putUser(user)
+        .then((savedUserResult) => {
+          this.datasource.data = this.datasource.data.map((user: User) => {
+            if (user.userId === savedUserResult.userId) {
+              return savedUserResult;
+            }
+            return user;
+          });
+          this.createUserForm.reset();
+          this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PASSWORD_CHANGED'), true);
+          this.datasource._updateChangeSubscription();
+        })
+        .catch((error) => {
+          this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PASSWORD_CHANGED'), false);
+        });
+    } else {
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PASSWORDS_DIFFERENT'), false);
+      return;
+    }
   }
 
   async onDelete(row: any) {
-      const result = await this.userService.deleteUser(row.id!);
-      if (result) {
-        const updatedData = this.datasource.data.filter(user => user !== row);
-        this.datasource.data = [...updatedData];
-        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
-      } else {
-        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
-      }
+    const result = await this.userService.deleteUser(row.id!);
+    if (result) {
+      const updatedData = this.datasource.data.filter(user => user !== row);
+      this.datasource.data = [...updatedData];
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
+    } else {
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
+    }
   }
 
-  selectRow(row: User){
+  selectRow(row: User) {
     this.selectedRow = row;
   }
 }

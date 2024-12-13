@@ -24,4 +24,8 @@ export class UserService{
   deleteUser(userId: string): Promise<boolean> {
     return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${userId}`));
   }
+
+  putUser(user: User): Promise<User> {
+    return firstValueFrom(this.http.put<User>(`${this.apiUrl}`, user));
+  }
 }
