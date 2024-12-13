@@ -45,7 +45,7 @@ export class LoginPageComponent implements OnInit{
     this.authenticationService.authenticate(this.userForm.value).then((response) => {
       if (response) {
         this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_LOGIN'), true);
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       } else {
         this.snackbarService.openSnackBar(this.translateService.instant('ERROR_LOGIN'), false);
       }

@@ -102,7 +102,7 @@
         <mat-divider></mat-divider>
         <div class="infoContainer">
           <mat-list>
-            <div mat-subheader>Price</div>
+            <div mat-subheader class="selectedCountryUndertitle">{{ 'PROJECT_PRICE' | translate }}</div>
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
@@ -112,7 +112,7 @@
               </mat-list-item>
             }
             <mat-divider/>
-            <div mat-subheader>Gross margin</div>
+            <div mat-subheader class="selectedCountryUndertitle">{{ "PROJECT_GM" | translate }}</div>
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
@@ -122,7 +122,7 @@
               </mat-list-item>
             }
             <mat-divider/>
-            <div mat-subheader>Day rate</div>
+            <div mat-subheader class="selectedCountryUndertitle">{{ "PROJECT_DAY_RATE" | translate }}</div>
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>

@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {NgxEchartsDirective} from 'ngx-echarts';
 import {DashboardProject} from '../../../models';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-projects-graph',
@@ -15,6 +16,10 @@ export class ProjectsGraphComponent implements OnChanges {
   @Input() data?: DashboardProject[];
   @Input() country?: string;
   chartOptions: any;
+
+
+  constructor(private translateService: TranslateService) {
+  }
 
   ngOnChanges(change: SimpleChanges) {
     if (change['data'] && this.data) {
@@ -31,7 +36,7 @@ export class ProjectsGraphComponent implements OnChanges {
 
     this.chartOptions = {
       title: {
-        text: `Projects in ${this.country}`,
+        text: `${this.translateService.instant('PROJECTS_IN')} ${this.country}`,
       },
       tooltip: {
         trigger: 'axis',
@@ -50,6 +55,7 @@ export class ProjectsGraphComponent implements OnChanges {
           fontSize: 8,
         },
         axisLabel: {
+          //format 1000 to 1K and 1000000 to 1M
           formatter: (value: number) => {
             if (value >= 1000000 || value <= -1000000) {
               return (value / 1000000).toFixed(1) + 'M';
@@ -71,7 +77,7 @@ export class ProjectsGraphComponent implements OnChanges {
       },
       series: [
         {
-          name: 'Project price',
+          name: this.translateService.instant('PROJECT_PRICE'),
           type: 'bar',
           stack: 'a',
           data: this.data?.map(project => project.price),
@@ -84,6 +90,7 @@ export class ProjectsGraphComponent implements OnChanges {
             label: {
               fontSize: 10,
               formatter: (params: any) => {
+                // add decimal separation
                 return new Intl.NumberFormat('en-US').format(Math.round(params.value));
               }
             },

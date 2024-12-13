@@ -115,6 +115,7 @@ export interface DashboardCountry {
   grossMargin: number;
   totalPrice: number;
   projects: DashboardProject[];
+  teams: DashboardTeam[];
 }
 
 export interface DashboardProject {
@@ -122,6 +123,10 @@ export interface DashboardProject {
   price: number;
   dayRate: number;
   grossMargin: number;
+}
+
+export interface DashboardTeam {
+  name: string;
 }
 
 export interface TreeNode {

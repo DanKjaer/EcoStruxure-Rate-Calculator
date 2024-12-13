@@ -1,9 +1,11 @@
 package ecostruxure.rate.calculator.bll.dashboard;
 
 import ecostruxure.rate.calculator.be.Project;
+import ecostruxure.rate.calculator.be.ProjectTeam;
 import ecostruxure.rate.calculator.be.Team;
 import ecostruxure.rate.calculator.be.dto.DashboardDTO;
 import ecostruxure.rate.calculator.be.dto.DashboardProjectDTO;
+import ecostruxure.rate.calculator.be.dto.DashboardTeamDTO;
 import ecostruxure.rate.calculator.dal.IProjectRepository;
 import ecostruxure.rate.calculator.dal.ITeamRepository;
 import jakarta.persistence.EntityManager;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -68,15 +71,28 @@ public class DashboardService {
                                     project.getProjectPrice(),
                                     project.getProjectGrossMargin(),
                                     project.getProjectDayRate()
-                                    ))
+                            ))
                             .toArray(DashboardProjectDTO[]::new);
+
+                    //Get teams in projects and convert to DashboardTeamDTO and take out duplicates
+                    DashboardTeamDTO[] dashboardTeamDTOs = projects.stream()
+                            .flatMap(project -> project.getProjectTeams().stream())
+                            .map(ProjectTeam::getTeam)
+                            .map(team -> new DashboardTeamDTO(team.getName()))
+                            .collect(Collectors.toMap(
+                                    DashboardTeamDTO::getName,
+                                    dto -> dto,
+                                    (existing, replacement) -> existing))
+                            .values()
+                            .toArray(DashboardTeamDTO[]::new);
 
                     return new DashboardDTO(
                             location,
                             totalDayRate,
                             totalGrossMargin,
                             totalPrice,
-                            dashboardProjectDTOs
+                            dashboardProjectDTOs,
+                            dashboardTeamDTOs
                     );
                 })
                 .toList();

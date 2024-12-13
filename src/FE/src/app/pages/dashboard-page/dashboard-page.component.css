@@ -154,3 +154,8 @@
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.05);
 }
+
+.selectedCountryUndertitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}

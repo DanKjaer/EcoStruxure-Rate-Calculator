@@ -7,7 +7,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {ReactiveFormsModule} from '@angular/forms';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {CurrencyService} from '../../services/currency.service';
 import {MenuService} from '../../services/menu.service';
 import {MatExpansionModule} from '@angular/material/expansion';
@@ -84,7 +84,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
 
   constructor(protected currencyService: CurrencyService,
               private menuService: MenuService,
-              private dashboardService: DashboardService) {
+              private dashboardService: DashboardService,
+              private translateService: TranslateService) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -131,13 +132,16 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
   fillCountryData() {
     this.treeData = [
       {
-        name: 'Projects',
+        name: this.translateService.instant('PROJECTS'),
         children: this.selectedCountry!.projects.map(project => ({
           name: `${project.name}`
         }))
       },
       {
-        name: 'Teams'
+        name: this.translateService.instant('TEAM'),
+        children: this.selectedCountry!.teams.map(team => ({
+          name: `${team.name}`
+        }))
       }
     ];
   }
