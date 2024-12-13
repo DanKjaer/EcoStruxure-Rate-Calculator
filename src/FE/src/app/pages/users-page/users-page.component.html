@@ -24,14 +24,26 @@
                         </td>
                     </ng-container>
 
-                    <!-- Delete button column -->
+                    <!-- Reset password button column -->
                     <ng-container matColumnDef="resetPassword">
                         <th mat-header-cell *matHeaderCellDef>
                             {{ 'RESET_PASSWORD' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let element">
-                            <button mat-icon-button (click)="resetPassword()">
+                            <button mat-icon-button (click)="displayResetPassword()">
                                 <mat-icon>lock_reset</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <!-- Delete button column -->
+                    <ng-container matColumnDef="delete">
+                        <th mat-header-cell *matHeaderCellDef>
+                            {{ 'DELETE' | translate }}
+                        </th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-icon-button (click)="onDelete()">
+                                <mat-icon>delete</mat-icon>
                             </button>
                         </td>
                     </ng-container>

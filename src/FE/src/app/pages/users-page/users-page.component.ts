@@ -61,7 +61,8 @@ export class UsersPageComponent implements OnInit{
   userForm: FormGroup = new FormGroup({});
   displayedColumns: string[] = [
     'username',
-    'resetPassword'
+    'resetPassword',
+    'delete'
   ];
   createUserForm: FormGroup = new FormGroup({});
   showResetPasswordFields = false;
@@ -74,11 +75,15 @@ export class UsersPageComponent implements OnInit{
 
   ngOnInit(): void {
       this.userForm = this.formBuilder.group({
-        username: ['']
+        username: [''],
+        delete: ['']
       });
       this.createUserForm = this.formBuilder.group({
         username: [''],
-        password: ['']
+        password: [''],
+        repeatPassword: [''],
+        oldPassword: [''],
+        newPassword: ['']
       });
 
       const data = [
@@ -99,20 +104,21 @@ export class UsersPageComponent implements OnInit{
     }
   }
 
-  deleteUser() {
-
-  }
 
   onSave() {
-
+    
   }
 
-  resetPassword() {
+  displayResetPassword() {
     this.showResetPasswordFields = !this.showResetPasswordFields;
     this.changeDetectorRef.detectChanges();
   }
 
   onResetPassword() {
+
+  }
+
+  onDelete() {
 
   }
 }
