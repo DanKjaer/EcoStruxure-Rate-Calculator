@@ -167,7 +167,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
     this.loading = true;
-    try{
+    try {
       let result = await this.teamService.putTeam(selectedTeam);
       result.updatedAtString = this.formatter.formatDateTime(new Date());
       const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);

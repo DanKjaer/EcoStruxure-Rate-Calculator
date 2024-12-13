@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, computed, inject, OnInit, signal, Writable
 import {DecimalPipe, NgClass, NgIf} from "@angular/common";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatButton, MatIconButton} from "@angular/material/button";
-import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {MatTableModule, MatTableDataSource} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatInput, MatPrefix} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
@@ -210,12 +210,12 @@ export class ProjectPageComponent implements OnInit {
     this.loading = true;
 
     this.project()!.projectTeams.forEach(member => {
-      if(member.team.teamId === selectedProject.teamId) {
+      if (member.team.teamId === selectedProject.teamId) {
         member.allocationPercentage = selectedProject.allocationPercentage;
       }
     });
 
-    try{
+    try {
       const updatedProject = {
         ...this.project()!,
         projectDayRate: this.project()!.projectDayRate

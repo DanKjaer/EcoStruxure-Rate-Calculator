@@ -6,7 +6,7 @@ import {ProfilePageComponent} from './pages/profile-page/profile-page.component'
 import {ProjectsPageComponent} from './pages/projects-page/projects-page.component';
 import {TeamPageComponent} from './pages/team-page/team-page.component';
 import {ProjectPageComponent} from './pages/project-page/project-page.component';
-import {WorldOverviewPageComponent} from './pages/world-overview-page/world-overview-page.component';
+import {DashboardPageComponent} from './pages/dashboard-page/dashboard-page.component';
 import {LoginPageComponent} from './pages/login-page/login-page.component';
 
 export const routes: Routes = [
@@ -17,6 +17,6 @@ export const routes: Routes = [
   { path: 'projects', component: ProjectsPageComponent },
   { path: 'projects/:id', component: ProjectPageComponent },
   { path: 'currency', component: CurrencyPageComponent },
-  { path: 'world', component: WorldOverviewPageComponent },
+  { path: 'dashboard', component: DashboardPageComponent },
   { path: 'login', component: LoginPageComponent },
 ];

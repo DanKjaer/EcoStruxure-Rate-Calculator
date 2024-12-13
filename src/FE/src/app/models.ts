@@ -109,6 +109,31 @@ export interface Currency {
   symbol: string;
 }
 
+export interface DashboardCountry {
+  name: string;
+  dayRate: number;
+  grossMargin: number;
+  totalPrice: number;
+  projects: DashboardProject[];
+  teams: DashboardTeam[];
+}
+
+export interface DashboardProject {
+  name: string;
+  price: number;
+  dayRate: number;
+  grossMargin: number;
+}
+
+export interface DashboardTeam {
+  name: string;
+}
+
+export interface TreeNode {
+  name: string;
+  children?: TreeNode[];
+}
+
 export interface User {
   userId?: string;
   username: string;

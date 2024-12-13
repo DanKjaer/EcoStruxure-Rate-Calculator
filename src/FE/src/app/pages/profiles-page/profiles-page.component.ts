@@ -113,6 +113,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
     this.searchConfigService.configureFilter(this.datasource, ['geography.name']);
   }
+
   //#endregion
 
   //#region functions

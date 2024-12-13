@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    // JWT token secret key from jwtkey.txt
+    // JWT token secret key from jwtkey.txt.txt
     // Skal måske gøres på en anden måde i en produktions applikation
     private final String SECRET_KEY;
 

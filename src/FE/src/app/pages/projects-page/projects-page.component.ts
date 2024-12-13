@@ -93,7 +93,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
               private searchConfigService: SearchConfigService,
               private ChangeDetectorRef: ChangeDetectorRef,
               private router: Router,
-              protected currencyService: CurrencyService) {}
+              protected currencyService: CurrencyService) {
+  }
 
   async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {

@@ -48,13 +48,13 @@ export class SidemenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-        this.router.events.subscribe(event => {
-          if (event instanceof NavigationEnd) {
-            const currentUrl = event.urlAfterRedirects;
-            this.showSidemenu = !currentUrl.includes('/login');
-          }
-        })
-    }
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const currentUrl = event.urlAfterRedirects;
+        this.showSidemenu = !currentUrl.includes('/login');
+      }
+    })
+  }
 
   toggleMenu(): void {
     this.menuService.toggleMenu();

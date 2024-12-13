@@ -1,14 +1,42 @@
 .container {
   display: flex;
   flex-direction: column;
+  max-width: 80vw;
   width: 80vw;
   padding-top: 1rem;
   overflow: auto;
   transition: width 0.3s ease;
+  gap: 1rem;
 }
 
 .container.menuClosed {
+  max-width: 90vw;
   width: 90vw;
+}
+
+.graphContainer {
+  display: flex;
+  flex-direction: row;
+  height: 35vh;
+  background-color: whitesmoke;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  transition: width 0.3s ease;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  overflow-x: auto;
+}
+
+.projectsGraphContainer{
+  display: flex;
+  max-width: 30vw;
+  width: 30vw;
+  max-height: 30vh;
+  height: 30vh;
 }
 
 .countriesContainer {
@@ -20,10 +48,9 @@
 .countryContainer {
   display: flex;
   flex-direction: column;
-  max-width: 90vw;
   width: 90vw;
   max-height: 90vh;
-  height: 90vh;
+  height: 55vh;
   background-color: whitesmoke;
   border: 1px solid gray;
   border-radius: 0.5rem;
@@ -78,10 +105,16 @@
   background-color: whitesmoke;
   border: 1px solid gray;
   border-radius: 0.5rem;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, transform 0.3s ease;
   padding: 1rem;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 55vh;
+  transform: translateX(0);
+}
+
+.selectedCountryContainer.closing {
+  width: 0;
+  transform: translateX(100%);
 }
 
 .buttonContainer {
@@ -120,4 +153,9 @@
 .tableRowSelected {
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.selectedCountryUndertitle {
+  font-size: 1.25rem;
+  font-weight: bold;
 }

@@ -1,0 +1,9 @@
+.echartsContainer {
+  max-height: 30vh;
+  height: 30vh;
+  width: 20vw;
+  border: 1px solid gray;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background-color: white;
+}

@@ -73,12 +73,12 @@ export class AddTeamDialogComponent implements OnInit {
     });
 
     let team: Team = {
-      name : this.teamForm.value.name,
+      name: this.teamForm.value.name,
       teamProfiles: this.selectedProfiles,
       markupPercentage: 0,
       grossMarginPercentage: 0
     };
-     try {
+    try {
       const newTeam = await this.teamService.postTeam(team);
 
       if (newTeam.teamId != undefined) {
@@ -88,8 +88,8 @@ export class AddTeamDialogComponent implements OnInit {
         this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
       }
     } catch (error) {
-       this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
-     }
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_CREATED'), false);
+    }
   }
 
   onSelectionChange($event: MatSelectionListChange) {

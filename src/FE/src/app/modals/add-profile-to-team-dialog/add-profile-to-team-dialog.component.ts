@@ -41,7 +41,7 @@ import {CalculationsService} from '../../services/calculations.service';
   templateUrl: './add-profile-to-team-dialog.component.html',
   styleUrl: './add-profile-to-team-dialog.component.css'
 })
-export class AddProfileToTeamDialogComponent implements OnInit{
+export class AddProfileToTeamDialogComponent implements OnInit {
   @Output() addedProfileToTeam = new EventEmitter<TeamProfile[]>();
   @Input() profile!: Profile;
   @Input() teamProfiles!: TeamProfile[];
@@ -56,9 +56,10 @@ export class AddProfileToTeamDialogComponent implements OnInit{
     private translate: TranslateService,
     private calculationsService: CalculationsService,
     private formBuilder: FormBuilder
-  ) {}
+  ) {
+  }
 
-   async ngOnInit(): Promise<void> {
+  async ngOnInit(): Promise<void> {
     this.teamProfileForm = this.formBuilder.group({
       costAllocationPercentage: [0, Validators.required],
       hourAllocationPercentage: [0, Validators.required]
