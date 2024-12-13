@@ -250,7 +250,7 @@
 
       <!-- buttons -->
       <div class="buttonContainer">
-        <button mat-stroked-button (click)="update()">
+        <button mat-stroked-button (click)="update()" [disabled]="profileForm.invalid">
           <mat-icon>check</mat-icon>
           {{ 'UPDATE' | translate }}
         </button>

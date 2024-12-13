@@ -55,10 +55,10 @@ export class AddProfileDialogComponent implements OnInit {
       name: ['', Validators.required],
       geography: ['', Validators.required],
       resource_type: [true, Validators.required],
-      annual_cost: [''],
+      annual_cost: ['', Validators.required],
       annual_hours: [{value: '', disabled: true}],
-      effectiveness: [''],
-      hours_per_day: [''],
+      effectiveness: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      hours_per_day: ['', [Validators.required, Validators.min(0), Validators.max(24)]],
     });
 
     this.profileForm.get('resource_type')?.valueChanges.subscribe(value => {
