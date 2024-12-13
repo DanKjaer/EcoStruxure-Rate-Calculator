@@ -13,6 +13,7 @@ import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core'
 import {NgxEchartsModule} from 'ngx-echarts';
 import * as echarts from 'echarts';
 import {AuthInterceptor} from './interceptor/auth.interceptor';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './i18n/', '.json');
@@ -48,6 +49,7 @@ export const appConfig: ApplicationConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    { provide: MAT_DIALOG_DATA, useValue: {} }
   ]
 };

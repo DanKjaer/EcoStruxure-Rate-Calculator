@@ -21,6 +21,7 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 import {CurrencyService} from '../../services/currency.service';
 import {SearchConfigService} from '../../services/search-config.service';
 import {addWarning} from '@angular-devkit/build-angular/src/utils/webpack-diagnostics';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -56,7 +57,6 @@ import {addWarning} from '@angular-devkit/build-angular/src/utils/webpack-diagno
   styleUrl: './projects-page.component.css'
 })
 export class ProjectsPageComponent implements AfterViewInit, OnInit {
-  readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = ['name',
     'salesNumber',
@@ -90,7 +90,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private projectService: ProjectService,
+  constructor(protected currencyService: CurrencyService,
+              private projectService: ProjectService,
               private formatterService: FormatterService,
               private snackbarService: SnackbarService,
               private translateService: TranslateService,
@@ -98,7 +99,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
               private searchConfigService: SearchConfigService,
               private ChangeDetectorRef: ChangeDetectorRef,
               private router: Router,
-              protected currencyService: CurrencyService) {
+              private dialog: MatDialog) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -162,15 +163,28 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   }
 
   async onDelete() {
-    const result = await this.projectService.deleteProject(this.selectedRow?.projectId!);
-    if (result) {
-      this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
-      this.datasource._updateChangeSubscription();
-      this.updateTableFooterData();
-      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_DELETED'), true);
-    } else {
-      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_DELETED'), false);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translateService.instant('CONFIRM_DELETE_PROJECT_TITLE'),
+        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.projectName + '?'
+      },
+      maxWidth: '15vw',
+      minWidth: '15vw',
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const result = await this.projectService.deleteProject(this.selectedRow?.projectId!);
+        if (result) {
+          this.datasource.data = this.datasource.data.filter((project: Project) =>
+            project.projectId !== this.selectedRow?.projectId);
+          this.datasource._updateChangeSubscription();
+          this.updateTableFooterData();
+          this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_DELETED'), true);
+        } else {
+          this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_DELETED'), false);
+        }
+      }
+    })
   }
 
   selectRow(row: Project) {
@@ -263,6 +277,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.calculateTotals(displayedData);
     this.calculateAverages(displayedData);
   }
+
   private calculateTotals(displayedData: Project[]) {
     this.getTotalDayRate(displayedData);
     this.getTotalPrice(displayedData);
