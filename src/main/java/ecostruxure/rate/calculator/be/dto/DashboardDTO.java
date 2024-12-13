@@ -10,7 +10,12 @@ public class DashboardDTO {
     private DashboardProjectDTO[] projects;
     private DashboardTeamDTO[] teams;
 
-    public DashboardDTO(String name, BigDecimal dayRate, BigDecimal totalGrossMargin, BigDecimal totalPrice, DashboardProjectDTO[] projects, DashboardTeamDTO[] teams) {
+    public DashboardDTO(String name,
+                        BigDecimal dayRate,
+                        BigDecimal totalGrossMargin,
+                        BigDecimal totalPrice,
+                        DashboardProjectDTO[] projects,
+                        DashboardTeamDTO[] teams) {
         this.name = name;
         this.dayRate = dayRate;
         this.grossMargin = totalGrossMargin;

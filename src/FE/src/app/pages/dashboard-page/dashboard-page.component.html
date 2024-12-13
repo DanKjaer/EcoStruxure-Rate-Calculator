@@ -106,8 +106,9 @@
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
-                <div
-                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ countryData.price | number: '1.0-2' }}
+                <div matListItemLine>
+                    {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                    {{ countryData.price | number: '1.0-2' }}
                 </div>
               </mat-list-item>
             }
@@ -126,8 +127,9 @@
             @for (countryData of selectedCountry!.projects; track countryData) {
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
-                <div
-                  matListItemLine>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{ countryData.dayRate | number: '1.0-2' }}
+                <div matListItemLine>
+                    {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                    {{ countryData.dayRate | number: '1.0-2' }}
                 </div>
               </mat-list-item>
             }
