@@ -216,7 +216,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
       if (confirmed) {
         const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
         if (result) {
-          this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
+          this.datasource.data = this.datasource.data.filter((profile: Profile) =>
+            profile.profileId !== this.selectedRow?.profileId);
           this.datasource._updateChangeSubscription();
           this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
         } else {

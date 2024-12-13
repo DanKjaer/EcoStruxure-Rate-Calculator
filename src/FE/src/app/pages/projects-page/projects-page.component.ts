@@ -90,7 +90,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private projectService: ProjectService,
+  constructor(protected currencyService: CurrencyService,
+              private projectService: ProjectService,
               private formatterService: FormatterService,
               private snackbarService: SnackbarService,
               private translateService: TranslateService,
@@ -98,7 +99,6 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
               private searchConfigService: SearchConfigService,
               private ChangeDetectorRef: ChangeDetectorRef,
               private router: Router,
-              protected currencyService: CurrencyService,
               private dialog: MatDialog) {
   }
 
@@ -175,7 +175,8 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       if (confirmed) {
         const result = await this.projectService.deleteProject(this.selectedRow?.projectId!);
         if (result) {
-          this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
+          this.datasource.data = this.datasource.data.filter((project: Project) =>
+            project.projectId !== this.selectedRow?.projectId);
           this.datasource._updateChangeSubscription();
           this.updateTableFooterData();
           this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_DELETED'), true);
