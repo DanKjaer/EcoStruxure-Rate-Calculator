@@ -70,6 +70,9 @@ export class ProjectPageComponent implements OnInit {
   statBoxes = computed(() => {
     const project = this.project()!;
 
+    if (!project) {
+      return {totalDayRate: 0, totalPrice: 0, grossMargin: 0, totalDays: 0};
+    }
     const totalDayRate = project.projectDayRate!;
     const totalPrice = project.projectPrice!;
     const grossMargin = project.projectGrossMargin!;

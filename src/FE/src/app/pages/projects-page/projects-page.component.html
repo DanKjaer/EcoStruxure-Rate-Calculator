@@ -36,7 +36,15 @@
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectName']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ 'TOTALS' | translate }}</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ 'AVERAGE' | translate }}
+          </span>
+          <br>
+          <span>
+            {{ 'TOTALS' | translate }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- Sales number for project-->
@@ -70,10 +78,20 @@
           {{ 'PROJECT_DAY_RATE' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-          {{ this.currencyService.convert(element['projectDayRate'], 'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+          {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}{{ this.currencyService.convert(element['projectDayRate'], 'EUR',
+             localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{this.currencyService.convert(totalDayRate, 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}{{this.currencyService.convert(averageDayRate, 'EUR',
+              localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}
+          </span>
+          <br>
+          <span>
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}{{this.currencyService.convert(totalDayRate, 'EUR',
+              localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}
+          </span>
+        </td>
       </ng-container>
 
       <!-- Gross Margin-->
@@ -84,7 +102,15 @@
         <td mat-cell *matCellDef="let element">
           {{ element['projectGrossMargin'] + '%'}}
         </td>
-        <td mat-footer-cell *matFooterCellDef></td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ averageGrossMargin + '%' }}
+          </span>
+          <br>
+          <span>
+            -
+          </span>
+        </td>
       </ng-container>
 
       <!-- End price - what customer pays -->
@@ -94,12 +120,22 @@
         </th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
-            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-            {{ this.currencyService.convert(element['projectPrice'], 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2' }}
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}{{ this.currencyService.convert(element['projectPrice'], 'EUR',
+               localStorage.getItem("selectedCurrency")!) | number: '1.0-2' }}
           </span>
           <input type="number" matInput *ngIf="element.isEditing" [(ngModel)]="element['projectPrice']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }} {{this.currencyService.convert(totalPrice, 'EUR', localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}{{this.currencyService.convert(averagePrice, 'EUR',
+            localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}
+          </span>
+          <br>
+          <span>
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}{{this.currencyService.convert(totalPrice, 'EUR',
+              localStorage.getItem("selectedCurrency")!) | number: '1.0-2'}}
+          </span>
+        </td>
       </ng-container>
 
       <!-- Start date for project-->
@@ -141,7 +177,15 @@
         <td mat-cell *matCellDef="let element">
           {{ element['projectTotalDays'] + ' ' }}{{ 'DAYS' | translate }}
         </td>
-        <td mat-footer-cell *matFooterCellDef> {{totalDays}} {{ 'DAYS' | translate }}</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{averageDays}} {{ 'DAYS' | translate }}
+          </span>
+          <br>
+          <span>
+            {{totalDays}} {{ 'DAYS' | translate }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- Project location for project-->

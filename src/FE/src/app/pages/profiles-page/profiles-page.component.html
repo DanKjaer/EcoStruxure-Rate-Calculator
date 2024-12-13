@@ -42,7 +42,15 @@
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['name']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ 'AVERAGE' | translate }}:</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ 'AVERAGE' | translate }}
+          </span>
+          <br>
+          <span>
+            {{ 'TOTALS' | translate }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- annual hours -->
@@ -56,7 +64,15 @@
           </span>
           <input matInput *ngIf="element.isEditing" [(ngModel)]="element['annualHours']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef></td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ averageAnnualHours | number:'1.0-0' }} {{ 'HOURS' | translate }}
+          </span>
+          <br>
+          <span>
+            {{ totalAnnualHours | number:'1.0-0' }} {{ 'HOURS' | translate }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- effective work hours -->
@@ -67,7 +83,15 @@
         <td mat-cell *matCellDef="let element">
           {{ element['effectiveWorkHours'] | number:'1.0-0' }} {{ 'HOURS' | translate }}
         </td>
-        <td mat-footer-cell *matFooterCellDef></td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ averageEffectiveWorkHours | number:'1.0-0' }} {{ 'HOURS' | translate }}
+          </span>
+          <br>
+          <span>
+            {{ totalEffectiveWorkHours | number:'1.0-0' }} {{ 'HOURS' | translate }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- effectiveness -->
@@ -81,7 +105,15 @@
           </span>
           <input *ngIf="element.isEditing" [(ngModel)]="element['effectivenessPercentage']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef></td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ averageEffectiveness | number:'1.0-2' }} %
+          </span>
+          <br>
+          <span>
+            -
+          </span>
+        </td>
       </ng-container>
 
       <!-- contributed annual cost -->
@@ -92,11 +124,24 @@
         <td mat-cell *matCellDef="let element">
           <span *ngIf="!element.isEditing">
             {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-            {{ this.currencyService.convert(element['annualCost'], element.currency, localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+            {{ this.currencyService.convert(element['annualCost'], element.currency,
+              localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
           </span>
           <input *ngIf="element.isEditing" [(ngModel)]="element['annualCost']"/>
         </td>
-        <td mat-footer-cell *matFooterCellDef></td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+            {{ this.currencyService.convert(averageAnnualCost, 'EUR',
+              localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+          </span>
+          <br>
+          <span>
+            {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+            {{ this.currencyService.convert(totalAnnualCost, 'EUR',
+              localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- allocated hours -->
@@ -107,7 +152,15 @@
         <td mat-cell *matCellDef="let element">
           {{ element['totalHourAllocation'] + '%' }}
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ averageHourAllocation | number:'1.0-2' }}%</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ averageHourAllocation | number:'1.0-2' }} %
+          </span>
+          <br>
+          <span>
+            -
+          </span>
+        </td>
       </ng-container>
 
       <!-- cost allocation -->
@@ -118,7 +171,15 @@
         <td mat-cell *matCellDef="let element">
           {{ element['totalCostAllocation'] + '%' }}
         </td>
-        <td mat-footer-cell *matFooterCellDef>{{ averageCostAllocation | number:'1.0-2' }}%</td>
+        <td mat-footer-cell *matFooterCellDef>
+          <span>
+            {{ averageCostAllocation | number:'1.0-2' }}%
+          </span>
+          <br>
+          <span>
+            -
+          </span>
+        </td>
       </ng-container>
 
       <!-- location -->
