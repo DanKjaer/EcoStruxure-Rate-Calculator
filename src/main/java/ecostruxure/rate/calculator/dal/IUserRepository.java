@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.UUID;
 
 public interface IUserRepository extends CrudRepository<User, UUID> {
-    Iterable<User> findAllByUsername(String username);
+    User findByUsername(String username);
 }

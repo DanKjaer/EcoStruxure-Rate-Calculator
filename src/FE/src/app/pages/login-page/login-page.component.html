@@ -1,7 +1,7 @@
 <div class="imageContainer">
   <img src="images/sidebar_logo.png">
 </div>
-<mat-dialog-content class="loginContainer">
+<mat-dialog-content class="loginContainer" [formGroup]="userForm" (keyup.enter)="onSubmit()">
 
   <mat-form-field class="groupContainer">
     <mat-label>{{ 'USERNAME' | translate }}</mat-label>
@@ -11,7 +11,7 @@
       id="username"
       name="username"
       class="form-control"
-      [(ngModel)]="username"
+      formControlName="username"
       required
     />
   </mat-form-field>
@@ -24,18 +24,16 @@
       id="password"
       name="password"
       class="form-control"
-      [(ngModel)]="password"
+      formControlName="password"
       required
     />
   </mat-form-field>
 
   <mat-dialog-actions>
     <div class="buttonContainer">
-      <button mat-stroked-button (click)="onSubmit()" [disabled]="!username || !password">
+      <button mat-stroked-button (click)="onSubmit()" [disabled]="!userForm.valid">
         Login
       </button>
     </div>
   </mat-dialog-actions>
 </mat-dialog-content>
-
-

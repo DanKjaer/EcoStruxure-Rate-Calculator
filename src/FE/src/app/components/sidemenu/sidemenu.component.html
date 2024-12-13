@@ -58,7 +58,7 @@
           {{ this.selectedCurrency == "EUR" ? 'euro' : 'attach_money' }}
         </mat-icon>
       </button>
-      <button class="iconButton" mat-icon-button matTooltip="{{ 'LOGOUT' | translate }}">
+      <button class="iconButton" mat-icon-button (click)="onLogout()" matTooltip="{{ 'LOGOUT' | translate }}">
         <mat-icon>
           logout
         </mat-icon>

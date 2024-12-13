@@ -6,7 +6,15 @@ import jakarta.persistence.Id;
 
 import java.util.UUID;
 
+import jakarta.persistence.*;
+
+
 public class User {
+
+@Entity
+@Table(name = "users")
+public class User {
+
     @Id
     @GeneratedValue
     private UUID userId;
@@ -17,12 +25,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    public UUID getUserId() {
+    //#region Getters and Setters
+    public UUID getId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setId(UUID id) {
+        this.userId = id;
     }
 
     public String getUsername() {
@@ -40,4 +49,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-}
+    //#endregion

@@ -251,5 +251,9 @@
   "NEW_PASSWORD": "New password",
   "OLD_PASSWORD": "Old password",
   "RESET_PASSWORD": "Reset password",
-  "REPEAT_PASSWORD": "Repeat password"
+  "REPEAT_PASSWORD": "Repeat password",
+  "SUCCESS_LOGIN": "Login successful",
+  "ERROR_LOGIN": "Login failed, please try again",
+  "ERROR_AUTHENTICATING": "Failed to authenticate, please login again",
+  "SUCCESS_LOGOUT": "Logout successful"
 }

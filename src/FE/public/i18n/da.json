@@ -245,5 +245,9 @@
   "NEW_PASSWORD": "Nyt kodeord",
   "OLD_PASSWORD": "Gammelt kodeord",
   "RESET_PASSWORD": "Nulstil kodeord",
-  "REPEAT_PASSWORD": "Gentag kodeord"
+  "REPEAT_PASSWORD": "Gentag kodeord",
+  "SUCCESS_LOGIN": "Login succesfuldt",
+  "ERROR_LOGIN": "Login fejlede, venligst prøv igen",
+  "ERROR_AUTHENTICATING": "Kunne ikke autentificere, venlist login igen",
+  "SUCCESS_LOGOUT": "Log ud succesfuldt"
 }

@@ -6,25 +6,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import ecostruxure.rate.calculator.bll.utils.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          JwtUtil jwtUtil,
+                          AuthenticationManager authenticationManager) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
     }
 
-    @GetMapping("/all")
-    public Iterable<User> getUsers() throws Exception {
-        return userService.getUsers();
-    }
+    @GetMapping()
+        public Iterable<User> getUsers() {
+            return userService.getUsers();
+        }
 
-    @PostMapping
-    public User createUser(User user) throws Exception {
-        return userService.create(user);
+    @PostMapping("/register")
+    public User createUser(@RequestBody User user) {
+        return userService.createUser(user.getUsername(), user.getPassword());
     }
 
     @PutMapping
@@ -35,5 +49,18 @@ public class UserController {
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable UUID id) throws Exception {
         return userService.delete(id);
+
+    @PostMapping("/authenticate")
+    public Map<String, String> authenticate(@RequestBody User user) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+        );
+        final UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+
+        // Wrap the JWT in a JSON response
+        Map<String, String> response = new HashMap<>();
+        response.put("token", jwt);
+        return response;
     }
 }
