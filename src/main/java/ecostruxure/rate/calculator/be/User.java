@@ -8,9 +8,6 @@ import java.util.UUID;
 
 import jakarta.persistence.*;
 
-
-public class User {
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -50,3 +47,4 @@ public class User {
         this.password = password;
     }
     //#endregion
+}

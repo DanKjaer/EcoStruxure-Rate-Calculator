@@ -18,7 +18,9 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {MatSelect} from '@angular/material/select';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {TranslateModule} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {UserService} from '../../services/user.service';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-users-page',
@@ -70,7 +72,10 @@ export class UsersPageComponent implements OnInit{
 
 
   constructor(private formBuilder: FormBuilder,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private changeDetectorRef: ChangeDetectorRef,
+              private userService: UserService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -106,7 +111,7 @@ export class UsersPageComponent implements OnInit{
 
 
   onSave() {
-    
+
   }
 
   displayResetPassword() {
@@ -118,7 +123,14 @@ export class UsersPageComponent implements OnInit{
 
   }
 
-  onDelete() {
-
+  async onDelete() {
+    const result = await this.userService.deleteUser(this.userForm.value.delete);
+    if(result){
+      this.datasource.data = this.datasource.data.filter((user: any) => user.userId !== this.userForm.value.userId);
+      this.datasource._updateChangeSubscription();
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
+    } else {
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
+    }
   }
 }
