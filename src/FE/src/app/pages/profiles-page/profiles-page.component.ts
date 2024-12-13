@@ -22,6 +22,7 @@ import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {MatLabel} from '@angular/material/form-field';
 import {SearchConfigService} from '../../services/search-config.service';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-profiles-page',
@@ -56,7 +57,6 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
 
   //#region vars
-  readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = [
     'name',
@@ -101,7 +101,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
               private translateService: TranslateService,
               private menuService: MenuService,
               private searchConfigService: SearchConfigService,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
   }
 
   //#region inits
@@ -203,14 +204,26 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   async onDelete() {
-    const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
-    if (result) {
-      this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
-      this.datasource._updateChangeSubscription();
-      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
-    } else {
-      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translateService.instant('CONFIRM_DELETE_PROFILE_TITLE'),
+        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.name + '?'
+      },
+      maxWidth: '15vw',
+      minWidth: '15vw',
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
+        if (result) {
+          this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
+          this.datasource._updateChangeSubscription();
+          this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
+        } else {
+          this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
+        }
+      }
+    })
   }
 
   selectRow(row: Profile) {

@@ -65,10 +65,12 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
           data: {
             title: this.translateService.instant('UPDATE_CURRENCY_TITLE'),
             message: this.translateService.instant('UPDATE_CURRENCY_MESSAGE') + file.name
-          }
+          },
+          maxWidth: '15vw',
+          minWidth: '15vw',
         });
 
-        dialogRef.afterClosed().subscribe(async (confirmed) => {
+        dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
           if (confirmed) {
             const reader = new FileReader();
             reader.readAsText(file);
@@ -83,11 +85,6 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
                 this.snackbarService.openSnackBar(this.translateService.instant("SUCCESS_UPDATING_CURRENCY"), true);
               }
             };
-          } else {
-            this.snackbarService.openSnackBar(
-              this.translateService.instant("CANCELLED_UPDATING_CURRENCY"),
-              false
-            );
           }
         });
       } else {

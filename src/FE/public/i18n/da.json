@@ -242,5 +242,9 @@
   "PROJECT_PRICE": "Projekt pris",
   "PROJECTS_IN_COUNTRY": "Projekter i lande",
   "PROJECTS_IN": "Projekter i",
-  "CONFIRM": "Godkend"
+  "CONFIRM": "Godkend",
+  "CONFIRM_DELETE_MESSAGE": "Slet ",
+  "CONFIRM_DELETE_PROFILE_TITLE": "Slet profil",
+  "CONFIRM_DELETE_TEAM_TITLE": "Slet team",
+  "CONFIRM_DELETE_PROJECT_TITLE": "Slet projekt"
 }

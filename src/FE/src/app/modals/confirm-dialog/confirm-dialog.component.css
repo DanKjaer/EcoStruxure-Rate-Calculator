@@ -3,5 +3,11 @@
 }
 
 .content {
-  text-align: center;
+  text-align: start;
+  margin-left: 0.5rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
 }

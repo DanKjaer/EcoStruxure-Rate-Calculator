@@ -250,5 +250,9 @@
   "PROJECTS_IN": "Projects in",
   "CONFIRM": "Confirm",
   "UPDATE_CURRENCY_TITLE": "Update currency",
-  "UPDATE_CURRENCY_MESSAGE": "Selected file: "
+  "UPDATE_CURRENCY_MESSAGE": "Selected file: ",
+  "CONFIRM_DELETE_MESSAGE": "Delete ",
+  "CONFIRM_DELETE_PROFILE_TITLE": "Delete profile",
+  "CONFIRM_DELETE_TEAM_TITLE": "Delete team",
+  "CONFIRM_DELETE_PROJECT_TITLE": "Delete project"
 }
