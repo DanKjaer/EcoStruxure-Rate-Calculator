@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {DecimalPipe, NgClass, NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatCell,
@@ -57,7 +57,7 @@ export class UsersPageComponent implements OnInit{
   userForm: FormGroup = new FormGroup({});
   displayedColumns: string[] = [
     'username',
-    'resetPassword',
+    'changePassword',
     'delete'
   ];
   createUserForm: FormGroup = new FormGroup({});
@@ -124,12 +124,12 @@ export class UsersPageComponent implements OnInit{
       });
   }
 
-  displayResetPassword() {
+  showChangePassword() {
     this.showResetPasswordFields = !this.showResetPasswordFields;
     this.changeDetectorRef.detectChanges();
   }
 
-  onResetPassword() {
+  onChangePassword() {
 
   }
 
