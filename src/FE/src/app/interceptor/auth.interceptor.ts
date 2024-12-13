@@ -22,7 +22,7 @@ export class AuthInterceptor implements HttpInterceptor {
     }
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 || error.status === 403) {
+        if (error.status === 401) {
           // If the user is unauthorized, redirect to the login page
           this.router.navigate(['/login']);
           this.snackbarService.openSnackBar(this.translateService.instant('ERROR_AUTHENTICATING'), false);
