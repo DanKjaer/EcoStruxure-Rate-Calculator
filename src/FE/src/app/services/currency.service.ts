@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Currency} from '../models';
-import {BehaviorSubject, firstValueFrom, tap} from 'rxjs';
+import {BehaviorSubject, filter, firstValueFrom, tap} from 'rxjs';
+import {NavigationEnd, Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,15 @@ export class CurrencyService {
   private currencies: { [key: string]: Currency } = {};
   private apiUrl = 'http://localhost:8080/api/currency';
 
-  constructor(private http: HttpClient) {
-    this.loadCurrencies();
+  constructor(private http: HttpClient,
+              private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.url !== '/login') {
+          this.loadCurrencies();
+        }
+      });
   }
 
   //#region API calls

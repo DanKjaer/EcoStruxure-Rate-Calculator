@@ -2,7 +2,7 @@
   <div class="statsContainer">
     <div class="totalDayRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalDayRate | number:'1.0-2' }}
+        {{ statBoxes().totalDayRate | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_DAY_RATE' | translate }}
@@ -10,7 +10,7 @@
     </div>
     <div class="totalPriceBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalPrice | number:'1.0-2' }}
+        {{ statBoxes().totalPrice | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_PRICE' | translate }}
@@ -18,7 +18,7 @@
     </div>
     <div class="grossMarginBox">
       <p class="boxValue">
-        {{ this.statBoxes.grossMargin | number:'1.0-2' }}
+        {{ statBoxes().grossMargin | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'GROSS_MARGIN' | translate }}
@@ -26,7 +26,7 @@
     </div>
     <div class="totalDaysBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalDays | number:'1.0-0' }}
+        {{ statBoxes().totalDays | number:'1.0-0' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_DAYS' | translate }}

@@ -137,6 +137,7 @@ public class TeamService {
         return true;
     }
 
+
     public boolean deleteTeamProfile(UUID teamProfileId, UUID teamId) throws Exception{
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new Exception("Team not found."));
         for (TeamProfile teamProfile : team.getTeamProfiles()) {

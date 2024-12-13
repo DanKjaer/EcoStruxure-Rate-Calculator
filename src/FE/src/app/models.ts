@@ -128,3 +128,9 @@ export interface TreeNode {
   name: string;
   children?: TreeNode[];
 }
+
+export interface User {
+  userId?: string;
+  username: string;
+  password: string;
+}
