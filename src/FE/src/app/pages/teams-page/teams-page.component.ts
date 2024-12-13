@@ -21,32 +21,33 @@ import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 
 @Component({
-    selector: 'app-teams-page',
-    imports: [
-        TranslateModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatSortModule,
-        MatIcon,
-        MatIconButton,
-        NgIf,
-        MatMenu,
-        MatMenuItem,
-        MatMenuTrigger,
-        MatProgressSpinner,
-        MatButton,
-        MatDialogModule,
-        MatInput,
-        ReactiveFormsModule,
-        FormsModule,
-        NgClass,
-        DecimalPipe,
-        MatFormField,
-        MatLabel,
-        MatPrefix
-    ],
-    templateUrl: './teams-page.component.html',
-    styleUrl: './teams-page.component.css'
+  selector: 'app-teams-page',
+  standalone: true,
+  imports: [
+    TranslateModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatIcon,
+    MatIconButton,
+    NgIf,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatProgressSpinner,
+    MatButton,
+    MatDialogModule,
+    MatInput,
+    ReactiveFormsModule,
+    FormsModule,
+    NgClass,
+    DecimalPipe,
+    MatFormField,
+    MatLabel,
+    MatPrefix
+  ],
+  templateUrl: './teams-page.component.html',
+  styleUrl: './teams-page.component.css'
 })
 export class TeamsPageComponent implements AfterViewInit, OnInit {
   readonly dialog = inject(MatDialog);
@@ -166,7 +167,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
     selectedTeam['isEditing'] = false;
     this.isEditingRow = false;
     this.loading = true;
-    try{
+    try {
       let result = await this.teamService.putTeam(selectedTeam);
       result.updatedAtString = this.formatter.formatDateTime(new Date());
       const index = this.datasource.data.findIndex((team: Team) => team.teamId === selectedTeam.teamId);

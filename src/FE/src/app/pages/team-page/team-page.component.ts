@@ -54,7 +54,7 @@ export class TeamPageComponent implements OnInit {
   originalRowData: { [key: number]: any } = {};
   protected isEditingRow: boolean = false;
 
-  statBoxes = computed (() =>{
+  statBoxes = computed(() => {
     const team = this.team();
     const teamProfiles = this.teamProfiles();
     let rawHourlyRate: number = 0;
@@ -62,21 +62,19 @@ export class TeamPageComponent implements OnInit {
     let gmHourlyRate: number = 0;
     let totalAnnualHours: number = 0;
 
-    if(!team) {
+    if (!team) {
       return {rawHourlyRate, markupHourlyRate, gmHourlyRate, totalAnnualHours};
     }
     rawHourlyRate = team.hourlyRate!;
 
     if (team.markupPercentage === 0) {
       markupHourlyRate = team.hourlyRate!;
-    }
-    else {
+    } else {
       markupHourlyRate = team.hourlyRate! * ((team.markupPercentage! / 100) + 1);
     }
-    if (team.grossMarginPercentage === 0){
+    if (team.grossMarginPercentage === 0) {
       gmHourlyRate = markupHourlyRate;
-    }
-    else {
+    } else {
       gmHourlyRate = markupHourlyRate * ((team.grossMarginPercentage! / 100) + 1);
     }
     totalAnnualHours = teamProfiles.reduce((sum, item) =>
@@ -107,8 +105,8 @@ export class TeamPageComponent implements OnInit {
               private searchConfigService: SearchConfigService,
               private generateDTOService: GenerateDTOService,
               private route: ActivatedRoute,
-              private changeDetectorRef: ChangeDetectorRef) {}
-
+              private changeDetectorRef: ChangeDetectorRef) {
+  }
 
 
   async ngOnInit() {
@@ -116,9 +114,9 @@ export class TeamPageComponent implements OnInit {
       this.isMenuOpen = isOpen;
     });
     this.team.set(await this.teamService.getTeam(this.route.snapshot.paramMap.get('id')!));
-    this.teamProfiles.set(this.team()!.teamProfiles!) ;
+    this.teamProfiles.set(this.team()!.teamProfiles!);
     this.datasource.data = this.teamProfiles();
-    this.searchConfigService.configureFilter(this.datasource, ['profile.name','profile.geography.name']);
+    this.searchConfigService.configureFilter(this.datasource, ['profile.name', 'profile.geography.name']);
     this.loading = false;
   }
 
@@ -174,7 +172,7 @@ export class TeamPageComponent implements OnInit {
     }
     this.isEditingRow = true;
     selectedTeamProfile['isEditing'] = true;
-    if (!this.originalRowData[selectedTeamProfile.teamProfileId]){
+    if (!this.originalRowData[selectedTeamProfile.teamProfileId]) {
       this.originalRowData[selectedTeamProfile.teamProfileId] = {...selectedTeamProfile};
     }
   }

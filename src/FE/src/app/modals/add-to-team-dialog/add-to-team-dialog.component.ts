@@ -17,33 +17,34 @@ import {CalculationsService} from '../../services/calculations.service';
 import {GenerateDTOService} from '../../services/generate-dto.service';
 
 @Component({
-    selector: 'app-add-to-team-dialog',
-    imports: [
-        FormsModule,
-        MatButton,
-        MatDialogActions,
-        MatDialogClose,
-        MatDialogContent,
-        MatDialogTitle,
-        MatDivider,
-        MatFormField,
-        MatIcon,
-        MatInput,
-        MatLabel,
-        MatList,
-        MatListItem,
-        MatListOption,
-        MatSelectionList,
-        MatSuffix,
-        ReactiveFormsModule,
-        TranslateModule,
-        NgIf,
-    ],
-    templateUrl: './add-to-team-dialog.component.html',
-    styleUrl: './add-to-team-dialog.component.css'
+  selector: 'app-add-to-team-dialog',
+  standalone: true,
+  imports: [
+    FormsModule,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDivider,
+    MatFormField,
+    MatIcon,
+    MatInput,
+    MatLabel,
+    MatList,
+    MatListItem,
+    MatListOption,
+    MatSelectionList,
+    MatSuffix,
+    ReactiveFormsModule,
+    TranslateModule,
+    NgIf,
+  ],
+  templateUrl: './add-to-team-dialog.component.html',
+  styleUrl: './add-to-team-dialog.component.css'
 })
 export class AddToTeamDialogComponent implements OnInit {
-  teamProfileList:  TeamProfile[] = [];
+  teamProfileList: TeamProfile[] = [];
   selectedTeamProfiles: TeamProfile[] = [];
   @Output() AddToTeam = new EventEmitter<Team>();
   @Input() team!: Team;
@@ -56,13 +57,14 @@ export class AddToTeamDialogComponent implements OnInit {
     private calculationsService: CalculationsService,
     private translateService: TranslateService,
     private generateDTOService: GenerateDTOService
-    ) {}
+  ) {
+  }
 
   async ngOnInit(): Promise<void> {
     let profiles = await this.profileService.getProfiles();
     let potentialTeamProfiles = profiles.map(profile => {
       let teamProfile: TeamProfile = {
-        team: { ...this.team, teamProfiles: undefined },
+        team: {...this.team, teamProfiles: undefined},
         profile: profile!,
       };
       return teamProfile;

@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, computed, inject, OnInit, signal, Writable
 import {DecimalPipe, NgClass, NgIf} from "@angular/common";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatButton, MatIconButton} from "@angular/material/button";
-import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {MatTableModule, MatTableDataSource} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatInput, MatPrefix} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
@@ -21,32 +21,33 @@ import {CalculationsService} from '../../services/calculations.service';
 import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
-    selector: 'app-project-page',
-    imports: [
-        DecimalPipe,
-        FormsModule,
-        MatButton,
-        MatIcon,
-        MatIconButton,
-        MatInput,
-        MatLabel,
-        MatMenu,
-        MatMenuItem,
-        MatProgressSpinner,
-        MatTableModule,
-        NgIf,
-        TranslateModule,
-        NgClass,
-        MatFormField,
-        MatMenuTrigger,
-        ReactiveFormsModule,
-        MatDatepickerInput,
-        MatDatepickerToggle,
-        MatDatepicker,
-        MatPrefix
-    ],
-    templateUrl: './project-page.component.html',
-    styleUrl: './project-page.component.css'
+  selector: 'app-project-page',
+  standalone: true,
+  imports: [
+    DecimalPipe,
+    FormsModule,
+    MatButton,
+    MatIcon,
+    MatIconButton,
+    MatInput,
+    MatLabel,
+    MatMenu,
+    MatMenuItem,
+    MatProgressSpinner,
+    MatTableModule,
+    NgIf,
+    TranslateModule,
+    NgClass,
+    MatFormField,
+    MatMenuTrigger,
+    ReactiveFormsModule,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatPrefix
+  ],
+  templateUrl: './project-page.component.html',
+  styleUrl: './project-page.component.css'
 })
 export class ProjectPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
@@ -209,12 +210,12 @@ export class ProjectPageComponent implements OnInit {
     this.loading = true;
 
     this.project()!.projectTeams.forEach(member => {
-      if(member.team.teamId === selectedProject.teamId) {
+      if (member.team.teamId === selectedProject.teamId) {
         member.allocationPercentage = selectedProject.allocationPercentage;
       }
     });
 
-    try{
+    try {
       const updatedProject = {
         ...this.project()!,
         projectDayRate: this.project()!.projectDayRate

@@ -24,32 +24,33 @@ import {MatLabel} from '@angular/material/form-field';
 import {SearchConfigService} from '../../services/search-config.service';
 
 @Component({
-    selector: 'app-profiles-page',
-    imports: [
-        MatButtonModule,
-        MatTooltipModule,
-        MatCardModule,
-        MatIconModule,
-        TranslateModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatProgressSpinnerModule,
-        NgIf,
-        MatMenuTrigger,
-        MatMenuModule,
-        MatMenuItem,
-        MatDialogModule,
-        FormsModule,
-        MatInput,
-        NgClass,
-        DecimalPipe,
-        MatFormField,
-        MatLabel,
-        MatPrefix
-    ],
-    templateUrl: './profiles-page.component.html',
-    styleUrl: './profiles-page.component.css'
+  selector: 'app-profiles-page',
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatIconModule,
+    TranslateModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
+    NgIf,
+    MatMenuTrigger,
+    MatMenuModule,
+    MatMenuItem,
+    MatDialogModule,
+    FormsModule,
+    MatInput,
+    NgClass,
+    DecimalPipe,
+    MatFormField,
+    MatLabel,
+    MatPrefix
+  ],
+  templateUrl: './profiles-page.component.html',
+  styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
@@ -112,6 +113,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData();
     this.searchConfigService.configureFilter(this.datasource, ['geography.name']);
   }
+
   //#endregion
 
   //#region functions

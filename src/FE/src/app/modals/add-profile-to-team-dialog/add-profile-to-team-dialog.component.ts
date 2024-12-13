@@ -15,32 +15,33 @@ import {NgIf} from '@angular/common';
 import {CalculationsService} from '../../services/calculations.service';
 
 @Component({
-    selector: 'app-add-profile-to-team-dialog',
-    imports: [
-        MatButton,
-        MatDialogActions,
-        MatDialogClose,
-        MatDialogContent,
-        MatDialogTitle,
-        MatDivider,
-        MatFormField,
-        MatIcon,
-        MatInput,
-        MatLabel,
-        MatList,
-        MatListItem,
-        MatListOption,
-        MatSelectionList,
-        MatSuffix,
-        NgIf,
-        ReactiveFormsModule,
-        TranslateModule,
-        FormsModule
-    ],
-    templateUrl: './add-profile-to-team-dialog.component.html',
-    styleUrl: './add-profile-to-team-dialog.component.css'
+  selector: 'app-add-profile-to-team-dialog',
+  standalone: true,
+  imports: [
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDivider,
+    MatFormField,
+    MatIcon,
+    MatInput,
+    MatLabel,
+    MatList,
+    MatListItem,
+    MatListOption,
+    MatSelectionList,
+    MatSuffix,
+    NgIf,
+    ReactiveFormsModule,
+    TranslateModule,
+    FormsModule
+  ],
+  templateUrl: './add-profile-to-team-dialog.component.html',
+  styleUrl: './add-profile-to-team-dialog.component.css'
 })
-export class AddProfileToTeamDialogComponent implements OnInit{
+export class AddProfileToTeamDialogComponent implements OnInit {
   @Output() addedProfileToTeam = new EventEmitter<TeamProfile[]>();
   @Input() profile!: Profile;
   @Input() teamProfiles!: TeamProfile[];
@@ -55,9 +56,10 @@ export class AddProfileToTeamDialogComponent implements OnInit{
     private translate: TranslateService,
     private calculationsService: CalculationsService,
     private formBuilder: FormBuilder
-  ) {}
+  ) {
+  }
 
-   async ngOnInit(): Promise<void> {
+  async ngOnInit(): Promise<void> {
     this.teamProfileForm = this.formBuilder.group({
       costAllocationPercentage: [0, Validators.required],
       hourAllocationPercentage: [0, Validators.required]

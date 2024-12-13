@@ -9,16 +9,17 @@ import {Currency} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
-    selector: 'app-currency-page',
-    imports: [
-        TranslateModule,
-        MatTableModule,
-        MatProgressSpinner,
-        NgIf,
-        NgClass
-    ],
-    templateUrl: './currency-page.component.html',
-    styleUrl: './currency-page.component.css'
+  selector: 'app-currency-page',
+  standalone: true,
+  imports: [
+    TranslateModule,
+    MatTableModule,
+    MatProgressSpinner,
+    NgIf,
+    NgClass
+  ],
+  templateUrl: './currency-page.component.html',
+  styleUrl: './currency-page.component.css'
 })
 export class CurrencyPageComponent implements AfterViewInit, OnInit {
 

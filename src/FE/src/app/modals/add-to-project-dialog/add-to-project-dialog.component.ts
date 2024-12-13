@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Project, ProjectTeam } from "../../models";
+import {Project, ProjectTeam} from "../../models";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
 import {MatListModule, MatSelectionListChange} from "@angular/material/list";
 import {MatFormField, MatInputModule} from "@angular/material/input";
@@ -13,24 +13,25 @@ import {MatButton} from '@angular/material/button';
 import {MatDivider} from '@angular/material/divider';
 
 @Component({
-    selector: 'app-add-to-project-dialog',
-    imports: [
-        TranslateModule,
-        MatDialogContent,
-        MatFormField,
-        ReactiveFormsModule,
-        MatIcon,
-        MatListModule,
-        MatDialogActions,
-        MatDialogClose,
-        MatInputModule,
-        MatDialogTitle,
-        FormsModule,
-        MatButton,
-        MatDivider
-    ],
-    templateUrl: './add-to-project-dialog.component.html',
-    styleUrl: './add-to-project-dialog.component.css'
+  selector: 'app-add-to-project-dialog',
+  standalone: true,
+  imports: [
+    TranslateModule,
+    MatDialogContent,
+    MatFormField,
+    ReactiveFormsModule,
+    MatIcon,
+    MatListModule,
+    MatDialogActions,
+    MatDialogClose,
+    MatInputModule,
+    MatDialogTitle,
+    FormsModule,
+    MatButton,
+    MatDivider
+  ],
+  templateUrl: './add-to-project-dialog.component.html',
+  styleUrl: './add-to-project-dialog.component.css'
 })
 export class AddToProjectDialogComponent implements OnInit {
   teamForm!: FormGroup;
@@ -40,12 +41,13 @@ export class AddToProjectDialogComponent implements OnInit {
   @Input() project!: Project;
 
   constructor(
-      private formBuilder: FormBuilder,
-      private teamService: TeamsService,
-      private projectService: ProjectService,
-      private snackBar:SnackbarService,
-      private translate: TranslateService
-  ) {}
+    private formBuilder: FormBuilder,
+    private teamService: TeamsService,
+    private projectService: ProjectService,
+    private snackBar: SnackbarService,
+    private translate: TranslateService
+  ) {
+  }
 
   async ngOnInit() {
     this.teamForm = this.formBuilder.group({
@@ -77,17 +79,18 @@ export class AddToProjectDialogComponent implements OnInit {
       }
       this.project.projectTeams.push(projectTeam);
     });
-    try{
-    const updateProject = await this.projectService.putProject(this.project)
-    if (updateProject != undefined) {
-      this.AddToProject.emit(updateProject);
-      this.project = updateProject;
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_ADDED'), true);
-    } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_ADDED'), false);
+    try {
+      const updateProject = await this.projectService.putProject(this.project)
+      if (updateProject != undefined) {
+        this.AddToProject.emit(updateProject);
+        this.project = updateProject;
+        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_ADDED'), true);
+      } else {
+        this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_ADDED'), false);
+      }
+    } catch (error: any) {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);
     }
-    }catch (error: any) {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);}
   }
 
   onSelectionChange($event: MatSelectionListChange) {
