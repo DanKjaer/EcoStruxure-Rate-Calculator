@@ -49,42 +49,15 @@ public class DashboardService {
                     List<Project> projects = entry.getValue();
 
                     //Aggregate project data
-                    BigDecimal totalDayRate = projects.stream()
-                            .map(Project::getProjectDayRate)
-                            .filter(Objects::nonNull)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    BigDecimal totalGrossMargin = projects.stream()
-                            .map(Project::getProjectGrossMargin)
-                            .filter(Objects::nonNull)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                    BigDecimal totalPrice = projects.stream()
-                            .map(Project::getProjectPrice)
-                            .filter(Objects::nonNull)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalDayRate = getTotalDayRate(projects);
+                    BigDecimal totalGrossMargin = getTotalGrossMargin(projects);
+                    BigDecimal totalPrice = getTotalPrice(projects);
 
                     //Convert Project to DashboardProjectDTO
-                    DashboardProjectDTO[] dashboardProjectDTOs = projects.stream()
-                            .map(project -> new DashboardProjectDTO(
-                                    project.getProjectName(),
-                                    project.getProjectPrice(),
-                                    project.getProjectGrossMargin(),
-                                    project.getProjectDayRate()
-                            ))
-                            .toArray(DashboardProjectDTO[]::new);
+                    DashboardProjectDTO[] dashboardProjectDTOs = getDashboardProjectDTOS(projects);
 
                     //Get teams in projects and convert to DashboardTeamDTO and take out duplicates
-                    DashboardTeamDTO[] dashboardTeamDTOs = projects.stream()
-                            .flatMap(project -> project.getProjectTeams().stream())
-                            .map(ProjectTeam::getTeam)
-                            .map(team -> new DashboardTeamDTO(team.getName()))
-                            .collect(Collectors.toMap(
-                                    DashboardTeamDTO::getName,
-                                    dto -> dto,
-                                    (existing, replacement) -> existing))
-                            .values()
-                            .toArray(DashboardTeamDTO[]::new);
+                    DashboardTeamDTO[] dashboardTeamDTOs = getDashboardTeamDTOS(projects);
 
                     return new DashboardDTO(
                             location,
@@ -97,6 +70,56 @@ public class DashboardService {
                 })
                 .toList();
         return dashboardDTOs;
+    }
+
+    private DashboardTeamDTO[] getDashboardTeamDTOS(List<Project> projects) {
+        DashboardTeamDTO[] dashboardTeamDTOs = projects.stream()
+                .flatMap(project -> project.getProjectTeams().stream())
+                .map(ProjectTeam::getTeam)
+                .map(team -> new DashboardTeamDTO(team.getName()))
+                .collect(Collectors.toMap(
+                        DashboardTeamDTO::getName,
+                        dto -> dto,
+                        (existing, replacement) -> existing))
+                .values()
+                .toArray(DashboardTeamDTO[]::new);
+        return dashboardTeamDTOs;
+    }
+
+    private DashboardProjectDTO[] getDashboardProjectDTOS(List<Project> projects) {
+        DashboardProjectDTO[] dashboardProjectDTOs = projects.stream()
+                .map(project -> new DashboardProjectDTO(
+                        project.getProjectName(),
+                        project.getProjectPrice(),
+                        project.getProjectGrossMargin(),
+                        project.getProjectDayRate()
+                ))
+                .toArray(DashboardProjectDTO[]::new);
+        return dashboardProjectDTOs;
+    }
+
+    private BigDecimal getTotalPrice(List<Project> projects) {
+        BigDecimal totalPrice = projects.stream()
+                .map(Project::getProjectPrice)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return totalPrice;
+    }
+
+    private BigDecimal getTotalGrossMargin(List<Project> projects) {
+        BigDecimal totalGrossMargin = projects.stream()
+                .map(Project::getProjectGrossMargin)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return totalGrossMargin;
+    }
+
+    private BigDecimal getTotalDayRate(List<Project> projects) {
+        BigDecimal totalDayRate = projects.stream()
+                .map(Project::getProjectDayRate)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return totalDayRate;
     }
 
     private Map<String, List<Project>> getProjects() {
