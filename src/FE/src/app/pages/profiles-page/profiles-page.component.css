@@ -87,6 +87,11 @@
 
 .red {
   background-color: red;
+  color: white;
+}
+
+.red .mat-mdc-icon-button {
+  color: white;
 }
 
 .red:hover {
