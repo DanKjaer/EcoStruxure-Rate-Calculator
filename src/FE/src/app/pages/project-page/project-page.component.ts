@@ -121,12 +121,11 @@ export class ProjectPageComponent implements OnInit {
   private fillProjectForm() {
     this.projectForm = this.formBuilder.group({
       projectName: [this.project()!.projectName, Validators.required],
-      salesNumber: [this.project()!.projectSalesNumber],
-      projectPrice: [this.project()!.projectPrice],
+      salesNumber: [this.project()!.projectSalesNumber,Validators.required],
+      projectPrice: [this.project()!.projectPrice, Validators.required],
       projectDescription: [this.project()!.projectDescription],
-      startDate: [this.project()!.projectStartDate],
-      endDate: [this.project()!.projectEndDate],
-      dayRate: [this.project()!.projectDayRate || 0]
+      startDate: [this.project()!.projectStartDate, Validators.required],
+      endDate: [this.project()!.projectEndDate, Validators.required]
     });
   }
 
@@ -162,7 +161,8 @@ export class ProjectPageComponent implements OnInit {
         projectDescription: this.projectForm.value.projectDescription,
         projectPrice: this.projectForm.value.projectPrice,
         projectStartDate: this.projectForm.value.startDate,
-        projectEndDate: this.projectForm.value.endDate
+        projectEndDate: this.projectForm.value.endDate,
+        projectDayRate: this.project()!.projectDayRate
       }
       this.project.set(await this.projectService.putProject(updatedProject));
 

@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -17,8 +18,9 @@ import {TeamsService} from '../../services/teams.service';
 import {ProfileService} from '../../services/profile.service';
 import {Profile, Team, TeamProfile} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
-import {NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {CalculationsService} from '../../services/calculations.service';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-add-team-dialog',
@@ -35,7 +37,8 @@ import {CalculationsService} from '../../services/calculations.service';
     MatIcon,
     MatListModule,
     MatSuffix,
-    NgIf
+    NgIf,
+    NgForOf
   ],
   templateUrl: './add-team-dialog.component.html',
   styleUrl: './add-team-dialog.component.css'
@@ -47,7 +50,7 @@ export class AddTeamDialogComponent implements OnInit {
   @Output() teamAdded = new EventEmitter<Team>();
 
   constructor(
-    private fb: FormBuilder,
+    private formBuilder: FormBuilder,
     private teamService: TeamsService,
     private profileService: ProfileService,
     private snackBar: SnackbarService,
@@ -56,10 +59,10 @@ export class AddTeamDialogComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.teamForm = this.fb.group({
+    this.teamForm = this.formBuilder.group({
       name: ['', Validators.required],
-      profiles: [[], Validators.required]
-    })
+      allocations: this.formBuilder.array([]) // Dynamic FormArray for selected profiles
+    });
     this.profileList = await this.profileService.getProfiles();
     this.profileList.sort((a, b) => {
       return a.name.localeCompare(b.name);
@@ -67,17 +70,21 @@ export class AddTeamDialogComponent implements OnInit {
   }
 
   async onSave() {
-    this.selectedProfiles.forEach(teamProfile => {
+    this.selectedProfiles.forEach((teamProfile, index) => {
+      const allocationForm = this.allocations.at(index) as FormGroup;
+      teamProfile.allocationPercentageCost = allocationForm.get('allocationPercentageCost')!.value;
+      teamProfile.allocationPercentageHours = allocationForm.get('allocationPercentageHours')!.value;
       teamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfile);
       teamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfile);
     });
 
-    let team: Team = {
+    const team: Team = {
       name: this.teamForm.value.name,
       teamProfiles: this.selectedProfiles,
       markupPercentage: 0,
       grossMarginPercentage: 0
     };
+
     try {
       const newTeam = await this.teamService.postTeam(team);
 
@@ -92,14 +99,42 @@ export class AddTeamDialogComponent implements OnInit {
     }
   }
 
-  onSelectionChange($event: MatSelectionListChange) {
-    let teamProfiles: TeamProfile[] = [];
-    $event.source.selectedOptions.selected.map(profile => {
-      let teamProfile: TeamProfile = {
-        profile: profile.value
-      };
-      teamProfiles.push(teamProfile);
+  isSaveDisabled(): boolean {
+    return this.teamForm.invalid || this.allocations.invalid;
+  }
+
+  get allocations(): FormArray {
+    return this.teamForm.get('allocations') as FormArray;
+  }
+
+  getFormGroupAt(index: number): FormGroup {
+    return this.allocations.at(index) as FormGroup;
+  }
+
+  onSelectionChange(event: any): void {
+    const selectedProfiles = event.source.selectedOptions.selected.map((option: any) => option.value);
+
+    // Update selected profiles and reset FormArray
+    this.selectedProfiles = selectedProfiles.map((profile: Profile) => ({
+      profile,
+      allocationPercentageCost: 0,
+      allocationPercentageHours: 0
+    }));
+
+    this.allocations.clear();
+    this.selectedProfiles.forEach(profile => {
+      this.allocations.push(
+        this.formBuilder.group({
+          allocationPercentageCost: [
+            null,
+            [Validators.required, Validators.min(0), Validators.max(100)]
+          ],
+          allocationPercentageHours: [
+            null,
+            [Validators.required, Validators.min(0), Validators.max(100)]
+          ]
+        })
+      );
     });
-    this.selectedProfiles = teamProfiles;
   }
 }

@@ -128,14 +128,14 @@
           <!-- sales number input  -->
           <mat-form-field>
             <mat-label>{{ 'PROJECT_SALES_NUMBER' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="salesNumber">
+            <input matInput type="number" placeholder="0" formControlName="salesNumber">
           </mat-form-field>
         </div>
         <div>
           <!-- sales price input -->
           <mat-form-field>
             <mat-label>{{ 'PROJECT_TOTAL_PRICE' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="projectPrice">
+            <input matInput type="number" placeholder="0" formControlName="projectPrice">
           </mat-form-field>
         </div>
       </div>
@@ -169,7 +169,7 @@
 
       <!-- buttons -->
       <div class="buttonContainer">
-        <button mat-stroked-button (click)="update()">
+        <button mat-stroked-button (click)="update()" [disabled]="projectForm.invalid">
           <mat-icon>check</mat-icon>
           {{ 'UPDATE' | translate }}
         </button>

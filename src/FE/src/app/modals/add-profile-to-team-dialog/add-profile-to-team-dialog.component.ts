@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Profile, Team, TeamDTO, TeamProfile, TeamProfileDTO} from '../../models';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TeamsService} from '../../services/teams.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
@@ -11,7 +11,7 @@ import {MatDivider} from '@angular/material/divider';
 import {MatFormField, MatLabel, MatSuffix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {CalculationsService} from '../../services/calculations.service';
 
 @Component({
@@ -36,7 +36,8 @@ import {CalculationsService} from '../../services/calculations.service';
     NgIf,
     ReactiveFormsModule,
     TranslateModule,
-    FormsModule
+    FormsModule,
+    NgForOf
   ],
   templateUrl: './add-profile-to-team-dialog.component.html',
   styleUrl: './add-profile-to-team-dialog.component.css'
@@ -61,8 +62,7 @@ export class AddProfileToTeamDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.teamProfileForm = this.formBuilder.group({
-      costAllocationPercentage: [0, Validators.required],
-      hourAllocationPercentage: [0, Validators.required]
+      allocations: this.formBuilder.array([])
     });
     let teams = await this.teamService.getTeams();
     let teamsAvailable = teams.filter(potentialTeam => {
@@ -78,14 +78,39 @@ export class AddProfileToTeamDialogComponent implements OnInit {
     });
   }
 
+  isSaveDisabled(): boolean {
+    return this.teamProfileForm.invalid || this.selectedTeams.length === 0;
+  }
+
+  get allocations(): FormArray {
+    return this.teamProfileForm.get('allocations') as FormArray;
+  }
+
+  getFormGroupAt(index: number): FormGroup {
+    return this.allocations.at(index) as FormGroup;
+  }
+
   onSelectionChange($event: MatSelectionListChange) {
     this.selectedTeams = $event.source.selectedOptions.selected.map(team =>
       team.value);
+
+    this.allocations.clear();
+
+    this.selectedTeams.forEach(team => {
+      let allocationFormGroup = this.formBuilder.group({
+        allocationPercentageCost: [null, [Validators.required, Validators.min(0), Validators.max(100)]],
+        allocationPercentageHours: [null, [Validators.required, Validators.min(0), Validators.max(100)]]
+      });
+      this.allocations.push(allocationFormGroup);
+    });
   }
 
   async onSave() {
     let newTeamProfiles: TeamProfile[] = [];
-    this.selectedTeams.forEach(teamProfile => {
+    this.selectedTeams.forEach((teamProfile, index) => {
+      const allocationForm = this.allocations.at(index) as FormGroup;
+      teamProfile.allocationPercentageCost = allocationForm.get('allocationPercentageCost')!.value;
+      teamProfile.allocationPercentageHours = allocationForm.get('allocationPercentageHours')!.value;
       teamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfile);
       teamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfile);
       newTeamProfiles.push(teamProfile);

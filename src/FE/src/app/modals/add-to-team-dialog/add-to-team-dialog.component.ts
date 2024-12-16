@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
 import {MatDivider} from '@angular/material/divider';
@@ -12,7 +12,7 @@ import {Team, TeamDTO, TeamProfile} from '../../models';
 import {ProfileService} from '../../services/profile.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {TeamsService} from '../../services/teams.service';
-import {NgIf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {CalculationsService} from '../../services/calculations.service';
 import {GenerateDTOService} from '../../services/generate-dto.service';
 
@@ -39,11 +39,13 @@ import {GenerateDTOService} from '../../services/generate-dto.service';
     ReactiveFormsModule,
     TranslateModule,
     NgIf,
+    NgForOf,
   ],
   templateUrl: './add-to-team-dialog.component.html',
   styleUrl: './add-to-team-dialog.component.css'
 })
 export class AddToTeamDialogComponent implements OnInit {
+  profileForm!: FormGroup;
   teamProfileList: TeamProfile[] = [];
   selectedTeamProfiles: TeamProfile[] = [];
   @Output() AddToTeam = new EventEmitter<Team>();
@@ -56,11 +58,15 @@ export class AddToTeamDialogComponent implements OnInit {
     private snackbarService: SnackbarService,
     private calculationsService: CalculationsService,
     private translateService: TranslateService,
-    private generateDTOService: GenerateDTOService
+    private generateDTOService: GenerateDTOService,
+    private formbuilder: FormBuilder
   ) {
   }
 
   async ngOnInit(): Promise<void> {
+    this.profileForm = this.formbuilder.group({
+      allocations: this.formbuilder.array([])
+    });
     let profiles = await this.profileService.getProfiles();
     let potentialTeamProfiles = profiles.map(profile => {
       let teamProfile: TeamProfile = {
@@ -74,12 +80,25 @@ export class AddToTeamDialogComponent implements OnInit {
         alreadyProfile.profile!.profileId === potentialTeamProfile.profile!.profileId));
   }
 
+  isSaveDisabled(): boolean {
+    return this.profileForm.invalid || this.selectedTeamProfiles.length === 0;
+  }
+
+  get allocations(): FormArray {
+    return this.profileForm.get('allocations') as FormArray;
+  }
+
+  getFormGroupAt(index: number): FormGroup {
+    return this.allocations.at(index) as FormGroup;
+  }
+
   async onSave() {
-    this.selectedTeamProfiles.forEach((teamProfile) => {
-      let allocatedCost = this.calculationsService.calculateCostAllocation(teamProfile);
-      let allocatedHours = this.calculationsService.calculateHourAllocation(teamProfile);
-      teamProfile.allocatedCost = allocatedCost;
-      teamProfile.allocatedHours = allocatedHours;
+    this.selectedTeamProfiles.forEach((teamProfile, index) => {
+      const allocationForm = this.allocations.at(index) as FormGroup;
+      teamProfile.allocationPercentageCost = allocationForm.get('allocationPercentageCost')!.value;
+      teamProfile.allocationPercentageHours = allocationForm.get('allocationPercentageHours')!.value;
+      teamProfile.allocatedCost = this.calculationsService.calculateCostAllocation(teamProfile);
+      teamProfile.allocatedHours = this.calculationsService.calculateHourAllocation(teamProfile);
     });
     this.team.teamProfiles!.push(...this.selectedTeamProfiles);
     let DTO: TeamDTO = this.generateDTOService.createTeamDTO(this.team);
@@ -101,5 +120,21 @@ export class AddToTeamDialogComponent implements OnInit {
   onSelectionChange($event: MatSelectionListChange) {
     this.selectedTeamProfiles = $event.source.selectedOptions.selected.map(teamProfile =>
       teamProfile.value);
+
+    this.allocations.clear();
+    this.selectedTeamProfiles.forEach(() => {
+      this.allocations.push(
+        this.formbuilder.group({
+          allocationPercentageCost: [
+            null,
+            [Validators.required, Validators.min(0), Validators.max(100)]
+          ],
+          allocationPercentageHours: [
+            null,
+            [Validators.required, Validators.min(0), Validators.max(100)]
+          ]
+        })
+      );
+    });
   }
 }

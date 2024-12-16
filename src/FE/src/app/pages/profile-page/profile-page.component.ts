@@ -132,10 +132,10 @@ export class ProfilePageComponent implements OnInit {
       name: ['', Validators.required],
       location: ['', Validators.required],
       resource_type: [null, Validators.required],
-      annual_cost: [''],
+      annual_cost: ['', Validators.required],
       annual_hours: [{value: '', disabled: true}],
-      hours_per_day: [''],
-      effectiveness: ['']
+      hours_per_day: ['', [Validators.required, Validators.min(0), Validators.max(24)]],
+      effectiveness: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
     });
 
     this.locations = await this.geographyService.getCountries();
@@ -298,10 +298,12 @@ export class ProfilePageComponent implements OnInit {
       name: [this.currentProfile()!.name, Validators.required],
       location: [this.currentProfile()!.geography.id, Validators.required],
       resource_type: [this.currentProfile()!.resourceType, Validators.required],
-      annual_cost: [this.currentProfile()!.annualCost],
+      annual_cost: [this.currentProfile()!.annualCost, Validators.required],
       annual_hours: [{value: this.currentProfile()!.annualHours, disabled: true}],
-      effectiveness: [this.currentProfile()!.effectivenessPercentage],
-      hours_per_day: [this.currentProfile()!.hoursPerDay]
+      effectiveness: [this.currentProfile()!.effectivenessPercentage,
+        [Validators.required, Validators.min(0), Validators.max(100)]],
+      hours_per_day: [this.currentProfile()!.hoursPerDay,
+        [Validators.required, Validators.min(0), Validators.max(24)]]
     })
 
     if (!this.profileForm.get('resource_type')?.value) {

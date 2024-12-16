@@ -8,7 +8,7 @@
     <input matInput placeholder="Team Easy On" formControlName="name">
   </mat-form-field>
   <div class="profilesContainer">
-    <mat-selection-list formControlName="profiles" (selectionChange)="onSelectionChange($event)">
+    <mat-selection-list (selectionChange)="onSelectionChange($event)">
       @for (profile of profileList; track profile) {
         <mat-list-option [value]="profile" >{{ profile.name }}</mat-list-option>
       }
@@ -16,32 +16,36 @@
   </div>
 </mat-dialog-content>
 
-<mat-dialog-content class="container">
-  <div class="allocationContainer" *ngIf="selectedProfiles.length > 0">
+<mat-dialog-content class="container" *ngIf="selectedProfiles.length > 0">
+  <div class="allocationContainer">
     <mat-list>
-      @for (teamProfile of selectedProfiles; track teamProfile) {
-        <mat-list-item>
-          <div class="allocationItem">
-            <span>{{ teamProfile.profile!.name }}</span>
-            <div class="allocationInputDiv">
+      <mat-list-item *ngFor="let teamProfile of selectedProfiles; let i = index" [formGroup]="getFormGroupAt(i)">
+        <div class="allocationItem">
+          <span>{{ teamProfile.profile!.name }}</span>
+          <div class="allocationInputDiv">
               <mat-form-field class="allocationInput">
                 <mat-label>Cost Allocation (%)</mat-label>
                 <span matSuffix>%</span>
-                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageCost"
-                       min="0" max="100">
+                <input
+                  type="number"
+                  matInput
+                  placeholder="Ex. 75%"
+                  formControlName="allocationPercentageCost">
               </mat-form-field>
 
               <mat-form-field class="allocationInput">
                 <mat-label>Hour Allocation (%)</mat-label>
                 <span matSuffix>%</span>
-                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageHours"
-                       min="0" max="100">
+                <input
+                  type="number"
+                  matInput
+                  placeholder="Ex. 75%"
+                  formControlName="allocationPercentageHours">
               </mat-form-field>
             </div>
           </div>
         </mat-list-item>
         <mat-divider></mat-divider>
-      }
     </mat-list>
   </div>
 </mat-dialog-content>
@@ -55,7 +59,7 @@
       </mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()" [disabled]="isSaveDisabled()">
       <mat-icon>
         check_circle
       </mat-icon>
