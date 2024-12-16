@@ -2,18 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {NgClass, NgIf} from '@angular/common';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-  MatTableDataSource
-} from '@angular/material/table';
+  MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
 import {MatFormField, MatInput, MatLabel, MatPrefix} from '@angular/material/input';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -28,25 +17,16 @@ import {MenuService} from '../../services/menu.service';
   standalone: true,
   imports: [
     MatButton,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
+    MatTableModule,
     MatFormField,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
     MatIcon,
     MatIconButton,
     MatInput,
     MatLabel,
     MatPrefix,
-    MatRow,
-    MatRowDef,
-    MatTable,
     NgIf,
     ReactiveFormsModule,
     TranslateModule,
-    MatHeaderCellDef,
     NgClass,
   ],
   templateUrl: './users-page.component.html',
@@ -90,7 +70,6 @@ export class UsersPageComponent implements OnInit {
     });
 
     this.datasource.data = await this.userService.getUsers();
-
   }
 
   applySearch(event: Event) {

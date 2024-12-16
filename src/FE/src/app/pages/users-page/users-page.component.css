@@ -18,10 +18,10 @@
 }
 
 .userTitleContainer {
-  display: flex;  /* Align children horizontally */
-  justify-content: space-between;  /* Ensure space between "USERS" and the search bar */
-  align-items: center;  /* Vertically center the items */
-  gap: 1rem;  /* Optional: adds space between the elements */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .userContainer {
