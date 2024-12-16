@@ -22,6 +22,7 @@ import {CurrencyService} from '../../services/currency.service';
 import {SearchConfigService} from '../../services/search-config.service';
 import {addWarning} from '@angular-devkit/build-angular/src/utils/webpack-diagnostics';
 import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 
 @Component({
@@ -51,7 +52,8 @@ import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog
     MatDatepickerInput,
     MatDatepicker,
     DecimalPipe,
-    MatPrefix
+    MatPrefix,
+    MatProgressSpinner
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
