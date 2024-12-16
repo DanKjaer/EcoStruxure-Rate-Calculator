@@ -19,6 +19,7 @@ import {Router} from '@angular/router';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-teams-page',
@@ -50,7 +51,6 @@ import {CurrencyService} from '../../services/currency.service';
   styleUrl: './teams-page.component.css'
 })
 export class TeamsPageComponent implements AfterViewInit, OnInit {
-  readonly dialog = inject(MatDialog);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -99,7 +99,8 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
               private snackBar: SnackbarService,
               private translate: TranslateService,
               private menuService: MenuService,
-              protected currencyService: CurrencyService) {
+              protected currencyService: CurrencyService,
+              private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -149,18 +150,31 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   }
 
   async onDelete() {
-    const result = await this.teamService.deleteTeam(this.selectedRow?.teamId!)
-    this.loading = true;
-    if (result) {
-      this.datasource.data = this.datasource.data.filter((team: Team) => team.teamId !== this.selectedRow?.teamId);
-      this.datasource._updateChangeSubscription();
-      this.updateTableFooterData();
-      this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_DELETE'), true);
-    } else {
-      this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_DELETE'), true);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('CONFIRM_DELETE_TEAM_TITLE'),
+        message: this.translate.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.name + '?'
+      },
+      maxWidth: '15vw',
+      minWidth: '15vw',
+    });
+
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const result = await this.teamService.deleteTeam(this.selectedRow?.teamId!)
+        this.loading = true;
+        if (result) {
+          this.datasource.data = this.datasource.data.filter((team: Team) => team.teamId !== this.selectedRow?.teamId);
+          this.datasource._updateChangeSubscription();
+          this.updateTableFooterData();
+          this.loading = false;
+          this.snackBar.openSnackBar(this.translate.instant('SUCCESS_TEAM_DELETE'), true);
+        } else {
+          this.loading = false;
+          this.snackBar.openSnackBar(this.translate.instant('ERROR_TEAM_DELETE'), true);
+        }
+      }
+    });
   }
 
   editRow(element: any): void {

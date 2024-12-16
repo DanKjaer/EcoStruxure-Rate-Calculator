@@ -1,29 +1,18 @@
-package ecostruxure.rate.calculator.be;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+package ecostruxure.rate.calculator.be.dto;
 
 import java.util.UUID;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue
+public class UserDTO {
     private UUID userId;
-
-    @Column(nullable = false)
     private String username;
-
-    @Column(nullable = false)
     private String password;
 
-    //#region Getters and Setters
+    public UserDTO(UUID userId, String username, String password) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+    }
+
     public UUID getUserId() {
         return userId;
     }
@@ -47,5 +36,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    //#endregion
 }

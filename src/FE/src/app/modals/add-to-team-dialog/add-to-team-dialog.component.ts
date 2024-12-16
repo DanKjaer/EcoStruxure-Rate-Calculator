@@ -8,7 +8,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {MatList, MatListItem, MatListOption, MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {Profile, Team, TeamDTO, TeamProfile, TeamProfileDTO} from '../../models';
+import {Team, TeamDTO, TeamProfile} from '../../models';
 import {ProfileService} from '../../services/profile.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {TeamsService} from '../../services/teams.service';
@@ -122,7 +122,7 @@ export class AddToTeamDialogComponent implements OnInit {
       teamProfile.value);
 
     this.allocations.clear();
-    this.selectedTeamProfiles.forEach(profile => {
+    this.selectedTeamProfiles.forEach(() => {
       this.allocations.push(
         this.formbuilder.group({
           allocationPercentageCost: [

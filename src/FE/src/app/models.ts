@@ -137,5 +137,5 @@ export interface TreeNode {
 export interface User {
   userId?: string;
   username: string;
-  password: string;
+  password?: string;
 }
