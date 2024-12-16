@@ -13,7 +13,7 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
-import {MatFormField, MatInput, MatPrefix} from '@angular/material/input';
+import {MatFormField, MatInput, MatPrefix, MatSuffix} from '@angular/material/input';
 import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
@@ -48,7 +48,8 @@ import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog
     DecimalPipe,
     MatFormField,
     MatLabel,
-    MatPrefix
+    MatPrefix,
+    MatSuffix
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
@@ -89,6 +90,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   averageAnnualCost: number = 0;
   averageCostAllocation: number = 0;
   averageHourAllocation: number = 0;
+  value: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -133,6 +135,11 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
       this.datasource.paginator.firstPage();
     }
     this.updateTableFooterData(true);
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   editRow(element: any): void {
@@ -326,4 +333,5 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     this.averageCostAllocation = displayedData.reduce((acc, profile) =>
       acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
   }
+
 }

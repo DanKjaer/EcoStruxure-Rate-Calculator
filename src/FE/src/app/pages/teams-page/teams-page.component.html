@@ -17,7 +17,12 @@
   <div class="underTitleContainer">
     <mat-form-field>
       <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-      <input class="searchInput" matInput inputmode="search" type="search" (keyup)="applySearch($event)">
+      <input class="searchInput" matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
+      @if (value) {
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
       <mat-icon matPrefix>search</mat-icon>
     </mat-form-field>
 

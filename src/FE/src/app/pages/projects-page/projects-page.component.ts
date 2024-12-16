@@ -86,6 +86,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   averageGrossMargin: number = 0;
   averagePrice: number = 0;
   averageDays: number = 0;
+  value: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -140,6 +141,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       this.datasource.paginator.firstPage();
     }
     this.updateTableFooterData(true);
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   openDialog() {

@@ -5,7 +5,12 @@
         <p>{{ 'COUNTRIES_REGIONS' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)">
+          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
+          @if (value) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
       </div>
@@ -107,8 +112,8 @@
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
                 <div matListItemLine>
-                    {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-                    {{ countryData.price | number: '1.0-2' }}
+                  {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                  {{ countryData.price | number: '1.0-2' }}
                 </div>
               </mat-list-item>
             }
@@ -128,8 +133,8 @@
               <mat-list-item>
                 <div matListItemTitle>{{ countryData.name }}</div>
                 <div matListItemLine>
-                    {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
-                    {{ countryData.dayRate | number: '1.0-2' }}
+                  {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+                  {{ countryData.dayRate | number: '1.0-2' }}
                 </div>
               </mat-list-item>
             }
@@ -139,7 +144,7 @@
     </div>
   </div>
   <div class="graphContainer">
-      <app-country-projects-graph [data]="countryData!"/>
-      <app-projects-graph [data]="selectedCountryProjects!" [country]="selectedCountry?.name" *ngIf="countrySelected"/>
+    <app-country-projects-graph [data]="countryData!"/>
+    <app-projects-graph [data]="selectedCountryProjects!" [country]="selectedCountry?.name" *ngIf="countrySelected"/>
   </div>
 </div>

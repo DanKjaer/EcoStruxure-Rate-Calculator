@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatTableModule, MatTableDataSource} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
-import {MatFormField, MatInput, MatPrefix} from "@angular/material/input";
+import {MatFormField, MatInput, MatPrefix, MatSuffix} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
@@ -44,7 +44,8 @@ import {SearchConfigService} from '../../services/search-config.service';
     MatDatepickerInput,
     MatDatepickerToggle,
     MatDatepicker,
-    MatPrefix
+    MatPrefix,
+    MatSuffix
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
@@ -56,6 +57,7 @@ export class ProjectPageComponent implements OnInit {
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
   selectedRow: ProjectTeam | null = null;
+  value: string = '';
 
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
@@ -149,6 +151,11 @@ export class ProjectPageComponent implements OnInit {
     if (this.datasource.paginator) {
       this.datasource.paginator.firstPage();
     }
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   async update() {
