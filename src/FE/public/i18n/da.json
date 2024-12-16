@@ -226,7 +226,6 @@
   "ADD_NEW_PROJECT_MEMBER": "Tilføj nyt projektmedlem",
   "EXAMPLE": "Eksempel",
   "PROJECT_COST": "Projektomkostninger",
-  "PROJECT_SALES_NUMBER": "Projektsalgsnummer",
   "WORLD_OVERVIEW": "Verden",
   "COUNTRIES_REGIONS": "Lande og regioner",
   "CLOSE_PANEL": "Luk panel",
@@ -252,5 +251,13 @@
   "SUCCESS_LOGOUT": "Log ud succesfuldt",
   "PROJECT_PRICE": "Projekt pris",
   "PROJECTS_IN_COUNTRY": "Projekter i lande",
-  "PROJECTS_IN": "Projekter i"
+  "PROJECTS_IN": "Projekter i",
+  "SUCCESS_USER_CREATED": "Bruger oprettet",
+  "ERROR_USER_CREATED": "Kunne ikke oprette bruger",
+  "SUCCESS_PASSWORD_CHANGED": "Kodeord ændret",
+  "ERROR_PASSWORD_CHANGED": "Kunne ikke ændre kodeord",
+  "ERROR_PASSWORDS_DIFFERENT": "Kodeordene er forskellige",
+  "SUCCESS_USER_DELETED": "Bruger slettet",
+  "ERROR_USER_DELETED": "Kunne ikke slette bruger"
+
 }

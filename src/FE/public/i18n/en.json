@@ -232,7 +232,6 @@
   "ADD_NEW_PROJECT_MEMBER": "Add new project member",
   "EXAMPLE": "Example",
   "PROJECT_COST": "Project cost",
-  "PROJECT_SALES_NUMBER": "Project sales number",
   "WORLD_OVERVIEW": "World",
   "COUNTRIES_REGIONS": "Countries and regions",
   "CLOSE_PANEL": "Close panel",
@@ -258,5 +257,14 @@
   "SUCCESS_LOGOUT": "Logout successful",
   "PROJECT_PRICE": "Project price",
   "PROJECTS_IN_COUNTRY": "Projects in country",
-  "PROJECTS_IN": "Projects in"
+  "PROJECTS_IN": "Projects in",
+  "SUCCESS_USER_CREATED": "User created",
+  "ERROR_USER_CREATED": "Failed to create user",
+  "SUCCESS_PASSWORD_CHANGED": "Password changed",
+  "ERROR_PASSWORD_CHANGED": "Failed to change password",
+  "ERROR_PASSWORDS_DIFFERENT": "Passwords do not match",
+  "SUCCESS_USER_DELETED": "User deleted",
+  "ERROR_USER_DELETED": "Failed to delete user"
+
+
 }

@@ -28,7 +28,6 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  /*max-width: 60vw;*/
   background-color: whitesmoke;
   border: 1px solid gray;
   border-radius: 0.5rem;
@@ -57,10 +56,16 @@
 }
 
 .resetClass{
-  display: none;
-  margin: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
-.show-password-fields {
-  display: block;
+.newRepeatClass {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.passwordFields{
+  width: 30vw;
 }

@@ -1,8 +1,10 @@
 package ecostruxure.rate.calculator.bll.user;
 
 import ecostruxure.rate.calculator.be.User;
+import ecostruxure.rate.calculator.be.dto.UserDTO;
 import ecostruxure.rate.calculator.dal.IUserRepository;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     public UserService(IUserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -58,9 +61,10 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public User update(User user) {
+    public User update(UserDTO user) {
         user.setPassword(passwordEncoder.encode((user.getPassword())));
-        return userRepository.save(user);
+        User userObject = modelMapper.map(user, User.class);
+        return userRepository.save(userObject);
     }
 
     public boolean delete(UUID id) {

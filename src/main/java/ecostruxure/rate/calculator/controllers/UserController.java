@@ -1,5 +1,6 @@
 package ecostruxure.rate.calculator.controllers;
 
+import ecostruxure.rate.calculator.be.dto.UserDTO;
 import ecostruxure.rate.calculator.bll.utils.JwtUtil;
 import ecostruxure.rate.calculator.be.User;
 import ecostruxure.rate.calculator.bll.user.UserService;
@@ -37,12 +38,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody UserDTO user) {
         return userService.createUser(user.getUsername(), user.getPassword());
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) throws Exception {
+    public User updateUser(@RequestBody UserDTO user) throws Exception {
         return userService.update(user);
     }
 

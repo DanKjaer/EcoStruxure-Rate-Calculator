@@ -46,7 +46,6 @@ import {User} from '../../models';
     ReactiveFormsModule,
     TranslateModule,
     MatHeaderCellDef,
-    NgClass
   ],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.css'
@@ -127,6 +126,7 @@ export class UsersPageComponent implements OnInit {
     this.selectedRow = row;
     this.showResetPasswordFields = !this.showResetPasswordFields;
     this.changeDetectorRef.detectChanges();
+    console.log("kig her: ", this.showResetPasswordFields)
   }
 
   onChangePassword() {
