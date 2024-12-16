@@ -18,36 +18,68 @@
         }
       </mat-selection-list>
     </div>
-
-
   </div>
 </mat-dialog-content>
-<mat-dialog-content class="container">
-  <div class="allocationContainer" *ngIf="selectedTeams.length > 0">
-    <mat-list>
-      @for (teamProfile of selectedTeams; track teamProfile) {
-        <mat-list-item>
-          <div class="allocationItem">
-            <span>{{ teamProfile.team!.name }}</span>
-            <div class="allocationInputDiv">
-              <mat-form-field class="allocationInput">
-                <mat-label>Cost Allocation (%)</mat-label>
-                <span matSuffix>%</span>
-                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageCost"
-                       min="0" max="100">
-              </mat-form-field>
+<!--<mat-dialog-content class="container">-->
+<!--  <div class="allocationContainer" *ngIf="selectedTeams.length > 0">-->
+<!--    <mat-list>-->
+<!--      @for (teamProfile of selectedTeams; track teamProfile) {-->
+<!--        <mat-list-item>-->
+<!--          <div class="allocationItem">-->
+<!--            <span>{{ teamProfile.team!.name }}</span>-->
+<!--            <div class="allocationInputDiv">-->
+<!--              <mat-form-field class="allocationInput">-->
+<!--                <mat-label>Cost Allocation (%)</mat-label>-->
+<!--                <span matSuffix>%</span>-->
+<!--                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageCost"-->
+<!--                       min="0" max="100">-->
+<!--              </mat-form-field>-->
 
-              <mat-form-field class="allocationInput">
-                <mat-label>Hour Allocation (%)</mat-label>
-                <span matSuffix>%</span>
-                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageHours"
-                       min="0" max="100">
-              </mat-form-field>
-            </div>
+<!--              <mat-form-field class="allocationInput">-->
+<!--                <mat-label>Hour Allocation (%)</mat-label>-->
+<!--                <span matSuffix>%</span>-->
+<!--                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageHours"-->
+<!--                       min="0" max="100">-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </mat-list-item>-->
+<!--        <mat-divider></mat-divider>-->
+<!--      }-->
+<!--    </mat-list>-->
+<!--  </div>-->
+<!--</mat-dialog-content>-->
+
+<mat-dialog-content class="container" *ngIf="selectedTeams.length > 0">
+  <div class="allocationContainer">
+    <mat-list>
+      <mat-list-item *ngFor="let teamProfile of selectedTeams; let i = index" [formGroup]="getFormGroupAt(i)">
+        <div class="allocationItem">
+          <span>{{ teamProfile.profile!.name }}</span>
+          <div class="allocationInputDiv">
+            <mat-form-field class="allocationInput">
+              <mat-label>Cost Allocation (%)</mat-label>
+              <span matSuffix>%</span>
+              <input
+                type="number"
+                matInput
+                placeholder="Ex. 75%"
+                formControlName="allocationPercentageCost">
+            </mat-form-field>
+
+            <mat-form-field class="allocationInput">
+              <mat-label>Hour Allocation (%)</mat-label>
+              <span matSuffix>%</span>
+              <input
+                type="number"
+                matInput
+                placeholder="Ex. 75%"
+                formControlName="allocationPercentageHours">
+            </mat-form-field>
           </div>
-        </mat-list-item>
-        <mat-divider></mat-divider>
-      }
+        </div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
     </mat-list>
   </div>
 </mat-dialog-content>
@@ -58,7 +90,7 @@
       <mat-icon> cancel </mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()" [disabled]="isSaveDisabled()">
       <mat-icon> check_circle </mat-icon>
       {{ 'ADD' | translate }}
     </button>

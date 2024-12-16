@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Project, ProjectTeam} from "../../models";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
 import {MatListModule, MatSelectionListChange} from "@angular/material/list";
 import {MatFormField, MatInputModule} from "@angular/material/input";
@@ -11,6 +11,7 @@ import {ProjectService} from '../../services/project.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {MatButton} from '@angular/material/button';
 import {MatDivider} from '@angular/material/divider';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-add-to-project-dialog',
@@ -28,7 +29,9 @@ import {MatDivider} from '@angular/material/divider';
     MatDialogTitle,
     FormsModule,
     MatButton,
-    MatDivider
+    MatDivider,
+    NgForOf,
+    NgIf
   ],
   templateUrl: './add-to-project-dialog.component.html',
   styleUrl: './add-to-project-dialog.component.css'
@@ -51,7 +54,7 @@ export class AddToProjectDialogComponent implements OnInit {
 
   async ngOnInit() {
     this.teamForm = this.formBuilder.group({
-      teams: [[], Validators.required],
+      allocations: this.formBuilder.array([]),
     })
 
     let teams = await this.teamService.getTeams();
@@ -68,14 +71,27 @@ export class AddToProjectDialogComponent implements OnInit {
         alreadyMember.team.teamId === potentialProjectMember.team.teamId));
   }
 
+  isSaveDisabled(): boolean {
+    return this.teamForm.invalid || this.selectedTeams.length === 0;
+  }
+
+  get allocations(): FormArray {
+    return this.teamForm.get('allocations') as FormArray;
+  }
+
+  getFormGroupAt(index: number): FormGroup {
+    return this.allocations.at(index) as FormGroup;
+  }
+
   async onSave() {
     let teams = this.selectedTeams;
-    teams.forEach((team) => {
+    teams.forEach((team, index) => {
+      const allocationForm = this.allocations.at(index) as FormGroup;
       let projectTeam: ProjectTeam = {
         projectTeamId: '',
         project: this.project.projectId,
         team: team.team!,
-        allocationPercentage: team.allocationPercentage
+        allocationPercentage: allocationForm.get('allocation')!.value
       }
       this.project.projectTeams.push(projectTeam);
     });
@@ -95,5 +111,18 @@ export class AddToProjectDialogComponent implements OnInit {
 
   onSelectionChange($event: MatSelectionListChange) {
     this.selectedTeams = $event.source.selectedOptions.selected.map(team => team.value);
+
+    this.allocations.clear();
+
+    this.selectedTeams.forEach((team) => {
+      this.allocations.push(
+        this.formBuilder.group({
+          allocation: [
+            null,
+            [Validators.required, Validators.min(0), Validators.max(100)]
+          ]
+        })
+      )
+    });
   }
 }

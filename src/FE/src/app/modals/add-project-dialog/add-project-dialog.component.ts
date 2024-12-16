@@ -1,5 +1,13 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -45,6 +53,7 @@ import {MatDivider} from '@angular/material/divider';
 })
 export class AddProjectDialogComponent implements OnInit {
   projectForm!: FormGroup;
+  teamForm!: FormGroup;
   teamList: Team[] = [];
   locations!: Geography[];
   selectedProjectTeam: ProjectTeam[] = [];
@@ -72,9 +81,25 @@ export class AddProjectDialogComponent implements OnInit {
       projectDescription: ['']
     })
 
+    this.teamForm = this.formBuilder.group({
+      allocations: this.formBuilder.array([])
+    });
+
     this.teamList = await this.teamService.getTeams();
     this.getCountries();
     this.ChangeDetectorRef.detectChanges();
+  }
+
+  isSaveDisabled(): boolean {
+    return this.teamForm.invalid || this.selectedProjectTeam.length === 0 && this.projectForm.invalid;
+  }
+
+  get allocations(): FormArray {
+    return this.teamForm.get('allocations') as FormArray;
+  }
+
+  getFormGroupAt(index: number): FormGroup {
+    return this.allocations.at(index) as FormGroup;
   }
 
   onSelectionChange($event: MatSelectionListChange) {
@@ -85,6 +110,19 @@ export class AddProjectDialogComponent implements OnInit {
       };
       return projectTeam;
     });
+
+    this.allocations.clear();
+
+    this.selectedProjectTeam.forEach((projectTeam) => {
+      this.allocations.push(
+        this.formBuilder.group({
+          allocation: [
+            null,
+            [Validators.required, Validators.min(0), Validators.max(100)]
+          ]
+        })
+      );
+    });
   }
 
   async getCountries() {
@@ -92,34 +130,37 @@ export class AddProjectDialogComponent implements OnInit {
   }
 
   async onAddProject() {
-    if (this.projectForm.valid) {
-      const startDate = this.projectForm.value.startDate;
-      const endDate = this.projectForm.value.endDate;
+    const startDate = this.projectForm.value.startDate;
+    const endDate = this.projectForm.value.endDate;
 
-      // Convert the picked dates to UTC
-      const startDateUtc = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
-      const endDateUtc = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
+    // Convert the picked dates to UTC
+    const startDateUtc = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
+    const endDateUtc = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
 
-      let project = {
-        projectName: this.projectForm.value.projectName,
-        projectSalesNumber: this.projectForm.value.projectSalesNumber,
-        projectDescription: this.projectForm.value.projectDescription,
-        projectTeams: this.selectedProjectTeam,
-        projectDayRate: 0,
-        projectStartDate: startDateUtc,
-        projectEndDate: endDateUtc,
-        projectPrice: this.projectForm.value.projectPrice,
-        projectLocation: this.projectForm.value.geography
-      }
+    this.selectedProjectTeam.forEach((projectTeam, index) => {
+      const allocationForm = this.allocations.at(index) as FormGroup;
+      projectTeam.allocationPercentage = allocationForm.get('allocation')!.value;
+    });
 
-      project.projectTeams = this.selectedProjectTeam;
-      const newProject = await this.projectService.postProject(project);
-      if (newProject) {
-        this.projectAdded.emit(newProject);
-        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_CREATED'), true);
-      } else {
-        this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_CREATED'), false);
-      }
+    let project = {
+      projectName: this.projectForm.value.projectName,
+      projectSalesNumber: this.projectForm.value.projectSalesNumber,
+      projectDescription: this.projectForm.value.projectDescription,
+      projectTeams: this.selectedProjectTeam,
+      projectDayRate: 0,
+      projectStartDate: startDateUtc,
+      projectEndDate: endDateUtc,
+      projectPrice: this.projectForm.value.projectPrice,
+      projectLocation: this.projectForm.value.geography
     }
+
+    const newProject = await this.projectService.postProject(project);
+    if (newProject) {
+      this.projectAdded.emit(newProject);
+      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_CREATED'), true);
+    } else {
+      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_CREATED'), false);
+    }
+
   }
 }
