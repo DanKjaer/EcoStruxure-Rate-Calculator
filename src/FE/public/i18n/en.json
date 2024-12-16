@@ -264,7 +264,12 @@
   "ERROR_PASSWORD_CHANGED": "Failed to change password",
   "ERROR_PASSWORDS_DIFFERENT": "Passwords do not match",
   "SUCCESS_USER_DELETED": "User deleted",
-  "ERROR_USER_DELETED": "Failed to delete user"
-
-
+  "ERROR_USER_DELETED": "Failed to delete user",
+  "CONFIRM": "Confirm",
+  "UPDATE_CURRENCY_TITLE": "Update currency",
+  "UPDATE_CURRENCY_MESSAGE": "Selected file: ",
+  "CONFIRM_DELETE_MESSAGE": "Delete ",
+  "CONFIRM_DELETE_PROFILE_TITLE": "Delete profile",
+  "CONFIRM_DELETE_TEAM_TITLE": "Delete team",
+  "CONFIRM_DELETE_PROJECT_TITLE": "Delete project"
 }

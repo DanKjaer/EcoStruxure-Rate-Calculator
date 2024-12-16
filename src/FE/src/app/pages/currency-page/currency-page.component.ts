@@ -7,6 +7,8 @@ import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {Currency} from '../../models';
 import {SnackbarService} from '../../services/snackbar.service';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-currency-page',
@@ -26,7 +28,8 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
   constructor(private menuService: MenuService,
               private currencyService: CurrencyService,
               private snackbarService: SnackbarService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService,
+              private dialog: MatDialog) {
   }
 
   isMenuOpen: boolean | undefined;
@@ -58,20 +61,32 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
       const file = input.files[0];
 
       if (file.type === 'text/csv' || file.type === 'application/vnd.ms-excel') {
-        const reader = new FileReader();
-        reader.readAsText(file);
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          data: {
+            title: this.translateService.instant('UPDATE_CURRENCY_TITLE'),
+            message: this.translateService.instant('UPDATE_CURRENCY_MESSAGE') + file.name
+          },
+          maxWidth: '15vw',
+          minWidth: '15vw',
+        });
 
-        reader.onload = async (e: ProgressEvent<FileReader>) => {
-          const csvData = e.target?.result;
-          if (typeof csvData === "string") {
+        dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+          if (confirmed) {
+            const reader = new FileReader();
+            reader.readAsText(file);
 
-            const data = this.parseCsv(csvData);
-            await this.currencyService.importCurrency(data);
-            this.datasource.data = data!;
-            this.snackbarService.openSnackBar(this.translateService.instant("SUCCESS_UPDATING_CURRENCY"), true);
+            reader.onload = async (e: ProgressEvent<FileReader>) => {
+              const csvData = e.target?.result;
+              if (typeof csvData === "string") {
+
+                const data = this.parseCsv(csvData);
+                await this.currencyService.importCurrency(data);
+                this.datasource.data = data!;
+                this.snackbarService.openSnackBar(this.translateService.instant("SUCCESS_UPDATING_CURRENCY"), true);
+              }
+            };
           }
-        };
-
+        });
       } else {
         alert('Please upload a valid CSV file.');
       }
