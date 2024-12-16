@@ -10,7 +10,6 @@
     </mat-form-field>
   </div>
   <div class="teamsContainer">
-    <!-- Left container: First projectMembersContainer -->
     <div class="projectMembersContainer leftContainer">
       <mat-selection-list (selectionChange)="onSelectionChange($event)">
         @for (teamProfile of teamList; track teamProfile) {
@@ -20,35 +19,6 @@
     </div>
   </div>
 </mat-dialog-content>
-<!--<mat-dialog-content class="container">-->
-<!--  <div class="allocationContainer" *ngIf="selectedTeams.length > 0">-->
-<!--    <mat-list>-->
-<!--      @for (teamProfile of selectedTeams; track teamProfile) {-->
-<!--        <mat-list-item>-->
-<!--          <div class="allocationItem">-->
-<!--            <span>{{ teamProfile.team!.name }}</span>-->
-<!--            <div class="allocationInputDiv">-->
-<!--              <mat-form-field class="allocationInput">-->
-<!--                <mat-label>Cost Allocation (%)</mat-label>-->
-<!--                <span matSuffix>%</span>-->
-<!--                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageCost"-->
-<!--                       min="0" max="100">-->
-<!--              </mat-form-field>-->
-
-<!--              <mat-form-field class="allocationInput">-->
-<!--                <mat-label>Hour Allocation (%)</mat-label>-->
-<!--                <span matSuffix>%</span>-->
-<!--                <input type="number" matInput placeholder="Ex. 75%" [(ngModel)]="teamProfile.allocationPercentageHours"-->
-<!--                       min="0" max="100">-->
-<!--              </mat-form-field>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </mat-list-item>-->
-<!--        <mat-divider></mat-divider>-->
-<!--      }-->
-<!--    </mat-list>-->
-<!--  </div>-->
-<!--</mat-dialog-content>-->
 
 <mat-dialog-content class="container" *ngIf="selectedTeams.length > 0">
   <div class="allocationContainer">
