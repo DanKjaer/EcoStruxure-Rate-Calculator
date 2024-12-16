@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
@@ -65,7 +65,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     'effectiveWorkHours',
     'effectivenessPercentage',
     'annualCost',
-    'totalAllocatedHours',
+    'totalHourAllocation',
     'totalCostAllocation',
     'geography',
     'options'

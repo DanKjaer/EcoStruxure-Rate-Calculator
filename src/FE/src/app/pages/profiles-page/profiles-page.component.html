@@ -150,7 +150,7 @@
       </ng-container>
 
       <!-- allocated hours -->
-      <ng-container matColumnDef="totalAllocatedHours">
+      <ng-container matColumnDef="totalHourAllocation">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'ALLOCATED_HOURS' | translate }}
         </th>
@@ -189,7 +189,7 @@
 
       <!-- location -->
       <ng-container matColumnDef="geography">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <th mat-header-cell *matHeaderCellDef>
           {{ 'LOCATION' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">

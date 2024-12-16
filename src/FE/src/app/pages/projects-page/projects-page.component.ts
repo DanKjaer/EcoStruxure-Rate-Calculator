@@ -60,15 +60,16 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 })
 export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['name',
-    'salesNumber',
-    'members',
-    'dayRate',
-    'grossMargin',
-    'price',
-    'startDate',
-    'endDate',
-    'totalDays',
+  displayedColumns: string[] = [
+    'projectName',
+    'projectSalesNumber',
+    'projectMembersString',
+    'projectDayRate',
+    'projectGrossMargin',
+    'projectPrice',
+    'startDateString',
+    'endDateString',
+    'projectTotalDays',
     'location',
     'options'];
 

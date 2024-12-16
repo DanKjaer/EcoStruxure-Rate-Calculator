@@ -60,15 +60,15 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   loading = true;
   displayedColumns: string[] = [
     'name',
-    'markup',
-    'gm',
-    'updated',
-    'hourly rate',
-    'day rate',
-    'total annual cost',
-    'total annual hours',
-    'total markup',
-    'total gm',
+    'markupPercentage',
+    'grossMarginPercentage',
+    'updatedAtString',
+    'hourlyRate',
+    'dayRate',
+    'totalAllocatedCost',
+    'totalAllocatedHours',
+    'totalCostWithMarkup',
+    'totalCostWithGrossMargin',
     'options'
   ]
   selectedRow: Team | null = null;
