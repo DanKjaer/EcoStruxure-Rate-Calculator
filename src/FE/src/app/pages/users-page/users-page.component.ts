@@ -11,6 +11,8 @@ import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {User} from '../../models';
 import {MenuService} from '../../services/menu.service';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-users-page',
@@ -50,7 +52,8 @@ export class UsersPageComponent implements OnInit {
               private userService: UserService,
               private snackbarService: SnackbarService,
               private translateService: TranslateService,
-              private menuService: MenuService) {
+              private menuService: MenuService,
+              private dialog: MatDialog) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -149,14 +152,26 @@ export class UsersPageComponent implements OnInit {
   }
 
   async onDelete(row: any) {
-    const result = await this.userService.deleteUser(row.userId!);
-    if (result) {
-      const updatedData = this.datasource.data.filter(user => user !== row);
-      this.datasource.data = [...updatedData];
-      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
-    } else {
-      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translateService.instant('CONFIRM_DELETE_PROFILE_TITLE'),
+        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.username + '?'
+      },
+      maxWidth: '15vw',
+      minWidth: '15vw',
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const result = await this.userService.deleteUser(row.userId!);
+        if (result) {
+          const updatedData = this.datasource.data.filter(user => user !== row);
+          this.datasource.data = [...updatedData];
+          this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_DELETED'), true);
+        } else {
+          this.snackbarService.openSnackBar(this.translateService.instant('ERROR_USER_DELETED'), false);
+        }
+      }
+    });
   }
 
   selectRow(row: User) {
