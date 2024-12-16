@@ -4,7 +4,6 @@ import ecostruxure.rate.calculator.be.dto.UserDTO;
 import ecostruxure.rate.calculator.bll.utils.JwtUtil;
 import ecostruxure.rate.calculator.be.User;
 import ecostruxure.rate.calculator.bll.user.UserService;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,7 @@ public class UserController {
     @Autowired
     public UserController(UserService userService,
                           JwtUtil jwtUtil,
-                          AuthenticationManager authenticationManager, EntityManager entityManager) {
+                          AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;

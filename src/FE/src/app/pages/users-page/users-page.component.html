@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngClass]="{menuClosed: !isMenuOpen}">
   <div class="infoContainer">
     <div class="userContainer">
       <div class="userTitleContainer">
@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div *ngIf="userForm" class="newUserContainer" [formGroup]="createUserForm">
+    <div class="newUserContainer" [formGroup]="createUserForm">
       <p>{{ 'NEW_USERS' | translate }}</p>
       <mat-form-field>
         <mat-label>{{ 'USERNAME' | translate }}</mat-label>
@@ -71,7 +71,7 @@
         <input matInput formControlName="repeatPassword" type="password">
       </mat-form-field>
 
-      <button mat-raised-button (click)="onSave()">
+      <button mat-raised-button (click)="onSave()" [disabled]="createUserForm.invalid">
         <mat-icon>
           add
         </mat-icon>
@@ -79,7 +79,7 @@
       </button>
 
       <div *ngIf="showResetPasswordFields" class="resetClass">
-        <form [formGroup]="createUserForm">
+        <form [formGroup]="changePasswordForm">
           <p>{{ 'CHANGE_PASSWORD' | translate }}</p>
           <div class="newRepeatClass">
             <mat-form-field>
@@ -91,7 +91,7 @@
               <input matInput formControlName="repeatPassword" type="password" class="passwordFields">
             </mat-form-field>
           </div>
-            <button mat-raised-button (click)="onChangePassword()">
+            <button mat-raised-button (click)="onChangePassword()" [disabled]="changePasswordForm.invalid">
               <mat-icon>
                 lock_reset
               </mat-icon>

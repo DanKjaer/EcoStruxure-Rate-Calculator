@@ -61,12 +61,14 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    @Transactional
     public User update(UserDTO user) {
         user.setPassword(passwordEncoder.encode((user.getPassword())));
         User userObject = modelMapper.map(user, User.class);
         return userRepository.save(userObject);
     }
 
+    @Transactional
     public boolean delete(UUID id) {
         userRepository.deleteById(id);
         return !userRepository.existsById(id);

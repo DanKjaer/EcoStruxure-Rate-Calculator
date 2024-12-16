@@ -21,6 +21,7 @@ import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
 import {User} from '../../models';
+import {MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-users-page',
@@ -46,6 +47,7 @@ import {User} from '../../models';
     ReactiveFormsModule,
     TranslateModule,
     MatHeaderCellDef,
+    NgClass,
   ],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.css'
@@ -53,37 +55,42 @@ import {User} from '../../models';
 export class UsersPageComponent implements OnInit {
   datasource: MatTableDataSource<any> = new MatTableDataSource();
   selectedRow: User | null = null;
-  userForm: FormGroup = new FormGroup({});
   displayedColumns: string[] = [
     'username',
     'changePassword',
     'delete'
   ];
   createUserForm: FormGroup = new FormGroup({});
+  changePasswordForm: FormGroup = new FormGroup({});
   showResetPasswordFields = false;
-
+  isMenuOpen: boolean | undefined;
 
   constructor(private formBuilder: FormBuilder,
               private changeDetectorRef: ChangeDetectorRef,
               private userService: UserService,
               private snackbarService: SnackbarService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService,
+              private menuService: MenuService) {
   }
 
   async ngOnInit(): Promise<void> {
-    this.userForm = this.formBuilder.group({
-      username: [''],
-      delete: ['']
+    this.menuService.isMenuOpen$.subscribe((isOpen) => {
+      this.isMenuOpen = isOpen;
     });
+
     this.createUserForm = this.formBuilder.group({
       username: ['', Validators.required],
-      password: ['', Validators.required],
-      repeatPassword: ['', Validators.required],
-      oldPassword: [''],
-      newPassword: ['']
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      repeatPassword: ['', [Validators.required, Validators.minLength(8)]],
+    });
+
+    this.changePasswordForm = this.formBuilder.group({
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      repeatPassword: ['', [Validators.required, Validators.minLength(8)]]
     });
 
     this.datasource.data = await this.userService.getUsers();
+
   }
 
   applySearch(event: Event) {
@@ -115,6 +122,7 @@ export class UsersPageComponent implements OnInit {
       .then((savedUserResult) => {
         this.createUserForm.reset();
         this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_USER_CREATED'), true);
+        this.datasource.data.push(savedUserResult);
         this.datasource._updateChangeSubscription();
       })
       .catch((error) => {
@@ -126,12 +134,11 @@ export class UsersPageComponent implements OnInit {
     this.selectedRow = row;
     this.showResetPasswordFields = !this.showResetPasswordFields;
     this.changeDetectorRef.detectChanges();
-    console.log("kig her: ", this.showResetPasswordFields)
   }
 
   onChangePassword() {
-    const newPassword = this.createUserForm.get('newPassword')?.value;
-    const repeatPassword = this.createUserForm.get('repeatPassword')?.value;
+    const newPassword = this.changePasswordForm.get('newPassword')?.value;
+    const repeatPassword = this.changePasswordForm.get('repeatPassword')?.value;
 
     if (newPassword === repeatPassword) {
       const user = {
@@ -148,9 +155,10 @@ export class UsersPageComponent implements OnInit {
             }
             return user;
           });
-          this.createUserForm.reset();
+          this.changePasswordForm.reset();
           this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PASSWORD_CHANGED'), true);
           this.datasource._updateChangeSubscription();
+          this.showResetPasswordFields = false;
         })
         .catch((error) => {
           this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PASSWORD_CHANGED'), false);
