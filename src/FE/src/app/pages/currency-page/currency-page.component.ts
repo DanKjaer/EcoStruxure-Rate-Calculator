@@ -72,6 +72,7 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
 
         dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
           if (confirmed) {
+            this.loading = true;
             const reader = new FileReader();
             reader.readAsText(file);
 
@@ -85,6 +86,7 @@ export class CurrencyPageComponent implements AfterViewInit, OnInit {
                 this.snackbarService.openSnackBar(this.translateService.instant("SUCCESS_UPDATING_CURRENCY"), true);
               }
             };
+            this.loading = false;
           }
         });
       } else {

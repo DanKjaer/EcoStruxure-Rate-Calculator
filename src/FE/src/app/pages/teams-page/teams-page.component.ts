@@ -11,7 +11,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {TeamsService} from '../../services/teams.service';
 import {Team} from '../../models';
-import {MatFormField, MatInput, MatLabel, MatPrefix} from '@angular/material/input';
+import {MatFormField, MatInput, MatLabel, MatPrefix, MatSuffix} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FormatterService} from '../../services/formatter.service';
 import {AddTeamDialogComponent} from '../../modals/add-team-dialog/add-team-dialog.component';
@@ -24,29 +24,30 @@ import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog
 @Component({
   selector: 'app-teams-page',
   standalone: true,
-  imports: [
-    TranslateModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatSortModule,
-    MatIcon,
-    MatIconButton,
-    NgIf,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    MatProgressSpinner,
-    MatButton,
-    MatDialogModule,
-    MatInput,
-    ReactiveFormsModule,
-    FormsModule,
-    NgClass,
-    DecimalPipe,
-    MatFormField,
-    MatLabel,
-    MatPrefix
-  ],
+    imports: [
+        TranslateModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatSortModule,
+        MatIcon,
+        MatIconButton,
+        NgIf,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+        MatProgressSpinner,
+        MatButton,
+        MatDialogModule,
+        MatInput,
+        ReactiveFormsModule,
+        FormsModule,
+        NgClass,
+        DecimalPipe,
+        MatFormField,
+        MatLabel,
+        MatPrefix,
+        MatSuffix
+    ],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.css'
 })
@@ -59,15 +60,15 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   loading = true;
   displayedColumns: string[] = [
     'name',
-    'markup',
-    'gm',
-    'updated',
-    'hourly rate',
-    'day rate',
-    'total annual cost',
-    'total annual hours',
-    'total markup',
-    'total gm',
+    'markupPercentage',
+    'grossMarginPercentage',
+    'updatedAtString',
+    'hourlyRate',
+    'dayRate',
+    'totalAllocatedCost',
+    'totalAllocatedHours',
+    'totalCostWithMarkup',
+    'totalCostWithGrossMargin',
     'options'
   ]
   selectedRow: Team | null = null;
@@ -91,6 +92,7 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
   averageHours: number = 0;
   averageMarkup: number = 0;
   averageGrossMargin: number = 0;
+  value: string = '';
 
 
   constructor(private teamService: TeamsService,
@@ -129,6 +131,11 @@ export class TeamsPageComponent implements AfterViewInit, OnInit {
       this.datasource.paginator.firstPage();
     }
     this.updateTableFooterData(true);
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   openDialog() {

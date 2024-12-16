@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatFormField, MatLabel, MatPrefix} from '@angular/material/form-field';
+import {MatFormField, MatLabel, MatPrefix, MatSuffix} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import {MatMenu, MatMenuItem} from '@angular/material/menu';
@@ -41,7 +41,8 @@ import {SearchConfigService} from '../../services/search-config.service';
     TranslateModule,
     NgClass,
     DecimalPipe,
-    FormsModule
+    FormsModule,
+    MatSuffix
   ],
   templateUrl: './team-page.component.html',
   styleUrl: './team-page.component.css'
@@ -53,6 +54,7 @@ export class TeamPageComponent implements OnInit {
   isMenuOpen: boolean | undefined;
   originalRowData: { [key: number]: any } = {};
   protected isEditingRow: boolean = false;
+  value: string = '';
 
   statBoxes = computed(() => {
     const team = this.team();
@@ -146,6 +148,11 @@ export class TeamPageComponent implements OnInit {
     if (this.datasource.paginator) {
       this.datasource.paginator.firstPage();
     }
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   async onRemove(row: TeamProfile) {

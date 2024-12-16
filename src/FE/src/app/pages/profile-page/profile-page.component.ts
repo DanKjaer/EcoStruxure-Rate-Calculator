@@ -78,6 +78,7 @@ export class ProfilePageComponent implements OnInit {
   ];
   originalRowData: { [key: number]: any } = {};
   protected isEditingRow: boolean = false;
+  value: string = '';
 
 
   //Create a computed property to calculate the stat boxes
@@ -156,6 +157,11 @@ export class ProfilePageComponent implements OnInit {
     if (this.datasource.paginator) {
       this.datasource.paginator.firstPage();
     }
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   openDialog() {
