@@ -5,10 +5,10 @@
   {{ data.message }}
 </div>
 <div mat-dialog-actions class="buttons">
-  <button mat-stroked-button (click)="onCancel()">
-    {{ 'CANCEL' | translate }}
-  </button>
   <button mat-stroked-button (click)="onConfirm()">
     {{ 'CONFIRM' | translate }}
+  </button>
+  <button mat-stroked-button (click)="onCancel()">
+    {{ 'CANCEL' | translate }}
   </button>
 </div>

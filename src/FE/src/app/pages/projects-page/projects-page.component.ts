@@ -21,6 +21,7 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 import {CurrencyService} from '../../services/currency.service';
 import {SearchConfigService} from '../../services/search-config.service';
 import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 
 @Component({
@@ -50,22 +51,24 @@ import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog
     MatDatepickerInput,
     MatDatepicker,
     DecimalPipe,
-    MatPrefix
+    MatPrefix,
+    MatProgressSpinner
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
 })
 export class ProjectsPageComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['name',
-    'salesNumber',
-    'members',
-    'dayRate',
-    'grossMargin',
-    'price',
-    'startDate',
-    'endDate',
-    'totalDays',
+  displayedColumns: string[] = [
+    'projectName',
+    'projectSalesNumber',
+    'projectMembersString',
+    'projectDayRate',
+    'projectGrossMargin',
+    'projectPrice',
+    'startDateString',
+    'endDateString',
+    'projectTotalDays',
     'location',
     'options'];
 
@@ -85,6 +88,7 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   averageGrossMargin: number = 0;
   averagePrice: number = 0;
   averageDays: number = 0;
+  value: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -139,6 +143,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
       this.datasource.paginator.firstPage();
     }
     this.updateTableFooterData(true);
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   openDialog() {
