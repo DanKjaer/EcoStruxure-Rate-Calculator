@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
@@ -20,7 +20,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {CurrencyService} from '../../services/currency.service';
 import {SearchConfigService} from '../../services/search-config.service';
-import {addWarning} from '@angular-devkit/build-angular/src/utils/webpack-diagnostics';
 import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
 
 
