@@ -59,7 +59,6 @@ public class UserService implements UserDetailsService {
     }
 
     public User update(User user) {
-        System.out.println("kodeordet: " + user.getPassword());
         user.setPassword(passwordEncoder.encode((user.getPassword())));
         return userRepository.save(user);
     }

@@ -20,7 +20,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
-import {Profile, User} from '../../models';
+import {User} from '../../models';
 
 @Component({
   selector: 'app-users-page',
@@ -124,7 +124,6 @@ export class UsersPageComponent implements OnInit {
   }
 
   showChangePassword(row: User) {
-    console.log('row', row);
     this.selectedRow = row;
     this.showResetPasswordFields = !this.showResetPasswordFields;
     this.changeDetectorRef.detectChanges();
@@ -134,9 +133,6 @@ export class UsersPageComponent implements OnInit {
     const newPassword = this.createUserForm.get('newPassword')?.value;
     const repeatPassword = this.createUserForm.get('repeatPassword')?.value;
 
-    console.log('newPassword', newPassword);
-    console.log('repeatPassword', repeatPassword);
-
     if (newPassword === repeatPassword) {
       const user = {
         userId: this.selectedRow!.userId,
@@ -144,7 +140,6 @@ export class UsersPageComponent implements OnInit {
         password: newPassword,
       };
 
-      console.log('user: ',user)
       this.userService.putUser(user)
         .then((savedUserResult) => {
           this.datasource.data = this.datasource.data.map((user: User) => {
