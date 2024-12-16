@@ -61,13 +61,13 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
   displayedColumns: string[] = [
     'name',
-    'annual hours',
-    'effective work hours',
-    'effectiveness',
-    'contributed annual cost',
-    'allocated hours',
-    'cost allocation',
-    'location',
+    'annualHours',
+    'effectiveWorkHours',
+    'effectivenessPercentage',
+    'annualCost',
+    'totalAllocatedHours',
+    'totalCostAllocation',
+    'geography',
     'options'
   ];
 
