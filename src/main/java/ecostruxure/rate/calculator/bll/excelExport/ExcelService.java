@@ -2,6 +2,7 @@ package ecostruxure.rate.calculator.bll.excelExport;
 
 import ecostruxure.rate.calculator.be.*;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
+import ecostruxure.rate.calculator.be.dto.ProjectDTO;
 import ecostruxure.rate.calculator.bll.profile.ProfileService;
 import ecostruxure.rate.calculator.bll.project.ProjectService;
 import ecostruxure.rate.calculator.bll.team.TeamService;
@@ -37,7 +38,7 @@ public class ExcelService {
         //data
         List<ProfileDTO> profiles = profileService.all();
         List<Team> teams = (List<Team>) teamService.all();
-        List<Project> projects = (List<Project>) projectService.getProjects();
+        List<Project> projects = (List<Project>) projectService.getProjectsForExcel();
 
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {

@@ -263,5 +263,7 @@
   "CONFIRM_DELETE_MESSAGE": "Slet ",
   "CONFIRM_DELETE_PROFILE_TITLE": "Slet profil",
   "CONFIRM_DELETE_TEAM_TITLE": "Slet team",
-  "CONFIRM_DELETE_PROJECT_TITLE": "Slet projekt"
+  "CONFIRM_DELETE_PROJECT_TITLE": "Slet projekt",
+  "SUCCESS_PROJECT_SAVED": "Projekt gemt",
+  "ERROR_PROJECT_SAVED": "Kunne ikke gemme projekt"
 }

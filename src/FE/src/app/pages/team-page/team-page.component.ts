@@ -195,7 +195,7 @@ export class TeamPageComponent implements OnInit {
     this.team()!.teamProfiles = this.teamProfiles();
 
     //update team
-    let DTO: TeamDTO = this.generateDTOService.createTeamDTO(this.team);
+    let DTO: TeamDTO = this.generateDTOService.createTeamDTO(this.team()!);
     let updatedTeam = await this.teamService.putTeam(DTO);
     if (updatedTeam) {
       this.team.set(updatedTeam);

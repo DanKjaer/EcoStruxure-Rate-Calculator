@@ -22,14 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.*;
 
 @Service
 public class TeamService {
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
 
     private final ITeamRepository teamRepository;
     private final ITeamProfileRepository teamProfileRepository;
@@ -56,7 +55,7 @@ public class TeamService {
         newTeam.setTotalCostWithGrossMargin(newTeam.getTotalAllocatedCost());
         newTeam.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        em.persist(newTeam);
+        entityManager.persist(newTeam);
         notifyTeamObservers(newTeam);
         return newTeam;
     }
@@ -66,7 +65,7 @@ public class TeamService {
     }
 
     public TeamDTO getById(UUID teamId) throws Exception {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Team> cq = cb.createQuery(Team.class);
         Root<Team> team = cq.from(Team.class);
 
@@ -76,7 +75,7 @@ public class TeamService {
         //select by team id
         cq.select(team).where(cb.equal(team.get("teamId"), teamId));
 
-        Team result = em.createQuery(cq).getSingleResult();
+        Team result = entityManager.createQuery(cq).getSingleResult();
 
         //map to TeamDTO
         TeamDTO teamDTO = modelMapper.map(result, TeamDTO.class);
@@ -84,7 +83,7 @@ public class TeamService {
     }
 
     public List<TeamProfileDTO> getByProfileId(UUID profileId) throws Exception {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamProfile> cq = cb.createQuery(TeamProfile.class);
         Root<TeamProfile> teamProfile = cq.from(TeamProfile.class);
 
@@ -95,7 +94,7 @@ public class TeamService {
         //select by profile id
         cq.select(teamProfile).where(cb.equal(teamProfile.get("profile").get("profileId"), profileId));
 
-        List<TeamProfile> teamProfiles = em.createQuery(cq).getResultList();
+        List<TeamProfile> teamProfiles = entityManager.createQuery(cq).getResultList();
 
         //map to TeamProfileDTO list
         Type listType = new TypeToken<List<TeamProfileDTO>>() {}.getType();
@@ -154,7 +153,7 @@ public class TeamService {
         team = RateUtils.calculateRates(team);
         team = RateUtils.calculateTotalMarkupAndTotalGrossMargin(team);
         teamRepository.save(team);
-        em.detach(team);
+        entityManager.detach(team);
 
         notifyTeamObservers(team);
         teamProfileRepository.deleteById(teamProfileId);

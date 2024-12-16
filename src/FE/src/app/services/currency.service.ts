@@ -76,7 +76,7 @@ export class CurrencyService {
    * @param to
    */
   convert(amount: number, from: string, to: string): number {
-    if (amount === Infinity) {
+    if (amount === Infinity || amount === 0) {
       return 0;
     }
     else if(!this.currencies[from] || !this.currencies[to]){

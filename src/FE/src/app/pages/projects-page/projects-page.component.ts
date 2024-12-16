@@ -8,7 +8,7 @@ import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Project} from '../../models';
+import {Project, ProjectTeam, Team} from '../../models';
 import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
@@ -128,7 +128,6 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   async ngAfterViewInit(): Promise<void> {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
-    this.updateTableFooterData();
   }
 
   applySearch(event: Event) {
@@ -209,6 +208,13 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     selectedProject['isEditing'] = false;
     this.loading = true;
     this.isEditingRow = false;
+    selectedProject.projectTeams.forEach((projectTeam: ProjectTeam) => {
+      projectTeam.project = selectedProject.projectId
+      projectTeam.team.teamProfiles?.forEach((profile) => {
+        profile.team = undefined;
+        profile.profile = undefined;
+      });
+    });
 
     const endDate: Date = new Date(selectedProject.projectEndDate);
     selectedProject.projectEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));

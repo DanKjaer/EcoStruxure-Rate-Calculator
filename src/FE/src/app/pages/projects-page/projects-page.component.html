@@ -107,7 +107,7 @@
         </td>
         <td mat-footer-cell *matFooterCellDef>
           <span>
-            {{ averageGrossMargin + '%' }}
+            {{ averageGrossMargin | number: '1.0-2' }} %
           </span>
           <br>
           <span>
@@ -185,7 +185,7 @@
         </td>
         <td mat-footer-cell *matFooterCellDef>
           <span>
-            {{averageDays}} {{ 'DAYS' | translate }}
+            {{averageDays | number: '1.0-2'}} {{ 'DAYS' | translate }}
           </span>
           <br>
           <span>
