@@ -19,6 +19,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
 import {CalculationsService} from '../../services/calculations.service';
 import {SearchConfigService} from '../../services/search-config.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-project-page',
@@ -58,6 +59,7 @@ export class ProjectPageComponent implements OnInit {
   isEditingRow: boolean = false;
   selectedRow: ProjectTeam | null = null;
   value: string = '';
+  protected readonly localStorage = localStorage;
 
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
@@ -91,7 +93,8 @@ export class ProjectPageComponent implements OnInit {
               private searchConfigService: SearchConfigService,
               private formBuilder: FormBuilder,
               private route: ActivatedRoute,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private changeDetectorRef: ChangeDetectorRef,
+              protected currencyService: CurrencyService) {
   }
 
   async ngOnInit(): Promise<void> {
