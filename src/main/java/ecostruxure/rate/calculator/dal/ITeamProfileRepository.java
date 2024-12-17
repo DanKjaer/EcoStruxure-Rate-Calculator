@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface ITeamProfileRepository extends CrudRepository<TeamProfile, UUID> {
     List<TeamProfile> findAllByProfile_ProfileId(UUID profileId);
     <T> SimpleJpaRepository<T, UUID> findTeamProfileByProfile_ProfileId(UUID profileProfileId);
+
+    void deleteAllByProfile_ProfileId(UUID profileProfileId);
 }

@@ -84,9 +84,11 @@ public class ProfileService {
         }
     }
 
+    @Transactional
     public boolean delete(UUID profileId) throws Exception {
+        teamProfileRepository.deleteAllByProfile_ProfileId(profileId);
         profileRepository.deleteById(profileId);
-        return true;
+        return !profileRepository.existsById(profileId);
     }
 
     public boolean archive(UUID profileId) throws Exception {
