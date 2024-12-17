@@ -76,7 +76,7 @@ jobs:
         npx lite-server --config bs-config.json &
     - name: Wait for Frontend
       run: |
-        timeout 30 bash -c 'until echo > /dev/tcp/localhost/4200; do sleep 1; done' || false
+        timeout 60 bash -c 'until echo > /dev/tcp/localhost/4200; do sleep 1; done' || false
 
     # Run TestCafe E2E Tests
     - name: Run E2E Tests with TestCafe
