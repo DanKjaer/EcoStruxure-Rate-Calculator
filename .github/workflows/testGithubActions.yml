@@ -71,8 +71,9 @@ jobs:
 
     # Serve Frontend Locally
     - name: Serve frontend
+      working-directory: src/FE
       run: |
-        npx lite-server --config src/FE/bs-config.json
+        npx lite-server --config bs-config.json &
     - name: Wait for Frontend
       run: |
         timeout 30 bash -c 'until echo > /dev/tcp/localhost/4200; do sleep 1; done' || false
