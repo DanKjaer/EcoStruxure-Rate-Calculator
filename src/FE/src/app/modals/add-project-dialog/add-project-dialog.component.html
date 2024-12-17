@@ -8,13 +8,13 @@
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_NAME' | translate }}</mat-label>
-            <input matInput placeholder="Project Name" formControlName="projectName">
+            <input matInput id="projectNameField" placeholder="Project Name" formControlName="projectName">
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_SALES_NUMBER' | translate }}</mat-label>
-            <input matInput placeholder="Project sales number" formControlName="projectSalesNumber">
+            <input matInput id="salesNumberField" placeholder="Project sales number" formControlName="projectSalesNumber">
           </mat-form-field>
         </div>
       </div>
@@ -24,9 +24,9 @@
           <!-- location select -->
           <mat-form-field>
             <mat-label>{{ 'LOCATION' | translate }}</mat-label>
-            <mat-select formControlName="geography">
+            <mat-select id="geographyMenu" formControlName="geography">
               @for (location of locations; track location) {
-                <mat-option [value]="location">
+                <mat-option id="{{location.name}}" [value]="location">
                   {{ location.name }}
                 </mat-option>
               }
@@ -36,7 +36,7 @@
         <div>
           <mat-form-field>
             <mat-label>{{ 'PROJECT_TOTAL_PRICE' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="projectPrice">
+            <input matInput id="totalPriceField" placeholder="0" formControlName="projectPrice">
           </mat-form-field>
         </div>
       </div>
@@ -116,7 +116,7 @@
       <mat-icon>cancel</mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true" (click)="onAddProject()" [disabled]="isSaveDisabled()">
+    <button mat-stroked-button id="addButton" [mat-dialog-close]="true" (click)="onAddProject()" [disabled]="isSaveDisabled()">
       <mat-icon>check_circle</mat-icon>
       {{ 'ADD' | translate }}
     </button>
