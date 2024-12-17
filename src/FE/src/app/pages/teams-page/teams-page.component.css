@@ -24,6 +24,11 @@
   font-size: 3rem;
 }
 
+.searchInput {
+  max-width: 15vw;
+  width: 15vw;
+}
+
 .buttonContainer {
   display: flex;
   flex-direction: row-reverse;

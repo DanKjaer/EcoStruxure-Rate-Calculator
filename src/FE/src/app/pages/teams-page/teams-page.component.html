@@ -17,7 +17,12 @@
   <div class="underTitleContainer">
     <mat-form-field>
       <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-      <input class="searchInput" matInput inputmode="search" type="search" (keyup)="applySearch($event)">
+      <input class="searchInput" matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
+      @if (value) {
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
       <mat-icon matPrefix>search</mat-icon>
     </mat-form-field>
 
@@ -52,7 +57,7 @@
       </ng-container>
 
       <!-- markup -->
-      <ng-container matColumnDef="markup">
+      <ng-container matColumnDef="markupPercentage">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'MARKUP' | translate }}
         </th>
@@ -74,7 +79,7 @@
       </ng-container>
 
       <!-- gross margin -->
-      <ng-container matColumnDef="gm">
+      <ng-container matColumnDef="grossMarginPercentage">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'GROSS_MARGIN_ABBREVIATION' | translate }}
         </th>
@@ -96,7 +101,7 @@
       </ng-container>
 
       <!-- updated -->
-      <ng-container matColumnDef="updated">
+      <ng-container matColumnDef="updatedAtString">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'UPDATED_AT' | translate }}
         </th>
@@ -107,7 +112,7 @@
       </ng-container>
 
       <!-- hourly rate -->
-      <ng-container matColumnDef="hourly rate">
+      <ng-container matColumnDef="hourlyRate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'HOURLY_RATE' | translate }}
         </th>
@@ -130,7 +135,7 @@
       </ng-container>
 
       <!-- day rate -->
-      <ng-container matColumnDef="day rate">
+      <ng-container matColumnDef="dayRate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'DAY_RATE' | translate }}
         </th>
@@ -153,7 +158,7 @@
       </ng-container>
 
       <!-- total annual cost -->
-      <ng-container matColumnDef="total annual cost">
+      <ng-container matColumnDef="totalAllocatedCost">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'TOTAL_ANNUAL_COST' | translate }}
         </th>
@@ -176,7 +181,7 @@
       </ng-container>
 
       <!-- total annual hours -->
-      <ng-container matColumnDef="total annual hours">
+      <ng-container matColumnDef="totalAllocatedHours">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'TOTAL_HOURS_ANNUALLY' | translate }}
         </th>
@@ -195,7 +200,7 @@
       </ng-container>
 
       <!-- total markup -->
-      <ng-container matColumnDef="total markup">
+      <ng-container matColumnDef="totalCostWithMarkup">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'TOTAL_MARKUP' | translate }}
         </th>
@@ -218,7 +223,7 @@
       </ng-container>
 
       <!-- total gross margin -->
-      <ng-container matColumnDef="total gm">
+      <ng-container matColumnDef="totalCostWithGrossMargin">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'TOTAL_GROSS_MARGIN' | translate }}
         </th>

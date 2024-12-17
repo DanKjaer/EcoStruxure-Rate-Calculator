@@ -39,10 +39,15 @@
         <p>{{ 'PROJECT_TEAMS' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)">
+          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
+          @if (value) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
-        <button mat-stroked-button (click)="openDialog()">
+        <button mat-raised-button (click)="openDialog()">
           <mat-icon>
             add
           </mat-icon>
