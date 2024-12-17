@@ -7,7 +7,7 @@
       </mat-icon>
     </span>
     <div class="buttonContainer">
-      <button mat-raised-button (click)="openDialog()">
+      <button mat-raised-button id="createProfileButton" (click)="openDialog()">
         <mat-icon>
           add
         </mat-icon>
@@ -18,7 +18,7 @@
   <div class="underTitleContainer">
     <mat-form-field>
       <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-      <input class="searchInput" matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
+      <input class="searchInput" id="searchField" matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
       @if (value) {
         <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
           <mat-icon>close</mat-icon>

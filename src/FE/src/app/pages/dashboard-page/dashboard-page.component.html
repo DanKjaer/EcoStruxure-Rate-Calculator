@@ -2,7 +2,7 @@
   <div class="countriesContainer">
     <div class="countryContainer" [ngClass]="{'countrySelected': countrySelected}">
       <div class="countriesTitleContainer">
-        <p>{{ 'COUNTRIES_REGIONS' | translate }}</p>
+        <p id="countriesRegions">{{ 'COUNTRIES_REGIONS' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
           <input matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
