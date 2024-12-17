@@ -21,4 +21,5 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'users', component: UsersPageComponent },
+  { path: '**', redirectTo: 'dashboard'}
 ];

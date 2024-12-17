@@ -4,8 +4,8 @@ import {MatButton, MatIconButton} from '@angular/material/button';
 import {
   MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
-import {MatFormField, MatInput, MatLabel, MatPrefix} from '@angular/material/input';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatFormField, MatInput, MatLabel, MatPrefix, MatSuffix} from '@angular/material/input';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../services/user.service';
 import {SnackbarService} from '../../services/snackbar.service';
@@ -30,6 +30,8 @@ import {MatDialog} from '@angular/material/dialog';
     ReactiveFormsModule,
     TranslateModule,
     NgClass,
+    MatSuffix,
+    FormsModule,
   ],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.css'
@@ -46,6 +48,7 @@ export class UsersPageComponent implements OnInit {
   changePasswordForm: FormGroup = new FormGroup({});
   showResetPasswordFields = false;
   isMenuOpen: boolean | undefined;
+  value: string = '';
 
   constructor(private formBuilder: FormBuilder,
               private changeDetectorRef: ChangeDetectorRef,
@@ -84,6 +87,10 @@ export class UsersPageComponent implements OnInit {
     }
   }
 
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
+  }
 
   onSave() {
     const password = this.createUserForm.get('password')?.value;
@@ -154,8 +161,8 @@ export class UsersPageComponent implements OnInit {
   async onDelete(row: any) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this.translateService.instant('CONFIRM_DELETE_PROFILE_TITLE'),
-        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.username + '?'
+        title: this.translateService.instant('CONFIRM_DELETE_USER_TITLE'),
+        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + row.username + '?'
       },
       maxWidth: '15vw',
       minWidth: '15vw',

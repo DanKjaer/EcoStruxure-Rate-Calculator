@@ -58,6 +58,7 @@
 .resetClass{
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
 
 .newRepeatClass {
@@ -72,4 +73,13 @@
 
 .container.menuClosed {
   width: 90vw;
+}
+
+.deleteButton:hover {
+  color: darkred;
+}
+
+.searchInput {
+  max-width: 15vw;
+  width: 15vw;
 }
