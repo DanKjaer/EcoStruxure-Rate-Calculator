@@ -73,7 +73,7 @@ jobs:
     - name: Serve Frontend
       working-directory: src/FE
       run: |
-        npx http-server dist/FE -p 4200 &
+        npx http-server dist/FE -p 4200 -a localhost &
     - name: Wait for Frontend
       run: |
         timeout 30 bash -c 'until echo > /dev/tcp/localhost/4200; do sleep 1; done' || false
@@ -81,7 +81,7 @@ jobs:
     # Run TestCafe E2E Tests
     - name: Run E2E Tests with TestCafe
       run: |
-        testcafe chrome:headless src/test/*.js
+        testcafe chrome:headless src/test/*.js --reporter spec
 
 
     # Clean Up
