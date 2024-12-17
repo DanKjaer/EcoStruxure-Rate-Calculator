@@ -13,8 +13,7 @@ export class AuthenticationService {
 
   /**
    * Authenticates a user.
-   * @param username
-   * @param password
+   * @param user
    */
   public async authenticate(user: User): Promise<boolean> {
     try {
