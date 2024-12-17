@@ -271,5 +271,7 @@
   "CONFIRM_DELETE_MESSAGE": "Delete ",
   "CONFIRM_DELETE_PROFILE_TITLE": "Delete profile",
   "CONFIRM_DELETE_TEAM_TITLE": "Delete team",
-  "CONFIRM_DELETE_PROJECT_TITLE": "Delete project"
+  "CONFIRM_DELETE_PROJECT_TITLE": "Delete project",
+  "SUCCESS_PROJECT_SAVED": "Project saved successfully",
+  "ERROR_PROJECT_SAVED": "Failed to save project"
 }

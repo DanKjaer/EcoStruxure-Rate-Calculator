@@ -32,7 +32,7 @@ export class ProjectService {
    * @param project
    */
   async postProject(project: Project): Promise<Project> {
-    return firstValueFrom(this.http.post<Project>(`${this.apiUrl}`, {project}));
+    return firstValueFrom(this.http.post<Project>(`${this.apiUrl}`, project));
   }
 
   /**

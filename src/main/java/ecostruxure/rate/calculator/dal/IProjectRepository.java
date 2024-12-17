@@ -13,4 +13,7 @@ public interface IProjectRepository extends CrudRepository<Project, UUID> {
 
     @Query("SELECT p FROM Project p JOIN p.projectTeams pt WHERE pt.team.teamId = :teamId")
     List<Project> findProjectsByTeamId(UUID teamId);
+
+    @Query("SELECT p FROM Project p LEFT JOIN FETCH p.projectTeams pt LEFT JOIN FETCH pt.team WHERE p.projectArchived = false")
+    List<Project> findAllWithProjectTeams();
 }

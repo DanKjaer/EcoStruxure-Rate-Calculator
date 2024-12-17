@@ -6,6 +6,7 @@ import ecostruxure.rate.calculator.bll.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,13 +25,13 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public Iterable<Project> getProjects() throws Exception {
+    public List<ProjectDTO> getProjects() throws Exception {
         return projectService.getProjects();
     }
 
     @PostMapping()
-    public Project createProject(@RequestBody ProjectDTO projectDTO) throws Exception {
-        return projectService.createProject(projectDTO.getProject());
+    public Project createProject(@RequestBody Project project) throws Exception {
+        return projectService.createProject(project);
     }
 
     @DeleteMapping("/{id}")

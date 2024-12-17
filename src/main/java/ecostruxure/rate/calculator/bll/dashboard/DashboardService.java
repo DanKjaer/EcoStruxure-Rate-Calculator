@@ -29,14 +29,7 @@ public class DashboardService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final IProjectRepository projectRepository;
-    private final ITeamRepository teamRepository;
-
-
-    @Autowired
-    public DashboardService(IProjectRepository projectRepository, ITeamRepository teamRepository) {
-        this.projectRepository = projectRepository;
-        this.teamRepository = teamRepository;
+    public DashboardService() {
     }
 
     public List<DashboardDTO> getDashboard() {
