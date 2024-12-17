@@ -113,7 +113,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ecostruxure.rate.calculator.MainClass</mainClass> <!-- Replace with your main class -->
+                            <mainClass>ecostruxure.rate.calculator.Launcher</mainClass> <!-- Replace with your main class -->
                         </manifest>
                     </archive>
                     <descriptorRefs>
