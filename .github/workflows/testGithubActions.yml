@@ -67,7 +67,7 @@ jobs:
 
     - name: Wait for Backend to Start
       run: |
-        timeout 70 bash -c 'until echo > /dev/tcp/localhost/8080; do sleep 1; done' || false
+        timeout 30 bash -c 'until echo > /dev/tcp/localhost/8080; do sleep 1; done' || false
 
     # Serve Frontend Locally
     - name: Serve frontend
@@ -87,5 +87,7 @@ jobs:
     # Clean Up
     - name: Stop Backend and Frontend
       run: |
-        pkill -f 'java -jar'
-        pkill -f 'http-server'
+        pkill -f 'org.springframework.boot.loader.JarLauncher' || true
+        pkill -f 'mvn spring-boot:run' || true
+    
+        pkill -f 'lite-server' || true
