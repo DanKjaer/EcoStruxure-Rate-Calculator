@@ -61,8 +61,8 @@ jobs:
     # Start Backend Server
     - name: Start Backend
       run: |
-        mvn spring-boot:run
-      env:
+        nohup mvn spring-boot:run -Dspring-boot.run.profiles=test > backend.log 2>&1 &
+        env:
         SPRING_PROFILES_ACTIVE: test
 
     - name: Wait for Backend to Start
