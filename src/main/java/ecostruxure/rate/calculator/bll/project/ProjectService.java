@@ -49,7 +49,6 @@ public class ProjectService {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> cq = cb.createQuery(Project.class);
         Root<Project> project = cq.from(Project.class);
-        // Include projectTeams and their associated team
         project.fetch("projectTeams", JoinType.LEFT).fetch("team", JoinType.LEFT);
 
         cq.select(project).where(cb.equal(project.get("projectArchived"), false));
@@ -60,7 +59,6 @@ public class ProjectService {
                 .map(projectEntity -> modelMapper.map(projectEntity, ProjectDTO.class))
                         .toList();
         return projectDTOLists;
-        //return projectRepository.findAllByProjectArchived(false);
     }
 
     public Project createProject(Project project) throws Exception {
