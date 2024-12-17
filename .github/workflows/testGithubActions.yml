@@ -70,28 +70,9 @@ jobs:
         timeout 70 bash -c 'until echo > /dev/tcp/localhost/8080; do sleep 1; done' || false
 
     # Serve Frontend Locally
-    - name: Install and Configure Nginx
+    - name: Serve frontend
       run: |
-        sudo apt-get update
-        sudo apt-get install -y nginx
-        sudo rm /etc/nginx/sites-enabled/default
-        echo "
-        server {
-            listen 4200;
-            server_name localhost;
-        
-            root $GITHUB_WORKSPACE/src/FE/dist/fe/browser;
-            index index.html;
-        
-            location / {
-                try_files \$uri/ /index.html;
-            }
-        }
-        " | sudo tee /etc/nginx/sites-available/frontend
-        sudo ln -s /etc/nginx/sites-available/frontend /etc/nginx/sites-enabled/frontend
-        sudo nginx -t
-        sudo systemctl restart nginx
-
+        npx lite-server --config src/FE/bs-config.json
     - name: Wait for Frontend
       run: |
         timeout 30 bash -c 'until echo > /dev/tcp/localhost/4200; do sleep 1; done' || false
