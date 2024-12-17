@@ -51,7 +51,7 @@
 }
 
 .totalDayRateBox:after {
-  content: "\e8b5";
+  content: "\e8df";
 }
 
 .totalPriceBox {
@@ -61,7 +61,7 @@
 }
 
 .totalPriceBox:after {
-  content: "\e8df";
+  content: "\ef63";
 }
 
 .grossMarginBox {
@@ -71,7 +71,7 @@
 }
 
 .grossMarginBox:after {
-  content: "\ef63";
+  content: "\e9e6";
 }
 
 .totalDaysBox {
@@ -81,7 +81,7 @@
 }
 
 .totalDaysBox:after {
-  content: "\e923";
+  content: "\e8b5";
 }
 
 .boxValue {
@@ -176,4 +176,10 @@
   flex-direction: row;
   gap: 2rem;
   width: 100%;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
 }
