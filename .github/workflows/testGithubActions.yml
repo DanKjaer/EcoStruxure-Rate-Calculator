@@ -82,6 +82,8 @@ jobs:
     - name: Run E2E Tests with TestCafe
       run: |
         testcafe chrome:headless src/test/*.js --reporter spec
+      env:
+        TEST_JWT_BEARER: ${{ secrets.TEST_JWT_BEARER }}
 
 
     # Clean Up
