@@ -20,29 +20,6 @@
     </properties>
 
     <dependencies>
-    <!-- TESTING DEPENDENCIES -->
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.11.0-M1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.11.0-M1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-carbonicons-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -57,79 +34,6 @@
             <version>5.2.5</version> <!-- Or the latest version -->
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.23.1</version> <!-- Or the latest version -->
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.23.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.google.truth/truth -->
-        <dependency>
-            <groupId>com.google.truth</groupId>
-            <artifactId>truth</artifactId>
-            <version>1.4.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.11.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.11.0</version>
-            <scope>test</scope>
-        </dependency>
-
-    <!-- IKONLI DEPENDENCIES -->
-        <!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-javafx -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-javafx</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-material2-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-fontawesome5-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-feather-pack -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-feather-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-
-    <!-- DATABASE DEPENDENCIES -->
-        <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>12.4.1.jre11</version>
-        </dependency>
-
         <!-- Postgresql dependency - se om microsoft er nødvendig efter den er blevet implementeret -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -137,43 +41,7 @@
             <version>42.7.3</version> <!-- Use the latest version -->
         </dependency>
 
-
-    <!-- UI LIBRARIES DEPENDENCIES -->
-        <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
-        <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>11.2.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.github.mkpaz/atlantafx-base -->
-        <dependency>
-            <groupId>io.github.mkpaz</groupId>
-            <artifactId>atlantafx-base</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-
-        <!-- https://github.com/HanSolo/countries -->
-        <dependency>
-            <groupId>eu.hansolo.fx</groupId>
-            <artifactId>countries</artifactId>
-            <version>21.0.3</version>
-        </dependency>
-
     <!-- OTHER -->
-        <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.9</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -245,7 +113,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ecostruxure.rate.calculator.MainClass</mainClass> <!-- Replace with your main class -->
+                            <mainClass>ecostruxure.rate.calculator.Launcher</mainClass> <!-- Replace with your main class -->
                         </manifest>
                     </archive>
                     <descriptorRefs>
