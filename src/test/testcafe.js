@@ -13,7 +13,7 @@ class JwtBearerAuthorization extends RequestHook {
    constructor() {
       super();
       // Retrieve token from environment variable
-      this.token = process.env.test_jwt_bearer;
+      this.token = process.env.TEST_JWT_BEARER;
    }
 
    async onRequest(event) {
