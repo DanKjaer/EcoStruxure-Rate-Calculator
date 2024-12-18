@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Currency} from '../models';
-import {BehaviorSubject, firstValueFrom, tap} from 'rxjs';
+import {BehaviorSubject, filter, firstValueFrom, tap} from 'rxjs';
+import {NavigationEnd, Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,15 @@ export class CurrencyService {
   private currencies: { [key: string]: Currency } = {};
   private apiUrl = 'http://localhost:8080/api/currency';
 
-  constructor(private http: HttpClient) {
-    this.loadCurrencies();
+  constructor(private http: HttpClient,
+              private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.url !== '/login') {
+          this.loadCurrencies();
+        }
+      });
   }
 
   //#region API calls
@@ -68,10 +76,21 @@ export class CurrencyService {
    * @param to
    */
   convert(amount: number, from: string, to: string): number {
-    if(!this.currencies[from] || !this.currencies[to]){
+    if (amount === Infinity || amount === 0) {
+      return 0;
+    }
+    else if(!this.currencies[from] || !this.currencies[to]){
       return amount;
     }
     const amountInEUR = amount / this.currencies[from].eurConversionRate;
     return amountInEUR * this.currencies[to].eurConversionRate;
+  }
+
+  /**
+   * Updates the currencies in the database.
+   * @param currencies
+   */
+  importCurrency(currencies: Currency[]) {
+    return firstValueFrom(this.http.put<Currency>(`${this.apiUrl}/import`, currencies));
   }
 }

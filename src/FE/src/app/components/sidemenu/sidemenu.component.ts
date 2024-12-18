@@ -1,12 +1,14 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatButtonModule, MatIconButton} from '@angular/material/button';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {RouterLink} from '@angular/router';
+import {NavigationEnd, Router, RouterLink} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {NgClass} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
+import {ExportService} from '../../services/export.service';
+import {SnackbarService} from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-sidemenu',
@@ -18,36 +20,51 @@ import {CurrencyService} from '../../services/currency.service';
     MatIconButton,
     MatIcon,
     MatTooltipModule,
-    NgClass
+    NgClass,
+    NgIf
   ],
   templateUrl: './sidemenu.component.html',
   styleUrl: './sidemenu.component.css'
 })
-export class SidemenuComponent {
+export class SidemenuComponent implements OnInit {
 
   selectedCurrency: string | null;
   protected readonly localStorage = localStorage;
+  isMenuOpen = true;
+  showSidemenu: boolean = true;
 
-  constructor(private translate: TranslateService, private menuService: MenuService, private currencyService: CurrencyService) {
+  constructor(private translateService: TranslateService,
+              private snackbarService: SnackbarService,
+              private menuService: MenuService,
+              private currencyService: CurrencyService,
+              private exportService: ExportService,
+              private router: Router) {
     this.selectedCurrency = localStorage.getItem('selectedCurrency');
-    translate.setDefaultLang('en');
+    translateService.setDefaultLang('en');
     menuService.isMenuOpen$.subscribe((isOpen) => {
       this.isMenuOpen = isOpen;
     })
     currencyService.setCurrency("EUR");
   }
 
-  isMenuOpen = true;
+  ngOnInit(): void {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const currentUrl = event.urlAfterRedirects;
+        this.showSidemenu = !currentUrl.includes('/login');
+      }
+    })
+  }
 
   toggleMenu(): void {
     this.menuService.toggleMenu();
   }
 
   switchLanguage() {
-    if (this.translate.currentLang == 'en') {
-      this.translate.use('da');
+    if (this.translateService.currentLang == 'en') {
+      this.translateService.use('da');
     } else {
-      this.translate.use('en');
+      this.translateService.use('en');
     }
   }
 
@@ -61,4 +78,27 @@ export class SidemenuComponent {
     }
   }
 
+  async export() {
+    this.exportService.getExport().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export.xlsx';
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error exporting', error);
+      }
+    });
+  }
+
+  onLogout() {
+    localStorage.removeItem('EcoStructureProjectJWT');
+    this.router.navigate(['/login']);
+    this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_LOGOUT'), true);
+  }
 }

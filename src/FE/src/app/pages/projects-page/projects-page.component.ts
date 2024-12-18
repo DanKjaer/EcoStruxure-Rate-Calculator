@@ -1,26 +1,14 @@
-import {AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatButton, MatIconButton} from '@angular/material/button';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef, MatFooterCell, MatFooterCellDef, MatFooterRow, MatFooterRowDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-  MatTableDataSource
-} from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {MatSort, MatSortHeader, Sort} from '@angular/material/sort';
+import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Project} from '../../models';
+import {Project, ProjectTeam, Team} from '../../models';
 import {ProjectService} from '../../services/project.service';
 import {FormatterService} from '../../services/formatter.service';
 import {AddProjectDialogComponent} from '../../modals/add-project-dialog/add-project-dialog.component';
@@ -31,6 +19,9 @@ import {MatFormField, MatInput, MatLabel, MatPrefix, MatSuffix} from '@angular/m
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {CurrencyService} from '../../services/currency.service';
+import {SearchConfigService} from '../../services/search-config.service';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 
 @Component({
@@ -38,26 +29,17 @@ import {CurrencyService} from '../../services/currency.service';
   standalone: true,
   imports: [
     MatButton,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
+    MatTableModule,
     MatIcon,
     MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
     MatPaginator,
-    MatRow,
-    MatRowDef,
     MatSort,
     MatSortHeader,
-    MatTable,
     NgIf,
     TranslateModule,
-    MatHeaderCellDef,
     NgClass,
     MatInput,
     ReactiveFormsModule,
@@ -69,29 +51,26 @@ import {CurrencyService} from '../../services/currency.service';
     MatDatepickerInput,
     MatDatepicker,
     DecimalPipe,
-    MatFooterRow,
-    MatFooterCell,
-    MatFooterCellDef,
-    MatFooterRowDef,
-    MatPrefix
+    MatPrefix,
+    MatProgressSpinner
   ],
   templateUrl: './projects-page.component.html',
   styleUrl: './projects-page.component.css'
 })
 export class ProjectsPageComponent implements AfterViewInit, OnInit {
-  readonly dialog = inject(MatDialog);
 
-  displayedColumns: string[] = ['name',
-                                'salesNumber',
-                                'members',
-                                'dayRate',
-                                'grossMargin',
-                                'price',
-                                'startDate',
-                                'endDate',
-                                'totalDays',
-                                'location',
-                                'options'];
+  displayedColumns: string[] = [
+    'projectName',
+    'projectSalesNumber',
+    'projectMembersString',
+    'projectDayRate',
+    'projectGrossMargin',
+    'projectPrice',
+    'startDateString',
+    'endDateString',
+    'projectTotalDays',
+    'location',
+    'options'];
 
   protected readonly localStorage = localStorage;
 
@@ -102,20 +81,29 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   isMenuOpen: boolean | undefined;
   isEditingRow: boolean = false;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
   totalDays: number = 0;
   totalPrice: number = 0;
   totalDayRate: number = 0;
+  averageDayRate: number = 0;
+  averageGrossMargin: number = 0;
+  averagePrice: number = 0;
+  averageDays: number = 0;
+  value: string = '';
 
-  constructor(private projectService: ProjectService,
-              private formatter: FormatterService,
-              private snackBar: SnackbarService,
-              private ChangeDetectorRef: ChangeDetectorRef,
-              private translate: TranslateService,
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(protected currencyService: CurrencyService,
+              private projectService: ProjectService,
+              private formatterService: FormatterService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
               private menuService: MenuService,
+              private searchConfigService: SearchConfigService,
+              private ChangeDetectorRef: ChangeDetectorRef,
               private router: Router,
-              protected currencyService: CurrencyService) {}
+              private dialog: MatDialog) {
+  }
 
   async ngOnInit(): Promise<void> {
     this.menuService.isMenuOpen$.subscribe((isOpen) => {
@@ -125,16 +113,17 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     try {
       const projects = await this.projectService.getProjects();
       projects.forEach(project => {
-        project.startDateString = this.formatter.formatDate(project.projectStartDate);
-        project.endDateString = this.formatter.formatDate(project.projectEndDate);
+        project.startDateString = this.formatterService.formatDate(project.projectStartDate);
+        project.endDateString = this.formatterService.formatDate(project.projectEndDate);
 
-        project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
+        project.projectMembersString = project.projectTeams.map(member => member.team.name).join(', ');
       });
       this.datasource.data = projects;
 
     } catch (error) {
       console.error('Failed to load projects:', error);
     } finally {
+      this.searchConfigService.configureFilter(this.datasource, ['projectLocation.name']);
       this.loading = false;
       this.updateTableFooterData();
     }
@@ -143,7 +132,6 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   async ngAfterViewInit(): Promise<void> {
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
-    this.updateTableFooterData();
   }
 
   applySearch(event: Event) {
@@ -156,6 +144,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.updateTableFooterData(true);
   }
 
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
+  }
+
   openDialog() {
     const dialogRef = this.dialog.open(AddProjectDialogComponent, {
       minHeight: '80vh',
@@ -165,9 +158,9 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     });
     this.loading = true;
     dialogRef.componentInstance.projectAdded.subscribe((project: Project) => {
-      project.startDateString = this.formatter.formatDate(project.projectStartDate);
-      project.endDateString = this.formatter.formatDate(project.projectEndDate);
-      project.projectMembersString = project.projectMembers.map(member => member.name).join(', ');
+      project.startDateString = this.formatterService.formatDate(project.projectStartDate);
+      project.endDateString = this.formatterService.formatDate(project.projectEndDate);
+      project.projectMembersString = project.projectTeams.map(member => member.team.name).join(', ');
       this.datasource.data.push(project);
       this.datasource._updateChangeSubscription();
     });
@@ -177,28 +170,42 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   }
 
   async onDelete() {
-    const result = await this.projectService.deleteProject(this.selectedRow?.projectId!);
-    if (result) {
-      this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
-      this.datasource._updateChangeSubscription();
-      this.updateTableFooterData();
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
-    } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translateService.instant('CONFIRM_DELETE_PROJECT_TITLE'),
+        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.projectName + '?'
+      },
+      maxWidth: '15vw',
+      minWidth: '15vw',
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const result = await this.projectService.deleteProject(this.selectedRow?.projectId!);
+        if (result) {
+          this.datasource.data = this.datasource.data.filter((project: Project) =>
+            project.projectId !== this.selectedRow?.projectId);
+          this.datasource._updateChangeSubscription();
+          this.updateTableFooterData();
+          this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_DELETED'), true);
+        } else {
+          this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_DELETED'), false);
+        }
+      }
+    })
   }
 
   selectRow(row: Project) {
     this.selectedRow = row;
   }
 
-
   goToProject(projectId: string): void {
     this.router.navigate(['/projects', projectId]);
   }
 
   editRow(element: any): void {
-    if (this.isEditingRow) return;
+    if (this.isEditingRow) {
+      return;
+    }
     this.isEditingRow = true;
     element['isEditing'] = true;
     if (!this.originalRowData[element.id]) {
@@ -210,6 +217,13 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     selectedProject['isEditing'] = false;
     this.loading = true;
     this.isEditingRow = false;
+    selectedProject.projectTeams.forEach((projectTeam: ProjectTeam) => {
+      projectTeam.project = selectedProject.projectId
+      projectTeam.team.teamProfiles?.forEach((profile) => {
+        profile.team = undefined;
+        profile.profile = undefined;
+      });
+    });
 
     const endDate: Date = new Date(selectedProject.projectEndDate);
     selectedProject.projectEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
@@ -221,18 +235,18 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
           project.projectGrossMargin = response.projectGrossMargin;
           project.projectPrice = response.projectPrice;
           project.projectEndDate = response.projectEndDate;
-          project.endDateString = this.formatter.formatDate(project.projectEndDate);
+          project.endDateString = this.formatterService.formatDate(project.projectEndDate);
           project.projectTotalDays = response.projectTotalDays;
         }
       });
       this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_SAVED'), true);
       this.updateTableFooterData();
       this.datasource._updateChangeSubscription();
     } catch (e) {
       this.cancelEdit(selectedProject);
       this.loading = false;
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_SAVED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_SAVED'), false);
     }
   }
 
@@ -247,9 +261,24 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     this.isEditingRow = false;
   }
 
-
   handlePageEvent($event: PageEvent) {
     this.updateTableFooterData();
+  }
+
+  async onArchive() {
+    try {
+      const result = await this.projectService.archiveProject(this.selectedRow?.projectId!);
+      if (result) {
+        this.datasource.data = this.datasource.data.filter((project: Project) => project.projectId !== this.selectedRow?.projectId);
+        this.datasource._updateChangeSubscription();
+        this.updateTableFooterData();
+        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_ARCHIVED'), true);
+      } else {
+        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_ARCHIVED'), false);
+      }
+    } catch (error) {
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_ARCHIVED'), false);
+    }
   }
 
   private updateTableFooterData(searching: boolean = false) {
@@ -259,6 +288,11 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
     } else {
       displayedData = this.getDisplayedData();
     }
+    this.calculateTotals(displayedData);
+    this.calculateAverages(displayedData);
+  }
+
+  private calculateTotals(displayedData: Project[]) {
     this.getTotalDayRate(displayedData);
     this.getTotalPrice(displayedData);
     this.getTotalDays(displayedData);
@@ -275,6 +309,39 @@ export class ProjectsPageComponent implements AfterViewInit, OnInit {
   private getTotalDays(displayedData: Project[]) {
     this.totalDays = displayedData.reduce((acc: number, project: Project) => acc + project.projectTotalDays!, 0);
   }
+
+  private calculateAverages(displayedData: Project[]) {
+    this.getAverageDayRate(displayedData);
+    this.getAverageGrossMargin(displayedData);
+    this.getAveragePrice(displayedData);
+    this.getAverageDays(displayedData);
+  }
+
+  private getAverageDayRate(displayedData: Project[]) {
+    const totalDayRate = this.totalDayRate;
+    const totalProjects = displayedData.length;
+    this.averageDayRate = totalDayRate / totalProjects;
+  }
+
+  private getAverageGrossMargin(displayedData: Project[]) {
+    const totalGrossMargin = displayedData.reduce((acc: number, project: Project) =>
+      acc + project.projectGrossMargin!, 0);
+    const totalProjects = displayedData.length;
+    this.averageGrossMargin = totalGrossMargin / totalProjects;
+  }
+
+  private getAveragePrice(displayedData: Project[]) {
+    const totalPrice = this.totalPrice;
+    const totalProjects = displayedData.length;
+    this.averagePrice = totalPrice / totalProjects;
+  }
+
+  private getAverageDays(displayedData: Project[]) {
+    const totalDays = this.totalDays;
+    const totalProjects = displayedData.length;
+    this.averageDays = totalDays / totalProjects;
+  }
+
   private getDisplayedData() {
     const startIndex = this.datasource.paginator!.pageIndex * this.datasource.paginator!.pageSize;
     const endIndex = startIndex + this.datasource.paginator!.pageSize;

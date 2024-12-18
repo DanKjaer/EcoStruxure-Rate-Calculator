@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {Team, TeamProfiles} from "../models";
+import {Team, TeamDTO, TeamProfile} from "../models";
 
 @Injectable({
   providedIn: 'root'
@@ -16,15 +16,23 @@ export class TeamsService {
    * Gets all teams.
    */
   getTeams(): Promise<Team[]> {
-    return firstValueFrom(this.http.get<Team[]>(`${this.apiUrl}`));
+    return firstValueFrom(this.http.get<Team[]>(`${this.apiUrl}/all`));
+  }
+
+  /**
+   * Gets a team by id.
+   * @param id
+   */
+  getTeam(id: string): Promise<Team> {
+    return firstValueFrom(this.http.get<Team>(`${this.apiUrl}?teamId=${id}`));
   }
 
   /**
    * Gets team profiles by team id.
    * @param id
    */
-  getTeamProfiles(id: string): Promise<TeamProfiles[]> {
-    return firstValueFrom(this.http.get<TeamProfiles[]>(`${this.apiUrl}/profiles?profileId=${id}`));
+  getTeamProfiles(id: string): Promise<TeamProfile[]> {
+    return firstValueFrom(this.http.get<TeamProfile[]>(`${this.apiUrl}/profiles?profileId=${id}`));
   }
 
   /**
@@ -32,16 +40,16 @@ export class TeamsService {
    * @param team
    * @param teamProfiles
    */
-  postTeam(team: Team, teamProfiles: TeamProfiles[]): Promise<Team> {
-    return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, {team, teamProfiles}));
+  postTeam(team: Team): Promise<Team> {
+    return firstValueFrom(this.http.post<Team>(`${this.apiUrl}`, team));
   }
 
   /**
    * Updates a team by id.
    * @param team
    */
-  putTeam(team: Team): Promise<Team> {
-    return firstValueFrom(this.http.put<Team>(`${this.apiUrl}?teamId=${team.teamId}`, team));
+  putTeam(team: TeamDTO): Promise<Team> {
+    return firstValueFrom(this.http.put<Team>(`${this.apiUrl}`, team));
   }
 
   /**
@@ -49,6 +57,26 @@ export class TeamsService {
    * @param teamID
    */
   deleteTeam(teamID: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${teamID}`));
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?id=${teamID}`));
+  }
+
+  /**
+   * Deletes a teamProfile by id from a team.
+   * @param teamProfileId
+   * @param teamId
+   */
+  deleteTeamProfile(teamProfileId: string, teamId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/teamProfile?teamProfileId=${teamProfileId}&teamId=${teamId}`));
+  }
+
+  addProfileToTeams(newTeamProfiles: TeamProfile[]) {
+    return firstValueFrom(this.http.put<TeamProfile[]>(`${this.apiUrl}/addProfileToTeams`, newTeamProfiles));
+  }
+
+  /**
+   * Update a team profile.
+   */
+  updateTeamProfile(teamProfile: TeamProfile) {
+    return firstValueFrom(this.http.put<TeamProfile>(`${this.apiUrl}/updateProfile`, teamProfile));
   }
 }

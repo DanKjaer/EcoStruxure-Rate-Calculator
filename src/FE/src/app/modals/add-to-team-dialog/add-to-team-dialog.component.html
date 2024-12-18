@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>{{ 'ADD_PROFILE_TO_TEAM' | translate }}</h2>
+<mat-dialog-content class="container">
+  <div class="searchContainer">
+    <mat-form-field>
+      <mat-label>
+        {{ 'SEARCH_PROMPT' | translate }}
+      </mat-label>
+      <input matInput>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="teamsContainer">
+    <div class="projectMembersContainer">
+      <mat-selection-list (selectionChange)="onSelectionChange($event)">
+        @for (teamProfile of teamProfileList; track teamProfile) {
+          <mat-list-option [value]="teamProfile">{{ teamProfile.profile!.name }}</mat-list-option>
+        }
+      </mat-selection-list>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-content class="container" *ngIf="selectedTeamProfiles.length > 0">
+  <div class="allocationContainer">
+    <mat-list>
+      <mat-list-item *ngFor="let teamProfile of selectedTeamProfiles; let i = index" [formGroup]="getFormGroupAt(i)">
+        <div class="allocationItem">
+          <span>{{ teamProfile.profile!.name }}</span>
+          <div class="allocationInputDiv">
+            <mat-form-field class="allocationInput">
+              <mat-label>Cost Allocation (%)</mat-label>
+              <span matSuffix>%</span>
+              <input
+                type="number"
+                matInput
+                placeholder="Ex. 75%"
+                formControlName="allocationPercentageCost">
+            </mat-form-field>
+
+            <mat-form-field class="allocationInput">
+              <mat-label>Hour Allocation (%)</mat-label>
+              <span matSuffix>%</span>
+              <input
+                type="number"
+                matInput
+                placeholder="Ex. 75%"
+                formControlName="allocationPercentageHours">
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="buttonContainer">
+    <button mat-stroked-button mat-dialog-close>
+      <mat-icon> cancel </mat-icon>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()" [disabled]="isSaveDisabled()">
+      <mat-icon> check_circle </mat-icon>
+      {{ 'ADD' | translate }}
+    </button>
+  </div>
+</mat-dialog-actions>

@@ -1,45 +1,23 @@
 package ecostruxure.rate.calculator.be;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
 public class Currency {
+
+    @Id
     private String currencyCode;
+
+    @Column(nullable = false)
     private BigDecimal eurConversionRate;
-    private BigDecimal usdConversionRate;
+
+    @Column(nullable = false)
     private String symbol;
 
     public Currency() {}
 
-    public Currency(String currencyCode, BigDecimal eurConversionRate, BigDecimal usdConversionRate) {
-        this.currencyCode = currencyCode;
-        this.eurConversionRate = eurConversionRate;
-        this.usdConversionRate = usdConversionRate;
-    }
-
-    public String currencyCode() {
-        return currencyCode;
-    }
-
-    public void currencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
-    }
-
-    public BigDecimal eurConversionRate() {
-        return eurConversionRate;
-    }
-
-    public void eurConversionRate(BigDecimal eurConversionRate) {
-        this.eurConversionRate = eurConversionRate;
-    }
-
-    public BigDecimal usdConversionRate() {
-        return usdConversionRate;
-    }
-
-    public void usdConversionRate(BigDecimal usdConversionRate) {
-        this.usdConversionRate = usdConversionRate;
-    }
-
+    //region Getters and Setters
     public String getCurrencyCode() {
         return currencyCode;
     }
@@ -56,14 +34,6 @@ public class Currency {
         this.eurConversionRate = eurConversionRate;
     }
 
-    public BigDecimal getUsdConversionRate() {
-        return usdConversionRate;
-    }
-
-    public void setUsdConversionRate(BigDecimal usdConversionRate) {
-        this.usdConversionRate = usdConversionRate;
-    }
-
     public String getSymbol() {
         return symbol;
     }
@@ -71,13 +41,5 @@ public class Currency {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
-
-    @Override
-    public String toString() {
-        return "Currency{" +
-                "currencyCode='" + currencyCode + '\'' +
-                ", eurConversionRate=" + eurConversionRate +
-                ", usdConversionRate=" + usdConversionRate +
-                '}';
-    }
+    //endregion
 }

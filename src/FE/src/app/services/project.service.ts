@@ -32,7 +32,7 @@ export class ProjectService {
    * @param project
    */
   async postProject(project: Project): Promise<Project> {
-    return firstValueFrom(this.http.post<Project>(`${this.apiUrl}`, {project}));
+    return firstValueFrom(this.http.post<Project>(`${this.apiUrl}`, project));
   }
 
   /**
@@ -45,8 +45,15 @@ export class ProjectService {
   /**
    * Deletes a project member
    */
-  deleteProjectMember(projectId: string, memberId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?projectId=${projectId}&teamId=${memberId}`));
+  deleteProjectMember(projectTeamId: string, projectId: string): Promise<Boolean> {
+    return firstValueFrom(this.http.delete<Boolean>(`${this.apiUrl}?projectTeamId=${projectTeamId}&projectId=${projectId}`));
+  }
+
+  /**
+   * Archives a project
+   */
+  archiveProject(projectId: string): Promise<boolean> {
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/archive?projectId=${projectId}`));
   }
 
   /**

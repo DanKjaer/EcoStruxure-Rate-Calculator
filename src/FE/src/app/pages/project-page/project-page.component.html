@@ -2,7 +2,9 @@
   <div class="statsContainer">
     <div class="totalDayRateBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalDayRate | number:'1.0-2' }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(statBoxes().totalDayRate,
+        'EUR', localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_DAY_RATE' | translate }}
@@ -10,7 +12,9 @@
     </div>
     <div class="totalPriceBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalPrice | number:'1.0-2' }}
+        {{ this.currencyService.getSymbol(localStorage.getItem("selectedCurrency")!) }}
+        {{ this.currencyService.convert(statBoxes().totalPrice,
+        'EUR', this.localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_PRICE' | translate }}
@@ -18,7 +22,7 @@
     </div>
     <div class="grossMarginBox">
       <p class="boxValue">
-        {{ this.statBoxes.grossMargin | number:'1.0-2' }}
+        {{ statBoxes().grossMargin | number:'1.0-2' }}%
       </p>
       <p class="boxText">
         {{ 'GROSS_MARGIN' | translate }}
@@ -26,7 +30,7 @@
     </div>
     <div class="totalDaysBox">
       <p class="boxValue">
-        {{ this.statBoxes.totalDays | number:'1.0-0' }}
+        {{ statBoxes().totalDays | number:'1.0-0' }}
       </p>
       <p class="boxText">
         {{ 'TOTAL_DAYS' | translate }}
@@ -39,10 +43,15 @@
         <p>{{ 'PROJECT_TEAMS' | translate }}</p>
         <mat-form-field class="searchInput" appearance="outline">
           <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
-          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)">
+          <input matInput inputmode="search" type="search" (keyup)="applySearch($event)" [(ngModel)]="value">
+          @if (value) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
           <mat-icon matPrefix>search</mat-icon>
         </mat-form-field>
-        <button mat-stroked-button (click)="openDialog()">
+        <button mat-raised-button (click)="openDialog()">
           <mat-icon>
             add
           </mat-icon>
@@ -58,7 +67,7 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['name'] }}
+                {{ element['team'].name }}
               </span>
             </td>
           </ng-container>
@@ -69,10 +78,10 @@
               {{ 'PROJECT_ALLOCATION' | translate }}
             </th>
             <td mat-cell *matCellDef="let element">
-        <span *ngIf="!element.isEditing">
-          {{ element['projectAllocation'] + '%' }}
-        </span>
-              <input matInput *ngIf="element.isEditing" [(ngModel)]="element['projectAllocation']">
+              <span *ngIf="!element.isEditing">
+                {{ element['allocationPercentage'] + '%' }}
+              </span>
+              <input matInput *ngIf="element.isEditing" [(ngModel)]="element['allocationPercentage']">
             </td>
           </ng-container>
 
@@ -83,7 +92,9 @@
             </th>
             <td mat-cell *matCellDef="let element">
               <span>
-                {{ element['dayRateWithMarkup'] | number:'1.0-2' }}
+                {{ this.currencyService.getSymbol(this.localStorage.getItem("selectedCurrency")!) }}
+                {{ this.currencyService.convert(calculationsService.calculateDayRateForTeam(element),
+                'EUR', this.localStorage.getItem("selectedCurrency")!) | number:'1.0-2' }}
               </span>
             </td>
           </ng-container>
@@ -128,14 +139,14 @@
           <!-- sales number input  -->
           <mat-form-field>
             <mat-label>{{ 'PROJECT_SALES_NUMBER' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="salesNumber">
+            <input matInput type="number" placeholder="0" formControlName="salesNumber">
           </mat-form-field>
         </div>
         <div>
           <!-- sales price input -->
           <mat-form-field>
             <mat-label>{{ 'PROJECT_TOTAL_PRICE' | translate }}</mat-label>
-            <input matInput placeholder="0" formControlName="projectPrice">
+            <input matInput type="number" placeholder="0" formControlName="projectPrice">
           </mat-form-field>
         </div>
       </div>
@@ -169,7 +180,7 @@
 
       <!-- buttons -->
       <div class="buttonContainer">
-        <button mat-stroked-button (click)="update()">
+        <button mat-stroked-button (click)="update()" [disabled]="projectForm.invalid">
           <mat-icon>check</mat-icon>
           {{ 'UPDATE' | translate }}
         </button>

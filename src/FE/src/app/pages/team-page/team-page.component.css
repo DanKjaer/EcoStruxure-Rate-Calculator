@@ -124,6 +124,7 @@
 
 .searchInput {
   max-width: 15vw;
+  width: 15vw;
   background-color: white;
 }
 
@@ -133,10 +134,9 @@
 }
 
 .spinnerContainer {
-  position: relative;
+  position: absolute;
   display: flex;
-  flex-direction: row;
-  top: 25vh;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;

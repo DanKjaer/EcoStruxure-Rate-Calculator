@@ -1,12 +1,9 @@
 package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Currency;
-import ecostruxure.rate.calculator.bll.service.CurrencyService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import ecostruxure.rate.calculator.bll.currency.CurrencyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -14,12 +11,18 @@ import java.util.List;
 public class CurrencyController {
     private final CurrencyService currencyService;
 
-    public CurrencyController() throws Exception {
-        this.currencyService = new CurrencyService();
+    @Autowired
+    public CurrencyController(CurrencyService currencyService) throws Exception {
+        this.currencyService = currencyService;
     }
 
     @GetMapping
-    public List<Currency> getAll() throws Exception {
+    public Iterable<Currency> getAll() throws Exception {
         return this.currencyService.all();
+    }
+
+    @PutMapping("/import")
+    public void importCurrenciesFromCSV(@RequestBody Currency[] currencies) throws Exception {
+        this.currencyService.importCurrencies(currencies);
     }
 }

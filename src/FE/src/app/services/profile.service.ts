@@ -19,7 +19,7 @@ export class ProfileService {
   }
 
   /**
-   * Gets a profile.
+   * Gets a profile by id.
    * @param id
    */
   getProfile(id: string): Promise<Profile> {
@@ -31,26 +31,22 @@ export class ProfileService {
    * @param profile
    */
   postProfile(profile: Profile): Promise<Profile> {
-    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}`, {profile}))
-        .catch(error => {
-            console.error('Error saving profile: ', error);
-            throw error;
-        });
+    return firstValueFrom(this.http.post<Profile>(`${this.apiUrl}`, profile));
   }
 
   /**
-   * updates a profile
+   * updates a profile.
    */
   putProfile(profile: Profile): Promise<Profile> {
     return firstValueFrom(this.http.put<Profile>(`${this.apiUrl}`, profile));
   }
 
   /**
-   * Deletes a profile
+   * Deletes a profile by id.
    * @param profileId
    */
   deleteProfile(profileId: string): Promise<boolean> {
-    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}/${profileId}`));
+    return firstValueFrom(this.http.delete<boolean>(`${this.apiUrl}?id=${profileId}`));
   }
 
 }

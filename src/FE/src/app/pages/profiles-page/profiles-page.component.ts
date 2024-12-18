@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import {MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {AddProfileDialogComponent} from '../../modals/add-profile-dialog/add-profile-dialog.component';
 import {FormsModule} from '@angular/forms';
-import {MatFormField, MatInput, MatPrefix} from '@angular/material/input';
+import {MatFormField, MatInput, MatPrefix, MatSuffix} from '@angular/material/input';
 import {ProfileService} from '../../services/profile.service';
 import {Router} from '@angular/router';
 import {Profile} from '../../models';
@@ -21,6 +21,8 @@ import {SnackbarService} from '../../services/snackbar.service';
 import {MenuService} from '../../services/menu.service';
 import {CurrencyService} from '../../services/currency.service';
 import {MatLabel} from '@angular/material/form-field';
+import {SearchConfigService} from '../../services/search-config.service';
+import {ConfirmDialogComponent} from '../../modals/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-profiles-page',
@@ -46,32 +48,26 @@ import {MatLabel} from '@angular/material/form-field';
     DecimalPipe,
     MatFormField,
     MatLabel,
-    MatPrefix
+    MatPrefix,
+    MatSuffix
   ],
   templateUrl: './profiles-page.component.html',
   styleUrl: './profiles-page.component.css'
 })
 export class ProfilesPageComponent implements AfterViewInit, OnInit {
 
-  constructor(private profileService: ProfileService,
-              private router: Router,
-              private snackBar: SnackbarService,
-              private translate: TranslateService,
-              private menuService: MenuService,
-              protected currencyService: CurrencyService) {
-  }
 
   //#region vars
-  readonly dialog = inject(MatDialog);
 
   displayedColumns: string[] = [
     'name',
-    'annual hours',
-    'effective work hours',
-    'effectiveness',
-    'contributed annual cost',
-    'allocated hours',
-    'cost allocation',
+    'annualHours',
+    'effectiveWorkHours',
+    'effectivenessPercentage',
+    'annualCost',
+    'totalHourAllocation',
+    'totalCostAllocation',
+    'geography',
     'options'
   ];
 
@@ -85,13 +81,31 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
   isMenuOpen: boolean | undefined;
+  totalAnnualHours: number = 0;
+  totalEffectiveWorkHours: number = 0;
+  totalAnnualCost: number = 0;
+  averageAnnualHours: number = 0;
+  averageEffectiveWorkHours: number = 0;
+  averageEffectiveness: number = 0;
+  averageAnnualCost: number = 0;
   averageCostAllocation: number = 0;
   averageHourAllocation: number = 0;
+  value: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   //#endregion
+
+  constructor(protected currencyService: CurrencyService,
+              private profileService: ProfileService,
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
+              private menuService: MenuService,
+              private searchConfigService: SearchConfigService,
+              private router: Router,
+              private dialog: MatDialog) {
+  }
 
   //#region inits
   ngOnInit() {
@@ -101,11 +115,13 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   async ngAfterViewInit() {
-    this.datasource.data = await this.profileService.getProfiles();
+    const profiles = await this.profileService.getProfiles();
+    this.datasource.data = profiles;
     this.loading = false;
     this.datasource.sort = this.sort;
     this.datasource.paginator = this.paginator;
     this.updateTableFooterData();
+    this.searchConfigService.configureFilter(this.datasource, ['geography.name']);
   }
 
   //#endregion
@@ -119,6 +135,11 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
       this.datasource.paginator.firstPage();
     }
     this.updateTableFooterData(true);
+  }
+
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
   }
 
   editRow(element: any): void {
@@ -142,15 +163,16 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
           profile.name = response.name;
           profile.annualHours = response.annualHours;
           profile.effectivenessPercentage = response.effectivenessPercentage;
+          profile.effectiveWorkHours = response.effectiveWorkHours;
           profile.annualCost = response.annualCost;
         }
       });
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_UPDATED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_UPDATED'), true);
       this.updateTableFooterData();
       this.loading = false;
     } catch (e) {
       this.cancelEdit(element)
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_UPDATED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_UPDATED'), false);
       this.loading = false;
     }
   }
@@ -171,7 +193,7 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   goToProfile(profileId: string): void {
-    this.router.navigate(['/profile', profileId]);
+    this.router.navigate(['/profiles', profileId]);
   }
 
   openDialog() {
@@ -189,14 +211,27 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
   }
 
   async onDelete() {
-    const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
-    if (result) {
-      this.datasource.data = this.datasource.data.filter((profile: Profile) => profile.profileId !== this.selectedRow?.profileId);
-      this.datasource._updateChangeSubscription();
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROFILE_DELETED'), true);
-    } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROFILE_DELETED'), false);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translateService.instant('CONFIRM_DELETE_PROFILE_TITLE'),
+        message: this.translateService.instant('CONFIRM_DELETE_MESSAGE') + this.selectedRow?.name + '?'
+      },
+      maxWidth: '15vw',
+      minWidth: '15vw',
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const result = await this.profileService.deleteProfile(this.selectedRow?.profileId!)
+        if (result) {
+          this.datasource.data = this.datasource.data.filter((profile: Profile) =>
+            profile.profileId !== this.selectedRow?.profileId);
+          this.datasource._updateChangeSubscription();
+          this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROFILE_DELETED'), true);
+        } else {
+          this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROFILE_DELETED'), false);
+        }
+      }
+    })
   }
 
   selectRow(row: Profile) {
@@ -229,16 +264,8 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     } else {
       displayedData = this.getDisplayedData();
     }
-    this.getAverageHourAllocation(displayedData);
-    this.getAverageCostAllocation(displayedData);
-  }
-
-  getAverageHourAllocation(displayedData: Profile[]) {
-    this.averageHourAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
-  }
-
-  getAverageCostAllocation(displayedData: Profile[]) {
-    this.averageCostAllocation = displayedData.reduce((acc, profile) => acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
+    this.calculateTotalValues(displayedData);
+    this.calculateAverageValues(displayedData);
   }
 
   getDisplayedData() {
@@ -246,4 +273,65 @@ export class ProfilesPageComponent implements AfterViewInit, OnInit {
     const endIndex = startIndex + this.datasource.paginator!.pageSize;
     return this.datasource.data.slice(startIndex, endIndex);
   }
+
+  private calculateTotalValues(displayedData: Profile[]) {
+    this.getTotalAnnualHours(displayedData);
+    this.getTotalEffectiveWorkHours(displayedData);
+    this.getTotalAnnualCost(displayedData);
+    this.getTotalEffectiveWorkHours(displayedData);
+    this.getTotalAnnualCost(displayedData);
+  }
+
+  private getTotalAnnualHours(displayedData: Profile[]) {
+    this.totalAnnualHours = displayedData.reduce((acc, profile) => acc + profile.annualHours!, 0);
+  }
+
+  private getTotalAnnualCost(displayedData: Profile[]) {
+    this.totalAnnualCost = displayedData.reduce((acc, profile) => acc + profile.annualCost!, 0);
+  }
+
+  private getTotalEffectiveWorkHours(displayedData: Profile[]) {
+    this.totalEffectiveWorkHours = displayedData.reduce((acc, profile) =>
+      acc + (profile.effectiveWorkHours ?? 0), 0);
+  }
+
+  private calculateAverageValues(displayedData: Profile[]) {
+    this.getAverageAnnualHours(displayedData);
+    this.getAverageEffectiveWorkHours(displayedData);
+    this.getAverageEffectiveness(displayedData);
+    this.getAverageAnnualCost(displayedData);
+    this.getAverageHourAllocation(displayedData);
+    this.getAverageCostAllocation(displayedData);
+  }
+
+  private getAverageAnnualHours(displayedData: Profile[]) {
+    this.averageAnnualHours = displayedData.reduce((acc, profile) =>
+      acc + (profile.annualHours ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageEffectiveWorkHours(displayedData: Profile[]) {
+    this.averageEffectiveWorkHours = displayedData.reduce((acc, profile) =>
+      acc + (profile.effectiveWorkHours ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageEffectiveness(displayedData: Profile[]) {
+    this.averageEffectiveness = displayedData.reduce((acc, profile) =>
+      acc + (profile.effectivenessPercentage ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageAnnualCost(displayedData: Profile[]) {
+    this.averageAnnualCost = displayedData.reduce((acc, profile) =>
+      acc + (profile.annualCost ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageHourAllocation(displayedData: Profile[]) {
+    this.averageHourAllocation = displayedData.reduce((acc, profile) =>
+      acc + (profile.totalHourAllocation ?? 0), 0) / displayedData.length;
+  }
+
+  private getAverageCostAllocation(displayedData: Profile[]) {
+    this.averageCostAllocation = displayedData.reduce((acc, profile) =>
+      acc + (profile.totalCostAllocation ?? 0), 0) / displayedData.length;
+  }
+
 }

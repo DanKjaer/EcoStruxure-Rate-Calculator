@@ -1,179 +1,57 @@
 package ecostruxure.rate.calculator.be;
 
-import ecostruxure.rate.calculator.bll.service.GeographyService;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+@Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "profileId")
 public class Profile {
-    private TeamProfile teamProfile;
+
+    @Id
+    @GeneratedValue
     private UUID profileId;
+
+    @Column(nullable = false)
     private String name;
-    private String currency;
+
+    @ManyToOne
+    @JoinColumn(name = "geography_id")
     private Geography geography;
+
     private Boolean resourceType;
+
+    @Column(precision = 15, scale = 2, nullable = false)
     private BigDecimal annualCost;
+
+    @Column(precision = 15, scale = 2, nullable = false)
     private BigDecimal annualHours;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal hoursPerDay;
+
+    @Column(precision = 5, scale = 2)
     private BigDecimal effectivenessPercentage;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal effectiveWorkHours;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal totalCostAllocation;
+
+    @Column(precision = 15, scale = 2)
     private BigDecimal totalHourAllocation;
+
     private boolean archived;
+
     private Timestamp updatedAt;
 
-    // Implementer builder pattern, så jeg kan have 1 constructor.
-    private Profile(Builder builder) {
-        this.profileId = builder.profileId;
-        this.name = builder.name;
-        this.currency = builder.currency;
-        this.geography = builder.geography;
-        this.resourceType = builder.resourceType;
-        this.annualCost = builder.annualCost;
-        this.annualHours = builder.annualHours;
-        this.hoursPerDay = builder.hoursPerDay;
-        this.effectivenessPercentage = builder.effectivenessPercentage;
-        this.effectiveWorkHours = builder.effectiveWorkHours;
-        this.totalCostAllocation = builder.totalCostAllocation;
-        this.totalHourAllocation = builder.totalHoursAllocation;
-        this.archived = builder.archived;
-        this.updatedAt = builder.updatedAt;
-    }
-
-    public static class Builder {
-        private UUID profileId;
-        private String name;
-        private String currency;
-        private Geography geography;
-        private Boolean resourceType;
-        private BigDecimal annualCost;
-        private BigDecimal annualHours;
-        private BigDecimal hoursPerDay;
-        private BigDecimal effectivenessPercentage;
-        private BigDecimal effectiveWorkHours;
-        private BigDecimal totalCostAllocation;
-        private BigDecimal totalHoursAllocation;
-        private boolean archived;
-        private Timestamp updatedAt;
-
-        public Builder setProfileId(UUID profileId) {
-            this.profileId = profileId;
-            return this;
-        }
-
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder setGeography(Geography geography) {
-            this.geography = geography;
-            return this;
-        }
-
-        public Builder setCurrency(String currency) {
-            this.currency = currency;
-            return this;
-        }
-
-        public Builder setResourceType(Boolean resourceType) {
-            this.resourceType = resourceType;
-            return this;
-        }
-
-        public Builder setAnnualCost(BigDecimal annualCost) {
-            this.annualCost = annualCost;
-            return this;
-        }
-
-        public Builder setAnnualHours(BigDecimal annualHours) {
-            this.annualHours = annualHours;
-            return this;
-        }
-
-        public Builder setHoursPerDay(BigDecimal hoursPerDay) {
-            this.hoursPerDay = hoursPerDay;
-            return this;
-        }
-
-        public Builder setEffectivenessPercentage(BigDecimal effectivenessPercentage) {
-            this.effectivenessPercentage = effectivenessPercentage;
-            return this;
-        }
-
-        public Builder setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
-            this.effectiveWorkHours = effectiveWorkHours;
-            return this;
-        }
-
-        public Builder setTotalCostAllocation(BigDecimal totalCostAllocation) {
-            this.totalCostAllocation = totalCostAllocation;
-            return this;
-        }
-
-        public Builder setTotalHoursAllocation(BigDecimal totalHoursAllocation) {
-            this.totalHoursAllocation = totalHoursAllocation;
-            return this;
-        }
-
-        public Builder setArchived(boolean archived) {
-            this.archived = archived;
-            return this;
-        }
-
-        public Builder setUpdatedAt(Timestamp updatedAt) {
-            this.updatedAt = updatedAt;
-            return this;
-        }
-
-        public Profile build() {
-            return new Profile(this);
-        }
-
-    }
-
-    public Profile() {
-    }
-
-    public Geography getGeography() {
-        return geography;
-    }
-
-    public void setGeography(Geography geography) {
-        this.geography = geography;
-    }
-
-    public Boolean getResourceType() {
-        return resourceType;
-    }
-
-    public BigDecimal getTotalCostAllocation() {
-        return totalCostAllocation;
-    }
-
-    public void setTotalCostAllocation(BigDecimal totalCostAllocation) {
-        this.totalCostAllocation = totalCostAllocation;
-    }
-
-    public BigDecimal getTotalHourAllocation() {
-        return totalHourAllocation;
-    }
-
-    public void setTotalHourAllocation(BigDecimal totalHourAllocation) {
-        this.totalHourAllocation = totalHourAllocation;
-    }
-
+    //region Getters and Setters
     public UUID getProfileId() {
         return profileId;
-    }
-
-    public BigDecimal getHoursPerDay() {
-        return hoursPerDay;
-    }
-
-    public void setHoursPerDay(BigDecimal hoursPerDay) {
-        this.hoursPerDay = hoursPerDay;
     }
 
     public void setProfileId(UUID profileId) {
@@ -188,15 +66,15 @@ public class Profile {
         this.name = name;
     }
 
-    public String getCurrency() {
-        return currency;
+    public Geography getGeography() {
+        return geography;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setGeography(Geography geography) {
+        this.geography = geography;
     }
 
-    public Boolean isResourceType() {
+    public Boolean getResourceType() {
         return resourceType;
     }
 
@@ -220,6 +98,14 @@ public class Profile {
         this.annualHours = annualHours;
     }
 
+    public BigDecimal getHoursPerDay() {
+        return hoursPerDay;
+    }
+
+    public void setHoursPerDay(BigDecimal hoursPerDay) {
+        this.hoursPerDay = hoursPerDay;
+    }
+
     public BigDecimal getEffectivenessPercentage() {
         return effectivenessPercentage;
     }
@@ -234,6 +120,22 @@ public class Profile {
 
     public void setEffectiveWorkHours(BigDecimal effectiveWorkHours) {
         this.effectiveWorkHours = effectiveWorkHours;
+    }
+
+    public BigDecimal getTotalCostAllocation() {
+        return totalCostAllocation;
+    }
+
+    public void setTotalCostAllocation(BigDecimal totalCostAllocation) {
+        this.totalCostAllocation = totalCostAllocation;
+    }
+
+    public BigDecimal getTotalHourAllocation() {
+        return totalHourAllocation;
+    }
+
+    public void setTotalHourAllocation(BigDecimal totalHourAllocation) {
+        this.totalHourAllocation = totalHourAllocation;
     }
 
     public boolean isArchived() {
@@ -251,13 +153,23 @@ public class Profile {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+    //endregion
 
-    public TeamProfile getTeamProfile() {
-        return teamProfile;
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "profileId= " + profileId +
+                ", name= '" + name + '\'' +
+                ", geography= " + geography +
+                ", resourceType= " + resourceType +
+                ", annualCost= " + annualCost +
+                ", annualHours= " + annualHours +
+                ", hoursPerDay= " + hoursPerDay +
+                ", effectivenessPercentage= " + effectivenessPercentage +
+                ", effectiveWorkHours= " + effectiveWorkHours +
+                ", totalCostAllocation= " + totalCostAllocation +
+                ", totalHourAllocation= " + totalHourAllocation +
+                '}';
     }
-
-    public void setTeamProfile(TeamProfile teamProfile) {
-        this.teamProfile = teamProfile;
-    }
-
 }

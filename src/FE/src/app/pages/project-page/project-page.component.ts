@@ -1,15 +1,15 @@
-import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {DecimalPipe, NgClass, NgIf} from "@angular/common";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatButton, MatIconButton} from "@angular/material/button";
-import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import {MatTableModule, MatTableDataSource} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
-import {MatFormField, MatInput, MatPrefix} from "@angular/material/input";
+import {MatFormField, MatInput, MatPrefix, MatSuffix} from "@angular/material/input";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {MatLabel} from "@angular/material/form-field";
-import {Project, ProjectMembers} from "../../models";
+import {Project, ProjectTeam} from "../../models";
 import {ProjectService} from '../../services/project.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MenuService} from '../../services/menu.service';
@@ -17,6 +17,9 @@ import {SnackbarService} from '../../services/snackbar.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/add-to-project-dialog.component';
+import {CalculationsService} from '../../services/calculations.service';
+import {SearchConfigService} from '../../services/search-config.service';
+import {CurrencyService} from '../../services/currency.service';
 
 @Component({
   selector: 'app-project-page',
@@ -42,7 +45,8 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
     MatDatepickerInput,
     MatDatepickerToggle,
     MatDatepicker,
-    MatPrefix
+    MatPrefix,
+    MatSuffix
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css'
@@ -50,17 +54,13 @@ import {AddToProjectDialogComponent} from '../../modals/add-to-project-dialog/ad
 export class ProjectPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   projectForm: FormGroup = new FormGroup({});
-  project!: Project;
+  project: WritableSignal<Project | null> = signal<Project | null>(null);
   originalRowData: { [key: number]: any } = {};
   isEditingRow: boolean = false;
-  selectedRow: ProjectMembers | null = null;
+  selectedRow: ProjectTeam | null = null;
+  value: string = '';
+  protected readonly localStorage = localStorage;
 
-  statBoxes = {
-    totalDayRate: 0,
-    totalPrice: 0,
-    grossMargin: 0,
-    totalDays: 0
-  };
   loading: boolean = true;
   isMenuOpen: boolean | undefined;
   datasource: MatTableDataSource<any> = new MatTableDataSource();
@@ -71,14 +71,30 @@ export class ProjectPageComponent implements OnInit {
     'options'
   ];
 
+  statBoxes = computed(() => {
+    const project = this.project()!;
 
-  constructor(private formBuilder: FormBuilder,
+    if (!project) {
+      return {totalDayRate: 0, totalPrice: 0, grossMargin: 0, totalDays: 0};
+    }
+    const totalDayRate = project.projectDayRate!;
+    const totalPrice = project.projectPrice!;
+    const grossMargin = project.projectGrossMargin!;
+    const totalDays = project.projectTotalDays!;
+
+    return {totalDayRate, totalPrice, grossMargin, totalDays};
+  });
+
+  constructor(protected calculationsService: CalculationsService,
               private projectService: ProjectService,
-              private route: ActivatedRoute,
               private menuService: MenuService,
-              private snackBar: SnackbarService,
-              private translate: TranslateService,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private snackbarService: SnackbarService,
+              private translateService: TranslateService,
+              private searchConfigService: SearchConfigService,
+              private formBuilder: FormBuilder,
+              private route: ActivatedRoute,
+              private changeDetectorRef: ChangeDetectorRef,
+              protected currencyService: CurrencyService) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -95,48 +111,36 @@ export class ProjectPageComponent implements OnInit {
       endDate: ['', Validators.required]
     });
 
-    this.project = await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!);
+    this.project.set(await this.projectService.getProject(this.route.snapshot.paramMap.get('id')!));
     this.fillTableWithTeams();
-    this.loading = false;
-    this.fillStatBox();
     this.fillProjectForm();
+    this.searchConfigService.configureFilter(this.datasource, ['team.name']);
+    this.loading = false;
   }
 
   private fillTableWithTeams() {
-    this.project.projectMembers.forEach(member => console.log(member.name, member.dayRateWithMarkup));
-    this.datasource.data = this.project.projectMembers;
+    this.datasource.data = this.project()!.projectTeams;
     this.datasource._updateChangeSubscription();
-  }
-
-  private fillStatBox() {
-    this.statBoxes = {
-      totalDayRate: this.project.projectDayRate!,
-      totalPrice: this.project.projectPrice!,
-      grossMargin: this.project.projectGrossMargin!,
-      totalDays: this.project.projectTotalDays!
-    }
   }
 
   private fillProjectForm() {
     this.projectForm = this.formBuilder.group({
-      projectName: [this.project.projectName, Validators.required],
-      salesNumber: [this.project.projectSalesNumber],
-      projectPrice: [this.project.projectPrice],
-      projectDescription: [this.project.projectDescription],
-      startDate: [this.project.projectStartDate],
-      endDate: [this.project.projectEndDate],
-      dayRate: [this.project.projectDayRate || 0]
+      projectName: [this.project()!.projectName, Validators.required],
+      salesNumber: [this.project()!.projectSalesNumber,Validators.required],
+      projectPrice: [this.project()!.projectPrice, Validators.required],
+      projectDescription: [this.project()!.projectDescription],
+      startDate: [this.project()!.projectStartDate, Validators.required],
+      endDate: [this.project()!.projectEndDate, Validators.required]
     });
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(AddToProjectDialogComponent);
     this.loading = true;
-    dialogRef.componentInstance.project = this.project;
+    dialogRef.componentInstance.project = this.project()!;
     dialogRef.componentInstance.AddToProject.subscribe((project: Project) => {
-      this.project.projectMembers = project.projectMembers;
+      this.project.set(project);
       this.fillTableWithTeams();
-      this.fillStatBox();
     });
     this.loading = false;
     this.changeDetectorRef.detectChanges();
@@ -151,50 +155,56 @@ export class ProjectPageComponent implements OnInit {
     }
   }
 
+  clearSearch() {
+    this.value = '';
+    this.applySearch({target: {value: ''}} as unknown as Event);
+  }
+
   async update() {
     if (this.projectForm.valid) {
-      let updatedProject = {
-        projectId: this.project.projectId,
+      let updatedProject: Project = {
+        projectId: this.project()!.projectId,
+        projectLocation: this.project()!.projectLocation,
+        projectTeams: this.project()!.projectTeams,
         projectName: this.projectForm.value.projectName,
         projectSalesNumber: this.projectForm.value.salesNumber,
-        projectPrice: this.projectForm.value.projectPrice,
         projectDescription: this.projectForm.value.projectDescription,
+        projectPrice: this.projectForm.value.projectPrice,
         projectStartDate: this.projectForm.value.startDate,
         projectEndDate: this.projectForm.value.endDate,
-        projectLocation: this.project.projectLocation,
-        projectMembers: this.project.projectMembers,
-        projectDayRate: this.project.projectDayRate || 0
-      };
+        projectDayRate: this.project()!.projectDayRate
+      }
+      this.project.set(await this.projectService.putProject(updatedProject));
 
-      const response = await this.projectService.putProject(updatedProject);
-      if (response != undefined) {
-        this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_UPDATED'), true);
+      if (this.project != undefined) {
+        this.fillProjectForm();
+        this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_UPDATED'), true);
       } else {
-        this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_UPDATED'), false);
+        this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_UPDATED'), false);
       }
     }
   }
 
   undo() {
     this.projectForm = this.formBuilder.group({
-      projectName: [this.project.projectName],
-      salesNumber: [this.project.projectSalesNumber],
-      projectPrice: [this.project.projectPrice],
-      projectDescription: [this.project.projectDescription],
-      startDate: [this.project.projectStartDate],
-      endDate: [this.project.projectEndDate]
+      projectName: [this.project()!.projectName],
+      salesNumber: [this.project()!.projectSalesNumber],
+      projectPrice: [this.project()!.projectPrice],
+      projectDescription: [this.project()!.projectDescription],
+      startDate: [this.project()!.projectStartDate],
+      endDate: [this.project()!.projectEndDate]
     });
   }
 
   async onRemove() {
-    const result = await this.projectService.deleteProjectMember(this.project.projectId!, this.selectedRow?.teamId!);
+    const result = await this.projectService.deleteProjectMember(this.selectedRow!.projectTeamId!,
+      this.project()!.projectId!);
     if (result) {
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_DELETED'), true);
-      this.project.projectMembers = this.project.projectMembers.filter(member => member.teamId !== this.selectedRow?.teamId);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_DELETED'), true);
+      this.project.set(await this.projectService.getProject(this.project()!.projectId!));
       this.fillTableWithTeams();
-      this.calculateProjectDayRate();
     } else {
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_DELETED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_DELETED'), false);
     }
   }
 
@@ -212,31 +222,25 @@ export class ProjectPageComponent implements OnInit {
     this.isEditingRow = false;
     this.loading = true;
 
-    this.project.projectMembers.forEach(member => {
-      if(member.teamId === selectedProject.teamId) {
-        member.projectAllocation = selectedProject.projectAllocation;
+    this.project()!.projectTeams.forEach(member => {
+      if (member.team.teamId === selectedProject.teamId) {
+        member.allocationPercentage = selectedProject.allocationPercentage;
       }
     });
 
-    try{
+    try {
       const updatedProject = {
-        ...this.project,
-        projectDayRate: this.project.projectDayRate
+        ...this.project()!,
+        projectDayRate: this.project()!.projectDayRate
       }
-      this.project = await this.projectService.putProject(updatedProject);
-      this.project.projectMembers.forEach(member => {
-        if(member.teamId === selectedProject.teamId) {
-          member.dayRateWithMarkup = member.dayRate! * (member.markup! / 100 + 1) * (member.projectAllocation / 100);
-        }
-      });
+      this.project.set(await this.projectService.putProject(updatedProject));
       this.fillTableWithTeams();
       this.fillProjectForm();
-      this.fillStatBox();
-      this.snackBar.openSnackBar(this.translate.instant('SUCCESS_PROJECT_SAVED'), true);
+      this.snackbarService.openSnackBar(this.translateService.instant('SUCCESS_PROJECT_SAVED'), true);
       this.loading = false;
     } catch (e) {
       this.cancelEdit(selectedProject);
-      this.snackBar.openSnackBar(this.translate.instant('ERROR_PROJECT_SAVED'), false);
+      this.snackbarService.openSnackBar(this.translateService.instant('ERROR_PROJECT_SAVED'), false);
       this.loading = false;
       return;
     }
@@ -251,14 +255,7 @@ export class ProjectPageComponent implements OnInit {
     this.isEditingRow = false;
   }
 
-  selectRow(row: ProjectMembers) {
+  selectRow(row: ProjectTeam) {
     this.selectedRow = row;
-  }
-
-  private calculateProjectDayRate(){
-    let totalDayRate = 0;
-    this.project.projectMembers.forEach(member => totalDayRate += member.dayRateWithMarkup!);
-    this.project.projectDayRate = totalDayRate;
-    this.fillStatBox();
   }
 }

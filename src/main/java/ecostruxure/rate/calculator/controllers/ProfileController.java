@@ -2,10 +2,10 @@ package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Profile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
-import ecostruxure.rate.calculator.bll.service.ProfileService;
+import ecostruxure.rate.calculator.bll.profile.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -13,23 +13,24 @@ import java.util.UUID;
 public class ProfileController {
     private final ProfileService profileService;
 
-    public ProfileController() throws Exception {
-        this.profileService = new ProfileService();
+    @Autowired
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
     }
 
     @GetMapping(produces = "application/json")
-    public Profile getProfile(@RequestParam UUID id) throws Exception {
-        return profileService.get(id);
+    public ProfileDTO getProfile(@RequestParam UUID id) throws Exception {
+        return profileService.getById(id);
     }
 
     @GetMapping("/all")
-    public List<Profile> getProfiles() throws Exception {
+    public Iterable<ProfileDTO> getProfiles() throws Exception {
         return profileService.all();
     }
 
     @PostMapping
-    public Profile createProfile(@RequestBody ProfileDTO profileDTO) throws Exception {
-        return profileService.create(profileDTO.getProfile());
+    public Profile createProfile(@RequestBody Profile profile) throws Exception {
+        return profileService.create(profile);
     }
 
     @PutMapping()
@@ -37,8 +38,13 @@ public class ProfileController {
         return profileService.update(profile);
     }
 
-    @DeleteMapping("/{id}")
-    public boolean deleteProfile(@PathVariable UUID id) throws Exception {
-        return profileService.archive(id, true);
+    @DeleteMapping()
+    public boolean delete(@RequestParam UUID id) throws Exception {
+        return profileService.delete(id);
+    }
+
+    @DeleteMapping("/archive")
+    public boolean archive(@RequestParam UUID id) throws Exception {
+        return profileService.archive(id);
     }
 }

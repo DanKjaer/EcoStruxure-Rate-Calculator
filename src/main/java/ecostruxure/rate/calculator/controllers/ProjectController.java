@@ -2,7 +2,8 @@ package ecostruxure.rate.calculator.controllers;
 
 import ecostruxure.rate.calculator.be.Project;
 import ecostruxure.rate.calculator.be.dto.ProjectDTO;
-import ecostruxure.rate.calculator.bll.service.ProjectService;
+import ecostruxure.rate.calculator.bll.project.ProjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,8 +14,9 @@ import java.util.UUID;
 public class ProjectController {
     private final ProjectService projectService;
 
-    public ProjectController() throws Exception {
-        projectService = new ProjectService();
+    @Autowired
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @GetMapping()
@@ -23,13 +25,13 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public List<Project> getProjects() throws Exception {
+    public List<ProjectDTO> getProjects() throws Exception {
         return projectService.getProjects();
     }
 
     @PostMapping()
-    public Project createProject(@RequestBody ProjectDTO projectDTO) throws Exception {
-        return projectService.createProject(projectDTO.getProject());
+    public Project createProject(@RequestBody Project project) throws Exception {
+        return projectService.createProject(project);
     }
 
     @DeleteMapping("/{id}")
@@ -38,8 +40,13 @@ public class ProjectController {
     }
 
     @DeleteMapping()
-    public boolean deleteProjectMember(@RequestParam UUID projectId, @RequestParam UUID teamId) throws Exception {
-        return projectService.deleteProjectMember(projectId, teamId);
+    public Project deleteProjectTeam(@RequestParam UUID projectTeamId) throws Exception {
+        return projectService.deleteProjectTeam(projectTeamId);
+    }
+
+    @DeleteMapping("/archive")
+    public boolean archiveProject(@RequestParam UUID projectId) throws Exception {
+        return projectService.archiveProject(projectId);
     }
 
     @PutMapping("/update")

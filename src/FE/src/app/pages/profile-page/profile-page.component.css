@@ -125,6 +125,7 @@
 
 .searchInput {
   max-width: 15vw;
+  width: 15vw;
   background-color: white;
 }
 
@@ -170,4 +171,8 @@
   flex-direction: row;
   gap: 2rem;
   width: 100%;
+}
+
+.removeButton:hover {
+  color: darkred;
 }

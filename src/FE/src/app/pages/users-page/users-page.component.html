@@ -1,0 +1,113 @@
+<div class="container" [ngClass]="{menuClosed: !isMenuOpen}">
+  <div class="infoContainer">
+    <div class="userContainer">
+      <div class="userTitleContainer">
+        <p>{{ 'USERS' | translate }}</p>
+        <mat-form-field appearance="outline" (keyup)="applySearch($event)">
+          <mat-label>{{ 'SEARCH_PROMPT' | translate }}</mat-label>
+          <input class="searchInput" matInput inputmode="search" type="search" [(ngModel)]="value">
+          @if (value) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="tableContainer">
+        <table class="userTable" mat-table [dataSource]="datasource">
+          <!-- name -->
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'USERNAME' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+            <span>
+              {{ element['username'] }}
+            </span>
+            </td>
+          </ng-container>
+
+          <!-- Change password button column -->
+          <ng-container matColumnDef="changePassword">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'CHANGE_PASSWORD' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button (click)="showChangePassword(row)">
+                <mat-icon>lock_reset</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Delete button column -->
+          <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'DELETE' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <button class="deleteButton" mat-icon-button (click)="onDelete(row)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="selectRow(row)"></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="newUserContainer" [formGroup]="createUserForm">
+      <h4>
+        {{ 'NEW_USERS' | translate }}
+      </h4>
+      <mat-form-field>
+        <mat-label>{{ 'USERNAME' | translate }}</mat-label>
+        <input matInput formControlName="username">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'PASSWORD' | translate }}</mat-label>
+        <input matInput formControlName="password" type="password">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'REPEAT_PASSWORD' | translate }}</mat-label>
+        <input matInput formControlName="repeatPassword" type="password">
+      </mat-form-field>
+
+      <button mat-raised-button (click)="onSave()" [disabled]="createUserForm.invalid">
+        <mat-icon>
+          add
+        </mat-icon>
+        {{ 'ADD_USER' | translate }}
+      </button>
+
+      <div *ngIf="showResetPasswordFields" class="resetClass">
+        <form [formGroup]="changePasswordForm">
+          <h5>
+            {{ 'CHANGE_PASSWORD' | translate }}
+          </h5>
+          <div class="newRepeatClass">
+            <mat-form-field>
+              <mat-label>{{ 'NEW_PASSWORD' | translate }}</mat-label>
+              <input matInput formControlName="newPassword" type="password" class="passwordFields">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>{{ 'REPEAT_PASSWORD' | translate }}</mat-label>
+              <input matInput formControlName="repeatPassword" type="password" class="passwordFields">
+            </mat-form-field>
+          </div>
+          <button mat-raised-button (click)="onChangePassword()" [disabled]="changePasswordForm.invalid">
+            <mat-icon>
+              lock_reset
+            </mat-icon>
+            {{ 'CHANGE_PASSWORD' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ 'ADD_NEW_PROFILE' | translate }}</h2>
+ <h2 mat-dialog-title>{{ 'ADD_NEW_PROFILE' | translate }}</h2>
 
 <mat-dialog-content class="container" [formGroup]="profileForm">
   <!-- name input -->
@@ -6,7 +6,7 @@
     <mat-label>
       {{ 'NAME' | translate }}
     </mat-label>
-    <input matInput placeholder="John Doe" formControlName="name">
+    <input matInput id="nameField" placeholder="John Doe" formControlName="name">
   </mat-form-field>
 
 
@@ -15,23 +15,10 @@
       <!-- location select -->
       <mat-form-field>
         <mat-label>{{ 'LOCATION' | translate }}</mat-label>
-        <mat-select formControlName="geography">
+        <mat-select id="geographyMenu" formControlName="geography">
           @for (location of locations; track location) {
-            <mat-option [value]="location">
+            <mat-option id="{{location.name}}" [value]="location">
               {{ location.name }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div>
-      <!-- currency select -->
-      <mat-form-field>
-        <mat-label>{{ 'CURRENCY' | translate }}</mat-label>
-        <mat-select formControlName="currency">
-          @for (currency of currencies; track currency) {
-            <mat-option [value]="currency">
-              {{ currency.currencyCode }}
             </mat-option>
           }
         </mat-select>
@@ -46,7 +33,7 @@
       <mat-radio-button [value]="true">
         {{ 'OVERHEAD' | translate }}
       </mat-radio-button>
-      <mat-radio-button [value]="false">
+      <mat-radio-button id="productionSelector" [value]="false">
         {{ 'PRODUCTION' | translate }}
       </mat-radio-button>
     </mat-radio-group>
@@ -59,9 +46,9 @@
       <mat-form-field>
         <mat-label>{{ 'ANNUAL_COST' | translate }}</mat-label>
         <span matTextSuffix>
-          {{ this.profileForm.value.currency.symbol }}
+          €
         </span>
-        <input matInput placeholder="0" formControlName="annual_cost">
+        <input matInput id="annualCost" type="number" placeholder="0" formControlName="annual_cost">
       </mat-form-field>
     </div>
     <div>
@@ -70,7 +57,7 @@
         <span matTextSuffix>
           {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
         </span>
-        <input matInput placeholder="0" formControlName="annual_hours">
+        <input matInput id="annualHours" type="number" placeholder="0" formControlName="annual_hours">
       </mat-form-field>
     </div>
   </div>
@@ -84,7 +71,7 @@
         <span matTextSuffix>
           %
         </span>
-        <input matInput placeholder="0" formControlName="effectiveness">
+        <input matInput id="effectiveness" type="number" placeholder="0" formControlName="effectiveness">
       </mat-form-field>
     </div>
     <div>
@@ -93,7 +80,7 @@
         <span matTextSuffix>
           {{ 'HOUR_SYMBOL_UPPERCASE' | translate }}
         </span>
-        <input matInput placeholder="0" formControlName="hours_per_day">
+        <input matInput id="hoursPerDay" type="number" placeholder="0" formControlName="hours_per_day">
       </mat-form-field>
     </div>
   </div>
@@ -108,7 +95,7 @@
       </mat-icon>
       {{ 'CANCEL' | translate }}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true" (click)="onSave()">
+    <button mat-stroked-button id="addButton" [mat-dialog-close]="true" (click)="onSave()" [disabled]="this.profileForm.invalid">
       <mat-icon>
         check_circle
       </mat-icon>
