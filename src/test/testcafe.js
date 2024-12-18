@@ -1,3 +1,5 @@
+import {RequestHook} from 'testcafe';
+
 const {Selector} = require('testcafe');
 
 const formatDate = (date) => {
@@ -7,16 +9,27 @@ const formatDate = (date) => {
    return `${year}-${month}-${day}`;
 };
 
+class JwtBearerAuthorization extends RequestHook {
+   constructor() {
+      super();
+      // Retrieve token from environment variable
+      this.token = process.env.test_jwt_bearer;
+   }
+
+   async onRequest(event) {
+      event.requestOptions.headers['Authorization'] = this.token;
+   }
+
+   async onResponse(event) {
+   }
+}
+
+// Create an instance of the hook
+const authHeaderHook = new JwtBearerAuthorization();
+
 fixture('Tests')
-    .page('http://localhost:4200/login')
-    .beforeEach(async test => {
-   // Common login and navigation steps
-   await test
-       .typeText('#username', 'test')
-       .typeText('#password', '123456')
-       .click('#loginButton')
-       .wait(2000)
-});
+    .page('http://localhost:4200/')
+    .requestHooks(authHeaderHook);
 
 test('Create a profile', async test => {
    await test
