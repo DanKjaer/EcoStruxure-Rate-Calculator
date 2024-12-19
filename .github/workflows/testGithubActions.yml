@@ -3,7 +3,7 @@ name: Run tests
 
 on:
   pull_request:
-    branches: [ "master", "Deployment" ]
+    branches: [ "master", "Development" ]
   workflow_dispatch:
 
 jobs:
