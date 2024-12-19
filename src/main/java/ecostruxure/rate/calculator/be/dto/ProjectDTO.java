@@ -21,6 +21,7 @@ public class ProjectDTO {
     private LocalDate projectEndDate;
     private Geography projectLocation;
     private String projectSalesNumber;
+    private boolean projectArchived;
 
     public ProjectDTO(UUID projectId,
                       String projectName,
@@ -34,7 +35,8 @@ public class ProjectDTO {
                       LocalDate projectStartDate,
                       LocalDate projectEndDate,
                       Geography projectLocation,
-                      String projectSalesNumber) {
+                      String projectSalesNumber,
+                      boolean projectArchived) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
@@ -48,6 +50,7 @@ public class ProjectDTO {
         this.projectEndDate = projectEndDate;
         this.projectLocation = projectLocation;
         this.projectSalesNumber = projectSalesNumber;
+        this.projectArchived = projectArchived;
     }
 
     public ProjectDTO() {
@@ -155,5 +158,13 @@ public class ProjectDTO {
 
     public void setProjectSalesNumber(String projectSalesNumber) {
         this.projectSalesNumber = projectSalesNumber;
+    }
+
+    public boolean isProjectArchived() {
+        return projectArchived;
+    }
+
+    public void setProjectArchived(boolean projectArchived) {
+        this.projectArchived = projectArchived;
     }
 }
