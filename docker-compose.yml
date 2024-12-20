@@ -1,0 +1,29 @@
+services:
+  EcoStruxure:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    hostname: EcoStruxure
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: EcoStuxure
+      POSTGRES_PASSWORD: ${db_password}
+    ports:
+      - 5432:5432
+
+  frontend:
+    image: project-manage-frontend
+    ports:
+      - 8081:80
+    depends_on:
+      - api
+
+  api:
+    image: project-manage-api
+    environment:
+      - jwt_secret_key=${jwt_secret_key}
+    ports:
+      - 8080:8080
+    depends_on:
+      - EcoStruxure

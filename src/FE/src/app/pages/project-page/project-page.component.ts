@@ -54,8 +54,8 @@ import {CurrencyService} from '../../services/currency.service';
 export class ProjectPageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   projectForm: FormGroup = new FormGroup({});
-  project: WritableSignal<Project | null> = signal<Project | null>(null);
   originalRowData: { [key: number]: any } = {};
+  project: WritableSignal<Project | null> = signal<Project | null>(null);
   isEditingRow: boolean = false;
   selectedRow: ProjectTeam | null = null;
   value: string = '';
