@@ -1,9 +1,7 @@
 package ecostruxure.rate.calculator.bll.profile;
 
 import ecostruxure.rate.calculator.be.Profile;
-import ecostruxure.rate.calculator.be.TeamProfile;
 import ecostruxure.rate.calculator.be.dto.ProfileDTO;
-import ecostruxure.rate.calculator.be.dto.TeamProfileDTO;
 import ecostruxure.rate.calculator.bll.utils.RateUtils;
 import ecostruxure.rate.calculator.dal.IProfileRepository;
 import ecostruxure.rate.calculator.dal.ITeamProfileRepository;
@@ -12,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -20,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +45,11 @@ public class ProfileService {
 
     @Transactional
     public Profile create(Profile profile) throws Exception {
+        profile.setEffectiveWorkHours(RateUtils.effectiveWorkHours(profile));
+        profile.setTotalCostAllocation(BigDecimal.ZERO);
+        profile.setTotalHourAllocation(BigDecimal.ZERO);
+        profile.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
         em.persist(profile);
         return profile;
     }
