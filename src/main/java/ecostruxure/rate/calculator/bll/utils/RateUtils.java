@@ -111,14 +111,14 @@ public class RateUtils {
 
     private static BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
         BigDecimal totalCostAtChange;
-        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
+        var daysPassed = calculateWorkingDays(project.getProjectStartDate(), LocalDate.now());
         totalCostAtChange = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed));
         return totalCostAtChange;
     }
 
     private static BigDecimal calculateTotalCostAtChange(Project project) {
         BigDecimal totalCostAtChange = project.getProjectTotalCostAtChange();
-        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectRestCostDate().toEpochDay();
+        var daysPassed = calculateWorkingDays(project.getProjectRestCostDate(), LocalDate.now());
         totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
         return totalCostAtChange;
     }
