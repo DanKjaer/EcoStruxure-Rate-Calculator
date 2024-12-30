@@ -90,7 +90,7 @@ public class RateUtils {
             project.setProjectGrossMargin(calculateGrossMargin(project));
         }
 
-        // Calculate, if rest cost haven't been calculated before
+        // Calculate, if rest cost haven't been calculated before, and project have not finished
         else if (projectContainsMembers && project.getProjectRestCostDate() == null && projectIsNotFinished) {
             project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
             project.setProjectRestCostDate(LocalDate.now());
@@ -98,7 +98,7 @@ public class RateUtils {
             project.setProjectGrossMargin(calculateAfterStartGrossMargin(project));
         }
 
-        // Calculate, if project members are present and project is started
+        // Calculate, if project members are present and project has not finished
         else if (projectContainsMembers && projectIsNotFinished) {
             project.setProjectTotalCostAtChange(calculateTotalCostAtChange(project));
             project.setProjectRestCostDate(LocalDate.now());
@@ -111,14 +111,14 @@ public class RateUtils {
 
     private static BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
         BigDecimal totalCostAtChange;
-        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
+        var daysPassed = calculateWorkingDays(project.getProjectStartDate(), LocalDate.now());
         totalCostAtChange = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed));
         return totalCostAtChange;
     }
 
     private static BigDecimal calculateTotalCostAtChange(Project project) {
         BigDecimal totalCostAtChange = project.getProjectTotalCostAtChange();
-        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectRestCostDate().toEpochDay();
+        var daysPassed = calculateWorkingDays(project.getProjectRestCostDate(), LocalDate.now());
         totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
         return totalCostAtChange;
     }
