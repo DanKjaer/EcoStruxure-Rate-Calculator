@@ -78,44 +78,47 @@ public class RateUtils {
     //region projects
     //These methods are for calculations on projects
     public static Project updateProjectRates(Project project) {
-        var projectContainsMembers = project.getProjectTeams() != null;
-        var projectContainsDayRate = project.getProjectDayRate() != null;
-        var projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
+        boolean projectContainsMembers = project.getProjectTeams() != null;
+        boolean projectIsStarted = LocalDate.now().isAfter(project.getProjectStartDate());
+        boolean projectIsNotFinished = LocalDate.now().isBefore(project.getProjectEndDate());
 
-        // Calculate, if rest cost have been calc. before
-        if (projectContainsMembers && projectContainsDayRate && project.getProjectRestCostDate() == null) {
+        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
+
+        // Calculate, if project members are present and project is not started
+        if (projectContainsMembers && !projectIsStarted) {
+            project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
+            project.setProjectGrossMargin(calculateGrossMargin(project));
+        }
+
+        // Calculate, if rest cost haven't been calculated before, and project have not finished
+        else if (projectContainsMembers && project.getProjectRestCostDate() == null && projectIsNotFinished) {
             project.setProjectTotalCostAtChange(calculateTotalCostAtChangeFirstTime(project));
             project.setProjectRestCostDate(LocalDate.now());
             project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
-            project.setProjectGrossMargin(calculateGrossMargin(project));
+            project.setProjectGrossMargin(calculateAfterStartGrossMargin(project));
         }
-        // Calculate, if project members are present and project is started
-        else if (projectContainsMembers && projectContainsDayRate && projectIsStarted) {
+
+        // Calculate, if project members are present and project has not finished
+        else if (projectContainsMembers && projectIsNotFinished) {
             project.setProjectTotalCostAtChange(calculateTotalCostAtChange(project));
             project.setProjectRestCostDate(LocalDate.now());
             project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
-            project.setProjectGrossMargin(calculateGrossMargin(project));
-        }
-        // Calculate, if project members are present and project is not started
-        else if (projectContainsMembers && projectContainsDayRate) {
-            project.setProjectDayRate(calculateDayRate(project.getProjectTeams()));
-            project.setProjectGrossMargin(calculateGrossMargin(project));
+            project.setProjectGrossMargin(calculateAfterStartGrossMargin(project));
         }
 
-        project.setProjectTotalDays(calculateWorkingDays(project.getProjectStartDate(), project.getProjectEndDate()));
         return project;
     }
 
     private static BigDecimal calculateTotalCostAtChangeFirstTime(Project project) {
         BigDecimal totalCostAtChange;
-        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectStartDate().toEpochDay();
+        var daysPassed = calculateWorkingDays(project.getProjectStartDate(), LocalDate.now());
         totalCostAtChange = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed));
         return totalCostAtChange;
     }
 
     private static BigDecimal calculateTotalCostAtChange(Project project) {
         BigDecimal totalCostAtChange = project.getProjectTotalCostAtChange();
-        var daysPassed = LocalDate.now().toEpochDay() - project.getProjectRestCostDate().toEpochDay();
+        var daysPassed = calculateWorkingDays(project.getProjectRestCostDate(), LocalDate.now());
         totalCostAtChange = totalCostAtChange.add(project.getProjectDayRate().multiply(BigDecimal.valueOf(daysPassed)));
         return totalCostAtChange;
     }
@@ -148,6 +151,20 @@ public class RateUtils {
 
     private static BigDecimal calculateGrossMargin(Project project) {
         BigDecimal grossMarginNumber = project.getProjectPrice().subtract(project.getProjectDayRate().multiply(BigDecimal.valueOf(project.getProjectTotalDays())));
+        BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        return grossMarginPercentage;
+    }
+
+    private static BigDecimal calculateAfterStartGrossMargin(Project project) {
+        if(project.getProjectTotalCostAtChange() == null) {
+            project.setProjectTotalCostAtChange(BigDecimal.ZERO);
+        }
+
+        int daysToCalculateRestCost = calculateWorkingDays(project.getProjectRestCostDate(), project.getProjectEndDate());
+        BigDecimal costRestOfProject = project.getProjectDayRate().multiply(BigDecimal.valueOf(daysToCalculateRestCost));
+        BigDecimal totalCost = project.getProjectTotalCostAtChange().add(costRestOfProject);
+
+        BigDecimal grossMarginNumber = project.getProjectPrice().subtract(totalCost);
         BigDecimal grossMarginPercentage = grossMarginNumber.divide(project.getProjectPrice(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         return grossMarginPercentage;
     }
